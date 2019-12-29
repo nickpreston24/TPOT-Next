@@ -14,7 +14,7 @@ const HeaderTabs = () => {
     const router = useRouter()
     const splitroute = router.pathname.split('/')
     const route = splitroute[splitroute.length - 1]
-    let stop = null
+    let stop = 1
     switch (route) {
         case 'scribe':
             stop = 0

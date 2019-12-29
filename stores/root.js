@@ -1,31 +1,33 @@
 import { action, observable } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
+import Router from 'next/router'
 
 const isServer = typeof window === 'undefined'
 // eslint-disable-next-line react-hooks/rules-of-hooks
 useStaticRendering(isServer)
 
 export class Store {
-  @observable lastUpdate = 0
-  @observable light = false
+  @observable authenticated = false
   @observable active = false
 
   hydrate(serializedStore) {
   // For later, such as offline IndexedDB with Localforage
   }
 
-  @action start = () => {
-    this.timer = setInterval(() => {
-      this.lastUpdate = Date.now()
-      this.light = true
-    }, 1000)
-  }
-
   @action toggle = () => {
       this.active = !this.active
   }
 
-  stop = () => clearInterval(this.timer)
+  @action signIn = () => {
+    this.authenticated = true
+    this.authenticated && Router.push('/')
+  }
+
+  @action signOut = () => {
+    this.authenticated = false
+    !this.authenticated && Router.push('/login')
+  }
+
 }
 
 export async function fetchInitialStoreState() {
