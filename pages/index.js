@@ -4,8 +4,8 @@ import Dashboard from '../components/Dashboard'
 
 const Home = () => (
   <Dashboard title="TPOT Scribe">
-    <h1>Welcome</h1>
-    <Link href="/editor"><a>To Editor</a></Link>
+    <h1>Welcome to Scribe</h1>
+    <Link href="/scribe/editor"><a>Lets Get Started! </a></Link>
   </Dashboard>
 )
 
