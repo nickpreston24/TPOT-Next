@@ -1,43 +1,33 @@
 import React, { Component } from 'react'
 import Head from 'next/head'
-import Header from './Header'
-import Box from '@material-ui/core/Box'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
+import { compose } from 'recompose'
+import { Box } from '@material-ui/core'
 
-@inject('store')
-@observer
-class Page extends Component {
+// : This component ensures that we always have a full height and width container for each page
 
-  render() {
-    const { store } = this.props
-    return (
-      <div>
-        <Head>
-          <title>TPOT Scribe</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-    
-        <style global jsx>{`
-          body {
-            margin: 0px;
-            border: none;
-            display: flex;
-          }
-        `}</style>
-        
-        <Box width="100%" height="100%" position="absolute" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch">
-          <Header />
-        <Box flexGrow={1} fontSize={24}>App Content
-          <button onClick={store.toggle}>{`${store.active}`}</button>
-          {this.props.children}
-        </Box>
-        </Box>
-    
-        {/* <Box id="frame" minHeight="100%" idth="100%" m={0} p={0} border={1}>Welcome to Next.js!</Box> */}
-        
-      </div>
-    )
-  }
-}
+const Page = compose(
+  observer
+)(
+  ({ children, title }) =>
+    <div>
+      <Head>
+        <title>{ title }</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <style global jsx>{`
+        body {
+          margin: 0px;
+          border: none;
+          background: #f8f9fa;
+        }
+      `}</style>
+      
+      <Box width="100vw" height="100vh" position="absolute">
+        { children }
+      </Box>
+    </div>
+)
 
 export default Page

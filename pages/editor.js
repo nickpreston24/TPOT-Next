@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import Link from 'next/link'
-import Page from '../components/Page'
+import Dashboard from '../components/Dashboard'
 
 const Other = () => (
-  <Page>
+  <Dashboard title="TPOT Scribe - Edit" panel>
+    <h1>Editor</h1>
     <Link href="/"><a>Back Home</a></Link>
-  </Page>
+  </Dashboard>
 )
 
 export default Other
