@@ -14,9 +14,14 @@ class Dashboard extends Component {
       <Page title={title}>
         <Box height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch">
           <Header />
-          <Box flexGrow={1} fontSize={24} bgcolor="#f8f9fa">
-            {children}
-            <button onClick={store.toggle}>{`Toggle ${store.active ? 'A' : 'B'}`}</button>
+          <Box flexGrow={1} fontSize={24} bgcolor="#f8f9fa" display="flex">
+            <Box flexGrow={1}>
+              {children}
+              <button onClick={store.toggle}>{`Toggle ${store.active ? 'A' : 'B'}`}</button>
+            </Box>
+            <Box width={320} bgcolor="white" boxShadow={3} p={2} style={{boxSizing: 'border-box'}}>
+              Details
+            </Box>
           </Box>
         </Box>
       </Page>

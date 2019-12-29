@@ -30,6 +30,7 @@ const Page = compose(
       <Box width="100vw" height="100vh" position="absolute">
         { children }
       </Box>
+      
     </div>
 )
 

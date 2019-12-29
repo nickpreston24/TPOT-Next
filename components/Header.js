@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Box from '@material-ui/core/Box'
 import HeaderTabs from './HeaderTabs'
 import HeaderAppDropdown from './HeaderAppDropdown'
+import HeaderUserLogin from './HeaderUserLogin'
 
 // #2d374a
 
@@ -15,7 +16,7 @@ const Header = () => (
             <HeaderTabs />
         </Box>
         <Box width={300}>
-            User
+            <HeaderUserLogin />
         </Box>
     </Box>
 )

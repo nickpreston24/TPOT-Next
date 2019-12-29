@@ -3,8 +3,8 @@ import Link from 'next/link'
 import Dashboard from '../../components/Dashboard'
 
 const Other = () => (
-  <Dashboard title="TPOT Scribe - Overview " panel>
-    <h1>Editor</h1>
+  <Dashboard title="TPOT Scribe - Overview ">
+    <h1>Overview</h1>
   </Dashboard>
 )
 
