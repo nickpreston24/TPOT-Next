@@ -36,7 +36,7 @@ const HeaderTabs = () => {
                 aria-label="action tabs example"
             >
                 <LinkTab icon={<ViewQuiltOutlinedIcon />} label="Overview" href="/scribe" />
-                <LinkTab icon={<CreateOutlinedIcon />} label="Editor" href="/scribe/editor" />
+                <LinkTab icon={<CreateOutlinedIcon />} label="Editor" href="/scribe/edit" />
                 <LinkTab icon={<ShoppingCartOutlinedIcon />} label="Checkout" href="/scribe/checkout" />
             </Tabs>
         </Box>

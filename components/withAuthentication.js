@@ -1,16 +1,15 @@
 import React, { Component, useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, withRouter } from 'next/router'
 import { inject, observer } from 'mobx-react'
 
 const withAuthentication = Component => {
     const WithAuthentication = observer(({ store, ...rest }) => {
         const authenticated = store.authenticated
-        const router = useRouter()
-        useEffect(() => {
-            !authenticated && router.push('/login')
-        })
         return (
-            <>{authenticated && <Component {...{store, ...rest}} />}</>
+            <>
+                {authenticated && <Component {...{store, ...rest}} />}
+                {!authenticated && <Redirect href="/login" /> }
+            </>
         )
     })
     return inject('store')(WithAuthentication);
@@ -53,11 +52,16 @@ export default withAuthentication;
 
 // export default Authenticator
 
-class Redirect extends Component {
-    componentDidMount() {
-        Router.push(this.props.href)
-    }
-    render() {
+const Redirect = withRouter(( props ) => {
+    class Redirect extends Component {
+      componentDidMount() {
+        const { router, href } = this.props
+        router.push(href)
+      }
+      render() {
         return <></>
+      }
     }
-}
+    return <Redirect {...props}/>
+  }
+)
