@@ -37,6 +37,7 @@ export class Store {
 
   hydrate(serializedStore) {
     // For later, such as offline IndexedDB with Localforage
+    console.log(serializedStore)
   }
 
   /////////////////////////
@@ -70,6 +71,10 @@ export class Store {
       .catch(error => console.error(error.message))
   }
 
+  @action getTime = () => {
+    return this.fb.getTime()
+  }
+
   /////////////////////////
   //      Checkout       //
   /////////////////////////
@@ -80,6 +85,7 @@ export class Store {
       sessions = new Collection('sessions')
     } catch (error) {
       // You are not authenticated
+
     }
     return sessions
   }
@@ -90,5 +96,5 @@ export class Store {
 
 export async function fetchInitialStoreState() {
   // You can do anything to fetch initial store state
-  return {}
+  return {cat: 'dog'}
 }

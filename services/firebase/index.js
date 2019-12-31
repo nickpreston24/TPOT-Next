@@ -58,5 +58,9 @@ export const Firebase = {
 
     forgot: email => {
         firebase.app().auth().sendPasswordResetEmail(email)
+    },
+
+    getTime: () => {
+        return firebase.firestore.Timestamp.fromDate(new Date())
     }
 }

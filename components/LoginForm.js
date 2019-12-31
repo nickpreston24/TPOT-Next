@@ -74,7 +74,7 @@ class LoginForm extends Component {
         const form = new MobxReactForm({ fields }, { plugins, hooks })
 
         return (
-            <Box fontSize={14} fontFamily="'Poppins', sans-serif" display="flex" flexDirection="column" width={300} height={450} border={1} >
+            <Box fontSize={14} fontFamily="'Poppins', sans-serif" display="flex" flexDirection="column" width={300} height={450} >
                 <Box flexGrow={1}>
                     <InputFields {...{ form, mode }} />
                     {mode == 'forgot' && <ResetText />}
@@ -91,7 +91,7 @@ export default LoginForm
 const InputFields = observer(({ form, mode }) => {
     const fields = Object.keys(toJS(form.fields))
     return (
-        <Box border={1} flexDirection="column">
+        <Box flexDirection="column">
             <form onSubmit={form.onSubmit}>
                 {fields.map(key => (
                     <Box height={90} key={key}>
