@@ -43,17 +43,31 @@ export class Store {
   //      Firebase       //
   /////////////////////////
 
-  @action signIn = async (email, password) => {
-    console.log('sign in', email, password)
+  @action setAuthUser = authUser => {
+    this.authUser = authUser
+  }
+
+  @action signIn = async userInfo => {
+    const { email, password } = userInfo
     this.fb.signIn(email, password)
+      .then(user => console.warn('Logged in User'))
+      .catch(error => console.error(error.message))
   }
 
   @action signOut = () => {
     this.fb.signOut()
   }
 
-  @action setAuthUser = authUser => {
-    this.authUser = authUser
+  @action forgot = userInfo => {
+    const { email } = userInfo
+    this.fb.forgot(email)
+  }
+
+  @action register = userInfo => {
+    const { first, last, email, password } = userInfo
+    this.fb.register(first, last, email, password)
+      .then(user => console.warn('Registered User'))
+      .catch(error => console.error(error.message))
   }
 
   /////////////////////////

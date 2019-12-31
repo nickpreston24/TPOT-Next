@@ -20,7 +20,7 @@ const Checkout = props => {
         const { id } = session
         return (
           <Link
-            href={"/scribe/edit/${id}"}
+            href={"/scribe/edit/[doc]"}
             as={`/scribe/edit/${id}`}
             key={id}
           >

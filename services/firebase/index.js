@@ -2,12 +2,11 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import { initFirestorter } from 'firestorter'
-import { firebaseConfig } from './firebase.key'
 
 export const Firebase = {
-    
+
     init: () => {
-        
+
         if (!firebase.apps.length) {
             firebase.initializeApp({
                 apiKey: "AIzaSyCrRjT-eZQAxfPkDemOe0WiebiWVZju97w",
@@ -19,7 +18,7 @@ export const Firebase = {
             })
 
             initFirestorter({ firebase: firebase })
-    
+
             // Fix for Firebase 5.0.4 Timestamp Deprecation
             // firebase.firestore().settings({ timestampsInSnapshots: true })
         }
@@ -43,5 +42,21 @@ export const Firebase = {
 
     signOut: () => {
         firebase.app().auth().signOut()
+    },
+
+    register: (first, last, email, password) => {
+        return new Promise((resolve, reject) => {
+            firebase.app().auth().createUserWithEmailAndPassword(email, password)
+                .then((newUser) => {
+                    resolve(newUser)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    },
+
+    forgot: email => {
+        firebase.app().auth().sendPasswordResetEmail(email)
     }
 }

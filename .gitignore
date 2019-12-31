@@ -22,7 +22,6 @@
 # auth
 /keys/*
 !/keys
-services/firebase/firebase.key.js
 
 # debug
 npm-debug.log*

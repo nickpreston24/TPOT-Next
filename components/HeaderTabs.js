@@ -23,7 +23,7 @@ const HeaderTabs = () => {
             stop = 2
             break
         default:
-            stop = 2
+            stop = 1
             break
     }
     return (
