@@ -8,7 +8,7 @@ const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
 
     componentDidMount() {
-      this.listener = this.props.store.firebase.app().auth().onAuthStateChanged(
+      this.listener = this.props.store.fb.firebase.app().auth().onAuthStateChanged(
         authUser => {
           this.props.store.setAuthUser(authUser)
           if (authUser == null) {
