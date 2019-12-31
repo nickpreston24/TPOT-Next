@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "export": "next export"
+    "export": "next export",
+    "serve": "serve out"
   },
   "dependencies": {
+    "firebase": "^6.5.0",
+    "firestorter": "^2.0.1",
     "@material-ui/core": "^4.8.1",
     "@material-ui/icons": "^4.5.1",
     "@material-ui/lab": "^4.0.0-alpha.37",

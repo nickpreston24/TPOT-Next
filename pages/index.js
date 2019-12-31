@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Link from 'next/link'
 import Dashboard from '../components/Dashboard'
-import { Router, withRouter } from 'next/router'
+import { withRouter } from 'next/router'
 import withAuthentication from '../components/withAuthentication'
 
 const Toolbox = () => {
@@ -15,7 +15,6 @@ const Toolbox = () => {
 }
 
 export default withAuthentication(Toolbox)
-
 
 
 

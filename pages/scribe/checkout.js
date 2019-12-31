@@ -1,17 +1,38 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import Dashboard from '../../components/Dashboard'
+import { inject, observer } from 'mobx-react'
+import { compose } from 'recompose'
 
-const Checkout = () => (
-  <Dashboard title="TPOT Scribe - Checkout">
-    <h1>Checkout</h1>
-    <Link 
-      href={"/scribe/edit/[doc]"} 
-      as={`/scribe/edit/${'cEHUmSdrzp8v9BxLFuvO'}`}
+const Checkout = props => {
+  const { store } = props
+  const { sessions } = store
+  return (
+    <Dashboard title="TPOT Scribe - Checkout">
+      <h1>Checkout</h1>
+      <Link
+        href={"/scribe/edit/[doc]"}
+        as={`/scribe/edit/${'cEHUmSdrzp8v9BxLFuvO'}`}
       >
-        <a>Load Document 'cEHUmSdrzp8v9BxLFuvO'</a>
+        <a>Load Example Document 'cEHUmSdrzp8v9BxLFuvO'</a>
       </Link>
-  </Dashboard>
-)
+      {sessions && sessions.docs.map((session, idx) => {
+        const { id } = session
+        return (
+          <Link
+            href={"/scribe/edit/[doc]"}
+            as={`/scribe/edit/${id}`}
+            key={id}
+          >
+            <p>{id}</p>
+          </Link>
+        )
+      })}
+    </Dashboard>
+  )
+}
 
-export default Checkout
+export default compose(
+  inject('store'),
+  observer
+)(Checkout)

@@ -19,7 +19,13 @@
 .DS_Store
 .env*
 
+# auth
+/keys/*
+!/keys
+services/firebase/firebase.key.js
+
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+

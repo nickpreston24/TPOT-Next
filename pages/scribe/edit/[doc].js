@@ -9,7 +9,11 @@ const Post = () => {
   const { doc } = router.query
 
   return (
-    <Dashboard title={`TPOT Scribe - Edit - ${doc}`}>
+    <Dashboard title={`TPOT Scribe - Edit - ${doc}`}
+      details={
+        <p>test</p>
+      }
+    >
       <p>DocID: {doc}</p>
     </Dashboard>
   )
