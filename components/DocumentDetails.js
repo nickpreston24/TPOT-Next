@@ -6,7 +6,6 @@ import moment from 'moment'
 import React from 'react'
 import DocumentForm from './DocumentForm'
 
-
 const DocumentDetails = observer(({ document }) => {
   const { data, id } = document
   let { title, excerpt, status, slug, date_modified } = data

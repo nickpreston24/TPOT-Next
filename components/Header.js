@@ -1,5 +1,4 @@
-import React, { Component } from 'react'
-import Link from 'next/link'
+import React from 'react'
 import Box from '@material-ui/core/Box'
 import HeaderTabs from './HeaderTabs'
 import HeaderAppDropdown from './HeaderAppDropdown'

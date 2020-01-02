@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Dashboard from '../components/Dashboard'
+import { inject, observer } from 'mobx-react'
 
 @inject('store')
 @observer

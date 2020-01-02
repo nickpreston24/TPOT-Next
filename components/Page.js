@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import { observer } from 'mobx-react'
 import { compose } from 'recompose'
