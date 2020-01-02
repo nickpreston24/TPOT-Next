@@ -23,6 +23,9 @@
 /keys/*
 !/keys
 
+# braden
+/backup*
+
 # debug
 npm-debug.log*
 yarn-debug.log*

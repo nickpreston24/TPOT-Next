@@ -1,40 +1,19 @@
 import React, { Component } from 'react'
-import Link from 'next/link'
 import Dashboard from '../components/Dashboard'
-import { withRouter } from 'next/router'
-import withAuthentication from '../components/withAuthentication'
 
-const Toolbox = () => {
-  return (
-    <Dashboard title="TPOT Toolbox">
-      <h1>Toolbox</h1>
-      <Link href="/scribe"><a>Go to Scribe{`-->`}</a></Link>
-      <Redirect href="/scribe" />
-    </Dashboard>
-  )
-}
+@inject('store')
+@observer
+class App extends Component {
 
-export default withAuthentication(Toolbox)
-
-
-
-
-
-
-const Redirect = withRouter((props) => {
-  class Redirect extends Component {
-    componentDidMount() {
-      const { router, href } = this.props
-      router.push(href)
-    }
-    render() {
-      return <></>
-    }
+  render() {
+    const { store } = this.props
+    return (
+      <Dashboard title="TPOT Toolbox">
+        {/* <Redirect href="/scribe" /> */}
+      </Dashboard>
+    )
   }
-  return <Redirect {...props} />
 }
-)
 
-
-
+export default App
 

@@ -1,12 +1,17 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
+import withAuthorization from './hoc'
 import { initFirestorter } from 'firestorter'
+import { observable } from 'mobx'
 
-export const Firebase = {
+class Firebase {
 
-    init: () => {
+    @observable authUser = null
+    @observable router = null
 
+    constructor() {
         if (!firebase.apps.length) {
             firebase.initializeApp({
                 apiKey: "AIzaSyCrRjT-eZQAxfPkDemOe0WiebiWVZju97w",
@@ -18,35 +23,25 @@ export const Firebase = {
             })
 
             initFirestorter({ firebase: firebase })
-
-            // Fix for Firebase 5.0.4 Timestamp Deprecation
-            // firebase.firestore().settings({ timestampsInSnapshots: true })
         }
 
-        return firebase
-    },
 
-    firebase: firebase,
+        this.app = firebase.app()
+        this.auth = firebase.auth()
+        this.firestore = firebase.firestore()
 
-    signIn: (email, password) => {
-        return new Promise((resolve, reject) => {
-            firebase.app().auth().signInWithEmailAndPassword(email, password)
-                .then(authUser => {
-                    resolve(authUser)
-                })
-                .catch(error => {
-                    reject(error)
-                })
+        this.listener = this.auth.onAuthStateChanged(authUser => {
+            this.authUser = authUser
+            if (!authUser) {
+                this.redirect('/login')
+            }
         })
-    },
 
-    signOut: () => {
-        firebase.app().auth().signOut()
-    },
+    }
 
-    register: (first, last, email, password) => {
+    register = (first, last, email, password) => {
         return new Promise((resolve, reject) => {
-            firebase.app().auth().createUserWithEmailAndPassword(email, password)
+            this.auth.createUserWithEmailAndPassword(email, password)
                 .then((newUser) => {
                     resolve(newUser)
                 })
@@ -54,13 +49,54 @@ export const Firebase = {
                     reject(error)
                 })
         })
-    },
+    }
 
-    forgot: email => {
-        firebase.app().auth().sendPasswordResetEmail(email)
-    },
+    signIn = (email, password) => {
+        return new Promise((resolve, reject) => {
+            this.auth.signInWithEmailAndPassword(email, password)
+                .then(authUser => {
+                    this.redirect('/')
+                    resolve(authUser)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    }
 
-    getTime: () => {
+    signOut = () => {
+        this.redirect('/login')
+        firebase.auth().signOut()
+            .then(result =>
+                console.log('logged out user', result)
+            )
+    }
+
+    forgot = email => {
+        this.auth.sendPasswordResetEmail(email)
+    }
+
+    updatePassword = password => {
+        this.auth.currentUser.updatePassword(password)
+    }
+
+    getTime = () => {
         return firebase.firestore.Timestamp.fromDate(new Date())
     }
+
+    setRouter = router =>
+        this.router = router
+
+    redirect = path => {
+        if (this.router) {
+            if (this.router.pathname !== path) {
+                this.router.push(path)
+            }
+        }
+    }
+
 }
+
+export default Firebase
+
+export { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser, withAuthorization };

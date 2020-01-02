@@ -1,7 +1,8 @@
+import { Provider } from 'mobx-react'
 import App from 'next/app'
 import React from 'react'
+import { withAuthorization } from '../services/firebase'
 import { fetchInitialStoreState, Store } from '../stores/root'
-import { Provider } from 'mobx-react'
 
 class MobxApp extends App {
   state = {
@@ -26,11 +27,12 @@ class MobxApp extends App {
   }
 
   render() {
-    const { Component, pageProps } = this.props
+    let { Component, pageProps } = this.props
+    let AuthorizedApp = withAuthorization(Component)
     return (
       <Provider store={this.state.store}>
-        <Component {...pageProps} />
-      </Provider>
+        <AuthorizedApp {...pageProps} />
+      </Provider >
     )
   }
 }

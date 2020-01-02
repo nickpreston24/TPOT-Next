@@ -1,52 +1,44 @@
 import { action, observable, computed } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
-import { Firebase } from '../services/firebase'
+import Firebase from '../services/firebase'
 import { Collection } from 'firestorter'
 
-
 // This needs to go before this root store has time to be populated by a provider
-Firebase.init()
+// Firebase.init()
 
 // Determine mode for client or server data serving 
 const isServer = typeof window === 'undefined'
 // eslint-disable-next-line react-hooks/rules-of-hooks
 useStaticRendering(isServer)
 
-
 // Main MobX store class for app-wide use.
 
 export class Store {
-
-  /////////////////////////
-  //   All Observables   //
-  /////////////////////////
-
-  @observable authenticated = false
-  @observable active = false
-  @observable authUser = null
 
   /////////////////////////
   //    Initialization   //
   /////////////////////////
 
   constructor() {
-    // Tie in of our custom functions as well as the vanilla firebase instance
-    // Putting it here on fb means we can use it anwhere in the app.
-    this.fb = Firebase
+    this.fb = new Firebase()
   }
 
   hydrate(serializedStore) {
     // For later, such as offline IndexedDB with Localforage
-    console.log(serializedStore)
+    let entries = Object.keys(serializedStore)
+    entries.forEach((entry) =>
+      this[entry] = serializedStore[entry]
+    )
+    // console.log(Object.keys(serializedStore))
+    // this.authUser = serializedStore.authUser
   }
 
   /////////////////////////
   //      Firebase       //
   /////////////////////////
 
-  @action setAuthUser = authUser => {
-    this.authUser = authUser
-  }
+  @observable authUser = this.fb.authUser
+  @observable router = this.fb.router
 
   @action signIn = async userInfo => {
     const { email, password } = userInfo
@@ -96,5 +88,5 @@ export class Store {
 
 export async function fetchInitialStoreState() {
   // You can do anything to fetch initial store state
-  return {cat: 'dog'}
+  return {}
 }
