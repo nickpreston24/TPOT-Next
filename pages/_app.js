@@ -3,6 +3,8 @@ import App from 'next/app'
 import React from 'react'
 import { withAuthorization } from '../services/firebase'
 import { fetchInitialStoreState, Store } from '../stores/root'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 class MobxApp extends App {
   state = {
@@ -32,6 +34,7 @@ class MobxApp extends App {
     return (
       <Provider store={this.state.store}>
         <AuthorizedApp {...pageProps} />
+        <ToastContainer newestOnTop />
       </Provider >
     )
   }

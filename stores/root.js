@@ -1,6 +1,7 @@
 import { action, observable, computed } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
 import Firebase from '../services/firebase'
+import { toast } from 'react-toastify';
 import { Collection } from 'firestorter'
 
 // This needs to go before this root store has time to be populated by a provider
@@ -43,28 +44,53 @@ export class Store {
   @action signIn = async userInfo => {
     const { email, password } = userInfo
     this.fb.signIn(email, password)
-      .then(user => console.warn('Logged in User'))
-      .catch(error => console.error(error.message))
+    .then(user => this.notify('Logged In Successfully', 'success'))
+    .catch(error => this.notify(error.message, 'error'))
   }
 
   @action signOut = () => {
     this.fb.signOut()
+    this.notify('You are logged out', 'info')
   }
 
   @action forgot = userInfo => {
     const { email } = userInfo
     this.fb.forgot(email)
+    this.notify('Success! Check your email', 'info')
   }
 
   @action register = userInfo => {
     const { first, last, email, password } = userInfo
     this.fb.register(first, last, email, password)
-      .then(user => console.warn('Registered User'))
-      .catch(error => console.error(error.message))
+      .then(user => {
+        this.notify('Registration Successful!', 'success')
+        this.notify('Admin approval needed before you can login')
+      })
+      .catch(error => this.notify(error.message, 'error'))
   }
 
   @action getTime = () => {
     return this.fb.getTime()
+  }
+
+  /////////////////////////
+  //    Notifications    //
+  /////////////////////////
+
+  @action callNotify = () => {
+    this.notify("Wow so easy !")
+  }
+
+  @action notify = (msg, mode) => {
+    let toaster = !!mode ? toast[mode] : toast
+    toaster(msg, {
+      position: "bottom-left",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    })
   }
 
   /////////////////////////

@@ -66,8 +66,7 @@ class LoginForm extends Component {
                 }
             },
             onError(form) {
-                alert('Form has errors!')
-                console.log('All form errors', form.errors())
+                store.notify('Form has errors!', 'error')
             }
         }
 
