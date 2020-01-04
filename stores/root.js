@@ -1,8 +1,9 @@
-import { action, observable, computed } from 'mobx'
+import { action, observable, computed, autorun } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
 import Firebase from '../services/firebase'
 import { toast } from 'react-toastify';
 import { Collection } from 'firestorter'
+import { confirmSignout } from '../components/DialogMessages';
 
 // This needs to go before this root store has time to be populated by a provider
 // Firebase.init()
@@ -16,8 +17,9 @@ useStaticRendering(isServer)
 
 export class Store {
 
+
   /////////////////////////
-  //    Initialization   //
+  //   Initialization    //
   /////////////////////////
 
   constructor() {
@@ -34,6 +36,10 @@ export class Store {
     // this.authUser = serializedStore.authUser
   }
 
+  @action setKey = (key, value) => {
+    this[key] = value
+  }
+
   /////////////////////////
   //      Firebase       //
   /////////////////////////
@@ -44,13 +50,17 @@ export class Store {
   @action signIn = async userInfo => {
     const { email, password } = userInfo
     this.fb.signIn(email, password)
-    .then(user => this.notify('Logged In Successfully', 'success'))
-    .catch(error => this.notify(error.message, 'error'))
+      .then(user => this.notify('Welcome, Enjoy your stay!', 'success'))
+      .catch(error => this.notify(error.message, 'error'))
   }
 
   @action signOut = () => {
-    this.fb.signOut()
-    this.notify('You are logged out', 'info')
+    this.dialog.confirm(confirmSignout)
+      .then(() => {
+        this.fb.signOut()
+        this.notify('You are logged out', 'info')
+      })
+      .catch(() => null)
   }
 
   @action forgot = userInfo => {
@@ -92,6 +102,27 @@ export class Store {
       draggable: true,
     })
   }
+
+  /////////////////////////
+  //       Dialogs       //
+  /////////////////////////
+
+  @observable dialogPortal = null
+  @observable currentPrompt = null
+
+  // @action prompt = (type, cb) => {
+  //   this.currentPrompt = {
+  //     type,
+  //     resolve: cb.resolve,
+  //     reject: cb.reject
+  //   }
+  // }
+
+  /////////////////////////
+  //       Routing       //
+  /////////////////////////
+
+
 
   /////////////////////////
   //      Checkout       //

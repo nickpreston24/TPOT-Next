@@ -1,10 +1,12 @@
-import { Provider } from 'mobx-react'
+import { Provider as MobxProvider } from 'mobx-react'
 import App from 'next/app'
 import React from 'react'
 import { withAuthorization } from '../services/firebase'
 import { fetchInitialStoreState, Store } from '../stores/root'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+// import { DialogProvider } from 'muibox'
+import DialogProvider from '../hoc/DialogProvider'
 
 class MobxApp extends App {
   state = {
@@ -32,10 +34,12 @@ class MobxApp extends App {
     let { Component, pageProps } = this.props
     let AuthorizedApp = withAuthorization(Component)
     return (
-      <Provider store={this.state.store}>
-        <AuthorizedApp {...pageProps} />
-        <ToastContainer newestOnTop />
-      </Provider >
+      <MobxProvider store={this.state.store}>
+        <DialogProvider>
+          <AuthorizedApp {...pageProps} />
+          <ToastContainer newestOnTop />
+        </DialogProvider>
+      </MobxProvider >
     )
   }
 }
