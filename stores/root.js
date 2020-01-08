@@ -3,7 +3,7 @@ import { useStaticRendering } from 'mobx-react'
 import Firebase from '../services/firebase'
 import { toast } from 'react-toastify';
 import { Collection } from 'firestorter'
-import { confirmSignout } from '../components/DialogMessages';
+import { confirmSignout, confirmSetAside } from '../components/DialogMessages';
 
 // This needs to go before this root store has time to be populated by a provider
 // Firebase.init()
@@ -107,16 +107,16 @@ export class Store {
   //       Dialogs       //
   /////////////////////////
 
-  @observable dialogPortal = null
-  @observable currentPrompt = null
-
-  // @action prompt = (type, cb) => {
-  //   this.currentPrompt = {
-  //     type,
-  //     resolve: cb.resolve,
-  //     reject: cb.reject
-  //   }
-  // }
+  @action confirmSetAside = async (router, url) => {
+    return new Promise((resolve, reject) => {
+      this.dialog.confirm(confirmSetAside)
+        .then(() => {
+          this.setAside()
+          resolve()
+        })
+        .catch(() => reject())
+    })
+  }
 
   /////////////////////////
   //       Routing       //
@@ -137,6 +137,11 @@ export class Store {
 
     }
     return sessions
+  }
+
+  @action setAside = (document) => {
+    this.notify('Set Aside, returning to Checkout', 'success')
+    // Save the current document and change the status to 'in-progress'
   }
 
 }
