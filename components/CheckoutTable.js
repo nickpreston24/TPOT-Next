@@ -62,6 +62,7 @@ export const CheckoutTable = compose(
         render() {
 
             let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
+            let { store } = this.props
             let { loading } = this
             console.log(toJS(this.config))
 
@@ -81,7 +82,9 @@ export const CheckoutTable = compose(
                 let id = document.id
                 let { status, date_modified, date_uploaded } = entry
                 status = status || 'in-progress';
+                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
                 date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
+                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds)
                 date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
                 data.push({
                     ...entry,

@@ -25,7 +25,7 @@ class Firebase {
             initFirestorter({ firebase: firebase })
         }
 
-
+        this.firebase = firebase
         this.app = firebase.app()
         this.auth = firebase.auth()
         this.firestore = firebase.firestore()
