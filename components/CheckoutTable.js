@@ -25,7 +25,7 @@ export const CheckoutTable = compose(
             direction: '',
             search: true,
             pageLimit: 5,
-            totalCount: 0,
+            totalCount: 11,
             array: [],
             pool: [],
             page: 0,
