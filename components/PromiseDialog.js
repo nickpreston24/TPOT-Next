@@ -39,6 +39,8 @@ class DialogContainer extends Component {
 
     componentDidMount() {
         this.mounted = true
+
+        console.log(this.props.store.currentPrompt)
     }
 
     @action display = () =>
@@ -102,7 +104,7 @@ const CustomDialog = compose(
         const { currentPrompt } = store
         console.log(currentPrompt)
     }
-    console.log(prompt) 
+    console.log(prompt)
     return (
         <Box>
             <h1>THIS IS TEXT</h1>
