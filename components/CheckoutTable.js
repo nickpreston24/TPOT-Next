@@ -120,12 +120,12 @@ export const CheckoutTable = compose(
                                 tooltip: 'Upload .docx from your computer',
                                 icon: 'backupOutlinedIcon',
                                 isFreeAction: true,
-                                onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+                                onClick: (event, data) => data ?? alert(`You want to delete ${data.length} rows`)
                             }
                         ]}
                     />
                 </Box>
-            )
+            );
         }
 
         /* Builds a Firestorter query based off of given params */
