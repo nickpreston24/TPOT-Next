@@ -1,12 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component, createContext } from 'react'
 import { compose } from 'recompose'
+import { observable, computed, autorun, toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 import MaterialTable from 'material-table'
 import { Box, Chip, Button, Link as MLink } from '@material-ui/core';
-import { observable, computed, action, autorun, toJS, runInAction } from 'mobx';
 import DescriptionIcon from '@material-ui/icons/Description';
 import moment from 'moment';
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 import EditIcon from '@material-ui/icons/Edit';
 import { Collection } from 'firestorter'
@@ -32,68 +31,20 @@ export const CheckoutTable = compose(
             last: 0
         }
 
-        paginate = (array, page_size, page_number) => {
-            return array.slice(page_number * page_size, (page_number + 1) * page_size)
+        @computed get data() {
+            let { store } = this.props
+            let data = this.loadSessions(store)
+            console.log("data", data);
+            return data
         }
-
-        disposer = autorun(async () => {
-
-            let totalCount = this.sessions.docs.length
-            let array = [...Array(totalCount).keys()]
-            const paginate = (array, page_size, page_number) => {
-                return array.slice(page_number * page_size, (page_number + 1) * page_size)
-            }
-            let pool = paginate(array, 5, 0)
-
-            // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
-            console.log(pool)
-            // this.config.totalCount = this.sessions.docs.length
-            // this.config.array = [...Array(this.config.totalCount).keys()]
-            // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
-            // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
-            // // await rest(800)
-            this.config = {
-                totalCount,
-                array,
-                pool
-            }
-        })
 
         render() {
 
+            //TODO: Find out which of these are absolutely critical and keep them; remove the rest.
             let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
-            let { store } = this.props
+
+            // TODO: Try state hooks?
             let { loading } = this
-            console.log(toJS(this.config))
-
-
-            // this.sessions.query = undefined
-            console.log(this.sessions.docs.length)
-
-            this.sessions.query = (ref) => {
-                ref = filter ? direction ? ref.orderBy(filter, direction) : ref.orderBy(filter) : ref
-                ref = ref.limit(200)
-                return ref
-            }
-
-            let data = []
-            this.sessions.docs.map(document => {
-                let entry = toJS(document.data)
-                let id = document.id
-                let { status, date_modified, date_uploaded } = entry
-                status = status || 'in-progress';
-                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
-                date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds)
-                date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-                data.push({
-                    ...entry,
-                    id,
-                    status,
-                    date_modified,
-                    date_uploaded
-                })
-            })
 
             const columns = [
                 { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
@@ -113,7 +64,7 @@ export const CheckoutTable = compose(
                     <MaterialTable
                         title="Checkout"
                         columns={columns}
-                        data={data}
+                        data={this.data}
                         isLoading={loading}
                         detailPanel={paper => <PaperDetails paper={paper} />}
                         options={{
@@ -162,19 +113,94 @@ export const CheckoutTable = compose(
                                 icon: 'refresh',
                                 tooltip: 'Refresh Table',
                                 isFreeAction: true,
-                                onClick: () => this.tableRef.current && this.tableRef.current.onQueryChange(),
+                                //TODO: whatever tableRef is, if you hit refresh, it comes back undefined.
+                                // onClick: () => this.tableRef.current && this.tableRef.current.onQueryChange(),
                             },
                             {
                                 tooltip: 'Upload .docx from your computer',
                                 icon: 'backupOutlinedIcon',
                                 isFreeAction: true,
-                                onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+                                onClick: (event, data) => data ?? alert(`You want to delete ${data.length} rows`)
                             }
                         ]}
                     />
                 </Box>
-            )
+            );
         }
+
+        /* Builds a Firestorter query based off of given params */
+        buildStorterQuery(filter, direction) {
+            return (ref) => {
+                console.log('ref: ', ref, filter, direction);
+                ref = filter
+                    ? direction
+                        ? ref.orderBy(filter, direction)
+                        : ref.orderBy(filter)
+                    : ref;
+                ref = ref.limit(200);
+                return ref;
+            };
+        }
+
+        /* Loads the session data for rendering */
+        loadSessions(store) {
+
+            let sessions = this.sessions.docs.map(document => {
+                let entry = toJS(document.data);
+                let id = document.id;
+                let { status, date_modified, date_uploaded } = entry;
+                status = status || 'in-progress';
+                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds);
+                date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true);
+                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds);
+                date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true);
+                return {
+                    ...entry,
+                    id,
+                    status,
+                    date_modified,
+                    date_uploaded
+                };
+            });
+
+            // TODO: Enable once we figure out how to attempt loading only once.
+            // if (!sessions || sessions.length == 0)
+            //     throw new Error('No sessions were loaded.')
+
+            return sessions;
+        }
+
+        paginate = (array, page_size, page_number) => {
+            return array.slice(page_number * page_size, (page_number + 1) * page_size)
+        }
+
+        // disposer = autorun(async () => {
+
+        //     let totalCount = this.sessions.docs.length
+        //     console.log('total count: ', totalCount);
+
+
+        //     // console.log("???", Array(totalCount).keys());
+        //     // let array = [...Array(totalCount).keys()]
+        //     // console.log('array', array);
+
+        //     // let pool = this.paginate(array, 5, 0)
+
+        //     // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
+        //     // console.log('pool', pool)
+        //     // this.config.totalCount = this.sessions.docs.length
+        //     // this.config.array = [...Array(this.config.totalCount).keys()]
+        //     // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
+        //     // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
+        //     // // await rest(800)
+        //     // this.config = {
+        //     //     totalCount,
+        //     //     array,
+        //     // pool
+        //     // }
+        //     // console.log('after disposing: ', toJS(this.config));
+        // })
+
     }
 )
 
