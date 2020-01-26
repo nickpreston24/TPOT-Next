@@ -1,2 +1,1 @@
-# next-js-layout
-Basic scaffold
+# TPOT-Next
