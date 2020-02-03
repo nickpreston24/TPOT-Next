@@ -32,49 +32,57 @@ export const CheckoutTable = compose(
             last: 0
         }
 
-        paginate = (array, page_size, page_number) => {
-            return array.slice(page_number * page_size, (page_number + 1) * page_size)
-        }
+        // PLEASE READ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TODO : Notes for Nick for future development, please read
+        // : Right now the data that the table recieves comes from an unfiltered, unsorted
+        // : array of the sessions collection via Firestorter. This means features like
+        // : sorting by category, name, search, and pagination won't work. Material-Table
+        // : has a function for this, but it requires that the call is a single layer async.
+        // : What would be better for us is to have an observable, data, that plugs into the
+        // : MaterialTable prop called data. This observable needs to be a computed value that
+        // : is a single Firestorter.query result. The query being a combination of filters,
+        // : search, pagination, search and orderby. This query should be done in an @autorun
+        // : with the result being the data state. When the new data is calculated, the component
+        // : will re-render its children because this.data is in the render function.
+        // : 
+        // : I have started some of this work in the commented out code below, but it isn't MVP.
+        // : Please leave it there until you implement it or come up with something better.
+        // : 
+        // : NOTE!!!! It is FINE to leave this in this state until we get like 100+ letters in /sesssions/
 
-        disposer = autorun(async () => {
+        // paginate = (array, page_size, page_number) => {
+        //     return array.slice(page_number * page_size, (page_number + 1) * page_size)
+        // }
 
-            let totalCount = this.sessions.docs.length
-            let array = [...Array(totalCount).keys()]
-            const paginate = (array, page_size, page_number) => {
-                return array.slice(page_number * page_size, (page_number + 1) * page_size)
-            }
-            let pool = paginate(array, 5, 0)
+        // disposer = autorun(async () => {
 
-            // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
-            console.log(pool)
-            // this.config.totalCount = this.sessions.docs.length
-            // this.config.array = [...Array(this.config.totalCount).keys()]
-            // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
-            // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
-            // // await rest(800)
-            this.config = {
-                totalCount,
-                array,
-                pool
-            }
-        })
+        //     let totalCount = this.sessions.docs.length
+        //     let array = [...Array(totalCount).keys()]
+        //     const paginate = (array, page_size, page_number) => {
+        //         return array.slice(page_number * page_size, (page_number + 1) * page_size)
+        //     }
+        //     let pool = paginate(array, 5, 0)
+
+        //     // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
+        //     console.log(pool)
+        //     // this.config.totalCount = this.sessions.docs.length
+        //     // this.config.array = [...Array(this.config.totalCount).keys()]
+        //     // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
+        //     // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
+        //     // // await rest(800)
+        //     this.config = {
+        //         totalCount,
+        //         array,
+        //         pool
+        //     }
+        // this.data = [//result of query plus transformed data like date_modified gets humanized]
+        // })
 
         render() {
 
             let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
             let { store } = this.props
             let { loading } = this
-            console.log(toJS(this.config))
-
-
-            // this.sessions.query = undefined
-            console.log(this.sessions.docs.length)
-
-            this.sessions.query = (ref) => {
-                ref = filter ? direction ? ref.orderBy(filter, direction) : ref.orderBy(filter) : ref
-                ref = ref.limit(200)
-                return ref
-            }
 
             let data = []
             this.sessions.docs.map(document => {
@@ -115,14 +123,14 @@ export const CheckoutTable = compose(
                         columns={columns}
                         data={data}
                         isLoading={loading}
-                        detailPanel={paper => <PaperDetails paper={paper} />}
+                        detailPanel={paper => <PaperDetails {...{ paper, store }} />}
                         options={{
                             search: search,
                             pageSize: pageLimit,
                             pageSizeOptions: [5, 7, 10],
                             selection: false,
                             draggable: true,
-                            grouping: true,
+                            grouping: false,
                             exportButton: true,
                             exportAllData: true,
                             exportFileName: `TPOT Letters ${new Date().toDateString()}`,
@@ -147,9 +155,6 @@ export const CheckoutTable = compose(
                             direction = direction
                         }}
                         localization={{
-                            header: {
-                                actions: 'imaaction'
-                            },
                             toolbar: {
                                 exportTitle: 'Export Table',
                                 exportName: 'Save as CSV',
@@ -162,7 +167,8 @@ export const CheckoutTable = compose(
                                 icon: 'refresh',
                                 tooltip: 'Refresh Table',
                                 isFreeAction: true,
-                                onClick: () => this.tableRef.current && this.tableRef.current.onQueryChange(),
+                                // TODO : Fix this later
+                                // onClick: () => this.tableRef.current && this.tableRef.current.onQueryChange(),
                             },
                             {
                                 tooltip: 'Upload .docx from your computer',
@@ -210,7 +216,8 @@ const rest = (ms) =>
         }, ms)
     ))
 
-const PaperDetails = observer(({ paper }) => {
+const PaperDetails = observer(({ paper, store }) => {
+    let { checkout } = store
     let { id, slug, excerpt, docx, date_modified, date_uploaded } = paper
     docx = !!docx ? docx.slice(25) : ''
 
@@ -262,12 +269,13 @@ const PaperDetails = observer(({ paper }) => {
                 </Box>
                 <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
                     <Box>
-                        <Link
+                        {/* <Link
                             href={"/scribe/edit/[doc]"}
                             as={`/scribe/edit/${id}`}
                             key={id}
-                        ><Button color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
-                        </Link>
+                        > */}
+                        <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
+                        {/* </Link> */}
                     </Box>
                 </Box>
             </Box>

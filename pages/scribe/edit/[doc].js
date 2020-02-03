@@ -5,6 +5,7 @@ import React, { useEffect } from 'react'
 import Dashboard from '../../../components/Dashboard'
 import DocumentDetails from '../../../components/DocumentDetails'
 import Router from 'next/router'
+import Editor from '../../../components/Editor'
 
 const Doc = ({ store }) => {
 
@@ -69,20 +70,20 @@ const Doc = ({ store }) => {
 }
 
 
+// : This becomes the DocumentEditorShim?
+// const Editor = observer(({ document }) => {
+//   const { data, id } = document
+//   const entries = data ? Object.entries(data) : []
+//   return (
+//     <>
+//       <h3>{`Now Editing: ${data.title}`}</h3>
+//       {data && entries.map((element, idx) => (
+//         <p key={idx}><b>{element[0]}</b>{`: ${element[1]}`}</p>
 
-const Editor = observer(({ document }) => {
-  const { data, id } = document
-  const entries = data ? Object.entries(data) : []
-  return (
-    <>
-      <h3>{`Now Editing: ${data.title}`}</h3>
-      {data && entries.map((element, idx) => (
-        <p key={idx}><b>{element[0]}</b>{`: ${element[1]}`}</p>
-
-      ))}
-    </>
-  )
-})
+//       ))}
+//     </>
+//   )
+// })
 
 
 

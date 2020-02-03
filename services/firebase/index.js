@@ -3,8 +3,8 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
 import withAuthorization from './hoc'
-import { initFirestorter } from 'firestorter'
-import { observable } from 'mobx'
+import { initFirestorter, Document } from 'firestorter'
+import { observable, toJS } from 'mobx'
 
 class Firebase {
 
@@ -87,12 +87,36 @@ class Firebase {
     setRouter = router =>
         this.router = router
 
-    redirect = path => {
+    redirect = (path, as) => {
         if (this.router) {
             if (this.router.pathname !== path) {
-                this.router.push(path)
+                if (!!as) {
+                    this.router.push(path, as)
+                } else {
+                    this.router.push(path)
+                }
             }
         }
+    }
+
+    // Checkout Functions
+
+    checkout = async (id) => {
+        console.log('chekcout document', id)
+        return new Promise(async (resolve, reject) => {
+            console.log(`ID: ${id}`)
+            let requestedDocument = new Document(`sessions/${id}`)
+            await requestedDocument.fetch()
+            let { status } = requestedDocument.data
+            if (['not-started', 'in-progress'].includes(status)) {
+                this.redirect("/scribe/edit/[doc]", `/scribe/edit/${id}`)
+                // href={"/scribe/edit/[doc]"}
+                // as={`/scribe/edit/${id}`}
+                resolve()
+            } else {
+                reject()
+            }
+        })
     }
 
 }

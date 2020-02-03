@@ -1,15 +1,16 @@
 import { Avatar, Box, Button, Divider } from '@material-ui/core'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { toJS } from 'mobx'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react';
 import moment from 'moment'
 import React from 'react'
 import DocumentForm from './DocumentForm'
 
-const DocumentDetails = observer(({ document }) => {
+const DocumentDetails = observer(({ document, store }) => {
   const { data, id } = document
   let { title, excerpt, status, slug, date_modified } = data
   if (date_modified) {
+    date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
     date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
   }
   status = status == 'in-progress' ? 'Ready for publishing' : 'In progress'
@@ -37,19 +38,19 @@ const DocumentDetails = observer(({ document }) => {
         <Box mr="4px" py={1}>Contributors</Box>
         <Box display="flex" py={1}>
           <Box pr={1}>
-          <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar1.png" />
+            <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar1.png" />
           </Box>
           <Box pr={1}>
-          <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar5.png" />
+            <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar5.png" />
           </Box>
           <Box pr={1}>
-          <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar7.png" />
+            <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar7.png" />
           </Box>
         </Box>
       </Box>
       <Divider />
       <Box pt={3} px={3}>
-        <DocumentForm {...{ document }}/>
+        <DocumentForm {...{ document }} />
       </Box>
       {/* <Box display="flex">{slug}</Box>
       <Box display="flex">{excerpt}</Box>
@@ -58,4 +59,4 @@ const DocumentDetails = observer(({ document }) => {
   )
 })
 
-export default DocumentDetails
+export default inject('store')(DocumentDetails)
