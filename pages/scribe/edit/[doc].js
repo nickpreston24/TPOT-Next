@@ -15,11 +15,17 @@ import DocumentEditor from '../../../components/DocumentEditor'
 @observer
 class Document extends Component {
 
+  document = new FireStorterDocument(`sessions/${this.props.router.query.doc}`, { mode: 'off' })
+
+  componentDidMount() {
+    this.document.fetch()
+  }
+
   render() {
 
     const { store, router } = this.props
     const { doc } = router.query
-    const document = new FireStorterDocument(`sessions/${doc}`) || 'cat'
+    let { document } = this
 
     return (
       <DocumentForm {...{ document }}>

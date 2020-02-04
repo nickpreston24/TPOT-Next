@@ -37,6 +37,10 @@ class Draft extends React.Component {
         return 'I am code'
     }
 
+    get plainText() {
+        return this.state.editorState.getCurrentContent().getPlainText()
+    }
+
     render() {
         return (
             <Box border={1} >

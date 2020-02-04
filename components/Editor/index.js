@@ -43,6 +43,10 @@ class Editor extends React.Component {
         return this.draft.current.rawState
     }
 
+    get plainText() {
+        return this.draft.current.plainText
+    }
+
     render() {
         const { mode } = this.state
         return (
