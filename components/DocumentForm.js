@@ -2,9 +2,7 @@ import MobxReactForm from 'mobx-react-form'
 import dvr from 'mobx-react-form/lib/validators/DVR'
 import React, { Component } from 'react'
 import validatorjs from 'validatorjs'
-import { TextField, Box } from '@material-ui/core'
-import { inject, observer, Provider } from 'mobx-react'
-import { toJS } from 'mobx'
+import { inject, observer } from 'mobx-react'
 
 // : DocumentForm is a wrapper that provides a prop, {form} that can be used by
 // : the Editor and Details Panel. Includes pretty good validaton, but more can

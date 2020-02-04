@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import Dashboard from '../../../components/Dashboard'
 import DocumentDetails from '../../../components/DocumentDetails'
 import DocumentForm from '../../../components/DocumentForm'
-import Editor from '../../../components/Editor'
+import DocumentEditor from '../../../components/DocumentEditor'
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides
@@ -26,7 +26,7 @@ class Document extends Component {
         <Dashboard title={`TPOT Scribe - Edit - ${doc}`}
           details={() => <DocumentDetails {...{ document }} />}
         >
-          <Editor />
+          <DocumentEditor {...{ document, id: doc }} />
         </Dashboard>
       </DocumentForm>
     )

@@ -2,12 +2,14 @@ import React from 'react'
 import { Box } from '@material-ui/core'
 import { inject, observer } from 'mobx-react'
 import Editor from 'draft-js-plugins-editor';
-import { EditorState } from 'draft-js';
+import { EditorState, convertToRaw } from 'draft-js';
 import plugins from './functions/plugins'
 
 @inject('store')
 @observer
 class Draft extends React.Component {
+
+    editor = React.createRef()
 
     state = {
         editorState: EditorState.createEmpty(),
@@ -19,10 +21,27 @@ class Draft extends React.Component {
         });
     };
 
+    set editorState( editorState ) {
+        this.setState({ editorState })
+    }
+
+    get editorState() {
+        return this.state.editorState
+    }
+
+    get rawState() {
+        return convertToRaw(this.state.editorState.getCurrentContent())
+    }
+
+    get code() {
+        return 'I am code'
+    }
+
     render() {
         return (
             <Box border={1} >
                 <Editor
+                    ref={this.editor}
                     editorState={this.state.editorState}
                     onChange={this.onChange}
                     plugins={plugins}
