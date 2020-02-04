@@ -3,127 +3,113 @@ import dvr from 'mobx-react-form/lib/validators/DVR'
 import React, { Component } from 'react'
 import validatorjs from 'validatorjs'
 import { TextField, Box } from '@material-ui/core'
-import { inject, observer } from 'mobx-react'
+import { inject, observer, Provider } from 'mobx-react'
 import { toJS } from 'mobx'
 
+// : DocumentForm is a wrapper that provides a prop, {form} that can be used by
+// : the Editor and Details Panel. Includes pretty good validaton, but more can
+// : be added, with something like Typescript to mirror the schema that is in 
+// : Firebase but validating it locally here to get it perfect on every submit.
 @inject('store')
 @observer
 class DocumentForm extends Component {
 
     render() {
 
-        const { document, store } = this.props
-        const { getTime, signIn, forgot, register } = store
-        const { title, slug, excerpt } = document.data
+        const { document, store, children } = this.props
 
-        const plugins = {
-            dvr: dvr(validatorjs)
-        }
+        if (!!document.data) {
 
-        const options = {
-            showErrorsOnInit: true,
-            showErrorsOnBlur: true,
-            showErrorsOnChange: true,
-            validateOnInit: true,
-            validateOnBlur: true,
-            validateOnChangeAfterInitialBlur: true,
-            validateOnChangeAfterSubmit: true,
-        }
+            const { getTime, signIn, forgot, register } = store
+            const { title, slug, excerpt } = document.data
 
-        let fields = [{
-            name: 'title',
-            label: 'Title',
-            placeholder: 'Name of Paper',
-            rules: 'required|string|min:5',
-        }, {
-            name: 'slug',
-            label: 'Slug',
-            placeholder: 'name-of-paper',
-            rules: 'required|string|min:5',
-        }, {
-            name: 'excerpt',
-            label: 'Excerpt',
-            placeholder: 'A brief description',
-            rules: 'string',
-        },]
-
-        const hooks = {
-            onBlur(form) {
-                form.validate()
-                    .then(({ isValid }) => {
-                        if (isValid) {
-                            let values = form.values()
-                            let date_modified = getTime()
-                            document.set({ ...values, date_modified }, {merge: true})
-                        } else {
-                            form.submit()
-                        }
-                        // ... // Use `isValid` to check the validation status
-                    })
-
-            },
-            onSuccess(form) {
-                let values = form.values()
-                console.log(values)
-            },
-            onError(form) {
-                // alert('Form has errors!')
-                console.log('All form errors', form.errors())
+            const plugins = {
+                dvr: dvr(validatorjs)
             }
+
+            const options = {
+                showErrorsOnInit: true,
+                showErrorsOnBlur: true,
+                showErrorsOnChange: true,
+                validateOnInit: true,
+                validateOnBlur: true,
+                validateOnChangeAfterInitialBlur: true,
+                validateOnChangeAfterSubmit: true,
+            }
+
+            let fields = [{
+                name: 'title',
+                label: 'Title',
+                placeholder: 'Name of Paper',
+                rules: 'required|string|min:5',
+            }, {
+                name: 'slug',
+                label: 'Slug',
+                placeholder: 'name-of-paper',
+                rules: 'required|string|min:5',
+            }, {
+                name: 'excerpt',
+                label: 'Excerpt',
+                placeholder: 'A brief description',
+                rules: 'string',
+            },]
+
+            const hooks = {
+                onBlur(form) {
+                    form.validate()
+                        .then(({ isValid }) => {
+                            if (isValid) {
+                                let values = form.values()
+                                let date_modified = getTime()
+                                document.set({ ...values, date_modified }, { merge: true })
+                            } else {
+                                form.submit()
+                            }
+                            // ... // Use `isValid` to check the validation status
+                        })
+
+                },
+                onSuccess(form) {
+                    let values = form.values()
+                    console.log(values)
+                },
+                onError(form) {
+                    // alert('Form has errors!')
+                    console.log('All form errors', form.errors())
+                }
+            }
+
+            // This is a MobX React form instance that is passed as a consumable to children components.
+            const form = new MobxReactForm({ fields }, { plugins, hooks, options })
+
+            // Set the initial values for the form based on the first fetch of data
+            form.update({ title, slug, excerpt })
+
+            // Force the helper text to display to help the user by validating on mount
+            form.validate()
+
+            return (
+                <FormProvider value={form}>
+                    {children}
+                </FormProvider>
+            )
+
+        } else {
+            return (
+                <p>Loading...</p>
+            )
         }
-
-        // const onChange = field => (e, k, payload) => {
-        //     console.log('onchange')
-        //     field.set(payload);
-        //   }
-
-        const form = new MobxReactForm({ fields }, { plugins, hooks, options })
-
-        form.update({ title, slug, excerpt })
-        form.validate()
-
-        return (
-            <InputFields {...{ form }} />
-        )
     }
 }
 
 export default DocumentForm
 
-const InputFields = observer(({ form, onChange }) => {
-    const fields = Object.keys(toJS(form.fields))
-    let { onBlur } = toJS(form.$hooks)
+export const FormContext = React.createContext(null);
 
-    return (
-        <Box flexDirection="column">
-            <form onSubmit={form.onSubmit}>
-                <Box height={70}>
-                    <TextField
-                        fullWidth
-                        error={form.$(`title`).hasError}
-                        helperText={form.$(`title`).error}
-                        {...form.$(`title`).bind({onBlur: () => onBlur(form)})}
-                    />
-                </Box>
-                <Box height={70}>
-                    <TextField
-                        fullWidth
-                        error={form.$(`slug`).hasError}
-                        helperText={form.$(`slug`).error}
-                        {...form.$(`slug`).bind({onBlur: () => onBlur(form)})}
-                    />
-                </Box>
-                <Box height={70}>
-                    <TextField
-                        multiline
-                        fullWidth
-                        error={form.$(`excerpt`).hasError}
-                        helperText={form.$(`excerpt`).error}
-                        {...form.$(`excerpt`).bind({onBlur: () => onBlur(form)})}
-                    />
-                </Box>
-            </form>
-        </Box>
-    )
-})
+export const FormProvider = FormContext.Provider
 
+export const withForm = Component => props => (
+    <FormContext.Consumer>
+        {value => <Component {...props} form={value} />}
+    </FormContext.Consumer>
+)
