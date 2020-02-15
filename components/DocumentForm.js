@@ -14,6 +14,19 @@ import { toJS } from 'mobx'
 @observer
 class DocumentForm extends Component {
 
+    componentDidMount() {
+        this.props.document.set({ 
+            contributors: this.props.store.authUser.email,
+            status: 'checked-out'
+           }, { merge: true })
+    }
+
+    componentWillUnmount() {
+        this.props.document.set({ 
+            status: 'in-progress'
+           }, { merge: true })
+    }
+
     render() {
 
         const { data, document, store, children } = this.props
@@ -23,7 +36,7 @@ class DocumentForm extends Component {
         if (hasData) {
 
             const { getTime, signIn, forgot, register } = store
-            const { title, slug, excerpt, draft_state } = toJS(document.data)
+            const { title, slug, excerpt, draft } = toJS(document.data)
 
             const plugins = {
                 dvr: dvr(validatorjs)
@@ -55,7 +68,7 @@ class DocumentForm extends Component {
                 placeholder: 'A brief description',
                 rules: 'string',
             }, {
-                name: 'draft_state',
+                name: 'draft',
                 label: 'Draft State',
                 placeholder: 'Welcome to Draft!',
                 rules: 'string',
@@ -104,7 +117,7 @@ class DocumentForm extends Component {
             const form = new MobxReactForm({ fields }, { plugins, hooks, options })
 
             // Initialize the values of the form from the firestorter data
-            form.init({ title, slug, excerpt, draft_state })
+            form.init({ title, slug, excerpt, draft })
 
             // Force the helper text to display to help the user by validating on mount
             form.validate()

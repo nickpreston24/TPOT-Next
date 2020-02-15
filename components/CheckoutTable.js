@@ -5,11 +5,13 @@ import MaterialTable from 'material-table'
 import { Box, Chip, Button, Link as MLink } from '@material-ui/core';
 import { observable, computed, action, autorun, toJS, runInAction } from 'mobx';
 import DescriptionIcon from '@material-ui/icons/Description';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import moment from 'moment';
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import EditIcon from '@material-ui/icons/Edit';
 import { Collection } from 'firestorter'
+import { uploadLocalFile } from './Editor/functions/uploader'
 
 
 export const CheckoutTable = compose(
@@ -78,17 +80,19 @@ export const CheckoutTable = compose(
         // this.data = [//result of query plus transformed data like date_modified gets humanized]
         // })
 
+
+
         render() {
 
             let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
             let { store } = this.props
-            let { loading } = this
+            let { loading, handleFile } = this
 
             let data = []
             this.sessions.docs.map(document => {
                 let entry = toJS(document.data)
                 let id = document.id
-                let { status, date_modified, date_uploaded } = entry
+                let { status, date_modified, date_uploaded, contributors } = entry
                 status = status || 'in-progress';
                 date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
                 date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
@@ -99,7 +103,8 @@ export const CheckoutTable = compose(
                     id,
                     status,
                     date_modified,
-                    date_uploaded
+                    date_uploaded,
+                    author: contributors,
                 })
             })
 
@@ -167,14 +172,13 @@ export const CheckoutTable = compose(
                                 icon: 'refresh',
                                 tooltip: 'Refresh Table',
                                 isFreeAction: true,
-                                // TODO : Fix this later
-                                // onClick: () => this.tableRef.current && this.tableRef.current.onQueryChange(),
+                                onClick: () => console.log('refresh')
                             },
                             {
-                                tooltip: 'Upload .docx from your computer',
-                                icon: 'backupOutlinedIcon',
+                                tooltip: 'Upload DOCX',
+                                icon: () => <UploadButton {...{store}} />,
                                 isFreeAction: true,
-                                onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+                                onClick: () => null
                             }
                         ]}
                     />
@@ -216,10 +220,34 @@ const rest = (ms) =>
         }, ms)
     ))
 
+const UploadButton = observer(({ store }) => {
+    return (
+        <Box width={24} height={20} p={0} m={0} mt="4px" display="flex" alignItems="center" justifyContent="center">
+            <input
+                // multiple // multi-upload not recommended
+                accept=".docx"
+                type="file"
+                id="upload-button-input"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                    const files = e.target.files
+                    let file = files[0]
+                    if (!file) return
+                    uploadLocalFile(file, store)
+                }}
+            />
+            <label htmlFor="upload-button-input" style={{ margin: 12 }}>
+                <CloudUploadIcon />
+            </label>
+        </Box>
+    )
+})
+
 const PaperDetails = observer(({ paper, store }) => {
     let { checkout } = store
-    let { id, slug, excerpt, docx, date_modified, date_uploaded } = paper
-    docx = !!docx ? docx.slice(25) : ''
+    let { id, slug, excerpt, docx, date_modified, date_uploaded, filename } = paper
+    docx = !!docx ? docx : ''
+    filename = !!filename ? filename : 'Document'
 
     return (
         <Box height={150} display="flex" flexWrap="no-wrap" fontSize={13}>
@@ -250,10 +278,10 @@ const PaperDetails = observer(({ paper, store }) => {
                     <Box height={30}></Box>
                     <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
                         <MLink
-                            href={`https://firebasestorage.googleapis.com/v0/b/tpot-toolbox.appspot.com/o/originals%2F${docx}?alt=media&token=36efb560-7a06-4385-95cf-162051c3d304`}
+                            href={`${docx}`}
                             key={id}
                         >
-                            {`${docx}`}
+                            {`${filename}`}
                         </MLink>
                     </Box>
                 </Box>

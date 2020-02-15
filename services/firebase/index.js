@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/storage'
 import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
 import withAuthorization from './hoc'
 import { initFirestorter, Document } from 'firestorter'
@@ -28,6 +29,7 @@ class Firebase {
         this.firebase = firebase
         this.app = firebase.app()
         this.auth = firebase.auth()
+        this.storage = firebase.storage()
         this.firestore = firebase.firestore()
 
         this.listener = this.auth.onAuthStateChanged(authUser => {
