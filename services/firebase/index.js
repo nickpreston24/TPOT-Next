@@ -108,17 +108,21 @@ class Firebase {
         return new Promise(async (resolve, reject) => {
             console.log(`Save Document by ID: ${id}`)
             let requestedDocument = new Document(`sessions/${id}`)
-            await requestedDocument.fetch()
+            requestedDocument.update({
+                date_modified: new Date()
+            })
+                .then(resolve())
+                .catch(reject())
 
             // @action.bound save = () => {
             //     // const plainText = this.editor.current.plainText
             //     // console.log(
             //     //   // this.editor.current.editorState,
             //     //   // this.editor.current.stylesheet,
-            //     //   this.editor.current.original,
+            //     //   this.editor.current.original, 
             //     //   // this.editor.current.code,
             //     // )
-              
+
             //     // status: 'not-started',
             //     // contributors: store.authUser.email,
             //     // date_uploaded: new Date(),
@@ -134,7 +138,7 @@ class Firebase {
             //     // this.props.document.set({ draft: plainText }, { merge: true })
             //     this.props.store.notify('Saved Document Successfully!', 'info')
             //   }
-            
+
             // let { status } = requestedDocument.data
             // if (['not-started', 'in-progress'].includes(status)) {
             //     this.redirect("/scribe/edit/[doc]", `/scribe/edit/${id}`)
@@ -166,7 +170,7 @@ class Firebase {
     }
 
     unlock = async id => {
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             console.log(`Unlock Document by ID: ${id}`)
             let requestedDocument = new Document(`sessions/${id}`)
             await requestedDocument.fetch()

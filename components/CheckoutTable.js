@@ -9,7 +9,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import moment from 'moment';
 import EditIcon from '@material-ui/icons/Edit';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
-import { Collection } from 'firestorter'
+import { Collection, Document } from 'firestorter'
 import { uploadLocalFile } from './Editor/functions/uploader'
 import { withStyles } from '@material-ui/styles';
 
@@ -242,7 +242,7 @@ const StyledTableBody = withStyles({
             overflow: 'hidden'
         }
     },
-  })(Paper)
+})(Paper)
 
 const UploadButton = observer(({ store }) => {
     return (
@@ -287,7 +287,14 @@ export const TableDetails = compose(
          * An observable for hiding/showing the Unlock Button
          */
         @observable allowUnlock = false
-   
+
+        /**
+         * @type Number
+         * @description
+         * An observable for the time in seconds since the last save
+         */
+        @observable seconds_since_last_save = 0
+
         /**
          * @description
          * checkUnlock() to make sure the prospective document is available to edit
@@ -306,18 +313,16 @@ export const TableDetails = compose(
          * a document, but for now, this should be safe enough considering we won't
          * have many concurrent users all begging to edit at the same time.
          */
-        @action checkUnlock = () => {
-            const { store, paper, docData } = this.props
+        @action checkUnlock = async () => {
+            let { paper } = this.props
             let { date_modified_timestamp } = paper
-            let date_modified = new store.fb.firebase.firestore.Timestamp(date_modified_timestamp.seconds, date_modified_timestamp.nanoseconds)
-            let date_now = store.fb.getTime()
-            let seconds_since_last_save = moment.duration(moment(date_now.toDate()).diff(moment(date_modified.toDate()))).asSeconds()
-            console.log(seconds_since_last_save)
+            let now = moment(new Date())
+            let end = moment(date_modified_timestamp.toDate())
+            let duration = moment.duration(now.diff(end)).asSeconds()
             // Return if not enough time has passed
-            if (seconds_since_last_save <= 70) { return }
-            // Enable the unlock button
+            if (duration <= 70) { return }
+            // Else enable the unlock button
             this.allowUnlock = true
-            console.warn(`You may unlock Document ${paper.id} now`)
         }
 
         @observable open = false
@@ -329,7 +334,7 @@ export const TableDetails = compose(
             // Check every 250ms seconds to see if the document can be unlocked
             // This is low cost as it isn't actually calling the data from firestore
             // it just a simple math operation clientside against an existing value
-            this.unlockTimer = setInterval(() => this.checkUnlock(this.props), 2000)
+            this.unlockTimer = setInterval(() => this.checkUnlock(this.props), 250)
 
             // Transition the animation for the expansion panel
             this.expand()

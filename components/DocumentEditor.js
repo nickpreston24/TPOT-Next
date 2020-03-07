@@ -23,7 +23,7 @@ class DocumentEditor extends Component {
 
   componentDidMount() {
     // Set a Auto-Save Timer for the Editor's content (1 mins)
-    this.timer = setInterval(() => this.props.store.save(this.props), 60000)
+    this.timer = setInterval(() => this.props.store.save(this.props.id), 60000)
   }
 
   componentWillUnmount() {
@@ -53,7 +53,7 @@ class DocumentEditor extends Component {
   render() {
 
     // When the component mounts, have it check back to re-init itself with the first editorState after the document data is fetched.
-    const { document, store } = this.props
+    const { document, store, id } = this.props
     let hasData = Object.keys(toJS(document.data)) !== 0
     if (hasData && !!this.editor.current) {
       this.init()
@@ -67,7 +67,7 @@ class DocumentEditor extends Component {
         <Button onClick={() => this.setMode('blocks')}>Blocks</Button>
         <Editor 
           ref={this.editor} 
-          saveFn={store.save} 
+          saveFn={() => store.save(id)} 
         />
       </>
     )
