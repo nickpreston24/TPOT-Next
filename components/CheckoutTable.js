@@ -103,9 +103,8 @@ export const CheckoutTable = compose(
                 let { status, date_modified, date_uploaded, contributors } = entry
                 let date_modified_timestamp = date_modified
                 status = status || 'in-progress';
-                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
+                if (!date_modified || !date_uploaded) { return }
                 date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds)
                 date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
                 data.push({
                     ...entry,
@@ -402,9 +401,16 @@ export const TableDetails = compose(
                             </Box>
                             <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
                                 <Box>
-                                    {allowUnlock && (
-                                        <Button onClick={() => unlock(id)} color="secondary" variant="contained" endIcon={<LockOpenIcon />} style={{ marginRight: 8 }}>Unlock</Button>
-                                    )}
+                                    <Button
+                                        disabled={!allowUnlock}
+                                        onClick={() => unlock(id)}
+                                        color="primary"
+                                        variant="outlined"
+                                        endIcon={allowUnlock && <LockOpenIcon />}
+                                        style={{ marginRight: 8 }}
+                                    >
+                                        {allowUnlock ? 'Unlock' : <LockOpenIcon />}
+                                    </Button>
                                     <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
                                 </Box>
                             </Box>

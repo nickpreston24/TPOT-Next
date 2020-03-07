@@ -159,7 +159,7 @@ export class Store {
   @action unlock = (id) => {
     this.fb.unlock(id)
       .then(result => {
-        this.notify('Document unlocked. You may Start Editing!', 'info')
+        this.notify('Document unlocked. You may Start Editing!', 'warning')
       })
       .catch(error => this.notify('Could not unlock Document', 'error'))
   }
