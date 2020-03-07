@@ -1,7 +1,7 @@
 import { Box } from '@material-ui/core'
 import { inject, observer } from 'mobx-react'
 import React, { Component } from 'react'
-import LoginForm from '../components/Forms/LoginForm'
+import LoginForm from '../components/LoginForm'
 import Page from '../components/Page'
 
 @inject('store')

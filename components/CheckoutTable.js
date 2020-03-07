@@ -179,82 +179,8 @@ export const CheckoutTable = compose(
                         ]}
                     />
                 </Box>
-            );
+            )
         }
-
-        /* Builds a Firestorter query based off of given params */
-        buildStorterQuery(filter, direction) {
-            return (ref) => {
-                console.log('ref: ', ref, filter, direction);
-                ref = filter
-                    ? direction
-                        ? ref.orderBy(filter, direction)
-                        : ref.orderBy(filter)
-                    : ref;
-                ref = ref.limit(200);
-                return ref;
-            };
-        }
-
-        /* Loads the session data for rendering */
-        loadSessions(store) {
-
-            let sessions = this.sessions.docs.map(document => {
-                let entry = toJS(document.data);
-                let id = document.id;
-                let { status, date_modified, date_uploaded } = entry;
-                status = status || 'in-progress';
-                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds);
-                date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true);
-                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds);
-                date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true);
-                return {
-                    ...entry,
-                    id,
-                    status,
-                    date_modified,
-                    date_uploaded
-                };
-            });
-
-            // TODO: Enable once we figure out how to attempt loading only once.
-            // if (!sessions || sessions.length == 0)
-            //     throw new Error('No sessions were loaded.')
-
-            return sessions;
-        }
-
-        paginate = (array, page_size, page_number) => {
-            return array.slice(page_number * page_size, (page_number + 1) * page_size)
-        }
-
-        // disposer = autorun(async () => {
-
-        //     let totalCount = this.sessions.docs.length
-        //     console.log('total count: ', totalCount);
-
-
-        //     // console.log("???", Array(totalCount).keys());
-        //     // let array = [...Array(totalCount).keys()]
-        //     // console.log('array', array);
-
-        //     // let pool = this.paginate(array, 5, 0)
-
-        //     // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
-        //     // console.log('pool', pool)
-        //     // this.config.totalCount = this.sessions.docs.length
-        //     // this.config.array = [...Array(this.config.totalCount).keys()]
-        //     // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
-        //     // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
-        //     // // await rest(800)
-        //     // this.config = {
-        //     //     totalCount,
-        //     //     array,
-        //     // pool
-        //     // }
-        //     // console.log('after disposing: ', toJS(this.config));
-        // })
-
     }
 )
 

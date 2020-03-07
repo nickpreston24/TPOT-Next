@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Header from './Headers/Header'
+import Header from './Header'
 import { inject, observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import Page from './Page'

@@ -32,11 +32,11 @@ const DocumentDetails = ({ store, form, document }) => {
           <Box mr="4px" >Status:</Box>
           <Box color="dodgerblue"><span>{status}</span></Box>
         </Box>
-        {/* <Box display="flex" flexGrow={1} alignItems="center">
+        <Box display="flex" flexGrow={1} alignItems="center">
           <Box fontSize={16} mr={0.25}><AccessTimeIcon fontSize="inherit" /></Box>
           <Box mr="4px" >Publish:</Box>
           <Box color="dodgerblue"><span>Now</span></Box>
-        </Box> */}
+        </Box>
         <Box display="flex" width="100%" my={2} color="white">
           <Box flexGrow={1} pr={2} ><Button fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>Publish</Button></Box>
           <Box width={90}><Button color="inherit" fullWidth variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#a2a9b1' }}>More</Button></Box>
