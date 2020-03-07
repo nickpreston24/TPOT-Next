@@ -1,18 +1,24 @@
-import React, { Component } from 'react'
-import { compose } from 'recompose'
-import { inject, observer } from 'mobx-react';
-import MaterialTable from 'material-table'
-import { Box, Chip, Button, Link as MLink } from '@material-ui/core';
-import { observable, computed, action, autorun, toJS, runInAction } from 'mobx';
-import DescriptionIcon from '@material-ui/icons/Description';
+import React, { Component } from 'react';
+import { compose } from 'recompose';
+import { uploadLocalFile } from './Editor/functions/uploader';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import moment from 'moment';
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import DescriptionIcon from '@material-ui/icons/Description';
 import EditIcon from '@material-ui/icons/Edit';
-import { Collection } from 'firestorter'
-import { uploadLocalFile } from './Editor/functions/uploader'
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import { withStyles } from '@material-ui/styles';
+import { Collection } from 'firestorter';
+import MaterialTable from 'material-table';
+import { action, autorun, observable, toJS } from 'mobx';
+import { inject, observer } from 'mobx-react';
+import moment from 'moment';
+import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core';
 
+// <CheckoutTable /> is a class component that has a live connection to the firebase
+// 'sessions' Collection. It is an inexpensive reactive component that displays the
+// documents available through a paginated table. It is reactive so that when somebody
+// else is editing a document, you will see the table update with the status change.
+// It is the springboard for checking out a document, unlocking, or uploading a new
+// document to firestore for editing. It is also offers a way to download documents.
 
 export const CheckoutTable = compose(
     inject('store'),
@@ -20,93 +26,70 @@ export const CheckoutTable = compose(
 )(
     class CheckoutTable extends Component {
 
+        tableRef = React.createRef()
+
         @observable sessions = new Collection('sessions')
+
         @observable loading = false
-        @observable config = {
-            filter: '',
-            direction: '',
-            search: true,
-            pageLimit: 5,
-            totalCount: 11,
-            array: [],
-            pool: [],
-            page: 0,
-            last: 0
+        @observable prevDocument = null
+        @observable page = 0
+        @observable pageSize = 5
+        @observable filter = -1
+        @observable direction = ''
+        @observable query = null
+        @observable totalCount = 0
+
+        @action countTotalDocs = async () => {
+            let collection = await new Collection("sessions", { mode: 'off' }).fetch()
+            this.totalCount = collection.docs.length
         }
 
-        // PLEASE READ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // TODO : Notes for Nick for future development, please read
-        // : Right now the data that the table recieves comes from an unfiltered, unsorted
-        // : array of the sessions collection via Firestorter. This means features like
-        // : sorting by category, name, search, and pagination won't work. Material-Table
-        // : has a function for this, but it requires that the call is a single layer async.
-        // : What would be better for us is to have an observable, data, that plugs into the
-        // : MaterialTable prop called data. This observable needs to be a computed value that
-        // : is a single Firestorter.query result. The query being a combination of filters,
-        // : search, pagination, search and orderby. This query should be done in an @autorun
-        // : with the result being the data state. When the new data is calculated, the component
-        // : will re-render its children because this.data is in the render function.
-        // : 
-        // : I have started some of this work in the commented out code below, but it isn't MVP.
-        // : Please leave it there until you implement it or come up with something better.
-        // : 
-        // : NOTE!!!! It is FINE to leave this in this state until we get like 100+ letters in /sesssions/
+        @action orderChange = (colID, direction) => {
+            this.filter = colID
+            this.direction = direction
+        }
 
-        // paginate = (array, page_size, page_number) => {
-        //     return array.slice(page_number * page_size, (page_number + 1) * page_size)
-        // }
+        @action setLoading = bool =>
+            this.loading = bool
 
-        // disposer = autorun(async () => {
+        @action changePage = page =>
+            this.page = page
 
-        //     let totalCount = this.sessions.docs.length
-        //     let array = [...Array(totalCount).keys()]
-        //     const paginate = (array, page_size, page_number) => {
-        //         return array.slice(page_number * page_size, (page_number + 1) * page_size)
-        //     }
-        //     let pool = paginate(array, 5, 0)
+        @action changeRowsPerPage = pageSize =>
+            this.pageSize = pageSize
 
-        //     // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
-        //     console.log(pool)
-        //     // this.config.totalCount = this.sessions.docs.length
-        //     // this.config.array = [...Array(this.config.totalCount).keys()]
-        //     // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
-        //     // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
-        //     // // await rest(800)
-        //     this.config = {
-        //         totalCount,
-        //         array,
-        //         pool
-        //     }
-        // this.data = [//result of query plus transformed data like date_modified gets humanized]
-        // })
+        @action setTotalCount = count =>
+            this.totalCount = count
 
+        @action updateQuery = query =>
+            this.sessions.query = query
+
+
+        queryBuilder = autorun(async () => {
+
+            let { page, pageSize, filter, direction, prevDocument } = this
+            this.setLoading(true)
+
+            filter = filter != -1 ? 'title' : 'status'
+            direction = filter != -1 ? 'asc' : direction
+            
+            await this.countTotalDocs()
+            await this.updateQuery(
+                collectionRef => {
+                    return collectionRef
+                        .orderBy(filter, direction)
+                        .limit(pageSize)
+                        .startAfter(prevDocument)
+
+                }
+            )
+            
+            this.setLoading(false)
+        })
 
 
         render() {
-
-            let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
-            let { store } = this.props
-            let { loading, handleFile } = this
-
-            let data = []
-            this.sessions.docs.map(document => {
-                let entry = toJS(document.data)
-                let id = document.id
-                let { status, date_modified, date_uploaded, contributors } = entry
-                status = status || 'in-progress';
-                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
-                date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds)
-                date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-                data.push({
-                    ...entry,
-                    id,
-                    status,
-                    date_modified,
-                    date_uploaded,
-                    author: contributors,
-                })
-            })
+            const { store } = this.props
 
             const columns = [
                 { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
@@ -121,17 +104,43 @@ export const CheckoutTable = compose(
                 { title: 'ID', field: 'id', searchable: false, hidden: true },
             ]
 
+            let data = []
+            this.sessions.docs.map(document => {
+                let entry = toJS(document.data)
+                let id = document.id
+                let { status, date_modified, date_uploaded, contributors } = entry
+                let date_modified_timestamp = date_modified
+                status = status || 'in-progress';
+                if (!date_modified || !date_uploaded) { return }
+                date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
+                date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
+                data.push({
+                    ...entry,
+                    id,
+                    status,
+                    date_modified,
+                    date_uploaded,
+                    date_modified_timestamp,
+                    author: contributors,
+                })
+            })
+
             return (
                 <Box fontFamily="'Poppins', sans-serif" width={900}>
                     <MaterialTable
                         title="Checkout"
                         columns={columns}
                         data={data}
-                        isLoading={loading}
-                        detailPanel={paper => <PaperDetails {...{ paper, store }} />}
+                        isLoading={this.loading}
+                        tableRef={this.tableRef}
+                        onChangePage={this.changePage}
+                        onChangeRowsPerPage={this.changeRowsPerPage}
+                        onOrderChange={this.orderChange}
+                        detailPanel={paper => <TableDetails {...{ paper, store }} />}
+                        components={{ Container: props => <StyledTableBody {...props} /> }}
                         options={{
-                            search: search,
-                            pageSize: pageLimit,
+                            // search: search,
+                            pageSize: this.pageSize,
                             pageSizeOptions: [5, 7, 10],
                             selection: false,
                             draggable: true,
@@ -142,22 +151,9 @@ export const CheckoutTable = compose(
                             columnsButton: false,
                             detailPanelType: 'single',
                             detailPanelColumnAlignment: 'right',
-                            emptyRowsWhenPaging: true,
+                            emptyRowsWhenPaging: false,
                             showSelectAllCheckbox: false,
                             showTextRowsSelected: false,
-                        }}
-                        onChangePage={async (page) => {
-                            loading = true
-                            page = page
-                            await rest(500)
-                            loading = false
-                        }}
-                        onChangeRowsPerPage={pageSize => {
-                            pageLimit = pageSize
-                        }}
-                        onOrderChange={(colID, direction) => {
-                            filter = columns[colID] ? columns[colID].field : ''
-                            direction = direction
                         }}
                         localization={{
                             toolbar: {
@@ -176,7 +172,7 @@ export const CheckoutTable = compose(
                             },
                             {
                                 tooltip: 'Upload DOCX',
-                                icon: () => <UploadButton {...{store}} />,
+                                icon: () => <UploadButton {...{ store }} />,
                                 isFreeAction: true,
                                 onClick: () => null
                             }
@@ -187,9 +183,6 @@ export const CheckoutTable = compose(
         }
     }
 )
-
-const DocxIcon = () =>
-    <DescriptionIcon style={{ color: '#0000008a' }} />
 
 const statusMap = {
     'in-progress': 'In Progress',
@@ -205,6 +198,17 @@ const labelColors = {
     'published': '#c6ffc6',
 }
 
+const rest = (ms) =>
+    new Promise(rs => (
+        setTimeout(() => {
+            rs()
+        }, ms)
+    ))
+
+
+const DocxIcon = () =>
+    <DescriptionIcon style={{ color: '#0000008a' }} />
+
 const StatusChip = ({ status }) => {
     const label = statusMap[status]
     const color = labelColors[status]
@@ -213,12 +217,14 @@ const StatusChip = ({ status }) => {
     )
 }
 
-const rest = (ms) =>
-    new Promise(rs => (
-        setTimeout(() => {
-            rs()
-        }, ms)
-    ))
+// An alternate Paper component to fix overflow clipping in the X direction on rows that have no data
+const StyledTableBody = withStyles({
+    root: {
+        '& div > div > table': {
+            overflow: 'hidden'
+        }
+    },
+})(Paper)
 
 const UploadButton = observer(({ store }) => {
     return (
@@ -243,71 +249,159 @@ const UploadButton = observer(({ store }) => {
     )
 })
 
-const PaperDetails = observer(({ paper, store }) => {
-    let { checkout } = store
-    let { id, slug, excerpt, docx, date_modified, date_uploaded, filename } = paper
-    docx = !!docx ? docx : ''
-    filename = !!filename ? filename : 'Document'
 
-    return (
-        <Box height={150} display="flex" flexWrap="no-wrap" fontSize={13}>
-            <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
-                <Box display="flex">
-                    <Box display="flex" minWidth={80} fontSize={13}>
-                        <b>Slug</b>
+/**
+ * @param {*} store
+ * @descripion 
+ * TableDetails is a class that is plugged in as a prop for the CheckoutTable
+ * It displays additional information on dropdown of a row item. Clicking on
+ * it also reveals actions that can be taken, like editing or unlocking the doc.
+ */
+export const TableDetails = compose(
+    inject('store'),
+    observer
+)(
+    class extends Component {
+
+        /**
+         * @type Boolean
+         * @description
+         * An observable for hiding/showing the Unlock Button
+         */
+        @observable allowUnlock = false
+
+        /**
+         * @type Number
+         * @description
+         * An observable for the time in seconds since the last save
+         */
+        @observable seconds_since_last_save = 0
+
+        /**
+         * @description
+         * checkUnlock() to make sure the prospective document is available to edit
+         * before it can be unlocked. The reason we know this will work is if
+         * another user has the document checked out, it is autosaving every 60
+         * seconds. It then updates the "date_modified" field in Firebase. So if
+         * we do a local operation against the staticly retrieved "date_modified"
+         * and check to see if it is say, 70 seconds since it was last updated,
+         * then it is possible to know the other user is not online, or having 
+         * internet trouble or is no longer actively autosaving the document.
+         * This means we can safely adjust the status on Firebase to "in-progress",
+         * bypassing the local check for viability and gain access to the document
+         * 
+         * Obviously a better thing to do would be to handle this all serverside
+         * with a backend that knows what users are online and who is currently in
+         * a document, but for now, this should be safe enough considering we won't
+         * have many concurrent users all begging to edit at the same time.
+         */
+        @action checkUnlock = async () => {
+            let { paper } = this.props
+            let { date_modified_timestamp } = paper
+            let now = moment(new Date())
+            let end = moment(date_modified_timestamp.toDate())
+            let duration = moment.duration(now.diff(end)).asSeconds()
+            // Return if not enough time has passed
+            if (duration <= 70) { return }
+            // Else enable the unlock button
+            this.allowUnlock = true
+        }
+
+        @observable open = false
+
+        @action expand = () => this.open = true
+        @action collapse = () => this.open = false
+
+        componentDidMount() {
+            // Check every 250ms seconds to see if the document can be unlocked
+            // This is low cost as it isn't actually calling the data from firestore
+            // it just a simple math operation clientside against an existing value
+            this.unlockTimer = setInterval(() => this.checkUnlock(this.props), 250)
+
+            // Transition the animation for the expansion panel
+            this.expand()
+        }
+
+        componentWillUnmount() {
+            clearInterval(this.unlockTimer)
+            this.collapse()
+        }
+
+        render() {
+            const { store, paper } = this.props
+            let { allowUnlock } = this
+            let { checkout, unlock } = store
+            let { id, slug, excerpt, docx, date_uploaded, filename } = paper
+            docx = !!docx ? docx : ''
+            filename = !!filename ? filename : 'Document'
+
+            return (
+                <Collapse in={this.open}>
+                    <Box height={150} display="flex" flexWrap="no-wrap" fontSize={13} >
+                        <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
+                            <Box display="flex">
+                                <Box display="flex" minWidth={80} fontSize={13}>
+                                    <b>Slug</b>
+                                </Box>
+                                <Box height={30}></Box>
+                                <Box display="flex" flexGrow={1}>
+                                    {slug}
+                                </Box>
+                            </Box>
+                            <Box flexGrow={1} display="flex" pr={2} overflow="hidden">
+                                <Box display="flex" minWidth={80} fontSize={13} >
+                                    <b>Excerpt</b>
+                                </Box>
+                                <Box display="flex" mb={2} flexGrow={1} style={{ overflowX: 'hidden', overflowY: !!excerpt ? 'scroll' : 'hidden' }}>
+                                    {excerpt}
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
+                            <Box display="flex">
+                                <Box display="flex" minWidth={80} fontSize={13}>
+                                    <b>Document</b>
+                                </Box>
+                                <Box height={30}></Box>
+                                <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
+                                    <MLink
+                                        href={`${docx}`}
+                                        key={id}
+                                    >
+                                        {`${filename}`}
+                                    </MLink>
+                                </Box>
+                            </Box>
+                            <Box minWidth={80} display="flex" pr={2} overflow="hidden">
+                                <Box display="flex" minWidth={80} fontSize={13} >
+                                    <b>Uploaded</b>
+                                </Box>
+                                <Box height={30}></Box>
+                                <Box display="flex" minWidth={80} fontSize={13} >
+                                    {date_uploaded}
+                                </Box>
+                                <Box height={30}></Box>
+                            </Box>
+                            <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
+                                <Box>
+                                    <Button
+                                        disabled={!allowUnlock}
+                                        onClick={() => unlock(id)}
+                                        color="primary"
+                                        variant="outlined"
+                                        endIcon={allowUnlock && <LockOpenIcon />}
+                                        style={{ marginRight: 8 }}
+                                    >
+                                        {allowUnlock ? 'Unlock' : <LockOpenIcon />}
+                                    </Button>
+                                    <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
+                                </Box>
+                            </Box>
+                        </Box>
                     </Box>
-                    <Box height={30}></Box>
-                    <Box display="flex" flexGrow={1}>
-                        {slug}
-                    </Box>
-                </Box>
-                <Box flexGrow={1} display="flex" pr={2} overflow="hidden">
-                    <Box display="flex" minWidth={80} fontSize={13} >
-                        <b>Excerpt</b>
-                    </Box>
-                    <Box display="flex" mb={2} flexGrow={1} style={{ overflowX: 'hidden', overflowY: 'scroll' }}>
-                        {excerpt}
-                    </Box>
-                </Box>
-            </Box>
-            <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
-                <Box display="flex">
-                    <Box display="flex" minWidth={80} fontSize={13}>
-                        <b>Document</b>
-                    </Box>
-                    <Box height={30}></Box>
-                    <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
-                        <MLink
-                            href={`${docx}`}
-                            key={id}
-                        >
-                            {`${filename}`}
-                        </MLink>
-                    </Box>
-                </Box>
-                <Box minWidth={80} display="flex" pr={2} overflow="hidden">
-                    <Box display="flex" minWidth={80} fontSize={13} >
-                        <b>Uploaded</b>
-                    </Box>
-                    <Box height={30}></Box>
-                    <Box display="flex" minWidth={80} fontSize={13} >
-                        {date_uploaded}
-                    </Box>
-                    <Box height={30}></Box>
-                </Box>
-                <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
-                    <Box>
-                        {/* <Link
-                            href={"/scribe/edit/[doc]"}
-                            as={`/scribe/edit/${id}`}
-                            key={id}
-                        > */}
-                        <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
-                        {/* </Link> */}
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
-    )
-})
+                </Collapse>
+            )
+        }
+    }
+)
 
