@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
-import { compose } from 'recompose'
-import { inject, observer } from 'mobx-react';
-import MaterialTable from 'material-table'
-import { Box, Chip, Button, Link as MLink, Collapse, Paper } from '@material-ui/core';
-import { observable, action, toJS } from 'mobx';
-import DescriptionIcon from '@material-ui/icons/Description';
+import React, { Component } from 'react';
+import { compose } from 'recompose';
+import { uploadLocalFile } from './Editor/functions/uploader';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import moment from 'moment';
+import DescriptionIcon from '@material-ui/icons/Description';
 import EditIcon from '@material-ui/icons/Edit';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
-import { Collection, Document } from 'firestorter'
-import { uploadLocalFile } from './Editor/functions/uploader'
 import { withStyles } from '@material-ui/styles';
+import { Collection } from 'firestorter';
+import MaterialTable from 'material-table';
+import { action, autorun, observable, toJS } from 'mobx';
+import { inject, observer } from 'mobx-react';
+import moment from 'moment';
+import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core';
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -29,72 +29,80 @@ export const CheckoutTable = compose(
         tableRef = React.createRef()
 
         @observable sessions = new Collection('sessions')
+
         @observable loading = false
-        @observable config = {
-            filter: '',
-            direction: '',
-            search: true,
-            pageLimit: 5,
-            totalCount: 11,
-            array: [],
-            pool: [],
-            page: 0,
-            last: 0
+        @observable prevDocument = null
+        @observable page = 0
+        @observable pageSize = 5
+        @observable filter = -1
+        @observable direction = ''
+        @observable query = null
+        @observable totalCount = 0
+
+        @action countTotalDocs = async () => {
+            let collection = await new Collection("sessions", { mode: 'off' }).fetch()
+            this.totalCount = collection.docs.length
         }
 
-        // PLEASE READ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // TODO : Notes for Nick for future development, please read
-        // : Right now the data that the table recieves comes from an unfiltered, unsorted
-        // : array of the sessions collection via Firestorter. This means features like
-        // : sorting by category, name, search, and pagination won't work. Material-Table
-        // : has a function for this, but it requires that the call is a single layer async.
-        // : What would be better for us is to have an observable, data, that plugs into the
-        // : MaterialTable prop called data. This observable needs to be a computed value that
-        // : is a single Firestorter.query result. The query being a combination of filters,
-        // : search, pagination, search and orderby. This query should be done in an @autorun
-        // : with the result being the data state. When the new data is calculated, the component
-        // : will re-render its children because this.data is in the render function.
-        // : 
-        // : I have started some of this work in the commented out code below, but it isn't MVP.
-        // : Please leave it there until you implement it or come up with something better.
-        // : 
-        // : NOTE!!!! It is FINE to leave this in this state until we get like 100+ letters in /sesssions/
+        @action orderChange = (colID, direction) => {
+            this.filter = colID
+            this.direction = direction
+        }
 
-        // paginate = (array, page_size, page_number) => {
-        //     return array.slice(page_number * page_size, (page_number + 1) * page_size)
-        // }
+        @action setLoading = bool =>
+            this.loading = bool
 
-        // disposer = autorun(async () => {
+        @action changePage = page =>
+            this.page = page
 
-        //     let totalCount = this.sessions.docs.length
-        //     let array = [...Array(totalCount).keys()]
-        //     const paginate = (array, page_size, page_number) => {
-        //         return array.slice(page_number * page_size, (page_number + 1) * page_size)
-        //     }
-        //     let pool = paginate(array, 5, 0)
+        @action changeRowsPerPage = pageSize =>
+            this.pageSize = pageSize
 
-        //     // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
-        //     console.log(pool)
-        //     // this.config.totalCount = this.sessions.docs.length
-        //     // this.config.array = [...Array(this.config.totalCount).keys()]
-        //     // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
-        //     // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
-        //     // // await rest(800)
-        //     this.config = {
-        //         totalCount,
-        //         array,
-        //         pool
-        //     }
-        // this.data = [//result of query plus transformed data like date_modified gets humanized]
-        // })
+        @action setTotalCount = count =>
+            this.totalCount = count
 
+        @action updateQuery = query =>
+            this.sessions.query = query
+
+
+        queryBuilder = autorun(async () => {
+
+            let { page, pageSize, filter, direction, prevDocument } = this
+            this.setLoading(true)
+
+            filter = filter != -1 ? 'title' : 'status'
+            direction = filter != -1 ? 'asc' : direction
+            
+            await this.countTotalDocs()
+            await this.updateQuery(
+                collectionRef => {
+                    return collectionRef
+                        .orderBy(filter, direction)
+                        .limit(pageSize)
+                        .startAfter(prevDocument)
+
+                }
+            )
+            
+            this.setLoading(false)
+        })
 
 
         render() {
+            const { store } = this.props
 
-            let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
-            let { store } = this.props
-            let { loading, handleFile } = this
+            const columns = [
+                { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
+                { title: 'Document', field: 'title', type: 'string', searchable: true },
+                { title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => <StatusChip status={paper.status} /> },
+                { title: 'Last Edited', field: 'date_modified', type: 'string', searchable: false },
+                { title: 'Author', field: 'author', type: 'string', searchable: false },
+                { title: 'Uploaded', field: 'date_uploaded', type: 'string', searchable: false, hidden: true },
+                { title: 'Cloud Location', field: 'docx', type: 'string', searchable: false, hidden: true },
+                { title: 'Slug', field: 'slug', searchable: false, hidden: true },
+                { title: 'Excerpt', field: 'excerpt', searchable: false, hidden: true },
+                { title: 'ID', field: 'id', searchable: false, hidden: true },
+            ]
 
             let data = []
             this.sessions.docs.map(document => {
@@ -117,31 +125,22 @@ export const CheckoutTable = compose(
                 })
             })
 
-            const columns = [
-                { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
-                { title: 'Document', field: 'title', type: 'string', searchable: true },
-                { title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => <StatusChip status={paper.status} /> },
-                { title: 'Last Edited', field: 'date_modified', type: 'string', searchable: false },
-                { title: 'Author', field: 'author', type: 'string', searchable: false },
-                { title: 'Uploaded', field: 'date_uploaded', type: 'string', searchable: false, hidden: true },
-                { title: 'Cloud Location', field: 'docx', type: 'string', searchable: false, hidden: true },
-                { title: 'Slug', field: 'slug', searchable: false, hidden: true },
-                { title: 'Excerpt', field: 'excerpt', searchable: false, hidden: true },
-                { title: 'ID', field: 'id', searchable: false, hidden: true },
-            ]
-
             return (
                 <Box fontFamily="'Poppins', sans-serif" width={900}>
                     <MaterialTable
                         title="Checkout"
                         columns={columns}
                         data={data}
-                        isLoading={loading}
+                        isLoading={this.loading}
                         tableRef={this.tableRef}
+                        onChangePage={this.changePage}
+                        onChangeRowsPerPage={this.changeRowsPerPage}
+                        onOrderChange={this.orderChange}
                         detailPanel={paper => <TableDetails {...{ paper, store }} />}
+                        components={{ Container: props => <StyledTableBody {...props} /> }}
                         options={{
-                            search: search,
-                            pageSize: pageLimit,
+                            // search: search,
+                            pageSize: this.pageSize,
                             pageSizeOptions: [5, 7, 10],
                             selection: false,
                             draggable: true,
@@ -156,19 +155,6 @@ export const CheckoutTable = compose(
                             showSelectAllCheckbox: false,
                             showTextRowsSelected: false,
                         }}
-                        onChangePage={async (page) => {
-                            loading = true
-                            page = page
-                            await rest(500)
-                            loading = false
-                        }}
-                        onChangeRowsPerPage={pageSize => {
-                            pageLimit = pageSize
-                        }}
-                        onOrderChange={(colID, direction) => {
-                            filter = columns[colID] ? columns[colID].field : ''
-                            direction = direction
-                        }}
                         localization={{
                             toolbar: {
                                 exportTitle: 'Export Table',
@@ -176,9 +162,6 @@ export const CheckoutTable = compose(
                                 searchTooltip: 'Search by Document Name',
                                 searchPlaceholder: 'Search'
                             }
-                        }}
-                        components={{
-                            Container: props => <StyledTableBody {...props} />
                         }}
                         actions={[
                             {
