@@ -103,10 +103,54 @@ class Firebase {
 
     // Checkout Functions
 
-    checkout = async (id) => {
+    save = async id => {
         console.log('chekcout document', id)
         return new Promise(async (resolve, reject) => {
-            console.log(`ID: ${id}`)
+            console.log(`Save Document by ID: ${id}`)
+            let requestedDocument = new Document(`sessions/${id}`)
+            await requestedDocument.fetch()
+
+            // @action.bound save = () => {
+            //     // const plainText = this.editor.current.plainText
+            //     // console.log(
+            //     //   // this.editor.current.editorState,
+            //     //   // this.editor.current.stylesheet,
+            //     //   this.editor.current.original,
+            //     //   // this.editor.current.code,
+            //     // )
+              
+            //     // status: 'not-started',
+            //     // contributors: store.authUser.email,
+            //     // date_uploaded: new Date(),
+            //     // date_modified: new Date(),
+            //     // draft: JSON.stringify(draftState),
+            //     // code: JSON.stringify(codeState),
+            //     // original: JSON.stringify(html),
+            //     // stylesheet: JSON.stringify(newBaseStyleMap),
+            //     // filename: file.name,
+            //     // title: title,
+            //     // slug: `letters/${slug}.htm`,
+            //     // excerpt: ''
+            //     // this.props.document.set({ draft: plainText }, { merge: true })
+            //     this.props.store.notify('Saved Document Successfully!', 'info')
+            //   }
+            
+            // let { status } = requestedDocument.data
+            // if (['not-started', 'in-progress'].includes(status)) {
+            //     this.redirect("/scribe/edit/[doc]", `/scribe/edit/${id}`)
+            //     // href={"/scribe/edit/[doc]"}
+            //     // as={`/scribe/edit/${id}`}
+            //     resolve()
+            // } else {
+            //     reject()
+            // }
+        })
+    }
+
+    checkout = async id => {
+        console.log('chekcout document', id)
+        return new Promise(async (resolve, reject) => {
+            console.log(`Checkout Document by ID: ${id}`)
             let requestedDocument = new Document(`sessions/${id}`)
             await requestedDocument.fetch()
             let { status } = requestedDocument.data
@@ -118,6 +162,19 @@ class Firebase {
             } else {
                 reject()
             }
+        })
+    }
+
+    unlock = async id => {
+        return new Promise( async (resolve, reject) => {
+            console.log(`Unlock Document by ID: ${id}`)
+            let requestedDocument = new Document(`sessions/${id}`)
+            await requestedDocument.fetch()
+            requestedDocument.update({
+                status: 'in-progress'
+            })
+                .then(resolve)
+                .catch(reject)
         })
     }
 

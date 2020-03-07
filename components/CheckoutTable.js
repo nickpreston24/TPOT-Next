@@ -2,23 +2,31 @@ import React, { Component } from 'react'
 import { compose } from 'recompose'
 import { inject, observer } from 'mobx-react';
 import MaterialTable from 'material-table'
-import { Box, Chip, Button, Link as MLink } from '@material-ui/core';
-import { observable, computed, action, autorun, toJS, runInAction } from 'mobx';
+import { Box, Chip, Button, Link as MLink, Collapse, Paper } from '@material-ui/core';
+import { observable, action, toJS } from 'mobx';
 import DescriptionIcon from '@material-ui/icons/Description';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import moment from 'moment';
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 import EditIcon from '@material-ui/icons/Edit';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { Collection } from 'firestorter'
 import { uploadLocalFile } from './Editor/functions/uploader'
+import { withStyles } from '@material-ui/styles';
 
+// <CheckoutTable /> is a class component that has a live connection to the firebase
+// 'sessions' Collection. It is an inexpensive reactive component that displays the
+// documents available through a paginated table. It is reactive so that when somebody
+// else is editing a document, you will see the table update with the status change.
+// It is the springboard for checking out a document, unlocking, or uploading a new
+// document to firestore for editing. It is also offers a way to download documents.
 
 export const CheckoutTable = compose(
     inject('store'),
     observer
 )(
     class CheckoutTable extends Component {
+
+        tableRef = React.createRef()
 
         @observable sessions = new Collection('sessions')
         @observable loading = false
@@ -93,6 +101,7 @@ export const CheckoutTable = compose(
                 let entry = toJS(document.data)
                 let id = document.id
                 let { status, date_modified, date_uploaded, contributors } = entry
+                let date_modified_timestamp = date_modified
                 status = status || 'in-progress';
                 date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
                 date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
@@ -104,6 +113,7 @@ export const CheckoutTable = compose(
                     status,
                     date_modified,
                     date_uploaded,
+                    date_modified_timestamp,
                     author: contributors,
                 })
             })
@@ -128,7 +138,8 @@ export const CheckoutTable = compose(
                         columns={columns}
                         data={data}
                         isLoading={loading}
-                        detailPanel={paper => <PaperDetails {...{ paper, store }} />}
+                        tableRef={this.tableRef}
+                        detailPanel={paper => <TableDetails {...{ paper, store }} />}
                         options={{
                             search: search,
                             pageSize: pageLimit,
@@ -142,7 +153,7 @@ export const CheckoutTable = compose(
                             columnsButton: false,
                             detailPanelType: 'single',
                             detailPanelColumnAlignment: 'right',
-                            emptyRowsWhenPaging: true,
+                            emptyRowsWhenPaging: false,
                             showSelectAllCheckbox: false,
                             showTextRowsSelected: false,
                         }}
@@ -167,6 +178,9 @@ export const CheckoutTable = compose(
                                 searchPlaceholder: 'Search'
                             }
                         }}
+                        components={{
+                            Container: props => <StyledTableBody {...props} />
+                        }}
                         actions={[
                             {
                                 icon: 'refresh',
@@ -176,7 +190,7 @@ export const CheckoutTable = compose(
                             },
                             {
                                 tooltip: 'Upload DOCX',
-                                icon: () => <UploadButton {...{store}} />,
+                                icon: () => <UploadButton {...{ store }} />,
                                 isFreeAction: true,
                                 onClick: () => null
                             }
@@ -187,9 +201,6 @@ export const CheckoutTable = compose(
         }
     }
 )
-
-const DocxIcon = () =>
-    <DescriptionIcon style={{ color: '#0000008a' }} />
 
 const statusMap = {
     'in-progress': 'In Progress',
@@ -205,6 +216,17 @@ const labelColors = {
     'published': '#c6ffc6',
 }
 
+const rest = (ms) =>
+    new Promise(rs => (
+        setTimeout(() => {
+            rs()
+        }, ms)
+    ))
+
+
+const DocxIcon = () =>
+    <DescriptionIcon style={{ color: '#0000008a' }} />
+
 const StatusChip = ({ status }) => {
     const label = statusMap[status]
     const color = labelColors[status]
@@ -213,12 +235,14 @@ const StatusChip = ({ status }) => {
     )
 }
 
-const rest = (ms) =>
-    new Promise(rs => (
-        setTimeout(() => {
-            rs()
-        }, ms)
-    ))
+// An alternate Paper component to fix overflow clipping in the X direction on rows that have no data
+const StyledTableBody = withStyles({
+    root: {
+        '& div > div > table': {
+            overflow: 'hidden'
+        }
+    },
+  })(Paper)
 
 const UploadButton = observer(({ store }) => {
     return (
@@ -243,71 +267,147 @@ const UploadButton = observer(({ store }) => {
     )
 })
 
-const PaperDetails = observer(({ paper, store }) => {
-    let { checkout } = store
-    let { id, slug, excerpt, docx, date_modified, date_uploaded, filename } = paper
-    docx = !!docx ? docx : ''
-    filename = !!filename ? filename : 'Document'
 
-    return (
-        <Box height={150} display="flex" flexWrap="no-wrap" fontSize={13}>
-            <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
-                <Box display="flex">
-                    <Box display="flex" minWidth={80} fontSize={13}>
-                        <b>Slug</b>
+/**
+ * @param {*} store
+ * @descripion 
+ * TableDetails is a class that is plugged in as a prop for the CheckoutTable
+ * It displays additional information on dropdown of a row item. Clicking on
+ * it also reveals actions that can be taken, like editing or unlocking the doc.
+ */
+export const TableDetails = compose(
+    inject('store'),
+    observer
+)(
+    class extends Component {
+
+        /**
+         * @type Boolean
+         * @description
+         * An observable for hiding/showing the Unlock Button
+         */
+        @observable allowUnlock = false
+   
+        /**
+         * @description
+         * checkUnlock() to make sure the prospective document is available to edit
+         * before it can be unlocked. The reason we know this will work is if
+         * another user has the document checked out, it is autosaving every 60
+         * seconds. It then updates the "date_modified" field in Firebase. So if
+         * we do a local operation against the staticly retrieved "date_modified"
+         * and check to see if it is say, 70 seconds since it was last updated,
+         * then it is possible to know the other user is not online, or having 
+         * internet trouble or is no longer actively autosaving the document.
+         * This means we can safely adjust the status on Firebase to "in-progress",
+         * bypassing the local check for viability and gain access to the document
+         * 
+         * Obviously a better thing to do would be to handle this all serverside
+         * with a backend that knows what users are online and who is currently in
+         * a document, but for now, this should be safe enough considering we won't
+         * have many concurrent users all begging to edit at the same time.
+         */
+        @action checkUnlock = () => {
+            const { store, paper, docData } = this.props
+            let { date_modified_timestamp } = paper
+            let date_modified = new store.fb.firebase.firestore.Timestamp(date_modified_timestamp.seconds, date_modified_timestamp.nanoseconds)
+            let date_now = store.fb.getTime()
+            let seconds_since_last_save = moment.duration(moment(date_now.toDate()).diff(moment(date_modified.toDate()))).asSeconds()
+            console.log(seconds_since_last_save)
+            // Return if not enough time has passed
+            if (seconds_since_last_save <= 70) { return }
+            // Enable the unlock button
+            this.allowUnlock = true
+            console.warn(`You may unlock Document ${paper.id} now`)
+        }
+
+        @observable open = false
+
+        @action expand = () => this.open = true
+        @action collapse = () => this.open = false
+
+        componentDidMount() {
+            // Check every 250ms seconds to see if the document can be unlocked
+            // This is low cost as it isn't actually calling the data from firestore
+            // it just a simple math operation clientside against an existing value
+            this.unlockTimer = setInterval(() => this.checkUnlock(this.props), 2000)
+
+            // Transition the animation for the expansion panel
+            this.expand()
+        }
+
+        componentWillUnmount() {
+            clearInterval(this.unlockTimer)
+            this.collapse()
+        }
+
+        render() {
+            const { store, paper } = this.props
+            let { allowUnlock } = this
+            let { checkout, unlock } = store
+            let { id, slug, excerpt, docx, date_uploaded, filename } = paper
+            docx = !!docx ? docx : ''
+            filename = !!filename ? filename : 'Document'
+
+            return (
+                <Collapse in={this.open}>
+                    <Box height={150} display="flex" flexWrap="no-wrap" fontSize={13} >
+                        <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
+                            <Box display="flex">
+                                <Box display="flex" minWidth={80} fontSize={13}>
+                                    <b>Slug</b>
+                                </Box>
+                                <Box height={30}></Box>
+                                <Box display="flex" flexGrow={1}>
+                                    {slug}
+                                </Box>
+                            </Box>
+                            <Box flexGrow={1} display="flex" pr={2} overflow="hidden">
+                                <Box display="flex" minWidth={80} fontSize={13} >
+                                    <b>Excerpt</b>
+                                </Box>
+                                <Box display="flex" mb={2} flexGrow={1} style={{ overflowX: 'hidden', overflowY: !!excerpt ? 'scroll' : 'hidden' }}>
+                                    {excerpt}
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
+                            <Box display="flex">
+                                <Box display="flex" minWidth={80} fontSize={13}>
+                                    <b>Document</b>
+                                </Box>
+                                <Box height={30}></Box>
+                                <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
+                                    <MLink
+                                        href={`${docx}`}
+                                        key={id}
+                                    >
+                                        {`${filename}`}
+                                    </MLink>
+                                </Box>
+                            </Box>
+                            <Box minWidth={80} display="flex" pr={2} overflow="hidden">
+                                <Box display="flex" minWidth={80} fontSize={13} >
+                                    <b>Uploaded</b>
+                                </Box>
+                                <Box height={30}></Box>
+                                <Box display="flex" minWidth={80} fontSize={13} >
+                                    {date_uploaded}
+                                </Box>
+                                <Box height={30}></Box>
+                            </Box>
+                            <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
+                                <Box>
+                                    {allowUnlock && (
+                                        <Button onClick={() => unlock(id)} color="secondary" variant="contained" endIcon={<LockOpenIcon />} style={{ marginRight: 8 }}>Unlock</Button>
+                                    )}
+                                    <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
+                                </Box>
+                            </Box>
+                        </Box>
                     </Box>
-                    <Box height={30}></Box>
-                    <Box display="flex" flexGrow={1}>
-                        {slug}
-                    </Box>
-                </Box>
-                <Box flexGrow={1} display="flex" pr={2} overflow="hidden">
-                    <Box display="flex" minWidth={80} fontSize={13} >
-                        <b>Excerpt</b>
-                    </Box>
-                    <Box display="flex" mb={2} flexGrow={1} style={{ overflowX: 'hidden', overflowY: 'scroll' }}>
-                        {excerpt}
-                    </Box>
-                </Box>
-            </Box>
-            <Box width="50%" display="flex" flexDirection="column" pl={6} py={2}>
-                <Box display="flex">
-                    <Box display="flex" minWidth={80} fontSize={13}>
-                        <b>Document</b>
-                    </Box>
-                    <Box height={30}></Box>
-                    <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
-                        <MLink
-                            href={`${docx}`}
-                            key={id}
-                        >
-                            {`${filename}`}
-                        </MLink>
-                    </Box>
-                </Box>
-                <Box minWidth={80} display="flex" pr={2} overflow="hidden">
-                    <Box display="flex" minWidth={80} fontSize={13} >
-                        <b>Uploaded</b>
-                    </Box>
-                    <Box height={30}></Box>
-                    <Box display="flex" minWidth={80} fontSize={13} >
-                        {date_uploaded}
-                    </Box>
-                    <Box height={30}></Box>
-                </Box>
-                <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
-                    <Box>
-                        {/* <Link
-                            href={"/scribe/edit/[doc]"}
-                            as={`/scribe/edit/${id}`}
-                            key={id}
-                        > */}
-                        <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
-                        {/* </Link> */}
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
-    )
-})
+                </Collapse>
+            )
+        }
+    }
+)
 

@@ -139,12 +139,29 @@ export class Store {
     return sessions
   }
 
+
+  @action save = (id) => {
+    this.fb.save(id)
+      .then(result => {
+        this.notify('Document saved sucessfully!', 'info')
+      })
+      .catch(error => this.notify('Document could not save!', 'error'))
+  }
+
   @action checkout = (id) => {
     this.fb.checkout(id)
       .then(result => {
         this.notify('Document loaded sucessfully!', 'info')
       })
       .catch(error => this.notify('Document not free to edit!', 'error'))
+  }
+
+  @action unlock = (id) => {
+    this.fb.unlock(id)
+      .then(result => {
+        this.notify('Document unlocked. You may Start Editing!', 'info')
+      })
+      .catch(error => this.notify('Could not unlock Document', 'error'))
   }
 
   @action setAside = (document) => {

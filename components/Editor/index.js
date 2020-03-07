@@ -1,14 +1,21 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
-import { inject, observer } from 'mobx-react'
 import Original from './Original'
 import Blocks from './Blocks'
 import Draft from './Draft'
 import Code from './Code'
 import { EditorState } from 'draft-js'
 
-// @inject('store')
-// @observer
+// The <Editor /> component is wrapper class that meshes together a DraftJS
+// editor plus several visualizers. Most of its methods are an abstraction
+// of the editor's functions, but there are bonuses like mode switching.
+// It should be able to be dropped into any application to get a clean draft
+// editor with some nicer features. In our case, the <Editor /> component is
+// instantiated and a reference is made by DocumentEditor, our shim for the
+// editor inside Toolbox. Once a reference is made, you can call all the vanilla
+// methods inside this class, set its initial state, and give it a function to
+// save with, etc. This class and its children may always function in isolation.
+
 class Editor extends React.Component {
 
     draft = React.createRef()
@@ -19,11 +26,11 @@ class Editor extends React.Component {
     }
 
     componentDidMount() {
-        // console.log( this.draft.current.rawState )
+        // 
     }
 
     componentDidUpdate() {
-        // console.log( this.draft.current.editorState )
+        // 
     }
 
     set mode(mode) {
@@ -47,7 +54,6 @@ class Editor extends React.Component {
     }
 
     get code() {
-        // convert the current editors draftState to html result
         return this.state.code
     }
 

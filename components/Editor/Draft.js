@@ -1,13 +1,11 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
-import { inject, observer } from 'mobx-react'
 import Editor from 'draft-js-plugins-editor';
-import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
 import { baseStyleMap } from './functions/utilities'
 import plugins from './functions/plugins'
+import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
 
-@inject('store')
-@observer
+
 class Draft extends React.Component {
 
     editor = React.createRef()
@@ -72,7 +70,6 @@ class Draft extends React.Component {
 
     render() {
         const { hidden } = this.props
-        // console.log(this.state.stylesheet)
         return (
             <Box border={0} p={2} flexGrow={1} display={hidden ? 'none' : 'inherit'} >
                 <Editor

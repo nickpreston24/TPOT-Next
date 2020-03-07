@@ -6,23 +6,24 @@ import { EditorState, convertFromRaw } from 'draft-js'
 import { toJS, action } from 'mobx'
 import { Button } from '@material-ui/core'
 
-// : DocumentEditor is a shim that passes along the editorState in
-// : a way that can be submitted as part of the document form to the
-// : Firestorter session. It references a perfectly standalone editor
-// : and has methods for calling up that data and submitting it,
-// : validation, autosaving, and transformation.
+// Document editor is a shim that connects our feature-rich DraftJS editor to
+// Toolbox. When the shim mounts a reference is made to our <Editor /> child.
+// The Editor is designed in a way to be drag and drop and application independant.
+// This shim allows us to connect our application and state and call methods off
+// the standalone editor, such as mode switching, saving, initial state, etc. It
+// also allows us to ask the standalone editor for his data so we can publish it.
 
 @inject('store')
 @withForm
 @observer
 class DocumentEditor extends Component {
 
-  // Make a ref to the editor to access its built-in functions and state
+  // Make a ref to the standalone editor to access its built-in functions and state
   editor = React.createRef()
 
   componentDidMount() {
     // Set a Auto-Save Timer for the Editor's content (1 mins)
-    this.timer = setInterval(() => this.save(this.props), 60000)
+    this.timer = setInterval(() => this.props.store.save(this.props), 60000)
   }
 
   componentWillUnmount() {
@@ -45,33 +46,6 @@ class DocumentEditor extends Component {
     this.editor.current.code = code
   }
 
-  @action.bound save = () => {
-    // const plainText = this.editor.current.plainText
-    // console.log(
-    //   // this.editor.current.editorState,
-    //   // this.editor.current.stylesheet,
-    //   this.editor.current.original,
-    //   // this.editor.current.code,
-    // )
-
-    // status: 'not-started',
-    // contributors: store.authUser.email,
-    // date_uploaded: new Date(),
-    // date_modified: new Date(),
-    // draft: JSON.stringify(draftState),
-    // code: JSON.stringify(codeState),
-    // original: JSON.stringify(html),
-    // stylesheet: JSON.stringify(newBaseStyleMap),
-    // filename: file.name,
-    // title: title,
-    // slug: `letters/${slug}.htm`,
-    // excerpt: ''
-    // this.props.document.set({ draft: plainText }, { merge: true })
-    this.props.store.notify('Saved Document Successfully!', 'info')
-  }
-
-
-
   setMode(name) {
     this.editor.current.mode = name
   }
@@ -79,7 +53,7 @@ class DocumentEditor extends Component {
   render() {
 
     // When the component mounts, have it check back to re-init itself with the first editorState after the document data is fetched.
-    const { document } = this.props
+    const { document, store } = this.props
     let hasData = Object.keys(toJS(document.data)) !== 0
     if (hasData && !!this.editor.current) {
       this.init()
@@ -91,7 +65,10 @@ class DocumentEditor extends Component {
         <Button onClick={() => this.setMode('draft')}>Draft</Button>
         <Button onClick={() => this.setMode('code')}>Code</Button>
         <Button onClick={() => this.setMode('blocks')}>Blocks</Button>
-        <Editor ref={this.editor} saveFn={this.save} />
+        <Editor 
+          ref={this.editor} 
+          saveFn={store.save} 
+        />
       </>
     )
   }
