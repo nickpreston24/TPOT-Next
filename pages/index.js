@@ -21,8 +21,8 @@ class App extends Component {
     console.log('main store', store);
     return (
       <Dashboard title="TPOT Toolbox">
-        <Editor />
-        {/* <Redirect href="/scribe" /> */}
+        Click on "Checkout" at the top to get started!
+        {/* <Redirect href="/scribe/checkout" /> */}
       </Dashboard>
     )
   }

@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Sans|Ubuntu:300,400,700');
+
+body .DraftEditor-root {
+    font-size: 18px;
+    line-height: 30.6px;
+}
+
+img .DraftEditor-root { 
+    /* max-width: 100%; */
+    /* max-height: 70%; */
+}
+
+.DraftEditor-root h1 {
+    /* font-size: 60px; */
+    font-size: 40px;
+    /* line-height: 72px */
+    line-height: 46px
+}
+
+.DraftEditor-root h2 {
+    font-size: 30px;
+    line-height: 36px
+}
+
+.DraftEditor-root h3 {
+    font-size: 28px;
+    line-height: 33.6px
+}
+
+.DraftEditor-root h4 {
+    font-size: 22px;
+    line-height: 26.4px
+}
+
+.DraftEditor-root h5 {
+    font-size: 20px;
+    line-height: 24px
+}
+
+.DraftEditor-root h6{
+    font-size: 16px;
+    line-height: 19.2px
+}
+
+.DraftEditor-root blockquote {
+    /* font-style: italic; */
+    text-align: left;
+    font-size: 22px; 
+    line-height: 35.2px;
+    padding: 20px;
+    border-left: 6px solid lightgrey;
+    padding-left: 60px;
+    background: #f5f5f5;
+    border-radius: 4px 8px 8px 4px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.DraftEditor-root blockquote:before {
+    content: '\201C';
+    line-height: 0px;
+    padding: 0px;
+    margin: 0px;
+    display: block;
+    position: absolute;
+    transform: translate(-44px, -16px);
+    font: 80px 'PT Sans', sans-serif;
+    color: #ccc;
+  }
+
+.DraftEditor-root .blockquote-intense {
+    /* text-emphasis: bold; */
+    /* padding: 16px;
+    font-weight: bold;
+    border-top: 1px solid rgb(68, 114, 196);
+    border-bottom: 1px solid rgb(68, 114, 196); */
+}
+
+.DraftEditor-root .indent {
+    text-indent: 48px;
+}
+
+.DraftEditor-root .block {
+    margin-left: 48px;
+}
+
+.DraftEditor-root .left {
+    text-align: left;
+}
+
+.DraftEditor-root .center {
+    text-align: center;
+}
+
+.DraftEditor-root .right {
+    text-align: right;
+}

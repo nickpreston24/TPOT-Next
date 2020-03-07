@@ -1,8 +1,8 @@
-import { action, observable, computed, autorun } from 'mobx'
+import { action, observable, computed, autorun, toJS } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
 import Firebase from '../services/firebase'
 import { toast } from 'react-toastify';
-import { Collection } from 'firestorter'
+import { Collection, Document } from 'firestorter'
 import { confirmSignout, confirmSetAside } from '../components/DialogMessages';
 
 // This needs to go before this root store has time to be populated by a provider
@@ -137,6 +137,14 @@ export class Store {
 
     }
     return sessions
+  }
+
+  @action checkout = (id) => {
+    this.fb.checkout(id)
+      .then(result => {
+        this.notify('Document loaded sucessfully!', 'info')
+      })
+      .catch(error => this.notify('Document not free to edit!', 'error'))
   }
 
   @action setAside = (document) => {

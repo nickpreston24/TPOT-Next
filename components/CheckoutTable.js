@@ -5,10 +5,12 @@ import { inject, observer } from 'mobx-react';
 import MaterialTable from 'material-table'
 import { Box, Chip, Button, Link as MLink } from '@material-ui/core';
 import DescriptionIcon from '@material-ui/icons/Description';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import moment from 'moment';
 import Link from 'next/link'
 import EditIcon from '@material-ui/icons/Edit';
 import { Collection } from 'firestorter'
+import { uploadLocalFile } from './Editor/functions/uploader'
 
 
 export const CheckoutTable = compose(
@@ -31,20 +33,80 @@ export const CheckoutTable = compose(
             last: 0
         }
 
-        @computed get data() {
-            let { store } = this.props
-            let data = this.loadSessions(store)
-            console.log("data", data);
-            return data
-        }
+        // PLEASE READ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TODO : Notes for Nick for future development, please read
+        // : Right now the data that the table recieves comes from an unfiltered, unsorted
+        // : array of the sessions collection via Firestorter. This means features like
+        // : sorting by category, name, search, and pagination won't work. Material-Table
+        // : has a function for this, but it requires that the call is a single layer async.
+        // : What would be better for us is to have an observable, data, that plugs into the
+        // : MaterialTable prop called data. This observable needs to be a computed value that
+        // : is a single Firestorter.query result. The query being a combination of filters,
+        // : search, pagination, search and orderby. This query should be done in an @autorun
+        // : with the result being the data state. When the new data is calculated, the component
+        // : will re-render its children because this.data is in the render function.
+        // : 
+        // : I have started some of this work in the commented out code below, but it isn't MVP.
+        // : Please leave it there until you implement it or come up with something better.
+        // : 
+        // : NOTE!!!! It is FINE to leave this in this state until we get like 100+ letters in /sesssions/
+
+        // paginate = (array, page_size, page_number) => {
+        //     return array.slice(page_number * page_size, (page_number + 1) * page_size)
+        // }
+
+        // disposer = autorun(async () => {
+
+        //     let totalCount = this.sessions.docs.length
+        //     let array = [...Array(totalCount).keys()]
+        //     const paginate = (array, page_size, page_number) => {
+        //         return array.slice(page_number * page_size, (page_number + 1) * page_size)
+        //     }
+        //     let pool = paginate(array, 5, 0)
+
+        //     // let pool = this.paginate(array, this.config.pageLimit, this.config.page)
+        //     console.log(pool)
+        //     // this.config.totalCount = this.sessions.docs.length
+        //     // this.config.array = [...Array(this.config.totalCount).keys()]
+        //     // this.config.pool = this.paginate(this.config.array, this.config.pageLimit, this.config.page)
+        //     // this.config.last = this.config.page != 0 ? this.config.pool[this.config.page] - 1 : 0
+        //     // // await rest(800)
+        //     this.config = {
+        //         totalCount,
+        //         array,
+        //         pool
+        //     }
+        // this.data = [//result of query plus transformed data like date_modified gets humanized]
+        // })
+
+
 
         render() {
 
             //TODO: Find out which of these are absolutely critical and keep them; remove the rest.
             let { filter, direction, page, search, pageLimit, totalCount, last } = this.config
+            let { store } = this.props
+            let { loading, handleFile } = this
 
-            // TODO: Try state hooks?
-            let { loading } = this
+            let data = []
+            this.sessions.docs.map(document => {
+                let entry = toJS(document.data)
+                let id = document.id
+                let { status, date_modified, date_uploaded, contributors } = entry
+                status = status || 'in-progress';
+                date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
+                date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
+                date_uploaded = new store.fb.firebase.firestore.Timestamp(date_uploaded.seconds, date_uploaded.nanoseconds)
+                date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
+                data.push({
+                    ...entry,
+                    id,
+                    status,
+                    date_modified,
+                    date_uploaded,
+                    author: contributors,
+                })
+            })
 
             const columns = [
                 { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
@@ -66,14 +128,14 @@ export const CheckoutTable = compose(
                         columns={columns}
                         data={this.data}
                         isLoading={loading}
-                        detailPanel={paper => <PaperDetails paper={paper} />}
+                        detailPanel={paper => <PaperDetails {...{ paper, store }} />}
                         options={{
                             search: search,
                             pageSize: pageLimit,
                             pageSizeOptions: [5, 7, 10],
                             selection: false,
                             draggable: true,
-                            grouping: true,
+                            grouping: false,
                             exportButton: true,
                             exportAllData: true,
                             exportFileName: `TPOT Letters ${new Date().toDateString()}`,
@@ -98,9 +160,6 @@ export const CheckoutTable = compose(
                             direction = direction
                         }}
                         localization={{
-                            header: {
-                                actions: 'imaaction'
-                            },
                             toolbar: {
                                 exportTitle: 'Export Table',
                                 exportName: 'Save as CSV',
@@ -113,14 +172,13 @@ export const CheckoutTable = compose(
                                 icon: 'refresh',
                                 tooltip: 'Refresh Table',
                                 isFreeAction: true,
-                                //TODO: whatever tableRef is, if you hit refresh, it comes back undefined.
-                                // onClick: () => this.tableRef.current && this.tableRef.current.onQueryChange(),
+                                onClick: () => console.log('refresh')
                             },
                             {
-                                tooltip: 'Upload .docx from your computer',
-                                icon: 'backupOutlinedIcon',
+                                tooltip: 'Upload DOCX',
+                                icon: () => <UploadButton {...{store}} />,
                                 isFreeAction: true,
-                                onClick: (event, data) => data ?? alert(`You want to delete ${data.length} rows`)
+                                onClick: () => null
                             }
                         ]}
                     />
@@ -236,9 +294,34 @@ const rest = (ms) =>
         }, ms)
     ))
 
-const PaperDetails = observer(({ paper }) => {
-    let { id, slug, excerpt, docx, date_modified, date_uploaded } = paper
-    docx = !!docx ? docx.slice(25) : ''
+const UploadButton = observer(({ store }) => {
+    return (
+        <Box width={24} height={20} p={0} m={0} mt="4px" display="flex" alignItems="center" justifyContent="center">
+            <input
+                // multiple // multi-upload not recommended
+                accept=".docx"
+                type="file"
+                id="upload-button-input"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                    const files = e.target.files
+                    let file = files[0]
+                    if (!file) return
+                    uploadLocalFile(file, store)
+                }}
+            />
+            <label htmlFor="upload-button-input" style={{ margin: 12 }}>
+                <CloudUploadIcon />
+            </label>
+        </Box>
+    )
+})
+
+const PaperDetails = observer(({ paper, store }) => {
+    let { checkout } = store
+    let { id, slug, excerpt, docx, date_modified, date_uploaded, filename } = paper
+    docx = !!docx ? docx : ''
+    filename = !!filename ? filename : 'Document'
 
     return (
         <Box height={150} display="flex" flexWrap="no-wrap" fontSize={13}>
@@ -269,10 +352,10 @@ const PaperDetails = observer(({ paper }) => {
                     <Box height={30}></Box>
                     <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
                         <MLink
-                            href={`https://firebasestorage.googleapis.com/v0/b/tpot-toolbox.appspot.com/o/originals%2F${docx}?alt=media&token=36efb560-7a06-4385-95cf-162051c3d304`}
+                            href={`${docx}`}
                             key={id}
                         >
-                            {`${docx}`}
+                            {`${filename}`}
                         </MLink>
                     </Box>
                 </Box>
@@ -288,12 +371,13 @@ const PaperDetails = observer(({ paper }) => {
                 </Box>
                 <Box flexGrow={1} display="flex" pr={2} justifyContent="flex-end" alignItems="flex-end">
                     <Box>
-                        <Link
+                        {/* <Link
                             href={"/scribe/edit/[doc]"}
                             as={`/scribe/edit/${id}`}
                             key={id}
-                        ><Button color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
-                        </Link>
+                        > */}
+                        <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
+                        {/* </Link> */}
                     </Box>
                 </Box>
             </Box>
