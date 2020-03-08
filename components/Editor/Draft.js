@@ -4,6 +4,7 @@ import Editor from 'draft-js-plugins-editor';
 import { baseStyleMap } from './functions/utilities'
 import plugins from './functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
+import { Toolbar } from './components/Toolbar';
 
 
 class Draft extends React.Component {
@@ -70,8 +71,11 @@ class Draft extends React.Component {
 
     render() {
         const { hidden } = this.props
+
+        // console.log('EDITOR', this.editor.current)
         return (
             <Box border={0} p={2} flexGrow={1} display={hidden ? 'none' : 'inherit'} >
+                <Toolbar forward={this.editor.current}/>
                 <Editor
                     ref={this.editor}
                     editorState={this.state.editorState}
