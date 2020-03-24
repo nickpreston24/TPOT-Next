@@ -18,7 +18,7 @@ class Dashboard extends Component {
             <Box flexGrow={1} fontSize={24} style={{ overflowY: 'scroll', overflowX: 'hidden' }}>
               {children}
             </Box>
-            {details && <Box bgcolor="white" boxShadow={3} p={2} style={{ boxSizing: 'border-box' }}>
+            {details && <Box bgcolor="white" boxShadow={3} p={2} style={{ boxSizing: 'border-box', overflowY: 'scroll', overflowX: 'hidden' }}>
               {details}
             </Box>}
           </Box>

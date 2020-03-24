@@ -27,7 +27,7 @@ const Page = compose(
         }
       `}</style>
       
-      <Box width="100vw" height="100vh" position="absolute">
+      <Box width="100vw" height="100vh" position="absolute" overflow="hidden">
         { children }
       </Box>
       

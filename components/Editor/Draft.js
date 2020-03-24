@@ -22,7 +22,7 @@ class Draft extends React.Component {
         })
     }
 
-    set editorState( editorState ) {
+    set editorState(editorState) {
         this.setState({ editorState })
     }
 
@@ -36,7 +36,7 @@ class Draft extends React.Component {
 
     get stylesheet() {
         return this.state.stylesheet
-    } 
+    }
 
     get rawState() {
         return convertToRaw(this.state.editorState.getCurrentContent())
@@ -49,7 +49,7 @@ class Draft extends React.Component {
     get plainText() {
         return this.state.editorState.getCurrentContent().getPlainText()
     }
-    
+
     handleKeyCommand(command) {
         if (command === 'save') {
             this.props.saveFn()
@@ -64,7 +64,7 @@ class Draft extends React.Component {
 
     myKeyBindingFn(e) {
         const { hasCommandModifier } = KeyBindingUtil
-        if (e.keyCode === 83 /* `S` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'save'}
+        if (e.keyCode === 83 /* `S` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'save' }
         if (e.keyCode === 80 /* `P` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'publish' }
         return getDefaultKeyBinding(e)
     }
@@ -74,8 +74,23 @@ class Draft extends React.Component {
 
         // console.log('EDITOR', this.editor.current)
         return (
-            <Box border={0} p={2} flexGrow={1} display={hidden ? 'none' : 'inherit'} >
-                <Toolbar forward={this.editor.current}/>
+            <Box border={2} display="flex" flexGrow={1} display={hidden ? 'none' : 'inherit'} flexDirection="column" style={{ overflowY: 'hidden !important', overflowX: 'hidden' }}>
+                <Box display="flex" height="120" border={1}>
+                    <Toolbar forward={this.editor.current} />
+                </Box>
+                <Box display="flex" flexGrow={1} border={1} style={{ overflowY: 'scroll !important', overflowX: 'hidden' }}>
+                    <Editor
+                        ref={this.editor}
+                        editorState={this.state.editorState}
+                        customStyleMap={this.state.stylesheet}
+                        onChange={this.onChange}
+                        handleKeyCommand={command => this.handleKeyCommand(command)}
+                        keyBindingFn={this.myKeyBindingFn}
+                        plugins={plugins}
+                    />
+                </Box>
+                {/* <Box display="flex">footer</Box> */}
+                {/* <Toolbar forward={this.editor.current}/>
                 <Editor
                     ref={this.editor}
                     editorState={this.state.editorState}
@@ -84,7 +99,7 @@ class Draft extends React.Component {
                     handleKeyCommand={command => this.handleKeyCommand(command)}
 					keyBindingFn={this.myKeyBindingFn}
                     plugins={plugins}
-                />
+                /> */}
             </Box>
         );
     }

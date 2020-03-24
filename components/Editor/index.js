@@ -85,7 +85,7 @@ class Editor extends React.Component {
         const { mode, code, draft, original, plainText } = this
         const { saveFn } = this.props
         return (
-            <Box border={0} p={2} flexGrow={1} fontSize={18} >
+            <Box border={1} borderColor="magenta" p={0} flexGrow={1} fontSize={18} >
                 <Original state={original} hidden={mode !== 'original'} />
                 <Code state={code} hidden={mode !== 'code'} />
                 <Draft ref={draft} hidden={mode !== 'draft'} saveFn={saveFn} />
