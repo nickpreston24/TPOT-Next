@@ -6,16 +6,30 @@ import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solari
 
 @inject('store')
 @observer
-class Code extends React.Component {
+class Blocks extends React.Component {
 
     render() {
-        const { hidden } = this.props
+        const { hidden, state } = this.props
+        const printedJSON = JSON.stringify(state, null, 4)
         return (
-            <Box border={1} flexGrow={1} display={hidden ? 'none' : 'inherit'} >
-                {this.props.state}
+            <Box flexGrow={1} display={hidden ? 'none' : 'flex'} justifyContent="center" >
+                <Box display="block" maxWidth={800} >
+                    <SyntaxHighlighter
+                        language='json'
+                        children={printedJSON}
+                        style={solarizedLight}
+                        lineProps={{ style: { border: '0px solid yellow' } }}
+                        codeTagProps={{ style: { border: '0px solid red' } }}
+                        customStyle={{
+                            fontSize: 16,
+                            overflowX: 'scroll',
+                            background: 'transparent'
+                        }}
+                    />
+                </Box>
             </Box>
         )
     }
 }
 
-export default Code
+export default Blocks

@@ -15,10 +15,10 @@ class Dashboard extends Component {
         <Box height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch">
           <Header />
           <Box flexGrow={1} bgcolor="#f8f9fa" display="flex" overflow="hidden">
-            <Box flexGrow={1} fontSize={24} style={{ overflowY: 'scroll', overflowX: 'hidden' }}>
+            <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1} fontSize={24} style={{ overflowY: 'hidden', overflowX: 'hidden' }}>
               {children}
             </Box>
-            {details && <Box bgcolor="white" boxShadow={3} p={2} style={{ boxSizing: 'border-box', overflowY: 'scroll', overflowX: 'hidden' }}>
+            {details && <Box bgcolor="white" boxShadow={3} p={2} style={{ overflowY: 'scroll', overflowX: 'hidden' }}>
               {details}
             </Box>}
           </Box>

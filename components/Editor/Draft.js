@@ -6,6 +6,10 @@ import plugins from './functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
 import { Toolbar } from './components/Toolbar';
 
+// The <Draft /> component is the primary view mode of the <Editor /> It can
+// also be used in a standalone app. All state managment is best done with
+// React.setState() rather than something like Redux or MobX. Additional plugins
+// can be written for the editor and are registered under ./functions/plugins
 
 class Draft extends React.Component {
 
@@ -38,16 +42,12 @@ class Draft extends React.Component {
         return this.state.stylesheet
     }
 
-    get rawState() {
+    get blocks() {
         return convertToRaw(this.state.editorState.getCurrentContent())
     }
 
     get code() {
         return 'I am code'
-    }
-
-    get plainText() {
-        return this.state.editorState.getCurrentContent().getPlainText()
     }
 
     handleKeyCommand(command) {
@@ -71,37 +71,26 @@ class Draft extends React.Component {
 
     render() {
         const { hidden } = this.props
-
-        // console.log('EDITOR', this.editor.current)
         return (
-            <Box border={2} display="flex" flexGrow={1} display={hidden ? 'none' : 'inherit'} flexDirection="column" style={{ overflowY: 'hidden !important', overflowX: 'hidden' }}>
-                <Box display="flex" height="120" border={1}>
+            <Box display={hidden ? 'none' : 'flex'} flexGrow={1} flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+                <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
                     <Toolbar forward={this.editor.current} />
                 </Box>
-                <Box display="flex" flexGrow={1} border={1} style={{ overflowY: 'scroll !important', overflowX: 'hidden' }}>
-                    <Editor
-                        ref={this.editor}
-                        editorState={this.state.editorState}
-                        customStyleMap={this.state.stylesheet}
-                        onChange={this.onChange}
-                        handleKeyCommand={command => this.handleKeyCommand(command)}
-                        keyBindingFn={this.myKeyBindingFn}
-                        plugins={plugins}
-                    />
+                <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
+                    <Box display="flex" width={800} >
+                        <Editor
+                            ref={this.editor}
+                            editorState={this.state.editorState}
+                            customStyleMap={this.state.stylesheet}
+                            onChange={this.onChange}
+                            handleKeyCommand={command => this.handleKeyCommand(command)}
+                            keyBindingFn={this.myKeyBindingFn}
+                            plugins={plugins}
+                        />
+                    </Box>
                 </Box>
-                {/* <Box display="flex">footer</Box> */}
-                {/* <Toolbar forward={this.editor.current}/>
-                <Editor
-                    ref={this.editor}
-                    editorState={this.state.editorState}
-                    customStyleMap={this.state.stylesheet}
-                    onChange={this.onChange}					
-                    handleKeyCommand={command => this.handleKeyCommand(command)}
-					keyBindingFn={this.myKeyBindingFn}
-                    plugins={plugins}
-                /> */}
             </Box>
-        );
+        )
     }
 }
 
