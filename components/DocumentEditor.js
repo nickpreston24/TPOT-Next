@@ -37,20 +37,25 @@ class DocumentEditor extends Component {
   init() {
     let { document } = this.props
     if (!document) return // Ditch if there is no document, will render a a <CircularProgress /> instead.
-    let { draft, code, original, stylesheet } = toJS(document.data)
-    draft = JSON.parse(draft)
-    code = JSON.parse(code)
-    original = JSON.parse(original)
-    stylesheet = JSON.parse(stylesheet)
-    const contentState = convertFromRaw(draft)
-    const initialState = EditorState.createWithContent(contentState)
     let editorRef = this.editor.current
     // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />
     if (!editorRef) return
-    editorRef.editorState = initialState
-    editorRef.stylesheet = stylesheet
-    editorRef.original = original
-    editorRef.code = code
+    let { draft, code, original, stylesheet } = toJS(document.data)
+
+    code = JSON.parse(code)
+    original = JSON.parse(original)
+    stylesheet = JSON.parse(stylesheet)
+
+    if (!!draft) {
+      draft = JSON.parse(draft)
+      const contentState = convertFromRaw(draft)
+      const initialState = EditorState.createWithContent(contentState)
+      editorRef.editorState = initialState
+    }
+
+    editorRef.stylesheet = stylesheet || {}
+    editorRef.original = original || ''
+    editorRef.code = code || '<p></p>'
   }
 
   // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
@@ -74,10 +79,10 @@ class DocumentEditor extends Component {
               {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
               <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
-                  <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
-                  <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
-                  <Button color={ mode === 'code' ? 'secondary' : 'primary' } onClick={() => this.setMode('code')}>Code</Button>
-                  <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
+                  <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
+                  <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => this.setMode('draft')}>Draft</Button>
+                  <Button color={mode === 'code' ? 'secondary' : 'primary'} onClick={() => this.setMode('code')}>Code</Button>
+                  <Button color={mode === 'blocks' ? 'secondary' : 'primary'} onClick={() => this.setMode('blocks')}>Blocks</Button>
                 </ButtonGroup>
               </EditorView>
             </>
