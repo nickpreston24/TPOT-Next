@@ -15,21 +15,13 @@ import Code from './Code'
 // methods inside this class, set its initial state, and give it a function to
 // save with, etc. This class and its children may always function in isolation.
 
-class Editor extends React.Component {
+class EditorView extends React.Component {
 
     draft = React.createRef()
 
     state = {
         mode: 'draft',
         code: null,
-    }
-
-    componentDidMount() {
-        // 
-    }
-
-    componentDidUpdate() {
-        // 
     }
 
     set mode(mode) {
@@ -74,7 +66,7 @@ class Editor extends React.Component {
 
     get blocks() {
         return !!this.draft.current ? this.draft.current.blocks : ''
-    }
+    }    
 
     render() {
         const { mode, code, draft, original, blocks } = this
@@ -95,4 +87,4 @@ class Editor extends React.Component {
     }
 }
 
-export default Editor
+export default EditorView

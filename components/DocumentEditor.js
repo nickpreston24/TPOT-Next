@@ -1,7 +1,7 @@
 import { inject, observer } from 'mobx-react'
 import React, { Component } from 'react'
 import { withForm } from './DocumentForm'
-import Editor from './Editor'
+import EditorView from './Editor/EditorView'
 import { EditorState, convertFromRaw } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
@@ -72,14 +72,14 @@ class DocumentEditor extends Component {
           : (
             <>
               {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
-              <Editor ref={this.editor} saveFn={() => store.save(id)} >
+              <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
                   <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
                   <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
                   <Button color={ mode === 'code' ? 'secondary' : 'primary' } onClick={() => this.setMode('code')}>Code</Button>
                   <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
                 </ButtonGroup>
-              </Editor>
+              </EditorView>
             </>
           )
         }
