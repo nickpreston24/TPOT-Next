@@ -6,7 +6,7 @@ import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solari
 
 @inject('store')
 @observer
-class Code extends React.Component {
+class CodeView extends React.Component {
 
     render() {
         const { hidden } = this.props
@@ -34,4 +34,4 @@ class Code extends React.Component {
     }
 }
 
-export default Code
+export default CodeView

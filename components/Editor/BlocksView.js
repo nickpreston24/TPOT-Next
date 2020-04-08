@@ -6,7 +6,7 @@ import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solari
 
 @inject('store')
 @observer
-class Blocks extends React.Component {
+class BlocksView extends React.Component {
 
     render() {
         const { hidden, state } = this.props
@@ -32,4 +32,4 @@ class Blocks extends React.Component {
     }
 }
 
-export default Blocks
+export default BlocksView

@@ -1,9 +1,9 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
 import Original from './Original'
-import Blocks from './Blocks'
-import Draft from './Draft'
-import Code from './Code'
+import BlocksView from './BlocksView'
+import DraftView from './DraftView'
+import CodeView from './CodeView'
 
 // The <Editor /> component is wrapper class that meshes together a DraftJS
 // editor plus several visualizers. Most of its methods are an abstraction
@@ -56,13 +56,13 @@ class EditorView extends React.Component {
         return this.state.original
     }
 
-    set stylesheet(stylesheet) {
-        this.draft.current.stylesheet = stylesheet
-    }
+    // set stylesheet(stylesheet) {
+    //     this.draft.current.stylesheet = stylesheet
+    // }
 
-    get stylesheet() {
-        return this.draft.current.stylesheet
-    }
+    // get stylesheet() {
+    //     return this.draft.current.stylesheet
+    // }
 
     get blocks() {
         return !!this.draft.current ? this.draft.current.blocks : ''
@@ -75,9 +75,9 @@ class EditorView extends React.Component {
             <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
                 <Box display={mode === 'draft' ? 'flex' : 'block' } width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
                     <Original state={original} hidden={mode !== 'original'} />
-                    <Draft ref={draft} hidden={mode !== 'draft'} saveFn={saveFn} />
-                    <Code state={code} hidden={mode !== 'code'} />
-                    <Blocks state={blocks} hidden={mode !== 'blocks'} />
+                    <DraftView ref={draft} hidden={mode !== 'draft'} saveFn={saveFn} />
+                    <CodeView state={code} hidden={mode !== 'code'} />
+                    <BlocksView state={blocks} hidden={mode !== 'blocks'} />
                 </Box>
                 <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
                     { children }

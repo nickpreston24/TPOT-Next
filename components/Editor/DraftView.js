@@ -11,7 +11,7 @@ import { Toolbar } from './components/Toolbar';
 // React.setState() rather than something like Redux or MobX. Additional plugins
 // can be written for the editor and are registered under ./functions/plugins
 
-class Draft extends React.Component {
+class DraftView extends React.Component {
 
     editor = React.createRef()
 
@@ -94,4 +94,4 @@ class Draft extends React.Component {
     }
 }
 
-export default Draft
+export default DraftView
