@@ -1,4 +1,3 @@
-import { } from './plugins/index';
 import { EditorState, Modifier, RichUtils } from "draft-js";
 import { useRef, useState } from "react";
 import { PrimaryButton } from "./buttons/PrimaryButton";

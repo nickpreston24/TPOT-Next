@@ -6,6 +6,7 @@ import { EditorState, convertFromRaw } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { RichEditor } from './RichEditor'
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
 // Toolbox. When the shim mounts a reference is made to our <Editor /> child.
@@ -14,9 +15,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 // the standalone editor, such as mode switching, saving, initial state, etc. It
 // also allows us to ask the standalone editor for his data so we can publish it.
 
-// @inject('store')
-// @withForm
-// @observer
 class DocumentEditor extends Component {
 
   // Make a ref to the standalone editor to access its built-in functions and state
@@ -39,9 +37,9 @@ class DocumentEditor extends Component {
   init() {
     let { document } = this.props
     if (!document) return // Ditch if there is no document, will render a a <CircularProgress /> instead.
-    let editorRef = this.editor.current
+    let editor = this.editor.current
     // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />
-    if (!editorRef) return
+    if (!editor) return
     let { draft, code, original, stylesheet } = toJS(document.data)
 
     code = JSON.parse(code)
@@ -52,12 +50,12 @@ class DocumentEditor extends Component {
       draft = JSON.parse(draft)
       const contentState = convertFromRaw(draft)
       const initialState = EditorState.createWithContent(contentState)
-      editorRef.editorState = initialState
+      editor.editorState = initialState
     }
 
-    editorRef.stylesheet = stylesheet || {}
-    editorRef.original = original || ''
-    editorRef.code = code || '<p></p>'
+    editor.stylesheet = stylesheet || {}
+    editor.original = original || ''
+    editor.code = code || '<p></p>'
   }
 
   // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
@@ -70,6 +68,7 @@ class DocumentEditor extends Component {
     const mode = this.editor.current ? this.editor.current.mode : 'draft'
     const noData = document.isLoading || !store || !document
 
+    console.log('editor state: ', this.editor.editorState)
     return (
       <>
         {noData
@@ -79,6 +78,7 @@ class DocumentEditor extends Component {
           : (
             <>
               {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
+              {/* <RichEditor editor={this.editor} editorState={this.editor.editorState} /> */}
               <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
                   <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
