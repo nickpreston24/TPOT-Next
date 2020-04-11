@@ -53,7 +53,7 @@ const styles = {
         borderRadius: "40px",
         padding: 20
     },
-    editor: {
+    content: {
         backgroundColor: palette.secondary.eggshell,
         border: "1px solid " + palette.secondary.orange,
         overflowY: "auto",

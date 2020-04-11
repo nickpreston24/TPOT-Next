@@ -41,6 +41,7 @@
     "draft-js-static-toolbar-plugin": "^3.0.1",
     "draft-js-typeahead": "^0.1.1",
     "draft-js-undo-plugin": "^2.0.3",
+    "draftjs-to-html": "^0.9.1",
     "file2html": "^0.2.0",
     "file2html-ooxml": "^0.2.2",
     "firebase": "^6.5.0",

@@ -1,12 +1,11 @@
-import { } from './functions/index';
+import { } from './plugins/index';
 import { EditorState, Modifier, RichUtils } from "draft-js";
-import Editor from 'draft-js-plugins-editor';
 import { useRef, useState } from "react";
 import { PrimaryButton } from "./buttons/PrimaryButton";
 import { SubmitButton } from "./buttons/SubmitButton";
 import { plugins, RedoButton, sampleEditorState, UndoButton } from './plugins';
-import { getJsonFromRaw } from './functions'
-import { generateHtmlFromEditorState } from './functions'
+import { generateHtmlFromEditorState, getJsonFromRaw } from './functions'
+import Editor from 'draft-js-plugins-editor';
 import styles, { colorStyleMap } from './styles'
 
 let publish = null; //TODO: use Publisher class
@@ -14,19 +13,14 @@ let publish = null; //TODO: use Publisher class
 /* 
  * A rich text Draft Editor that uses Draft JS Plugins library  
  */
-export const RichEditor = ({ draftState }) => {
+export const RichEditor = ({ draftState, editorRef }) => {
 
-  if (!draftState)
-    draftState = null
-  // console.log('what I got from DocEditor: ', html)
-  // console.log(wp, 'raw draft:', draft, 'draft editor state: ', EditorState.createWithContent(convertFromRaw(JSON.parse(draft))))  
+  if (!draftState || !editorRef)
+    return <div>Not Ready!</div>   
+  
+  editorRef = editorRef || useRef(null);
 
-  // TODO: Ensure this always gets passed in, instead of init here:
-
-
-
-  const editorRef = useRef(null);
-  const { root, editor } = styles;
+  const { root, content } = styles;
   // const [editorState, setEditorState] = useState(draftState || EditorState.createEmpty());
 
   // console.log('result of getting editor state from html: ', getEditorStateFromHtml(html))
@@ -35,7 +29,6 @@ export const RichEditor = ({ draftState }) => {
     // || getEditorStateFromHtml(html) 
     || sampleEditorState
   );
-
 
   const handleKeyCommand = (command, state) => {
     const nextState = RichUtils.handleKeyCommand(state, command);
@@ -56,16 +49,11 @@ export const RichEditor = ({ draftState }) => {
     onChange(RichUtils.toggleInlineStyle(editorState, type));
   };
 
-
   const onChange = nextstate => {
-    // console.log('Next state: ', nextstate.toJS()) //intercept?
-    // let text = humanize(nextstate);
-    // console.log("Current Text: ", text);
-
     setEditorState(nextstate);
   };
 
-  // const focus = () => editorRef.current.focus()
+  const focus = () => editorRef.current.focus()
 
   const logState = () => {
     //TODO: on Error, log state dump to firebase errors table
@@ -147,16 +135,19 @@ export const RichEditor = ({ draftState }) => {
       <UndoButton />
       <RedoButton />
 
-      <div style={editor}>
+      <div style={content}>
         <Editor
+          /* Required */
           ref={editorRef}
-          blockStyleFn={getBlockStyle}
-          onFocus={logState}
+          plugins={plugins}
+          onChange={onChange}
+          editorState={editorState}
           customStyleMap={colorStyleMap}
           handleKeyCommand={handleKeyCommand}
-          editorState={editorState}
-          onChange={onChange}
-          plugins={plugins}
+
+          /*Local Funcs */
+          blockStyleFn={getBlockStyle}
+          onFocus={logState}
         />
       </div>
 
@@ -177,115 +168,3 @@ export const RichEditor = ({ draftState }) => {
     </div>
   );
 }
-
-const BLOCK_TYPES = [
-  { label: "H1", style: "header-one" },
-  { label: "H2", style: "header-two" },
-  { label: "H3", style: "header-three" },
-  { label: "H4", style: "header-four" },
-  { label: "H5", style: "header-five" },
-  { label: "H6", style: "header-six" },
-  { label: '"', style: "blockquote" },
-  { label: "*-", style: "unordered-list-item" },
-  { label: "1..3", style: "ordered-list-item" },
-  // { label: "-S-", style: "STRIKETHROUGH" },
-  // { label: "-S-", style: "line-through" }
-  // { label: "Code Block", style: "code-block" }
-];
-
-const getBlockStyle = block => {
-  switch (block.getType()) {
-    case "blockquote":
-      return "RichEditor-blockquote";
-    default:
-      return null;
-  }
-};
-
-const BlockStyleControls = props => {
-  const { editorState } = props;
-  const selection = editorState.getSelection();
-  const blockType = editorState
-    .getCurrentContent()
-    .getBlockForKey(selection.getStartKey())
-    .getType();
-
-  return (
-    <div className="RichEditor-controls">
-      {BLOCK_TYPES.map(type => {
-        return (
-          <PrimaryButton
-            // palette={palette}
-            key={type.label}
-            active={type.style === blockType}
-            label={type.label}
-            onToggle={props.onToggle}
-            style={type.style}
-          />
-        )
-      })}
-    </div>
-  );
-};
-
-const ColorPicker = props => {
-
-  var currentStyle = props.editorState.getCurrentInlineStyle();
-
-  return (
-    <div>
-      {COLORS.map(color =>
-        <PrimaryButton
-          key={color.label}
-          active={currentStyle.has(color.style)}
-          label={color.label}
-          onToggle={props.onToggle}
-          style={color.style}
-        // style={"color-" + colorStyleMap[color.style].color}
-        // style={"color-#bada55"}
-        />)
-      }
-    </div>
-  )
-}
-
-var COLORS = [
-  { label: 'Red', style: 'red' },
-  { label: 'Orange', style: 'orange' },
-  { label: 'Yellow', style: 'yellow' },
-  { label: 'Green', style: 'green' },
-  { label: 'Blue', style: 'blue' },
-  { label: 'Indigo', style: 'indigo' },
-  { label: 'Violet', style: 'violet' },
-  { label: 'Awesome', style: 'awesome' },
-  { label: 'Giraffe', style: 'giraffe' },
-  { label: 'Mutt', style: 'doggie' },
-  { label: 'Upstack', style: 'upstack' },
-  { label: 'Taters', style: 'taters' },
-  { label: 'TPOT', style: 'teapot' },
-];
-
-
-var INLINE_STYLES = [
-  { label: "Bold", style: "BOLD" },
-  { label: "Italic", style: "ITALIC" },
-  { label: "Underline", style: "UNDERLINE" },
-  { label: "Monospace", style: "CODE" }
-];
-
-const InlineStyleControls = props => {
-  var currentStyle = props.editorState.getCurrentInlineStyle();
-  return (
-    <div className="RichEditor-controls">
-      {INLINE_STYLES.map(type => (
-        <PrimaryButton
-          key={type.label}
-          active={currentStyle.has(type.style)}
-          label={type.label}
-          onToggle={props.onToggle}
-          style={type.style}
-        />
-      ))}
-    </div>
-  );
-};

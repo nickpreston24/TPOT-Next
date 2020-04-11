@@ -1,7 +1,7 @@
 import { inject, observer } from 'mobx-react'
 import React, { Component } from 'react'
 import { withForm } from './DocumentForm'
-import EditorView from './Editor/EditorView'
+import EditorView from './Editor'
 import { EditorState, convertFromRaw } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
@@ -14,9 +14,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 // the standalone editor, such as mode switching, saving, initial state, etc. It
 // also allows us to ask the standalone editor for his data so we can publish it.
 
-@inject('store')
-@withForm
-@observer
+// @inject('store')
+// @withForm
+// @observer
 class DocumentEditor extends Component {
 
   // Make a ref to the standalone editor to access its built-in functions and state
@@ -26,7 +26,9 @@ class DocumentEditor extends Component {
     // Initialize the Draft editor with the document's data
     this.init()
     // Set a Auto-Save Timer for the Editor's content (1 mins)
-    this.timer = setInterval(() => this.props.store.save(this.props.id), 600000)
+    this.timer = setInterval(() =>
+
+      this.props.store.save(this.props.id), 600000)
   }
 
   componentWillUnmount() {
@@ -66,7 +68,7 @@ class DocumentEditor extends Component {
   render() {
     const { document, store, id } = this.props
     const mode = this.editor.current ? this.editor.current.mode : 'draft'
-    const noData = document.isLoading
+    const noData = document.isLoading || !store || !document
 
     return (
       <>
@@ -93,4 +95,4 @@ class DocumentEditor extends Component {
   }
 }
 
-export default DocumentEditor
+export default withForm(inject('store')(observer(DocumentEditor)));
