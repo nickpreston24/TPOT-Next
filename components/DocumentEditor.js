@@ -1,16 +1,16 @@
-import { inject, observer } from 'mobx-react'
-import React, { Component } from 'react'
-import { withForm } from './DocumentForm'
+import {inject, observer} from 'mobx-react'
+import React, {Component} from 'react'
+import {withForm} from './DocumentForm'
 import EditorView from './Editor'
-import { EditorState, convertFromRaw } from 'draft-js'
-import { toJS } from 'mobx'
-import { Button, ButtonGroup } from '@material-ui/core'
+import {convertFromRaw, EditorState} from 'draft-js'
+import {toJS} from 'mobx'
+import {Button, ButtonGroup} from '@material-ui/core'
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from './RichEditor'
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
 // Toolbox. When the shim mounts a reference is made to our <Editor /> child.
-// The Editor is designed in a way to be drag and drop and application independant.
+// The Editor is designed in a way to be drag and drop and application independent.
 // This shim allows us to connect our application and state and call methods off
 // the standalone editor, such as mode switching, saving, initial state, etc. It
 // also allows us to ask the standalone editor for his data so we can publish it.
@@ -49,13 +49,12 @@ class DocumentEditor extends Component {
     if (!!draft) {
       draft = JSON.parse(draft)
       const contentState = convertFromRaw(draft)
-      const initialState = EditorState.createWithContent(contentState)
-      editor.editorState = initialState
+      editor.editorState = EditorState.createWithContent(contentState)
     }
 
     editor.stylesheet = stylesheet || {}
     editor.original = original || ''
-    editor.code = code || '<p></p>'
+    editor.code = code || '<p/>'
   }
 
   // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
@@ -72,13 +71,12 @@ class DocumentEditor extends Component {
     return (
       <>
         {noData
-          // No Document, duck safely out with a loader, just incase (... should already provided from [doc].js )
+          // No Document, duck safely out with a loader, just in case (... should already provided from [doc].js )
           ? <CircularProgress />
           // Yay Document! Render the Editor
           : (
             <>
-              {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
-              {/* <RichEditor editor={this.editor} editorState={this.editor.editorState} /> */}
+              {/* You can replace what is below here with another draft editor instead of <Editor /> if you wanted to */}
               <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
                   <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
