@@ -1,10 +1,10 @@
-import {inject, observer} from 'mobx-react'
-import React, {Component} from 'react'
-import {withForm} from './DocumentForm'
+import { inject, observer } from 'mobx-react'
+import React, { Component } from 'react'
+import { withForm } from './DocumentForm'
 import EditorView from './Editor'
-import {convertFromRaw, EditorState} from 'draft-js'
-import {toJS} from 'mobx'
-import {Button, ButtonGroup} from '@material-ui/core'
+import { convertFromRaw, EditorState } from 'draft-js'
+import { toJS } from 'mobx'
+import { Button, ButtonGroup } from '@material-ui/core'
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from './RichEditor'
 
@@ -66,8 +66,9 @@ class DocumentEditor extends Component {
     const { document, store, id } = this.props
     const mode = this.editor.current ? this.editor.current.mode : 'draft'
     const noData = document.isLoading || !store || !document
+    const state = this.editor.editorState;
 
-    console.log('editor state: ', this.editor.editorState)
+    console.log('editor state: ', state)
     return (
       <>
         {noData
@@ -77,14 +78,22 @@ class DocumentEditor extends Component {
           : (
             <>
               {/* You can replace what is below here with another draft editor instead of <Editor /> if you wanted to */}
-              <EditorView ref={this.editor} saveFn={() => store.save(id)} >
+              {/* <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
                   <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
                   <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => this.setMode('draft')}>Draft</Button>
                   <Button color={mode === 'code' ? 'secondary' : 'primary'} onClick={() => this.setMode('code')}>Code</Button>
                   <Button color={mode === 'blocks' ? 'secondary' : 'primary'} onClick={() => this.setMode('blocks')}>Blocks</Button>
                 </ButtonGroup>
-              </EditorView>
+              </EditorView> */}
+              <RichEditor editorRef={this.editor} draftState={state} >
+                {/* <ButtonGroup variant="outlined">
+                  <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
+                  <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => this.setMode('draft')}>Draft</Button>
+                  <Button color={mode === 'code' ? 'secondary' : 'primary'} onClick={() => this.setMode('code')}>Code</Button>
+                  <Button color={mode === 'blocks' ? 'secondary' : 'primary'} onClick={() => this.setMode('blocks')}>Blocks</Button>
+                </ButtonGroup> */}
+              </RichEditor>
             </>
           )
         }
