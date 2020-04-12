@@ -1,10 +1,11 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
 import Editor from 'draft-js-plugins-editor';
-import { baseStyleMap } from './functions/utilities'
-import plugins from './functions/plugins'
+import { baseStyleMap } from '../functions/utilities'
+import { inject, observer } from 'mobx-react'
+import plugins from '../functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
-import { Toolbar } from './components/Toolbar';
+import { Toolbar } from '../components/Toolbar';
 
 // The <Draft /> component is the primary view mode of the <Editor /> It can
 // also be used in a standalone app. All state managment is best done with
@@ -91,6 +92,8 @@ const DraftViewFC = props => {
     }
 };
 
+@inject('store')
+@observer
 class DraftView extends React.Component {
 
     editorRef = React.createRef()

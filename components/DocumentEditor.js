@@ -1,12 +1,13 @@
-import {inject, observer} from 'mobx-react'
-import React, {Component} from 'react'
-import {withForm} from './DocumentForm'
-import EditorView from './Editor'
+import { inject, observer } from 'mobx-react'
+import React, { Component } from 'react'
+import { withForm } from './DocumentForm'
+import EditorView from './Editor/experimental/EditorView'
 import { convertFromRaw, EditorState } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from './RichEditor'
+import { NullReferenceError } from './Errors'
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
 // Toolbox. When the shim mounts a reference is made to our <Editor /> child.
@@ -22,7 +23,7 @@ class DocumentEditor extends Component {
 
   componentDidMount() {
     // Initialize the Draft editor with the document's data
-    this.init()
+    this.init(this.props)
     // Set a Auto-Save Timer for the Editor's content (1 mins)
     this.timer = setInterval(() =>
 
@@ -34,14 +35,24 @@ class DocumentEditor extends Component {
   }
 
   // the init() function fills in data for Draft editor - including an initial, immutable DraftState :)
-  init() {
-    let { document } = this.props
-    if (!document) return // Ditch if there is no document, will render a a <CircularProgress /> instead.
-    let editor = this.editor.current
-    // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />
-    if (!editor) return
+  init({ document }) {
+
+    console.log('init  (DocumentEditor)')
+
+    if (!document) {
+      throw new ArgumentNullReferenceError('No document found!')
+      // return // Ditch if there is no document, will render a a <CircularProgress /> instead.
+    }
+
+    let editorRef = this.editor.current
+    if (!editorRef) {
+      throw new NullReferenceError('editorRef.current')
+      // return // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />      
+    }
+
     let { draft, code, original, stylesheet } = toJS(document.data)
 
+    // console.log('parts: ', draft, code, original, stylesheet)
     code = JSON.parse(code)
     original = JSON.parse(original)
     stylesheet = JSON.parse(stylesheet)
@@ -49,16 +60,18 @@ class DocumentEditor extends Component {
     if (!!draft) {
       draft = JSON.parse(draft)
       const contentState = convertFromRaw(draft)
-      editor.editorState = EditorState.createWithContent(contentState)
+      editorRef.editorState = EditorState.createWithContent(contentState)
+      console.log('draft set!')
     }
 
-    editor.stylesheet = stylesheet || {}
-    editor.original = original || ''
-    editor.code = code || '<p/>'
+    editorRef.stylesheet = stylesheet || {}
+    editorRef.original = original || ''
+    editorRef.code = code || '<p/>'
   }
 
   // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
   setMode(name) {
+
     this.editor.current.mode = name
   }
 
@@ -68,32 +81,36 @@ class DocumentEditor extends Component {
     const noData = document.isLoading || !store || !document
     const state = this.editor.editorState;
 
-    console.log('editor state: ', state)
+    console.log(
+      'isLoading', !!document.isLoading
+      , 'document', !!document//, document
+    )
+    console.log('RENDER called (DocumentEditor)')
+
+    //// These are undefined by this point, both passes:
+    // console.log('editor state: ', state, 'editor ref:', this.editorRef)
     return (
       <>
         {noData
-          // No Document, duck safely out with a loader, just in case (... should already provided from [doc].js )
           ? <CircularProgress />
-          // Yay Document! Render the Editor
           : (
             <>
               {/* You can replace what is below here with another draft editor instead of <Editor /> if you wanted to */}
-              {/* <EditorView ref={this.editor} saveFn={() => store.save(id)} >
+              <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
-                  <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
-                  <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => this.setMode('draft')}>Draft</Button>
-                  <Button color={mode === 'code' ? 'secondary' : 'primary'} onClick={() => this.setMode('code')}>Code</Button>
-                  <Button color={mode === 'blocks' ? 'secondary' : 'primary'} onClick={() => this.setMode('blocks')}>Blocks</Button>
+                  <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
+                  <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
+                  <Button color={ mode === 'code' ? 'secondary' : 'primary' } onClick={() => this.setMode('code')}>Code</Button>
+                  <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
                 </ButtonGroup>
-              </EditorView> */}
-              <RichEditor editorRef={this.editor} draftState={state} >
-                {/* <ButtonGroup variant="outlined">
-                  <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => this.setMode('original')}>Original</Button>
-                  <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => this.setMode('draft')}>Draft</Button>
-                  <Button color={mode === 'code' ? 'secondary' : 'primary'} onClick={() => this.setMode('code')}>Code</Button>
-                  <Button color={mode === 'blocks' ? 'secondary' : 'primary'} onClick={() => this.setMode('blocks')}>Blocks</Button>
-                </ButtonGroup> */}
-              </RichEditor>
+              </EditorView>      
+              <br/>        
+              {/* <RichEditor
+                document={document}
+                //TODO: @BP, The following props must be defined before I can use them like in EditorView
+                editorRef={this.editorRef}
+                draftState={state}
+              > </RichEditor> */}
             </>
           )
         }

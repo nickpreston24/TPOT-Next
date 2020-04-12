@@ -17,11 +17,11 @@ class OriginalDocxView extends React.Component {
         if (!this.state.domTree) {
             if (this.props.state) {
                 const reactTree = await ReactHtmlParser(this.props.state)
-                this.setState({ 
+                this.setState({
                     loading: false,
                     domTree: reactTree
-                 })
-            }   
+                })
+            }
         }
     }
 
@@ -34,7 +34,7 @@ class OriginalDocxView extends React.Component {
                 <Box maxWidth={800} display="block">
                     {loading
                         ? <CircularProgress />
-                        : <>{ domTree }</>
+                        : <>{domTree}</>
                     }
                 </Box>
             </Box>

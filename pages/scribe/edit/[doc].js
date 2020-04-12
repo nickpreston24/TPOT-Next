@@ -6,6 +6,7 @@ import DocumentDetails from "../../../components/DocumentDetails";
 import DocumentForm from "../../../components/DocumentForm";
 import DocumentEditor from "../../../components/DocumentEditor";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { RichEditor } from "../../../components/RichEditor";
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides
@@ -25,6 +26,14 @@ class Document extends Component {
     const { isLoading } = document
     const { doc } = router.query;
 
+    console.log(
+      'doc', doc
+      , 'isLoading', !!isLoading
+      , 'document', !!document
+      , 'router', !!router
+    )
+
+    console.info('RENDER ([doc.js])')
     return (
       <>
         {isLoading ? (
@@ -33,16 +42,17 @@ class Document extends Component {
             <CircularProgress />
           </Dashboard>
         ) : (
-          // Render the Dashboard with the Editor and Details when document is ready
-          <DocumentForm {...{ document }}>
-            <Dashboard
-              title={`TPOT Scribe - Edit - ${doc}`}
-              details={() => <DocumentDetails {...{ document }} />}
-            >
-              <DocumentEditor {...{ document, id: doc }} />
-            </Dashboard>
-          </DocumentForm>
-        )}
+            // Render the Dashboard with the Editor and Details when document is ready
+            <DocumentForm {...{ document }}>
+              <Dashboard
+                title={`TPOT Scribe - Edit - ${doc}`}
+                details={() => <DocumentDetails {...{ document }} />}
+              >
+                {/* <DocumentEditor {...{ document, id: doc }} /> */}
+                <RichEditor document={document} />
+              </Dashboard>
+            </DocumentForm>
+          )}
       </>
     );
   }

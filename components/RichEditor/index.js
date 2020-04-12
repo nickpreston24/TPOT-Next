@@ -1,33 +1,80 @@
-import { EditorState, Modifier, RichUtils } from "draft-js";
+import { EditorState, Modifier, RichUtils, convertFromRaw } from "draft-js";
 import { useRef, useState } from "react";
-import { PrimaryButton } from "./buttons/PrimaryButton";
+import { Box } from '@material-ui/core'
+import { toJS } from 'mobx'
+import NotReadyMessage from '../Editor/components/NotReadyMessage'
+
 import { SubmitButton } from "./buttons/SubmitButton";
-import { plugins, RedoButton, sampleEditorState, UndoButton } from './plugins';
-import { generateHtmlFromEditorState, getJsonFromRaw } from './functions'
+import {
+  plugins
+  , RedoButton
+  , sampleEditorState
+  , UndoButton
+  , BlockStyleControls
+  , InlineStyleControls
+  , ColorPicker
+  , getBlockStyle
+} from './plugins';
+
+import {
+  generateHtmlFromEditorState
+  , getJsonFromRaw
+  , logState
+  , focus
+} from './functions'
+
 import Editor from 'draft-js-plugins-editor';
 import styles, { colorStyleMap } from './styles'
+import { ArgumentNullReferenceError } from "../Errors";
 
 let publish = null; //TODO: use Publisher class
 
 /* 
  * A rich text Draft Editor that uses Draft JS Plugins library  
  */
-export const RichEditor = ({ draftState, editorRef }) => {
+export const RichEditor = ({
+  // Required props:
+  document
+  // Optional props:
+  , draftState = sampleEditorState
+  , editorRef = null }
+) => {
 
-  if (!draftState || !editorRef)
-    return <div>Not Ready!</div>   
-  
+  if (document) {
+    return NotReadyMessage(new ArgumentNullReferenceError("document"))
+  }
+
+  // if (!draftState)
+  //   return NotReady('draftState was not provided')
+
+  // if (!editorRef) 
+  //   return NotReady('editorRef was not provided')
+
+  // console.log('Current document: ', document)
+
   editorRef = editorRef || useRef(null);
+
 
   const { root, content } = styles;
   // const [editorState, setEditorState] = useState(draftState || EditorState.createEmpty());
 
   // console.log('result of getting editor state from html: ', getEditorStateFromHtml(html))
 
-  const [editorState, setEditorState] = useState(draftState
-    // || getEditorStateFromHtml(html) 
-    || sampleEditorState
-  );
+  // console.log('sample: ', editorState)
+
+  let { draft, code, original, stylesheet } = toJS(document.data)
+  console.log('parts: ', draft, !!code, !!original, !!stylesheet)
+
+  let tempEditorState;
+  if (!!draft) {
+    console.log('draft: ', draft)
+    draft = JSON.parse(draft)
+    console.log('Raw: ', draft)
+    tempEditorState = EditorState.createWithContent(convertFromRaw(draft))
+    console.log('passed in: ', tempEditorState, '\nsample:', sampleEditorState)
+  }
+
+  const [editorState, setEditorState] = useState(sampleEditorState);
 
   const handleKeyCommand = (command, state) => {
     const nextState = RichUtils.handleKeyCommand(state, command);
@@ -50,13 +97,6 @@ export const RichEditor = ({ draftState, editorRef }) => {
 
   const onChange = nextstate => {
     setEditorState(nextstate);
-  };
-
-  const focus = () => editorRef.current.focus()
-
-  const logState = () => {
-    //TODO: on Error, log state dump to firebase errors table
-    console.log("Current state (onFocus):", editorState.toJS());
   };
 
   const toggleColor = (toggledColor) => {
@@ -99,6 +139,8 @@ export const RichEditor = ({ draftState, editorRef }) => {
     onChange(nextEditorState)
   }
 
+
+
   // TODO: Unsure what to do, should I plug it in somewhere?
   // const handlePastedText = (text, styles, editorState) => {
   //     setEditorState({
@@ -134,7 +176,9 @@ export const RichEditor = ({ draftState, editorRef }) => {
       <UndoButton />
       <RedoButton />
 
-      <div style={content}>
+      {/* <Box display="flex" flexGrow={1} height="400%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} > */}
+      {/* <Box display={'flex'} width="300%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: 'scroll' }}> */}
+      <div style={content} >
         <Editor
           /* Required */
           ref={editorRef}
@@ -146,9 +190,11 @@ export const RichEditor = ({ draftState, editorRef }) => {
 
           /*Local Funcs */
           blockStyleFn={getBlockStyle}
-          onFocus={logState}
+          onFocus={logState(editorState)}
         />
       </div>
+      {/* </Box> */}
+      {/* </Box> */}
 
       {!!publish && <SubmitButton
         onClick={publish}>Publish to TPOT</SubmitButton>}

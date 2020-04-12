@@ -1,6 +1,8 @@
+import { PrimaryButton } from '../buttons/PrimaryButton'
+import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
+
 /** Draft JS plugins */
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
-
 import {
     ItalicButton,
     BoldButton,
@@ -57,8 +59,6 @@ let sampleText = "Hello there!"
 
 export const sampleEditorState = createEditorStateWithText(sampleText)
 
-
-
 const BLOCK_TYPES = [
     { label: "H1", style: "header-one" },
     { label: "H2", style: "header-two" },
@@ -74,7 +74,7 @@ const BLOCK_TYPES = [
     // { label: "Code Block", style: "code-block" }
 ];
 
-const getBlockStyle = block => {
+export const getBlockStyle = block => {
     switch (block.getType()) {
         case "blockquote":
             return "RichEditor-blockquote";
@@ -83,8 +83,11 @@ const getBlockStyle = block => {
     }
 };
 
-export const BlockStyleControls = props => {
-    const { editorState } = props;
+export const BlockStyleControls = ({ editorState, onToggle }) => {
+
+    if (!editorState)
+        throw new EditorStateNotFoundError()
+
     const selection = editorState.getSelection();
     const blockType = editorState
         .getCurrentContent()
@@ -100,7 +103,7 @@ export const BlockStyleControls = props => {
                         key={type.label}
                         active={type.style === blockType}
                         label={type.label}
-                        onToggle={props.onToggle}
+                        onToggle={onToggle}
                         style={type.style}
                     />
                 )

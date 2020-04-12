@@ -1,12 +1,21 @@
 import { ContentState, convertFromHTML, convertToRaw } from 'draft-js'
 import { colorStyleMap } from '../styles'
 import draftToHtml from 'draftjs-to-html';
+import { toJS } from 'mobx'
+import { EditorStateNotFoundError } from '../../Errors'
 
 // TODO: Move to a constants.js
 const draftToHtmlPrefix = "color-";
 
+const focus = () => editorRef.current.focus()
+
+const logState = editorState => {
+    if (!editorState) throw new EditorStateNotFoundError()
+    console.log("Current state:", editorState.toJS());
+};
+
 const transformInlineStyles = (rawContentState) => {
-    
+
     // Get all avaialable color names:
     let currentColors = Object.keys(colorStyleMap)
 
@@ -41,6 +50,8 @@ const getEditorStateFromHtml = (html = null) => {
  * Generate the the Html from Draft state
  */
 const generateHtmlFromEditorState = (editorState) => {
+    if (!editorState)
+        throw new EditorStateNotFoundError()
 
     /* Using draft-js-export-html: */
 
@@ -55,14 +66,18 @@ const generateHtmlFromEditorState = (editorState) => {
     return draftToHtml(rawContentState)
 }
 
+const getJsonFromRaw = editorState => {
+    if (!editorState)
+        throw new EditorStateNotFoundError()
 
-
-const getJsonFromRaw = (editorState) => JSON.stringify(convertToRaw(editorState.getCurrentContent()));
+    return JSON.stringify(convertToRaw(editorState.getCurrentContent()));
+};
 
 export {
     getEditorStateFromHtml,
     getJsonFromRaw,
     generateHtmlFromEditorState,
+    focus,
+    logState,
 
-
-  }
+}

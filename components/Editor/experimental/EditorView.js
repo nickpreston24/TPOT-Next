@@ -1,9 +1,9 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
-import OriginalDocxView from './OriginalDocxView'
-import BlocksView from './BlocksView'
-import DraftView from './DraftView'
-import CodeView from './CodeView'
+import OriginalDocxView from '../experimental/OriginalDocxView'
+import BlocksView from '../experimental/BlocksView'
+import DraftView from '../experimental/DraftView'
+import CodeView from '../experimental/CodeView'
 
 // The <Editor /> component is wrapper class that meshes together a DraftJS
 // editor plus several visualizers. Most of its methods are an abstraction
@@ -71,7 +71,7 @@ class EditorView extends React.Component {
     render() {
         const { mode, code, draftRef, original, blocks } = this
         const { saveFn, children } = this.props
-        console.log('savefn?', saveFn)
+        
         return (
             <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
                 <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
