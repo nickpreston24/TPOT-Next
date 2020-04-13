@@ -5,6 +5,7 @@ import { toJS } from 'mobx'
 import NotReadyMessage from '../Editor/components/NotReadyMessage'
 
 import { SubmitButton } from "./buttons/SubmitButton";
+
 import {
   plugins
   , RedoButton
@@ -20,7 +21,7 @@ import {
   generateHtmlFromEditorState
   , getJsonFromRaw
   , logState
-  , focus
+
 } from './functions'
 
 import Editor from 'draft-js-plugins-editor';
@@ -40,8 +41,8 @@ export const RichEditor = ({
   , editorRef = null }
 ) => {
 
-  if (document) {
-    return NotReadyMessage(new ArgumentNullReferenceError("document"))
+  if (!document) {
+    return NotReadyMessage(new ArgumentNullReferenceError("document").message)
   }
 
   // if (!draftState)
@@ -54,25 +55,7 @@ export const RichEditor = ({
 
   editorRef = editorRef || useRef(null);
 
-
   const { root, content } = styles;
-  // const [editorState, setEditorState] = useState(draftState || EditorState.createEmpty());
-
-  // console.log('result of getting editor state from html: ', getEditorStateFromHtml(html))
-
-  // console.log('sample: ', editorState)
-
-  let { draft, code, original, stylesheet } = toJS(document.data)
-  console.log('parts: ', draft, !!code, !!original, !!stylesheet)
-
-  let tempEditorState;
-  if (!!draft) {
-    console.log('draft: ', draft)
-    draft = JSON.parse(draft)
-    console.log('Raw: ', draft)
-    tempEditorState = EditorState.createWithContent(convertFromRaw(draft))
-    console.log('passed in: ', tempEditorState, '\nsample:', sampleEditorState)
-  }
 
   const [editorState, setEditorState] = useState(sampleEditorState);
 
@@ -137,21 +120,7 @@ export const RichEditor = ({
     }
 
     onChange(nextEditorState)
-  }
-
-
-
-  // TODO: Unsure what to do, should I plug it in somewhere?
-  // const handlePastedText = (text, styles, editorState) => {
-  //     setEditorState({
-  //         editorState: removeEditorStyles(text, editorState),
-  //     });
-  // };
-
-  // const alterColorMap = colorStyleMap.map(x => {
-  //   console.log('alt color', x.color);
-  //   return x.;
-  // })
+  };
 
   return (
     <div className="RichEditor-root" style={root}>
@@ -212,4 +181,5 @@ export const RichEditor = ({
 
     </div>
   );
-}
+
+};

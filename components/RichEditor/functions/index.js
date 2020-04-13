@@ -2,7 +2,7 @@ import { ContentState, convertFromHTML, convertToRaw } from 'draft-js'
 import { colorStyleMap } from '../styles'
 import draftToHtml from 'draftjs-to-html';
 import { toJS } from 'mobx'
-import { EditorStateNotFoundError } from '../../Errors'
+import { EditorStateNotFoundError, ArgumentNullReferenceError } from '../../Errors'
 
 // TODO: Move to a constants.js
 const draftToHtmlPrefix = "color-";
@@ -31,6 +31,63 @@ const transformInlineStyles = (rawContentState) => {
                 inlineStyle.style = renamedInlineColor
             }));
 }
+
+
+
+// export const toggleBlockType = type => {
+//     onChange(RichUtils.toggleBlockType(editorState, type));
+// };
+
+// export const toggleInlineStyle = type => {
+//     onChange(RichUtils.toggleInlineStyle(editorState, type));
+// };
+
+
+/** For a given state, toggle the selection to the given color  */
+export const toggleColor = (editorState, toggledColor = 'black') => {
+
+    if (!editorState)
+        throw new EditorStateNotFoundError()
+
+    // console.log('toggled color:', toggledColor);
+
+    const selection = editorState.getSelection();
+    // console.log('selection: ', selection);
+
+    const nextContentState = Object.keys(colorStyleMap)
+        .reduce((contentState, color) => {
+            // console.log('color', colorStyleMap[color].color);
+            return Modifier.removeInlineStyle(contentState, selection, color)
+        }, editorState.getCurrentContent())
+
+    let nextEditorState = EditorState.push(
+        editorState,
+        nextContentState,
+        'change-inline-style'
+    )
+
+    const currentStyle = editorState.getCurrentInlineStyle();
+
+    // Unset the style override for the current color:
+    if (selection.isCollapsed()) {
+        // console.log('unset style.');
+        nextEditorState = currentStyle.reduce((state, color) => {
+            return RichUtils.toggleInlineStyle(state, color)
+        }, nextEditorState)
+    }
+
+    // If the color is being toggled on, apply it.
+    if (!currentStyle.has(toggledColor)) {
+        // console.log('applied color!', currentStyle);
+        nextEditorState = RichUtils.toggleInlineStyle(
+            nextEditorState,
+            toggledColor
+        )
+    }
+
+    return nextEditorState;
+}
+
 
 /**
  * Generate EditorState from a given html string

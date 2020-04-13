@@ -40,14 +40,12 @@ class DocumentEditor extends Component {
     console.log('init  (DocumentEditor)')
 
     if (!document) {
-      throw new ArgumentNullReferenceError('No document found!')
-      // return // Ditch if there is no document, will render a a <CircularProgress /> instead.
+      return // Ditch if there is no document, will render a a <CircularProgress /> instead.
     }
 
     let editorRef = this.editor.current
     if (!editorRef) {
-      throw new NullReferenceError('editorRef.current')
-      // return // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />      
+      return // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />      
     }
 
     let { draft, code, original, stylesheet } = toJS(document.data)
@@ -88,7 +86,7 @@ class DocumentEditor extends Component {
     console.log('RENDER called (DocumentEditor)')
 
     //// These are undefined by this point, both passes:
-    // console.log('editor state: ', state, 'editor ref:', this.editorRef)
+    console.log('editor state: ', state, 'editor ref:', this.editorRef)
     return (
       <>
         {noData
@@ -96,7 +94,7 @@ class DocumentEditor extends Component {
           : (
             <>
               {/* You can replace what is below here with another draft editor instead of <Editor /> if you wanted to */}
-              <EditorView ref={this.editor} saveFn={() => store.save(id)} >
+              {/* <EditorView ref={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
                   <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
                   <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
@@ -104,13 +102,13 @@ class DocumentEditor extends Component {
                   <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
                 </ButtonGroup>
               </EditorView>      
-              <br/>        
-              {/* <RichEditor
+              <br/>         */}
+              <RichEditor
                 document={document}
                 //TODO: @BP, The following props must be defined before I can use them like in EditorView
                 editorRef={this.editorRef}
                 draftState={state}
-              > </RichEditor> */}
+              > </RichEditor>
             </>
           )
         }

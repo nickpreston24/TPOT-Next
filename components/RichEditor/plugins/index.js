@@ -21,6 +21,7 @@ import createUndoPlugin from 'draft-js-undo-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
+import NotReadyMessage from '../../Editor/components/NotReadyMessage';
 // import createFocusPlugin from 'draft-js-focus-plugin';
 // import createAlignmentPlugin from 'draft-js-alignment-plugin';
 // import editorStyles from './editorStyles.css';
@@ -86,7 +87,7 @@ export const getBlockStyle = block => {
 export const BlockStyleControls = ({ editorState, onToggle }) => {
 
     if (!editorState)
-        throw new EditorStateNotFoundError()
+        throw new EditorStateNotFoundError();
 
     const selection = editorState.getSelection();
     const blockType = editorState
@@ -112,9 +113,12 @@ export const BlockStyleControls = ({ editorState, onToggle }) => {
     );
 };
 
-export const ColorPicker = props => {
+export const ColorPicker = ({ editorState, onToggle }) => {
 
-    var currentStyle = props.editorState.getCurrentInlineStyle();
+    if (!editorState)
+        throw new EditorStateNotFoundError();
+
+    var currentStyle = editorState.getCurrentInlineStyle();
 
     return (
         <div>
@@ -123,7 +127,7 @@ export const ColorPicker = props => {
                     key={color.label}
                     active={currentStyle.has(color.style)}
                     label={color.label}
-                    onToggle={props.onToggle}
+                    onToggle={onToggle}
                     style={color.style}
                 // style={"color-" + colorStyleMap[color.style].color}
                 // style={"color-#bada55"}
@@ -173,3 +177,14 @@ export const InlineStyleControls = props => {
     );
 };
 
+  // TODO: Unsure what to do, should I plug it in somewhere?
+  // const handlePastedText = (text, styles, editorState) => {
+  //     setEditorState({
+  //         editorState: removeEditorStyles(text, editorState),
+  //     });
+  // };
+
+  // const alterColorMap = colorStyleMap.map(x => {
+  //   console.log('alt color', x.color);
+  //   return x.;
+  // })

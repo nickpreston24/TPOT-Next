@@ -48,13 +48,14 @@ class Document extends Component {
                 title={`TPOT Scribe - Edit - ${doc}`}
                 details={() => <DocumentDetails {...{ document }} />}
               >
-                {/* <DocumentEditor {...{ document, id: doc }} /> */}
-                <RichEditor document={document} />
+                <DocumentEditor {...{ document, id: doc }} />
+                {/* <RichEditor document={document} /> */}
               </Dashboard>
             </DocumentForm>
           )}
       </>
     );
+
   }
 }
 
