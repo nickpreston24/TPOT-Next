@@ -29,15 +29,18 @@ function DocumentEditor(props) {
     return <CircularProgress />
   }
 
+
   // Editor is now safe to render. 
   // code dependent on props is below:
   // ______________________________
 
   // Create a reference to the child, EditorView
-  const editorRef = useRef(null)
+  const editorRef = useRef(null) // Access Functions that affect Original, Code, Draft, etc.
+  const draftRef = useRef(null) // Access functions that affect the Vanilla Draft Editor
 
   // Create local states
   const [mode, setMode] = useState('draft');
+  const [editorProperties, setEditorProperties] = useState(null);
 
   // Initialize the EditorViews's data for all
   // types (original, draft, code, etc.)
@@ -58,14 +61,23 @@ function DocumentEditor(props) {
     const draftEditorState = EditorState.createWithContent(contentState)
 
     // Set all the child's modes' states
+    // const test = subscribe()
+    // // console.log('CHILD', childProperties)
+    // console.log('CHILD', editorProperties)
     const childEditor = editorRef.current
-    childEditor.editorState = draftEditorState
-    childEditor.stylesheet = stylesheet
-    childEditor.original = original
-    childEditor.code = code
+    if (!editorRef.current) return
+    // editorRef.hello
+    // childEditor.stylesheet = stylesheet
+    // childEditor.original = original
+    // childEditor.code = code
 
     console.log('Initialized the editor')
-  })
+    // console.log('Statemeny', test)
+    console.log(editorRef.current)
+    // console.log(editorRef.current.getPluginMethods())
+    console.log('Edito Reference?')
+    console.log(draftRef.current)
+  }, [editorRef])
 
   // // Setup an Autosave Timer
   // useEffect(() => {
@@ -79,9 +91,10 @@ function DocumentEditor(props) {
     return (
       // You can replace what is below here with another draft editor intead of <Editor /> if you wanted to
       <EditorView
-        ref={editorRef}
+        editorRef={editorRef}
+        draftRef={draftRef}
         mode={mode}
-        saveFn={() => store.save(id)}
+        handleSave={() => store.save(id)}
         children={
           <ModeSwitcher {...{ mode, setMode }} />
         }

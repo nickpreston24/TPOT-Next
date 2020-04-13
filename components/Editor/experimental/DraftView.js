@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { Component, forwardRef } from 'react'
+import PropTypes from 'prop-types'
 import { Box } from '@material-ui/core'
 import Editor from 'draft-js-plugins-editor';
 import { baseStyleMap } from '../functions/utilities'
@@ -6,11 +7,52 @@ import { inject, observer } from 'mobx-react'
 import plugins from '../functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
 import { Toolbar } from '../components/Toolbar';
+import { compose } from 'recompose';
 
 // The <Draft /> component is the primary view mode of the <Editor /> It can
 // also be used in a standalone app. All state managment is best done with
 // React.setState() rather than something like Redux or MobX. Additional plugins
 // can be written for the editor and are registered under ./functions/plugins
+
+
+const myEditor = props => {
+    
+    const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
+
+    // Use the parent's ref if available otherwise use the vanilla one
+    const editor = !! props.draftRef ? props.draftRef : React.useRef(null)
+
+    // Focus the editor's textbox
+    function focus() {
+        editor.current.focus();
+    }
+
+    // Focus the editor when this component mounts
+    React.useEffect(() => {
+        focus()
+    }, []);
+
+    return (
+        <div onClick={focus} style={{ border: '1px solid black', margin: 20, width: '100%', height: '100%' }}>
+            <Editor
+                ref={editor}
+                editorState={editorState}
+                onChange={editorState => setEditorState(editorState)}
+            />
+        </div>
+    );
+}
+
+// myEditor.propTypes = {
+//     ref: PropTypes.oneOfType([
+//         PropTypes.func, 
+//         PropTypes.shape({ current: PropTypes.instanceOf(Component) })
+//     ]).isRequired
+// }
+
+export default myEditor
+
+
 
 const DraftViewFC = props => {
 
@@ -185,4 +227,4 @@ class DraftView extends React.Component {
     }
 }
 
-export default DraftView
+// export default myEditor
