@@ -53,6 +53,11 @@ export const RichEditor = ({
 
   // console.log('Current document: ', document)
 
+  if (!draftState || !editorRef) {
+    console.log('draftState: ', draftState, 'editorRef:', editorRef)
+    return <div>Not Ready!</div>
+  }
+
   editorRef = editorRef || useRef(null);
 
   const { root, content } = styles;

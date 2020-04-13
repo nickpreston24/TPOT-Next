@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box } from '@material-ui/core'
 import OriginalDocxView from './OriginalDocxView'
 import BlocksView from './BlocksView'
@@ -15,15 +15,16 @@ import CodeView from './CodeView'
 // methods inside this class, set its initial state, and give it a function to
 // save with, etc. This class and its children may always function in isolation.
 
-const EditorViewFC = ({
+export const EditorViewFC = ({
     saveFn,
     children
 }) => {
 
-    draftRef = React.createRef();
+    const draftRef = React.createRef();
+
     // const [state, setState] = useState({ mode: 'draft', code: null, });
     /// OR,
-    const [mode, setMode] = useState(state['mode']);
+    const [mode, setMode] = useState('draft');
     const [code, setCode] = useState(null);
     const [original, setOriginal] = useState(null);
     const [editorState, setEditorState] = useState(draftRef.current.editorState);
@@ -32,15 +33,15 @@ const EditorViewFC = ({
 
     render = () => {
 
-        if (!!this && !!draftRef.current)
-            console.log('setters and getters:',
-                'stylesheet', stylesheet
-                , "blocks", blocks
-                , "code", code
-                , "original", original
-                , "mode", mode
-                , "editorState", editorState
-            )
+        // if (!!this && !!draftRef.current)
+        //     console.log('setters and getters:',
+        //         'stylesheet', stylesheet
+        //         , "blocks", blocks
+        //         , "code", code
+        //         , "original", original
+        //         , "mode", mode
+        //         , "editorState", editorState
+        //     )
 
         // const { mode, code, draftRef, original, blocks } = this;
         console.log('render (EditorView)');
@@ -121,15 +122,15 @@ export class EditorView extends React.Component {
 
 
     render() {
-        // if (!!this && !!this.draftRef.current)
-        //     console.log('setters and getters:',
-        //         'stylesheet', this.stylesheet
-        //         , "blocks", this.blocks
-        //         , "code", this.code
-        //         , "original", this.original
-        //         , "mode", this.mode
-        //         , "editorState", this.editorState
-        // )
+        if (!!this && !!this.draftRef.current)
+            console.log('setters and getters:',
+                'stylesheet', this.stylesheet
+                , "blocks", this.blocks
+                , "code", this.code
+                , "original", this.original
+                , "mode", this.mode
+                , "editorState", this.editorState
+            )
 
         const { mode, code, draftRef, original, blocks } = this
         const { saveFn, children } = this.props

@@ -28,6 +28,8 @@ class DocumentEditor extends Component {
     this.timer = setInterval(() =>
 
       this.props.store.save(this.props.id), 600000)
+
+    console.log('editor state: ', this.editor.editorState, 'current:', this.editor.current)
   }
 
   componentWillUnmount() {
@@ -62,14 +64,15 @@ class DocumentEditor extends Component {
       console.log('draft set!')
     }
 
-    editorRef.stylesheet = stylesheet || {}
-    editorRef.original = original || ''
-    editorRef.code = code || '<p/>'
+    editor.stylesheet = stylesheet || {}
+    editor.original = original || ''
+    editor.code = code || '<p/>'
+
+    console.log('editor state: ', this.editor.editorState, 'current:', this.editor.current)
   }
 
   // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
   setMode(name) {
-
     this.editor.current.mode = name
   }
 
@@ -86,27 +89,30 @@ class DocumentEditor extends Component {
     console.log('RENDER called (DocumentEditor)')
 
     //// These are undefined by this point, both passes:
-    console.log('editor state: ', state, 'editor ref:', this.editorRef)
+    console.log('editor state: ', state, 'editor ref:', this.editor.current)
     return (
       <>
         {noData
           ? <CircularProgress />
           : (
             <>
-              {/* You can replace what is below here with another draft editor instead of <Editor /> if you wanted to */}
-              {/* <EditorView ref={this.editor} saveFn={() => store.save(id)} >
+              {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
+
+              {/* <RichEditor editorRef={this.editorRef} editorState={this.editorRef.editorState} /> */}
+
+              {/* <EditorView draftRef={this.editor} saveFn={() => store.save(id)} >
                 <ButtonGroup variant="outlined">
                   <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
                   <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
                   <Button color={ mode === 'code' ? 'secondary' : 'primary' } onClick={() => this.setMode('code')}>Code</Button>
                   <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
                 </ButtonGroup>
-              </EditorView>      
-              <br/>         */}
+              </EditorView>       */}
+
               <RichEditor
                 document={document}
                 //TODO: @BP, The following props must be defined before I can use them like in EditorView
-                editorRef={this.editorRef}
+                editorRef={this.editor}
                 draftState={state}
               > </RichEditor>
             </>
