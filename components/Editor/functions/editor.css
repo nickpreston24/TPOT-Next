@@ -1,13 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=PT+Sans|Ubuntu:300,400,700');
 
 body .DraftEditor-root {
+    margin-top: 60px;
+    margin-bottom: 80px;
     font-size: 18px;
     line-height: 30.6px;
 }
 
-img .DraftEditor-root { 
-    /* max-width: 100%; */
-    /* max-height: 70%; */
+.DraftEditor-root img { 
+    max-width: 600px;
+    max-height: 200px;
 }
 
 .DraftEditor-root h1 {
@@ -61,8 +63,9 @@ img .DraftEditor-root {
     line-height: 0px;
     padding: 0px;
     margin: 0px;
+    height: 0px;
     display: block;
-    position: absolute;
+    position: relative;
     transform: translate(-44px, -16px);
     font: 80px 'PT Sans', sans-serif;
     color: #ccc;

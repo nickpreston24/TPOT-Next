@@ -2,6 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { compose } from 'recompose'
 import { withRouter } from 'next/router'
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const withAuthorization = Component => {
   class withAuthorization extends React.Component {
@@ -20,7 +21,7 @@ const withAuthorization = Component => {
         ? <Component {...this.props} />
         : authUser
           ? <Component {...this.props} {...{ authUser }} />
-          : <h1 {...this.props}>Loading...</h1>
+          : <CircularProgress />
     }
   }
   

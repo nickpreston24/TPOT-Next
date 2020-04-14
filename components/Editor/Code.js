@@ -12,22 +12,23 @@ class Code extends React.Component {
         const { hidden } = this.props
         const children = this.props.state || ''
         return (
-            <Box flexGrow={1} display={hidden ? 'none' : 'inherit'} >
-                <SyntaxHighlighter
-                    showLineNumbers
-                    wrapLines
-                    language='html'
-                    children={children}
-                    style={solarizedLight}
-                    lineProps={{ style: { border: '0px solid yellow' } }}
-                    codeTagProps={{ style: { border: '0px solid red' } }}
-                    customStyle={{
-                        fontSize: 16,
-                        overflow: 'hidden',
-                        background: 'transparent',
-                        textOverflow: 'ellipsis',
-                    }}
-                />
+            <Box flexGrow={1} display={hidden ? 'none' : 'flex'} justifyContent="center" >
+                <Box display="block" maxWidth={800} >
+                    <SyntaxHighlighter
+                        language='html'
+                        children={children}
+                        style={solarizedLight}
+                        lineProps={{ style: { border: '0px solid yellow' } }}
+                        codeTagProps={{ style: { border: '0px solid red' } }}
+                        customStyle={{
+                            fontSize: 16,
+                            lineHeight: 1.5,
+                            letterSpacing: 0.5,
+                            overflowX: 'scroll',
+                            background: 'transparent'
+                        }}
+                    />
+                </Box>
             </Box>
         )
     }

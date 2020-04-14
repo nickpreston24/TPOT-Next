@@ -77,7 +77,7 @@ const InputFields = observer(({ form }) => {
   let { onBlur } = toJS(form.$hooks)
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" >
       <form onSubmit={form.onSubmit}>
         <Box height={70}>
           <TextField

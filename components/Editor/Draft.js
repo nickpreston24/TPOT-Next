@@ -4,7 +4,12 @@ import Editor from 'draft-js-plugins-editor';
 import { baseStyleMap } from './functions/utilities'
 import plugins from './functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil } from 'draft-js';
+import { Toolbar } from './components/Toolbar';
 
+// The <Draft /> component is the primary view mode of the <Editor /> It can
+// also be used in a standalone app. All state managment is best done with
+// React.setState() rather than something like Redux or MobX. Additional plugins
+// can be written for the editor and are registered under ./functions/plugins
 
 class Draft extends React.Component {
 
@@ -21,7 +26,7 @@ class Draft extends React.Component {
         })
     }
 
-    set editorState( editorState ) {
+    set editorState(editorState) {
         this.setState({ editorState })
     }
 
@@ -35,9 +40,9 @@ class Draft extends React.Component {
 
     get stylesheet() {
         return this.state.stylesheet
-    } 
+    }
 
-    get rawState() {
+    get blocks() {
         return convertToRaw(this.state.editorState.getCurrentContent())
     }
 
@@ -45,10 +50,6 @@ class Draft extends React.Component {
         return 'I am code'
     }
 
-    get plainText() {
-        return this.state.editorState.getCurrentContent().getPlainText()
-    }
-    
     handleKeyCommand(command) {
         if (command === 'save') {
             this.props.saveFn()
@@ -63,7 +64,7 @@ class Draft extends React.Component {
 
     myKeyBindingFn(e) {
         const { hasCommandModifier } = KeyBindingUtil
-        if (e.keyCode === 83 /* `S` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'save'}
+        if (e.keyCode === 83 /* `S` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'save' }
         if (e.keyCode === 80 /* `P` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'publish' }
         return getDefaultKeyBinding(e)
     }
@@ -71,18 +72,25 @@ class Draft extends React.Component {
     render() {
         const { hidden } = this.props
         return (
-            <Box border={0} p={2} flexGrow={1} display={hidden ? 'none' : 'inherit'} >
-                <Editor
-                    ref={this.editor}
-                    editorState={this.state.editorState}
-                    customStyleMap={this.state.stylesheet}
-                    onChange={this.onChange}					
-                    handleKeyCommand={command => this.handleKeyCommand(command)}
-					keyBindingFn={this.myKeyBindingFn}
-                    plugins={plugins}
-                />
+            <Box display={hidden ? 'none' : 'flex'} flexGrow={1} flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+                <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
+                    <Toolbar forward={this.editor.current} />
+                </Box>
+                <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
+                    <Box display="flex" width={800} >
+                        <Editor
+                            ref={this.editor}
+                            editorState={this.state.editorState}
+                            customStyleMap={this.state.stylesheet}
+                            onChange={this.onChange}
+                            handleKeyCommand={command => this.handleKeyCommand(command)}
+                            keyBindingFn={this.myKeyBindingFn}
+                            plugins={plugins}
+                        />
+                    </Box>
+                </Box>
             </Box>
-        );
+        )
     }
 }
 

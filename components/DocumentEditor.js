@@ -3,8 +3,9 @@ import React, { Component } from 'react'
 import { withForm } from './DocumentForm'
 import Editor from './Editor'
 import { EditorState, convertFromRaw } from 'draft-js'
-import { toJS, action } from 'mobx'
-import { Button } from '@material-ui/core'
+import { toJS } from 'mobx'
+import { Button, ButtonGroup } from '@material-ui/core'
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
 // Toolbox. When the shim mounts a reference is made to our <Editor /> child.
@@ -22,17 +23,20 @@ class DocumentEditor extends Component {
   editor = React.createRef()
 
   componentDidMount() {
+    // Initialize the Draft editor with the document's data
+    this.init()
     // Set a Auto-Save Timer for the Editor's content (1 mins)
-    this.timer = setInterval(() => this.props.store.save(this.props.id), 60000)
+    this.timer = setInterval(() => this.props.store.save(this.props.id), 600000)
   }
 
   componentWillUnmount() {
     clearInterval(this.timer) // Very important to clear! :D
   }
 
+  // the init() function fills in data for Draft editor - including an initial, immutable DraftState :)
   init() {
-    // Set initial editor states from first fetch of document
     let { document } = this.props
+    if (!document) return // Ditch if there is no document, will render a a <CircularProgress /> instead.
     let { draft, code, original, stylesheet } = toJS(document.data)
     draft = JSON.parse(draft)
     code = JSON.parse(code)
@@ -40,35 +44,45 @@ class DocumentEditor extends Component {
     stylesheet = JSON.parse(stylesheet)
     const contentState = convertFromRaw(draft)
     const initialState = EditorState.createWithContent(contentState)
-    this.editor.current.editorState = initialState
-    this.editor.current.stylesheet = stylesheet
-    this.editor.current.original = original
-    this.editor.current.code = code
+    let editorRef = this.editor.current
+    // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />
+    if (!editorRef) return
+    editorRef.editorState = initialState
+    editorRef.stylesheet = stylesheet
+    editorRef.original = original
+    editorRef.code = code
   }
 
+  // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
   setMode(name) {
     this.editor.current.mode = name
   }
 
   render() {
-
-    // When the component mounts, have it check back to re-init itself with the first editorState after the document data is fetched.
     const { document, store, id } = this.props
-    let hasData = Object.keys(toJS(document.data)) !== 0
-    if (hasData && !!this.editor.current) {
-      this.init()
-    }
+    const mode = this.editor.current ? this.editor.current.mode : 'draft'
+    const noData = document.isLoading
 
     return (
       <>
-        <Button onClick={() => this.setMode('original')}>Original</Button>
-        <Button onClick={() => this.setMode('draft')}>Draft</Button>
-        <Button onClick={() => this.setMode('code')}>Code</Button>
-        <Button onClick={() => this.setMode('blocks')}>Blocks</Button>
-        <Editor 
-          ref={this.editor} 
-          saveFn={() => store.save(id)} 
-        />
+        {noData
+          // No Document, duck safely out with a loader, just incase (... should already provided from [doc].js )
+          ? <CircularProgress />
+          // Yay Document! Render the Editor
+          : (
+            <>
+              {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
+              <Editor ref={this.editor} saveFn={() => store.save(id)} >
+                <ButtonGroup variant="outlined">
+                  <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
+                  <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
+                  <Button color={ mode === 'code' ? 'secondary' : 'primary' } onClick={() => this.setMode('code')}>Code</Button>
+                  <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
+                </ButtonGroup>
+              </Editor>
+            </>
+          )
+        }
       </>
     )
   }
