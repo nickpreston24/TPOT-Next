@@ -1,12 +1,12 @@
 import React, { useState, useEffect, forwardRef, useRef, useCallback } from 'react'
-import { Box } from '@material-ui/core'
+import { Box, CircularProgress } from '@material-ui/core'
 import OriginalDocxView from '../experimental/OriginalDocxView'
 import BlocksView from '../experimental/BlocksView'
 import DraftView from '../experimental/DraftView'
 import CodeView from '../experimental/CodeView'
 import { compose, toClass, flattenProp, withHandlers, withState, lifecycle } from 'recompose'
 import { observer } from 'mobx-react'
-import { Editor, EditorState } from 'draft-js'
+import { Editor, EditorState, convertToRaw } from 'draft-js'
 
 // The <Editor /> component is wrapper class that meshes together a DraftJS
 // editor plus several visualizers. Most of its methods are an abstraction
@@ -18,31 +18,147 @@ import { Editor, EditorState } from 'draft-js'
 // methods inside this class, set its initial state, and give it a function to
 // save with, etc. This class and its children may always function in isolation.
 
-
-
-
+// RESPONSIBILITY --> Multiple View Editor with Extra Abilitys:
+// 
+// └── this
+//     ├── getCode
+//     ├── getBlocks
+//     ├── getOriginal
+//     ├── getRawState
+//     ├── getStylesheet
+//     ├── getDraftEditor
+//     ├── getEditorState
+//     ├── setCode
+//     ├── setBlocks
+//     ├── setOriginal
+//     ├── setStylesheet
+//     ├── setEditorState
+//     ├── handleSave
+//     ├── handlePublish
+//     └── handleDuplicate
 
 const EditorView = props => {
 
-    const editorRef = !!props.editorRef ? props.editorRef : React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
-    const draftRef = !!props.draftRef ? props.draftRef : React.useRef(null) // Will return the child which contains the Vanilla Draft Editor
+    // Validate props
+    const mode = props.mode || 'draft'
+    const children = props.children || (() => <></>)
+    const handleSave = props.handleSave || (() => null)
+    const handlePublish = props.handlePublish || (() => null)
+    const handleDuplicate = props.handleDuplicate || (() => null)
 
-    // const editorRef = !!ref ? ref : React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
-    // const draftRef = React.useRef(null) // Will return the child which contains the Vanilla Draft Editor
+    // Use the parent's refs if available otherwise use internal ones
+    const editorRef = props.editorRef || React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
+    const draftRef = props.draftRef || React.useRef(null) // Will return the child, DraftView which contains the Vanilla DraftJS Editor
 
-    // This component's local properties will be accessible under editorRef.props
-    const handlers = {
-        test: 'cat',
-        render() {
-            console.log('yeah!')
+    const [code, setCode] = useState('');
+    const [blocks, setBlocks] = useState({});
+    const [original, setOriginal] = useState('');
+
+    // REQUIRED:
+    // Semantically define additional component properties on mount that are accessible by a parent referencing EditorView
+    useEffect(() => {
+
+        // _this contains Internal properties unique to this component, EditorView that we want publicly available
+        let _this = {
+            // Getters
+            getCode: () => code,
+            getBlocks: () => blocks,
+            getOriginal: () => original,
+            // Setters
+            setCode: setCode,
+            setBlocks: setBlocks,
+            setOriginal: setOriginal,
         }
+
+        // Pass up some properties from a referenced draftEditor as well if a actively filled draftRef has been supplied by the parent
+        console.log('WHAT AM I', draftRef)
+        let _child_this = {}
+        if (draftRef.current) {
+            console.log('TRUE', draftRef.current)
+            _child_this = {
+                kittens: 'cat'
+                // getRawState: () => draftRef.current.getRawState,
+                // getStylesheet: () => draftRef.current.getStylesheet,
+                // getEditorState: () => draftRef.current.getEditorState,
+                // getDraftEditor: () => draftRef.current,
+                // Setters
+                // setEditorState: draftRef.current.setEditorState,
+                // setStylesheet: draftRef.current.setStylesheet,
+                // Actions:
+                // handleSave: draftRef.current.handleSave,
+                // handlePublish: draftRef.current.handlePublish,
+                // handleDuplicate: draftRef.current.handleDuplicate,
+            }
+        }
+
+
+        // Map additional component properties to this reference
+        editorRef.current = { ...editorRef.current, ..._this }
+    })
+
+    // // Validate props
+    // const mode = props.mode || 'draft'
+    // const children = props.children || (() => <></>)
+    // const handleSave = props.handleSave || (() => null)
+    // const handlePublish = props.handlePublish || (() => null)
+    // const handleDuplicate = props.handleDuplicate || (() => null)
+
+    // // Use the parent's refs if available otherwise use internal ones
+    // const editorRef = props.editorRef || React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
+    // const draftRef = props.draftRef || React.useRef(null) // Will return the child which contains the Vanilla DraftJS Editor
+
+    // const [code, setCode] = useState('');
+    // const [blocks, setBlocks] = useState({});
+    // const [original, setOriginal] = useState('');
+
+    // // REQUIRED:
+    // // Semantically define additional component properties on mount
+    // useEffect(() => {
+    //     const _this = {
+    //         // Getters
+    //         getCode: () => code,
+    //         getBlocks: () => blocks,
+    //         getOriginal: () => original,
+    //         getRawState: () => draftRef.current.getRawState,
+    //         getStylesheet: () => draftRef.current.getStylesheet,
+    //         // getEditorState: () => draftRef.current.getEditorState,
+    //         getDraftEditor: () => draftRef.current,
+    //         // Setters
+    //         setCode: setCode,
+    //         setBlocks: setBlocks,
+    //         setOriginal: setOriginal,
+    //         // setEditorState: draftRef.current.setEditorState,
+    //         setStylesheet: draftRef.current.setStylesheet,
+    //         // Actions:
+    //         handleSave: draftRef.current.handleSave,
+    //         handlePublish: draftRef.current.handlePublish,
+    //         handleDuplicate: draftRef.current.handleDuplicate,
+    //     }
+    //     // Map additional component properties to this reference
+    //     editorRef.current = { ...editorRef.current, ..._this }
+    // }, [])
+
+    // Additional props to pass to DraftView and other Views
+    const states = {
+        mode,
+        code,
+        original,
+        blocks
+    }
+    const handles = {
+        handleSave,
+        handlePublish,
+        handleDuplicate
     }
 
+    // Map all props for the Stateless Functional Component on to the RenderedComponent which is a class component
     return (
-        <RenderedComponent
-            ref={editorRef}
-            draftRef={draftRef}
-            {...{ handlers }}
+        <RenderedComponent // <-- This guy is a class wrapped FC. The 'editorRef' is targeting this component
+            ref={editorRef} // <-- Here is EditorView's ref. This is what DocumentEditor can see. This enables DocumentEditor to use
+            // └── EditorView's internal functions, like getBlocks, getRawState, getCode, setOriginal, and setCode.
+            draftRef={draftRef} // <-- The second ref, draftRef, gets passed down to DraftView in RenderedComponent's return statement.
+            // └── This enables us to have access to DraftView's internal functions, like getEditorState and setStylesheet
+            {...{ states, handles, children }} // <-- These are the props that each mode will inherit, most of them going to DraftView.
         />
     )
 }
@@ -50,14 +166,29 @@ const EditorView = props => {
 export default EditorView
 
 
-// RENDERED COMPONENT
 
-// toClass() wrapps the FC up so that it can be used with references
-const RenderedComponent = toClass(({ draftRef }) => {
+// RENDERED COMPONENT
+//////////////////////////////////
+
+// toClass() wrapps the FC up so that it can be used with references (See Line: 99)
+const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
+
+    // const { mode, code, original, blocks } = states
+
     return (
-        <Box width="100%" height="100%" m={8}>
-            <DraftView draftRef={draftRef} />
-        </Box>
+        <DraftView draftRef={draftRef} />
+        // <p draftRef={draftRef}> Draft</p>
+        // <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+        //     <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
+        //         {/* <OriginalDocxView state={original} hidden={mode !== 'original'} /> */}
+        //         <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
+        //         {/* <CodeView state={code} hidden={mode !== 'code'} />
+        //         <BlocksView state={blocks} hidden={mode !== 'blocks'} /> */}
+        //     </Box>
+        //     <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
+        //         {children}
+        //     </Box>
+        // </Box>
     )
 })
 
@@ -66,38 +197,6 @@ const RenderedComponent = toClass(({ draftRef }) => {
 
 
 
-// const enhance = compose(
-//     withState('position', 'setPos', 'relative'),
-//     withHandlers({
-//         isTop: ({ setPos }) => () => {
-//             console.log('Enhanced!')
-//             // const { top } = ref && ref.getBoundingClientRect()
-//             // top && setPos(top <= 0 ? 'fixed' : 'relative')
-//         },
-//     }),
-//     // lifecycle({
-//     //     componentDidMount() {
-//     //         if (this.props.subscribe) {
-//     //             this.props.subscribe(this.props)
-//     //         }
-//     //     }
-//     // })
-// )
-
-// function EditorView(props) {
-
-//     useEffect(() => {
-//         props.subscribe({
-//             kittens: 'test'
-//         })
-//     })
-
-//     return (
-//         <p>Test!</p>
-//     )
-// }
-
-// export default enhance(EditorView)
 
 
 
@@ -105,53 +204,76 @@ const RenderedComponent = toClass(({ draftRef }) => {
 
 
 
-// function EditorView(props) {
 
-//     const ref = useRef(ref)
 
-//     // const [mode, setMode] = useState('draft');
 
-//     function hello() {
-//         console.log('test')
-//     }
 
-//     const hellosavey = () => {
-//         console.log('hello')
-//     }
+const EditorViewFC = props => {
 
-//     const meetingsAreCool = useCallback((a, b) => {
-//         // do something with a, b and props.x
-//     }, [props.x]);
+    // Validate props
+    const mode = props.mode || 'draft'
+    const children = props.children || (() => <></>)
+    const handleSave = props.handleSave || (() => null)
+    const handlePublish = props.handlePublish || (() => null)
+    const handleDuplicate = props.handleDuplicate || (() => null)
 
-//     // Provide subscribing parent this functional component's properties
-//     useEffect(() => {
-//         console.log('MOUNTED EDITOR')
-//         const properties = {
-//             ref: ref,
-//             props: props,
-//             state: {
-//                 chicken: 'test'
-//             },
-//             handlers: {
-//                 useEffect,
-//                 hello,
-//                 hellosavey,
-//                 meetingsAreCool
-//             }
-//         }
-//         if (!!props.subscribe) {
-//             props.subscribe(properties)
-//             console.log(properties)
-//         }
-//     }, [props.subscribe])
+    // Use the parent's refs if available otherwise use internal ones
+    const editorRef = props.editorRef || React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
+    const draftRef = props.draftRef || React.useRef(null) // Will return the child which contains the Vanilla DraftJS Editor
 
-//     return (
-//         <div ref={ref}>
-//             <p>test!</p>
-//         </div>
-//     )
+    const [code, setCode] = useState('');
+    const [blocks, setBlocks] = useState({});
+    const [original, setOriginal] = useState('');
 
-// }
+    // REQUIRED:
+    // Semantically define additional component properties on mount
+    useEffect(() => {
+        const _this = {
+            // Getters
+            getCode: () => code,
+            getBlocks: () => blocks,
+            getOriginal: () => original,
+            getRawState: () => draftRef.current.getRawState,
+            getStylesheet: () => draftRef.current.getStylesheet,
+            // getEditorState: () => draftRef.current.getEditorState,
+            getDraftEditor: () => draftRef.current,
+            // Setters
+            setCode: setCode,
+            setBlocks: setBlocks,
+            setOriginal: setOriginal,
+            // setEditorState: draftRef.current.setEditorState,
+            setStylesheet: draftRef.current.setStylesheet,
+            // Actions:
+            handleSave: draftRef.current.handleSave,
+            handlePublish: draftRef.current.handlePublish,
+            handleDuplicate: draftRef.current.handleDuplicate,
+        }
+        // Map additional component properties to this reference
+        editorRef.current = { ...editorRef.current, ..._this }
+    }, [])
+
+    // Additional props to pass to Draft and other Views
+    const states = {
+        mode,
+        code,
+        original,
+        blocks
+    }
+    const handles = {
+        handleSave,
+        handlePublish,
+        handleDuplicate
+    }
+
+    // Map all props onto the Stateless Functional Component
+    return (
+        <RenderedComponentFC
+            ref={editorRef}
+            draftRef={draftRef}
+            {...{ states, handles, children }}
+        />
+    )
+}
 
 // export default EditorView
 
@@ -160,94 +282,32 @@ const RenderedComponent = toClass(({ draftRef }) => {
 
 
 
-// function EditorView() {
-//     // const [editorState, setEditorState] = React.useState(
-//     //   EditorState.createEmpty()
-//     // );
-
-//     function hello() {
-//         console.log('hello!')
-//     }
-
-//     // const editor = React.useRef(null);
-
-//     // function focusEditor() {
-//     //   editor.current.focus();
-//     // }
-
-//     // React.useEffect(() => {
-//     //   focusEditor()
-//     // }, []);
-
-//     return (
-//         <p>Test Me!</p>
-//     //   <div onClick={focusEditor}>
-//     //     <Editor
-//     //       ref={editor}
-//     //       editorState={editorState}
-//     //       onChange={editorState => setEditorState(editorState)}
-//     //     />
-//     //   </div>
-//     );
-//   }
-
-// export default toClass(EditorView)
 
 
 
+// RENDERED COMPONENT
+//////////////////////////////////
 
+// toClass() wrapps the FC up so that it can be used with references (See Line: 99)
+const RenderedComponentFC = toClass(({ draftRef, states, handles, children }) => {
 
+    const { mode, code, original, blocks } = states
 
-// const EditorView = compose(
-//     toClass,
-//     withState('counter', 'setCounter', 0),
-//     withHandlers({
-//       increment: ({ setCounter }) => () => setCounter(n => n + 1),
-//       decrement: ({ setCounter }) => () =>  setCounter(n => n - 1),
-//       reset: ({ setCounter }) => () => setCounter(0)
-//     })
-// )((props, ref) => {
-//     console.log('stateless props', props)
-
-//     const [mode, setMode] = useState('draft');
-
-//     const meetingsAreCool = useCallback((a, b) => {
-//         // do something with a, b and props.x
-//     }, [props.x]);
-
-//     return (
-//         <p>Test!</p>
-//     )
-// })
-
-// export default EditorView
-
-
-// const EditorView = (props, ref) => {
-//     console.log('stateless props', props)
-
-//     const [mode, setMode] = useState('draft');
-
-//     const meetingsAreCool = useCallback((a, b) => {
-//         // do something with a, b and props.x
-//     }, [props.x]);
-
-//     return (
-//         <p>Test! {props.counter}</p>
-//     )
-// }
-
-// export default compose(
-//     withState('counter', 'setCounter', 0),
-//     withHandlers({
-//         increment: ({ setCounter }) => () => setCounter(n => n + 1),
-//         decrement: ({ setCounter }) => () => setCounter(n => n - 1),
-//         reset: ({ setCounter }) => () => setCounter(0)
-//     }),
-//     // toClass,
-// )(EditorView)
-
-// export default EditorView
+    return (
+        <DraftView draftRef={draftRef} />
+        // <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+        //     <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
+        //         {/* <OriginalDocxView state={original} hidden={mode !== 'original'} /> */}
+        //         <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
+        //         {/* <CodeView state={code} hidden={mode !== 'code'} />
+        //         <BlocksView state={blocks} hidden={mode !== 'blocks'} /> */}
+        //     </Box>
+        //     <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
+        //         {children}
+        //     </Box>
+        // </Box>
+    )
+})
 
 
 

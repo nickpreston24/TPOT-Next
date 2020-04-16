@@ -29,7 +29,6 @@ function DocumentEditor(props) {
     return <CircularProgress />
   }
 
-
   // Editor is now safe to render. 
   // code dependent on props is below:
   // ______________________________
@@ -40,74 +39,88 @@ function DocumentEditor(props) {
 
   // Create local states
   const [mode, setMode] = useState('draft');
-  const [editorProperties, setEditorProperties] = useState(null);
 
   // Initialize the EditorViews's data for all
   // types (original, draft, code, etc.)
-
   useEffect(() => {
+
     // Destructure the document's fields
     const documentData = toJS(document.data)
     let { draft, code, original, stylesheet } = documentData
 
     // Parse out each field and convert to target format
-    draft = JSON.parse(draft)
     code = JSON.parse(code)
+    draft = JSON.parse(draft)
     original = JSON.parse(original)
     stylesheet = JSON.parse(stylesheet)
 
-    // Build a state to initialize the child's Draft mode
+    // Build a state to initialize the child's 'Draft' mode
     const contentState = convertFromRaw(draft)
-    const draftEditorState = EditorState.createWithContent(contentState)
+    const editorState = EditorState.createWithContent(contentState)
 
-    // Set all the child's modes' states
-    // const test = subscribe()
-    // // console.log('CHILD', childProperties)
-    // console.log('CHILD', editorProperties)
-    const childEditor = editorRef.current
-    if (!editorRef.current) return
-    // editorRef.hello
-    // childEditor.stylesheet = stylesheet
-    // childEditor.original = original
-    // childEditor.code = code
+    // Get the current interally referenced children
+    const editorChild = editorRef.current
+    const draftChild = draftRef.current
 
-    console.log('Initialized the editor')
-    // console.log('Statemeny', test)
+
+    // Set all initial values for each child
+    // editorRef.current.setCode(code)
+    // editorRef.current.setBlocks(draft) // document.data.draft is already the equivalent of blocks
+    // editorRef.current.setOriginal(code)
+    // editorRef.current.setStylesheet(stylesheet)
+    // editorRef.current.setEditorState(editorState)
+    console.log('EDITOR')
+    console.log(editorRef)
     console.log(editorRef.current)
-    // console.log(editorRef.current.getPluginMethods())
-    console.log('Edito Reference?')
+    console.log('DRAFT')
+    console.log(draftRef)
     console.log(draftRef.current)
-  }, [editorRef])
+  }, [])
+
+
+  // Supply callbacks that the Editor can invoke interally with key commands
+  const handleSave = () => {
+    props.store.save(id)
+  }
+  
+
+  const handlePublish = () => {
+    console.log('handled publishing')
+  }
+
+  
+  const handleDuplicate = () => {
+    console.log('handled duplication')
+  }
+
 
   // // Setup an Autosave Timer
   // useEffect(() => {
   //   const timer = setInterval(() => {
   //     if (id) props.store.save(id)
-  //   }, 10000)
+  //   }, 60000)
   //   return () => clearInterval(timer)
-  // })
+  // }, [])
+
 
   if (document) {
     return (
-      // You can replace what is below here with another draft editor intead of <Editor /> if you wanted to
       <EditorView
         editorRef={editorRef}
         draftRef={draftRef}
-        mode={mode}
-        handleSave={() => store.save(id)}
+        // mode={mode}
+        // handleSave={handleSave}
+        // handlePublish={handlePublish}
+        // handleDuplicate={handleDuplicate}
         children={
           <ModeSwitcher {...{ mode, setMode }} />
         }
       />
-      // <RichEditor
-      //   document={document}
-      //   //TODO: @BP, The following props must be defined before I can use them like in EditorView
-      //   editorRef={this.editor}
-      //   draftState={state}
-      // ></RichEditor>
     )
   }
+
 }
+
 
 export default compose(
   inject('store'),
@@ -122,10 +135,19 @@ export default compose(
 function ModeSwitcher({ mode, setMode }) {
   return (
     <ButtonGroup variant="outlined">
-      <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => setMode('original')}>Original</Button>
-      <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => setMode('draft')}>Draft</Button>
-      <Button color={mode === 'code' ? 'secondary' : 'primary'} onClick={() => setMode('code')}>Code</Button>
-      <Button color={mode === 'blocks' ? 'secondary' : 'primary'} onClick={() => setMode('blocks')}>Blocks</Button>
+      <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => setMode('original')}>Paper</Button>
+      <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => setMode('draft')}>Editor</Button>
+      <Button color={mode === 'code' ? 'secondary' : null} onClick={() => setMode('code')}>Code</Button>
+      <Button color={mode === 'blocks' ? 'secondary' : null} onClick={() => setMode('blocks')}>Blocks</Button>
     </ButtonGroup>
   )
 }
+
+
+
+// <RichEditor
+//   document={document}
+//   //TODO: @BP, The following props must be defined before I can use them like in EditorView
+//   editorRef={editorRef}
+//   draftState={state} //INFO: @MP, this can be fixed. I know it doesn't work if you untoggle RichEditor
+// ></RichEditor>
