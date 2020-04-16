@@ -1,5 +1,4 @@
 import React from 'react'
-import { richButtonsPlugin } from '../functions/plugins'
 import { Box, Button, Tooltip } from '@material-ui/core'
 import { withProps } from 'recompose'
 import FormatBoldIcon from '@material-ui/icons/FormatBold'
@@ -38,53 +37,34 @@ export const BaseButton = props => {
                 <SvgIcon />
             </Button>
         </Tooltip>
-        // <Box
-        //     onClick={toggleInlineStyle} onMouseDown={onMouseDown}
-        //     color={isActive ? '#000' : '#777'}
-        //     borderColor="red"
-        //     border={1}
-        //     minWidth={40}
-        //     maxWidth={40}
-        //     minHeight={40}
-        //     maxHeight={40}
-        //     display="flex"
-        //     justifyContent="center"
-        //     // p="24px"
-        //     style={{ boxSizing: 'border-box'}}
-        //     // overflow="hidden"
-        // >
-        //     <Box
-        //         display="flex"
-        //         flexDirection="column"
-        //         justifyContent="center"
-        //         flexGrow={1}
-        //         minWidth={24}
-        //         maxWidth={24}
-        //         // minHeight={24}
-        //         // maxHeight={24}
-        //         border={1}
-        //     >
-        //         <SvgIcon />
-        //     </Box>
-        // </Box>
     )
 }
 
 // Pick a schema to creat certain types of buttons. Schema is determined by config.type
 
 export const generateButton = config => {
-    const { icon, style, type, label, schema } = config
-    if (!schema) return
 
-
-    switch (schema) {
-        case 'inline':
-            return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createStyleButton({ style, label }))
-        case 'block':
-            return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createBlockButton({ type, label }))
-        default:
-            return <BaseButton {...{ icon }} />
+    return props => {
+        // console.log('props', props)
+        return <p>test</p>
     }
+    // console.log('config', config)
+    // const { icon, style, type, label, schema } = config
+    // return () => <BaseButton {...{ icon }} />
+    // if (!schema) return
+
+    // schemas.createStyleButton(store, {style, label})
+    // returns { toggleEffect, isActive, label, onMouseDown }
+
+
+    // switch (schema) {
+    //     case 'inline':
+    //         return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createStyleButton({ style, label }))
+    //     case 'block':
+    //         return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createBlockButton({ type, label }))
+    //     default:
+    //         return <BaseButton {...{ icon }} />
+    // }
 
 }
 

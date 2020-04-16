@@ -4,9 +4,8 @@ import { Box, CircularProgress } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 import { baseStyleMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
-import plugins from '../functions/plugins'
-import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil, ContentState } from 'draft-js';
-import { Toolbar } from '../components/Toolbar';
+import plugins, { ScribeToolbar } from '../plugins'
+import { EditorState, convertToRaw, getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
 
 // The <DraftView /> component is the primary view mode of the <EditorView /> It
 // may also be used in a standalone app. All state managment is best done with
@@ -107,7 +106,8 @@ const DraftView = props => {
     return (
         <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
             <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
-                <Toolbar forward={draftRef.current} />
+                {/* <Toolbar forward={draftRef.current} /> */}
+                <ScribeToolbar />
             </Box>
             <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
                 <Box display="flex" width={800} >
