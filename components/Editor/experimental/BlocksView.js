@@ -6,7 +6,7 @@ import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solari
 const BlocksView = ({ hidden = true, state }) => {
 
     if (!state) 
-        return <div>No Block state</div>
+        return null
         
     const printedJSON = JSON.stringify(state, null, 4);
 

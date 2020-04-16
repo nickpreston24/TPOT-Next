@@ -41,7 +41,7 @@ const DraftView = props => {
     const draftRef = props.draftRef || React.useRef(null)
 
     //  Create minimum initial states
-    const [editorState, setEditorState] = React.useState(createEditorStateWithText('Start typing to begin...'))
+    const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
     const [stylesheet, setStylesheet] = useState(baseStyleMap)
 
     // Callback function for newly returned Immutable state
@@ -54,7 +54,7 @@ const DraftView = props => {
     const blur = () => draftRef.current.blur()
 
     // Convert ContentState to Blocks and Entity maps
-    // const rawState = () => convertToRaw(editorState.getCurrentContent())
+    const rawState = () => convertToRaw(editorState.getCurrentContent())
 
     // Invoke high-level commands within the editor. hasCommandModifier will add
     // CTRL + (key) for Windows/Linux and CMD + (key) for Mac automatically
@@ -62,113 +62,8 @@ const DraftView = props => {
         const { hasCommandModifier } = KeyBindingUtil
         if (event.keyCode === 83 /* `S` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'save' }
         if (event.keyCode === 80 /* `P` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'publish' }
-        // if (event.keyCode === 68 /* `D` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'duplicate' }
-        // return getDefaultKeyBinding(event)
-    }
-
-    // Callback for the result command from myKeyBindingFn()
-    const handleKeyCommand = command => {
-        console.warn(`Editor Call Action --> ${command}`)
-        if (command === 'save') { handleSave(); return 'handled'; }
-        if (command === 'publish') { handlePublish(); return 'handled'; }
-        if (command === 'duplicate') { handleDuplicate(); return 'handled'; }
-        return 'not-handled';
-    }
-
-    // Focus / Blur the editor during mount and un-mount
-    useEffect(() => {
-        focus()
-        return () => blur()
-    }, []);
-
-    // REQUIRED:
-    // Semantically define additional component properties on mount
-    useEffect(() => {
-        const _this = {
-            // Getters
-            getRawState: () => rawState,
-            getStylesheet: () => stylesheet,
-            // getEditorState: () => editorState,
-            // Setters
-            // setEditorState: setEditorState,
-            setStylesheet: setStylesheet,
-            // Actions:
-            handleSave: handleSave,
-            handlePublish: handlePublish,
-            handleDuplicate: handleDuplicate,
-        }
-        // Map additional component properties to this reference
-        draftRef.current = { ...draftRef.current, ..._this }
-    }, [])
-
-    return (
-        <Box display={hidden ? 'none' : 'flex'} flexGrow={1} flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-            <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
-                {/* <Toolbar forward={draftRef.current} /> */}
-            </Box>
-            <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
-                <Box display="flex" width={800} >
-                    <Editor
-                        ref={draftRef}
-                        plugins={plugins}
-                        onChange={onChange}
-                        editorState={editorState}
-                    // customStyleMap={stylesheet}
-                    // keyBindingFn={myKeyBindingFn}
-                    // handleKeyCommand={handleKeyCommand}
-                    />
-                </Box>
-            </Box>
-        </Box>
-        // <Editor
-        //     ref={draftRef}
-        //     plugins={plugins}
-        //     onChange={onChange}
-        //     editorState={editorState}
-        // // customStyleMap={stylesheet}
-        // // keyBindingFn={myKeyBindingFn}
-        // // handleKeyCommand={handleKeyCommand}
-        // />
-    )
-}
-
-export default DraftView
-
-const DraftViewOLD = props => {
-
-    // Validate props
-    const hidden = props.hidden
-    const handleSave = props.handleSave || (() => null)
-    const handlePublish = props.handlePublish || (() => null)
-    const handleDuplicate = props.handleDuplicate || (() => null)
-
-    // Use the parent's ref if available otherwise use an internal one
-    const draftRef = props.draftRef || React.useRef(null)
-
-    //  Create minimum initial states
-    const [editorState, setEditorState] = React.useState(EditorState.createWithContent())
-    const [stylesheet, setStylesheet] = useState(baseStyleMap)
-
-    // Callback function for newly returned Immutable state
-    const onChange = editorState => setEditorState(editorState)
-
-    // Focus the editor's textbox
-    const focus = () => draftRef.current.focus()
-
-    // De-Focus the editor's textbox
-    const blur = () => draftRef.current.blur()
-
-    // Convert ContentState to Blocks and Entity maps
-    // const rawState = () => convertToRaw(editorState.getCurrentContent())
-
-    // Invoke high-level commands within the editor. hasCommandModifier will add
-    // CTRL + (key) for Windows/Linux and CMD + (key) for Mac automatically
-    const myKeyBindingFn = (event) => {
-        const { hasCommandModifier } = KeyBindingUtil
-        if (event.keyCode === 83 /* `S` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'save' }
-        if (event.keyCode === 80 /* `P` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'publish' }
-        // if (event.keyCode === 68 /* `D` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'duplicate' }
-        // return getDefaultKeyBinding(event)
+        if (event.keyCode === 68 /* `D` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'duplicate' }
+        return getDefaultKeyBinding(event)
     }
 
     // Callback for the result command from myKeyBindingFn()
@@ -212,7 +107,7 @@ const DraftViewOLD = props => {
                 <Toolbar forward={draftRef.current} />
             </Box>
             <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
-                <Box onClick={focus} display="flex" width={800} border={10}>
+                <Box display="flex" width={800} >
                     <Editor
                         ref={draftRef}
                         plugins={plugins}
@@ -221,25 +116,42 @@ const DraftViewOLD = props => {
                         customStyleMap={stylesheet}
                         keyBindingFn={myKeyBindingFn}
                         handleKeyCommand={handleKeyCommand}
+                        placeholder={"Start typing to begin..."}
                     />
                 </Box>
             </Box>
         </Box>
-        // <div onClick={focus} style={{ border: '1px solid black', margin: 20, width: '100%', height: '100%' }}>
-        //     <Editor
-        //         ref={draftRef}
-        //         plugins={plugins}
-        //         onChange={onChange}
-        //         editorState={editorState}
-        //         customStyleMap={stylesheet}
-        //         keyBindingFn={myKeyBindingFn}
-        //         handleKeyCommand={handleKeyCommand}
-        //     />
-        // </div>
     )
 }
 
-// export default DraftView
+export default DraftView
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

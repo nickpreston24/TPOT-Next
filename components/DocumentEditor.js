@@ -108,10 +108,10 @@ function DocumentEditor(props) {
       <EditorView
         editorRef={editorRef}
         draftRef={draftRef}
-        // mode={mode}
-        // handleSave={handleSave}
-        // handlePublish={handlePublish}
-        // handleDuplicate={handleDuplicate}
+        mode={mode}
+        handleSave={handleSave}
+        handlePublish={handlePublish}
+        handleDuplicate={handleDuplicate}
         children={
           <ModeSwitcher {...{ mode, setMode }} />
         }

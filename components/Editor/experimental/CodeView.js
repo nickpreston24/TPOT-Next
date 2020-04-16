@@ -1,12 +1,12 @@
 import React from 'react'
-import { Box } from '@material-ui/core'
+import { Box, CircularProgress } from '@material-ui/core'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solarized-light';
 
 const CodeView = ({ hidden, state }) => {
 
     if (!state)
-        return <div>No Code state</div>
+        return null
 
     const children = state || '';
     return <Box flexGrow={1} display={hidden ? 'none' : 'flex'} justifyContent="center">
