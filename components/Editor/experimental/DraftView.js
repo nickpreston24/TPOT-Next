@@ -122,7 +122,7 @@ const DraftView = props => {
         // </Box>
         <Editor
             ref={draftRef}
-            // plugins={plugins}
+            plugins={plugins}
             onChange={onChange}
             editorState={editorState}
             // customStyleMap={stylesheet}
