@@ -7,6 +7,8 @@ import DocumentForm from "../../../components/DocumentForm";
 import DocumentEditor from "../../../components/DocumentEditor";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from "../../../components/RichEditor";
+import EditorView from "../../../components/Editor/experimental/EditorView";
+import DraftView from "../../../components/Editor/experimental/DraftView";
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides
@@ -26,14 +28,14 @@ class Document extends Component {
     const { isLoading } = document
     const { doc } = router.query;
 
-    console.log(
-      'doc', doc
-      , 'isLoading', !!isLoading
-      , 'document', !!document
-      , 'router', !!router
-    )
+    // console.log(
+    //   'doc', doc
+    //   , 'isLoading', !!isLoading
+    //   , 'document', !!document
+    //   , 'router', !!router
+    // )
 
-    console.info('RENDER ([doc.js])')
+    // console.info('RENDER ([doc.js])')
     return (
       <>
         {isLoading ? (
@@ -49,6 +51,11 @@ class Document extends Component {
                 details={() => <DocumentDetails {...{ document }} />}
               >
                 <DocumentEditor {...{ document, id: doc }} />
+                {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                All of the classes below can be pulled out on their own and they 
+                self manage. If you pass down refs to them, you can control them. :D */}
+                {/* <EditorView /> */}
+                {/* <DraftView /> */}
                 {/* <RichEditor document={document} /> */}
               </Dashboard>
             </DocumentForm>

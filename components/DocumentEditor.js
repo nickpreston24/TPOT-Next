@@ -21,7 +21,6 @@ function DocumentEditor(props) {
 
   // Validate Props
   const document = props.document || null
-  const store = props.store || null
   const id = props.id || null
 
   // Render a loader if props don't check out
@@ -58,50 +57,38 @@ function DocumentEditor(props) {
     const contentState = convertFromRaw(draft)
     const editorState = EditorState.createWithContent(contentState)
 
-    // Get the current interally referenced children
-    const editorChild = editorRef.current
-    const draftChild = draftRef.current
-
-
     // Set all initial values for each child
-    // editorRef.current.setCode(code)
-    // editorRef.current.setBlocks(draft) // document.data.draft is already the equivalent of blocks
-    // editorRef.current.setOriginal(code)
-    // editorRef.current.setStylesheet(stylesheet)
-    // editorRef.current.setEditorState(editorState)
-    console.log('EDITOR')
-    console.log(editorRef)
-    console.log(editorRef.current)
-    console.log('DRAFT')
-    console.log(draftRef)
-    console.log(draftRef.current)
+    try {
+      editorRef.current.setCode(code)
+      editorRef.current.setBlocks(draft) // document.data.draft is already the equivalent of blocks
+      editorRef.current.setOriginal(code)
+      editorRef.current.setStylesheet(stylesheet)
+      editorRef.current.setEditorState(editorState)
+    } catch (error) {
+      console.warn('There is no DraftView in EditorView. Make sure on is in the render statement and you pass down draftRef from DocumentEditor')
+    }
   }, [])
-
 
   // Supply callbacks that the Editor can invoke interally with key commands
   const handleSave = () => {
     props.store.save(id)
   }
-  
 
   const handlePublish = () => {
     console.log('handled publishing')
   }
 
-  
   const handleDuplicate = () => {
     console.log('handled duplication')
   }
 
-
-  // // Setup an Autosave Timer
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     if (id) props.store.save(id)
-  //   }, 60000)
-  //   return () => clearInterval(timer)
-  // }, [])
-
+  // Setup an Autosave Timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (id) props.store.save(id)
+    }, 60000)
+    return () => clearInterval(timer)
+  }, [])
 
   if (document) {
     return (
@@ -121,7 +108,6 @@ function DocumentEditor(props) {
 
 }
 
-
 export default compose(
   inject('store'),
   observer
@@ -137,6 +123,7 @@ function ModeSwitcher({ mode, setMode }) {
     <ButtonGroup variant="outlined">
       <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => setMode('original')}>Paper</Button>
       <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => setMode('draft')}>Editor</Button>
+      {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
       <Button color={mode === 'code' ? 'secondary' : null} onClick={() => setMode('code')}>Code</Button>
       <Button color={mode === 'blocks' ? 'secondary' : null} onClick={() => setMode('blocks')}>Blocks</Button>
     </ButtonGroup>

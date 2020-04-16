@@ -71,23 +71,20 @@ const EditorView = props => {
         }
 
         // Pass up some properties from a referenced draftEditor as well if a actively filled draftRef has been supplied by the parent
-        console.log('WHAT AM I', draftRef)
         let _child_this = {}
         if (draftRef.current) {
-            console.log('TRUE', draftRef.current)
             _child_this = {
-                kittens: 'cat'
-                // getRawState: () => draftRef.current.getRawState,
-                // getStylesheet: () => draftRef.current.getStylesheet,
-                // getEditorState: () => draftRef.current.getEditorState,
-                // getDraftEditor: () => draftRef.current,
+                getRawState: () => draftRef.current.getRawState,
+                getStylesheet: () => draftRef.current.getStylesheet,
+                getEditorState: () => draftRef.current.getEditorState,
+                getDraftEditor: () => draftRef.current,
                 // Setters
-                // setEditorState: draftRef.current.setEditorState,
-                // setStylesheet: draftRef.current.setStylesheet,
-                // Actions:
-                // handleSave: draftRef.current.handleSave,
-                // handlePublish: draftRef.current.handlePublish,
-                // handleDuplicate: draftRef.current.handleDuplicate,
+                setEditorState: draftRef.current.setEditorState,
+                setStylesheet: draftRef.current.setStylesheet,
+                // Actions
+                handleSave: draftRef.current.handleSave,
+                handlePublish: draftRef.current.handlePublish,
+                handleDuplicate: draftRef.current.handleDuplicate,
             }
         }
 
@@ -138,6 +135,7 @@ const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
             <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" height="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
                 <OriginalDocxView state={original} hidden={mode !== 'original'} />
                 <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
+                 {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
                 <CodeView state={code} hidden={mode !== 'code'} />
                 <BlocksView state={blocks} hidden={mode !== 'blocks'} />
             </Box>

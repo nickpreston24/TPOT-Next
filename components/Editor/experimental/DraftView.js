@@ -77,8 +77,10 @@ const DraftView = props => {
 
     // Focus / Blur the editor during mount and un-mount
     useEffect(() => {
-        focus()
-        return () => blur()
+        if (!!draftRef.current) {
+            focus()
+            return () => blur()
+        }
     }, []);
 
     // REQUIRED:
@@ -102,7 +104,7 @@ const DraftView = props => {
     }, [])
 
     return (
-        <Box display={hidden ? 'none' : 'flex'} flexGrow={1} flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+        <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
             <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
                 <Toolbar forward={draftRef.current} />
             </Box>
