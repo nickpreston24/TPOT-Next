@@ -1,5 +1,6 @@
-import { inject, observer } from 'mobx-react'
+import { inject, observer, PropTypes as MobXPropTypes } from 'mobx-react'
 import React, { Component, useState, useEffect, useRef } from 'react'
+import PropTypes from 'prop-types'
 import { withForm } from './DocumentForm'
 import EditorView from './Editor/experimental/EditorView'
 import { convertFromRaw, EditorState } from 'draft-js'
@@ -105,7 +106,12 @@ function DocumentEditor(props) {
       />
     )
   }
+}
 
+DocumentEditor.propTypes = {
+  id: PropTypes.string.isRequired,
+  store: MobXPropTypes.objectOrObservableObject.isRequired,
+  document: MobXPropTypes.objectOrObservableObject.isRequired,
 }
 
 export default compose(
@@ -115,10 +121,9 @@ export default compose(
 
 
 
-
 // Auxillary Components
 
-function ModeSwitcher({ mode, setMode }) {
+const ModeSwitcher = ({ mode, setMode }) => {
   return (
     <ButtonGroup variant="outlined">
       <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => setMode('original')}>Paper</Button>
@@ -129,6 +134,13 @@ function ModeSwitcher({ mode, setMode }) {
     </ButtonGroup>
   )
 }
+
+ModeSwitcher.propTypes = {
+  mode: PropTypes.string.isRequired,
+  setMode: PropTypes.func.isRequired,
+}
+
+
 
 
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { Box, CircularProgress } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 import { baseStyleMap } from '../functions/utilities'
@@ -124,6 +125,18 @@ const DraftView = props => {
             </Box>
         </Box>
     )
+}
+
+// Add Type Safety for Props
+DraftView.propTypes = {
+    hidden: PropTypes.bool,
+    handleSave: PropTypes.func,
+    handlePublish: PropTypes.func,
+    handleDuplicate: PropTypes.func,
+    draftRef: PropTypes.oneOfType([
+        PropTypes.func, 
+        PropTypes.shape({ current: PropTypes.object })
+    ])   
 }
 
 export default DraftView

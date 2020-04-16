@@ -1,5 +1,5 @@
 import { Document as FireStorterDocument } from "firestorter";
-import { observer } from "mobx-react";
+import { observer, PropTypes as MobXPropTypes } from "mobx-react";
 import React, { useState } from "react";
 import Dashboard from "../../../components/Dashboard";
 import DocumentDetails from "../../../components/DocumentDetails";
@@ -10,6 +10,7 @@ import { RichEditor } from "../../../components/RichEditor";
 import EditorView from "../../../components/Editor/experimental/EditorView";
 import DraftView from "../../../components/Editor/experimental/DraftView";
 import { compose } from "recompose";
+import PropTypes from 'prop-types';
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides
@@ -44,13 +45,18 @@ const Page = props => {
         <DocumentEditor {...{ document, id }} />
         {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         All of the classes below can be pulled out on their own and they 
-        self manage. If you pass down refs to them, you can control them. 😜 */}
+        self-manage. If you pass down refs to them, you can control them. 😜 */}
         {/* <EditorView /> */}
         {/* <DraftView /> */}
         {/* <RichEditor document={document} /> */}
       </Dashboard>
     </DocumentForm>
   )
+}
+
+Page.propTypes = {
+  id: PropTypes.string.isRequired,
+  document: MobXPropTypes.objectOrObservableObject,
 }
 
 // Only the ID is needed here, but you could imagine all the goodies that could be done:

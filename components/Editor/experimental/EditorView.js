@@ -1,4 +1,5 @@
 import React, { useState, useEffect, forwardRef, useRef, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { Box, CircularProgress } from '@material-ui/core'
 import OriginalDocxView from '../experimental/OriginalDocxView'
 import BlocksView from '../experimental/BlocksView'
@@ -118,6 +119,26 @@ const EditorView = props => {
     )
 }
 
+// Add Type Safety for Props
+EditorView.propTypes = {
+    mode: PropTypes.string,
+    handleSave: PropTypes.func,
+    handlePublish: PropTypes.func,
+    handleDuplicate: PropTypes.func,
+    children: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.object
+    ]),
+    editorRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.object })
+    ]),
+    draftRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.object })
+    ])
+}
+
 export default EditorView
 
 
@@ -135,7 +156,7 @@ const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
             <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" height="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
                 <OriginalDocxView state={original} hidden={mode !== 'original'} />
                 <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
-                 {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
+                {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
                 <CodeView state={code} hidden={mode !== 'code'} />
                 <BlocksView state={blocks} hidden={mode !== 'blocks'} />
             </Box>
@@ -145,6 +166,28 @@ const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
         </Box>
     )
 })
+
+RenderedComponent.propTypes = {
+    children: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.object
+    ]),
+    states: PropTypes.shape({
+        mode: PropTypes.string,
+        code: PropTypes.string,
+        original: PropTypes.string,
+        blocks: PropTypes.object
+    }),
+    handles: PropTypes.shape({
+        handleSave: PropTypes.func,
+        handlePublish: PropTypes.func,
+        handleDuplicate: PropTypes.func
+    }),
+    draftRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.object })
+    ])
+}
 
 
 
