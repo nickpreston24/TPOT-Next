@@ -107,7 +107,6 @@ const DraftView = props => {
         <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
             <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
                 {/* <Toolbar forward={draftRef.current} /> */}
-                <ScribeToolbar />
             </Box>
             <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
                 <Box display="flex" width={800} >
@@ -121,6 +120,7 @@ const DraftView = props => {
                         handleKeyCommand={handleKeyCommand}
                         placeholder={"Start typing to begin..."}
                     />
+                    <ScribeToolbar />
                 </Box>
             </Box>
         </Box>
@@ -134,9 +134,9 @@ DraftView.propTypes = {
     handlePublish: PropTypes.func,
     handleDuplicate: PropTypes.func,
     draftRef: PropTypes.oneOfType([
-        PropTypes.func, 
+        PropTypes.func,
         PropTypes.shape({ current: PropTypes.object })
-    ])   
+    ])
 }
 
 export default DraftView

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Box, Button, Tooltip } from '@material-ui/core'
 import { withProps } from 'recompose'
 import FormatBoldIcon from '@material-ui/icons/FormatBold'
@@ -19,80 +19,148 @@ import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import LinkIcon from '@material-ui/icons/Link';
 import Zoom from '@material-ui/core/Zoom';
+import { observer } from 'mobx-react'
 
 
 // Create the visual characteristics of the button and map the parent schema's functionality to it
 
-export const BaseButton = props => {
-    // console.log(props)
+class BaseButton extends Component {
+    
+}
+
+export const BaseButton = observer(props => {
+    // console.log("Button Props", props)
     const { icon: SvgIcon, toggleInlineStyle, toggleBlockType, isActive, label, inlineStyle, onMouseDown } = props
-    // console.log(props)
+    console.log(props)
     return (
         <Tooltip title={label} TransitionComponent={Zoom} arrow>
             <Button
                 onClick={!!toggleInlineStyle ? toggleInlineStyle : toggleBlockType}
                 onMouseDown={onMouseDown}
-                style={{ minWidth: 40, minHeight: 40, color: isActive ? 'dodgerblue' : '#000' }}
+                style={{ minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }}
             >
                 <SvgIcon />
             </Button>
         </Tooltip>
     )
-}
+})
 
 // Pick a schema to creat certain types of buttons. Schema is determined by config.type
 
-export const generateButton = config => {
+export const generateButton = config => props => {
+    // const { style, label } = config
+    // console.log('Config/Props Generator', config, props)
 
-    return props => {
-        // console.log('props', props)
-        return <p>test</p>
-    }
-    // console.log('config', config)
-    // const { icon, style, type, label, schema } = config
-    // return () => <BaseButton {...{ icon }} />
-    // if (!schema) return
-
-    // schemas.createStyleButton(store, {style, label})
-    // returns { toggleEffect, isActive, label, onMouseDown }
-
-
-    // switch (schema) {
-    //     case 'inline':
-    //         return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createStyleButton({ style, label }))
-    //     case 'block':
-    //         return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createBlockButton({ type, label }))
-    //     default:
-    //         return <BaseButton {...{ icon }} />
-    // }
-
+    // console.log(createStyleButton(config))
+    // const mapping = createStyleButton(config)
+    // const Component = props => withProps({ ...props, ...createStyleButton(config) })(BaseButton)
+    const mappedProps = createStyleButton(config)(props)
+    const Component = withProps(mappedProps)(BaseButton)
+    return <Component />
+    // return <><BaseButton {...{...props, ...mappedProps}} /></>
+    // return withProps({ children: <BaseButton {...{ config: config.icon }} /> })(createStyleButton({ style: config.style, label:config.label }))
 }
+
+
+//       SCHEMAS
+////////////////////////////
+// Makes props that will be wrapped with the BaseButton
+
+const createStyleButton = config => props => {
+    const { type, label, icon } = config
+    return {
+        icon,
+        label,
+        isActive: () => {
+            console.log(props.getEditorState().getCurrentInlineStyle())
+            return props.getEditorState && props.getEditorState().getCurrentInlineStyle().has('BOLD')
+        },
+        toggleEffect: event => {
+            event.preventDefault();
+            props.setEditorState(
+                RichUtils.toggleInlineStyle(
+                    props.getEditorState(), type
+                )
+            );
+        }
+    }
+}
+
+// const createStyleButton = (props, config) => {
+//     ...props,
+//     isActive: () => {
+//         props.getEditorState()
+//     }
+// }
+
+
+
+// const createStyleButton = ({ style, label, icon }) => {
+//     // console.log('rest', style)
+//     return {
+//         // icon,
+//         // label,
+//         // isActive: props => {
+//         //     // console.log(props)
+//         //     console.log(props.getEditorState())
+//         //     // props.getEditorState && props.getEditorState().getCurrentInlineStyle().has(style)
+//         // },
+//         // toggleEffect: event => {
+//         //     event.preventDefault();
+//         //     props.setEditorState(
+//         //         RichUtils.toggleInlineStyle(
+//         //             props.getEditorState(), style
+//         //         )
+//         //     );
+//         // }
+//     }
+// }
+
+// console.log('config', config)
+// const { icon, style, type, label, schema } = config
+// return () => <BaseButton {...{ icon }} />
+// if (!schema) return
+
+// schemas.createStyleButton(store, {style, label})
+// returns { toggleEffect, isActive, label, onMouseDown }
+
+
+// switch (schema) {
+//     case 'inline':
+//         return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createStyleButton({ style, label }))
+//     case 'block':
+//         return withProps({ children: <BaseButton {...{ icon }} /> })(richButtonsPlugin.createBlockButton({ type, label }))
+//     default:
+//         return <BaseButton {...{ icon }} />
+// }
+// 
+// }
 
 // Create all the custom Button exports for the module
 
 export const BoldButton = generateButton({
-    style: 'BOLD',
+    type: 'BOLD',
     label: 'Bold',
     schema: 'inline',
     icon: FormatBoldIcon,
 })
 
 export const ItalicButton = generateButton({
-    style: 'ITALIC',
+    type: 'ITALIC',
     label: 'Italic',
     schema: 'inline',
     icon: FormatItalicIcon,
 })
 
 export const UnderlineButton = generateButton({
-    style: 'UNDERLINE',
+    type: 'UNDERLINE',
     label: 'Underline',
     schema: 'inline',
     icon: FormatUnderlinedIcon,
 })
 
 export const DividerButton = generateButton({
-    style: 'BOLD',
+    type: 'BOLD',
     label: 'Divider',
     schema: 'block',
     icon: RemoveIcon,
@@ -155,14 +223,14 @@ export const HeadingThreeButton = generateButton({
 })
 
 export const ColorTextButton = generateButton({
-    style: 'BOLD',
+    type: 'BOLD',
     label: 'Color Text',
     schema: 'inline',
     icon: FormatColorTextIcon,
 })
 
 export const HighlightButton = generateButton({
-    style: 'BOLD',
+    type: 'BOLD',
     label: 'Highlight Text',
     schema: 'inline',
     icon: BorderColorIcon,
@@ -190,14 +258,14 @@ export const IndentIcon = generateButton({
 })
 
 export const EmojiIcon = generateButton({
-    style: 'BOLD',
+    type: 'BOLD',
     label: 'Emojis',
     schema: 'block',
     icon: EmojiEmotionsIcon,
 })
 
 export const LinkButton = generateButton({
-    style: 'BOLD',
+    type: 'BOLD',
     label: 'Add Link',
     schema: 'block',
     icon: LinkIcon,

@@ -10,6 +10,8 @@ import { BoldButton, ItalicButton, UnderlineButton, AlignLeftButton, AlignCenter
 const Toolbar = props => {
     // console.log('toolbar props', props)
     const { store } = props
+    console.log('BIG STORE', props)
+    console.log('BIG STORE', props.store.getItem('getPlugins'))
     const childProps = {
         store,
         getPlugins: store.getItem('getPlugins'),
@@ -25,7 +27,7 @@ const Toolbar = props => {
         <Box height="100%" width="100%" display="flex" flexDirection="row" overflow="hidden" boxShadow={2}>
             <BoldButton {...childProps} />
             <ItalicButton {...childProps} />
-            <UnderlineButton {...childProps} />
+            {/* <UnderlineButton {...childProps} />
             <HeadingFourButton {...childProps} />
             <ColorTextButton {...childProps} />
             <HighlightButton {...childProps} />
@@ -41,7 +43,7 @@ const Toolbar = props => {
             <BulletButton {...childProps} />
             <EmojiIcon {...childProps} />
             <HeadingThreeButton {...childProps} />
-            <ParagraphButton {...childProps} />
+            <ParagraphButton {...childProps} /> */}
         </Box>
     )
 }
