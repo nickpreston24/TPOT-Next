@@ -6,7 +6,7 @@ export const richButtonsPlugin = createRichButtonsPlugin() // export the instanc
 
 const plugins = [
   linkifyPlugin,
-  richButtonsPlugin,
+  // richButtonsPlugin,
 ]
 
 export default plugins
