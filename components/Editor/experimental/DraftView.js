@@ -4,7 +4,7 @@ import { Box, CircularProgress } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 import { baseStyleMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
-import plugins, { ScribeToolbar, Toolbar } from '../plugins'
+import plugins, { ScribeToolbar } from '../plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
 
 // The <DraftView /> component is the primary view mode of the <EditorView /> It
@@ -120,7 +120,6 @@ const DraftView = props => {
                         handleKeyCommand={handleKeyCommand}
                         placeholder={"Start typing to begin..."}
                     />
-                    <Toolbar />
                     <ScribeToolbar />
                 </Box>
             </Box>
