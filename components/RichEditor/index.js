@@ -52,8 +52,8 @@ export const RichEditor = ({
   if (!draftState)
     return UnderConstruction('draftState was not provided') // TODO: use a 404 here.
 
-  if (!editorRef)
-    return UnderConstruction('editorRef was not provided')
+  // if (!editorRef)
+  //   return UnderConstruction('editorRef was not provided')
 
   // console.log('Current document: ', document)
 
@@ -95,7 +95,7 @@ export const RichEditor = ({
     // console.log('toggled color:', toggledColor);
 
     const selection = editorState.getSelection();
-    // console.log('selection: ', selection);
+    console.log('selection: ', selection);
 
     const nextContentState = Object.keys(colorStyleMap)
       .reduce((contentState, color) => {

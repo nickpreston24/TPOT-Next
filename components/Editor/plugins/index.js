@@ -18,7 +18,11 @@ import {
 } from 'draft-js-buttons';
 
 import createUndoPlugin from 'draft-js-undo-plugin';
-import createLinkifyPlugin from 'draft-js-linkify-plugin';
+import createLinkifyPlugin from 'draft-js-linkify-plugin'
+import createRichButtonsPlugin from 'draft-js-richbuttons-plugin'
+ 
+export const linkifyPlugin = createLinkifyPlugin()
+export const richButtonsPlugin = createRichButtonsPlugin() 
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
 import { UnderConstruction } from '../../../pages/404';
@@ -28,16 +32,16 @@ const { Toolbar } = staticToolbarPlugin;
 
 const undoPlugin = createUndoPlugin();
 
-const linkifyPlugin = createLinkifyPlugin({
-    //property 'component' renders the component you want, instead of the normal anchor tag:
-    // TODO: @MP, provide an onClick function.
-    component: (props) => (
-        <a {...props} onClick={() => {
-            console.log(props)
-            // alert('Clicked on link!')
-        }} />
-    )
-});
+// const linkifyPlugin = createLinkifyPlugin({
+//     //property 'component' renders the component you want, instead of the normal anchor tag:
+//     // TODO: @MP, provide an onClick function.
+//     component: (props) => (
+//         <a {...props} onClick={() => {
+//             console.log(props)
+//             // alert('Clicked on link!')
+//         }} />
+//     )
+// });
 
 export const plugins = [linkifyPlugin, undoPlugin, staticToolbarPlugin];
 export const { UndoButton, RedoButton } = undoPlugin;
@@ -165,6 +169,9 @@ export const InlineStyleControls = props => {
         </div>
     );
 };
+
+
+
 
 // import createFocusPlugin from 'draft-js-focus-plugin';
 // import createAlignmentPlugin from 'draft-js-alignment-plugin';

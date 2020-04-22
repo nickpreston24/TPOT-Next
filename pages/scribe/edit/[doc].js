@@ -50,6 +50,7 @@ class Document extends Component {
                 details={() => <DocumentDetails {...{ document }} />}
               >
                 <DocumentEditor {...{ document, id: doc }} />
+                {/* <RichEditor/> */}
               </Dashboard>
             </DocumentForm>
           )}

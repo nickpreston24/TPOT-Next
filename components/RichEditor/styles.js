@@ -59,10 +59,8 @@ const styles = {
         overflowY: "auto",
         borderRadius: "25px",
         cursor: "text",
-        height: "100%",
-        maxHeight: "200px",
+        // height: "100%",
         padding: 10,
-
         boxSizing: "border-box",
         cursor: "text",
         boxShadow: "inset 0px 1px 8px -3px #ABABAB"

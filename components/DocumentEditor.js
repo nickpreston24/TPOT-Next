@@ -50,7 +50,6 @@ function DocumentEditor(props) {
     // Parse out each field and convert to target format
     code = JSON.parse(code)
     draft = JSON.parse(draft)
-    console.log('Current draft state? ', draft)
     original = JSON.parse(original)
     stylesheet = JSON.parse(stylesheet)
 

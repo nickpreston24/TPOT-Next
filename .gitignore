@@ -33,3 +33,6 @@ yarn-error.log*
 
 # Webstorm
 .idea/
+
+# Local Netlify folder
+.netlify

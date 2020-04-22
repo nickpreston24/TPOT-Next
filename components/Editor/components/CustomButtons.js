@@ -1,5 +1,5 @@
 import React from 'react'
-import { richButtonsPlugin } from '../functions/plugins'
+import { richButtonsPlugin } from '../plugins'
 import { Box, Button, Tooltip } from '@material-ui/core'
 import { withProps } from 'recompose'
 import FormatBoldIcon from '@material-ui/icons/FormatBold'

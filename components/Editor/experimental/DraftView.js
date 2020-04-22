@@ -3,7 +3,6 @@ import { Box, CircularProgress } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 import { baseStyleMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
-// import plugins from '../functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil, ContentState } from 'draft-js';
 import { Toolbar } from '../components/Toolbar';
 import { RichEditor } from '../../RichEditor';
@@ -15,7 +14,6 @@ import { useRef } from "react";
 import { UnderConstruction } from '../../../pages/404'
 // import { SubmitButton } from "./buttons/SubmitButton";
 
-
 import {
     plugins
     , RedoButton
@@ -25,7 +23,8 @@ import {
     , InlineStyleControls
     , ColorPicker
     , getBlockStyle
-} from '../../RichEditor/plugins';
+} from '../plugins';
+console.log('plugins', plugins);
 
 import {
     generateHtmlFromEditorState
@@ -75,9 +74,6 @@ const DraftView = props => {
     const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
     const [stylesheet, setStylesheet] = useState(baseStyleMap)
 
-    // Callback function for newly returned Immutable state
-    const onChange = editorState => setEditorState(editorState)
-
     // Focus the editor's textbox
     const focus = () => draftRef.current.focus()
 
@@ -97,14 +93,34 @@ const DraftView = props => {
         return getDefaultKeyBinding(event)
     }
 
-    // Callback for the result command from myKeyBindingFn()
-    const handleKeyCommand = command => {
-        console.warn(`Editor Call Action --> ${command}`)
+    // TODO @ MP - Merge the two handleKeys
+    const handleKeyCommand = (command, state) => {
+        console.info(`Editor Call Action --> ${command}`)
         if (command === 'save') { handleSave(); return 'handled'; }
         if (command === 'publish') { handlePublish(); return 'handled'; }
         if (command === 'duplicate') { handleDuplicate(); return 'handled'; }
+
+        const nextState = RichUtils.handleKeyCommand(state, command);
+
+        if (nextState) {
+            onChange(nextState);
+            return "handled";
+        }
+
         return 'not-handled';
     }
+
+    const toggleBlockType = type => {
+        onChange(RichUtils.toggleBlockType(editorState, type));
+    };
+
+    const toggleInlineStyle = type => {
+        onChange(RichUtils.toggleInlineStyle(editorState, type));
+    };
+
+    const onChange = nextstate => {
+        setEditorState(nextstate);
+    };
 
     // Focus / Blur the editor during mount and un-mount
     useEffect(() => {
@@ -113,6 +129,47 @@ const DraftView = props => {
             return () => blur()
         }
     }, []);
+
+    const toggleColor = (toggledColor) => {
+        console.log('toggled color:', toggledColor);
+        // console.log(editorState)
+        const selection = editorState.getSelection();
+        console.log('selection: ', selection);
+
+        const nextContentState = Object.keys(colorStyleMap)
+            .reduce((contentState, color) => {
+                // console.log('color', colorStyleMap[color].color);
+                return Modifier.removeInlineStyle(contentState, selection, color)
+            }, editorState.getCurrentContent())
+
+        let nextEditorState = EditorState.push(
+            editorState,
+            nextContentState,
+            'change-inline-style'
+        )
+
+        const currentStyle = editorState.getCurrentInlineStyle();
+
+        // Unset the style override for the current color:
+        if (selection.isCollapsed()) {
+            // console.log('unset style.');
+            nextEditorState = currentStyle.reduce((state, color) => {
+                return RichUtils.toggleInlineStyle(state, color)
+            }, nextEditorState)
+        }
+
+        // If the color is being toggled on, apply it.
+        if (!currentStyle.has(toggledColor)) {
+            // console.log('applied color!', currentStyle);
+            nextEditorState = RichUtils.toggleInlineStyle(
+                nextEditorState,
+                toggledColor
+            )
+        }
+
+        onChange(nextEditorState)
+    };
+
 
     // REQUIRED:
     // Semantically define additional component properties on mount
@@ -134,36 +191,57 @@ const DraftView = props => {
         draftRef.current = { ...draftRef.current, ..._this }
     }, [])
 
+    const { root, content, controls } = styles;
+
     return (
         <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
             <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
                 <Toolbar forward={draftRef.current} />
             </Box>
-            <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
-                <Box display="flex" width={800} >
-                    <Editor
-                        ref={draftRef}
-                        plugins={plugins}
-                        onChange={onChange}
+            <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
+
+                <div style={controls}>
+                    <BlockStyleControls
                         editorState={editorState}
-                        customStyleMap={stylesheet}
-                        keyBindingFn={myKeyBindingFn}
-                        handleKeyCommand={handleKeyCommand}
-                        placeholder={"Start typing to begin..."}
+                        onToggle={toggleBlockType}
+                    />
+                    <InlineStyleControls
+                        editorState={editorState}
+                        onToggle={toggleInlineStyle}
                     />
 
-                    {/* <RichEditor
-                        editorRef={draftRef}
-                        // plugins={plugins}
-                        // onChange={onChange}
-                        draftState={editorState}
-                        // customStyleMap={stylesheet}
-                        keyBindingFn={myKeyBindingFn}
-                        handleKeyCommand={handleKeyCommand}
-                        placeholder={"Start typing to begin..."}
+                    <ColorPicker
+                        editorState={editorState}
+                        onToggle={toggleColor}
+                    />
 
-                    /> */}
+                    {/* Universal controls */}
+                    {/* <PrimaryButton onClick={clear}>Clear</PrimaryButton> */}
+                    <UndoButton />
+                    <RedoButton />
+                </div>
 
+            </Box>
+            <Box
+                display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
+                <Box display="flex" width={800} >
+                    <div
+                        className="RichEditor-root"
+                        style={root}
+                    >
+                        <Editor
+                            ref={draftRef}
+                            plugins={plugins}
+                            onChange={onChange}
+                            editorState={editorState}
+                            customStyleMap={colorStyleMap}
+                            keyBindingFn={myKeyBindingFn}
+                            handleKeyCommand={handleKeyCommand}
+                            placeholder={"Start typing to begin..."}
+
+                            blockStyleFn={getBlockStyle}
+                        />
+                    </div>
                 </Box>
             </Box>
         </Box>
@@ -273,8 +351,9 @@ const DraftViewFC = props => {
                         customStyleMap={props.stylesheet}
                         onChange={onChange}
                         handleKeyCommand={handleKeyCommand}
+                        onFocus={logState(editorState)}
                         // keyBindingFn={this.myKeyBindingFn}
-                        plugins={plugins} /> : <div>Letters Could not be Loaded</div>}
+                        plugins={plugins} /> : <UnderConstruction message="Editor did not load properly" />}
                 </Box>
             </Box>
         </Box>
