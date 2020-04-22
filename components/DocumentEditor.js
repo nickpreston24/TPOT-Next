@@ -1,91 +1,141 @@
 import { inject, observer } from 'mobx-react'
-import React, { Component } from 'react'
+import React, { Component, useState, useEffect, useRef } from 'react'
 import { withForm } from './DocumentForm'
-import Editor from './Editor'
-import { EditorState, convertFromRaw } from 'draft-js'
+import EditorView from './Editor/experimental/EditorView'
+import { convertFromRaw, EditorState } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { RichEditor } from './RichEditor'
+import { NullReferenceError } from './Errors'
+import { compose } from 'recompose'
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
 // Toolbox. When the shim mounts a reference is made to our <Editor /> child.
-// The Editor is designed in a way to be drag and drop and application independant.
+// The Editor is designed in a way to be drag and drop and application independent.
 // This shim allows us to connect our application and state and call methods off
 // the standalone editor, such as mode switching, saving, initial state, etc. It
 // also allows us to ask the standalone editor for his data so we can publish it.
 
-@inject('store')
-@withForm
-@observer
-class DocumentEditor extends Component {
+function DocumentEditor(props) {
 
-  // Make a ref to the standalone editor to access its built-in functions and state
-  editor = React.createRef()
+  // Validate Props
+  const document = props.document || null
+  const id = props.id || null
 
-  componentDidMount() {
-    // Initialize the Draft editor with the document's data
-    this.init()
-    // Set a Auto-Save Timer for the Editor's content (1 mins)
-    this.timer = setInterval(() => this.props.store.save(this.props.id), 600000)
+  // Render a loader if props don't check out
+  if (!document) {
+    return <CircularProgress />
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timer) // Very important to clear! :D
-  }
+  // Editor is now safe to render. 
+  // code dependent on props is below:
+  // ______________________________
 
-  // the init() function fills in data for Draft editor - including an initial, immutable DraftState :)
-  init() {
-    let { document } = this.props
-    if (!document) return // Ditch if there is no document, will render a a <CircularProgress /> instead.
-    let { draft, code, original, stylesheet } = toJS(document.data)
-    draft = JSON.parse(draft)
+  // Create a reference to the child, EditorView
+  const editorRef = useRef(null) // Access Functions that affect Original, Code, Draft, etc.
+  const draftRef = useRef(null) // Access functions that affect the Vanilla Draft Editor
+
+  // Create local states
+  const [mode, setMode] = useState('draft');
+
+  // Initialize the EditorViews's data for all
+  // types (original, draft, code, etc.)
+  useEffect(() => {
+
+    // Destructure the document's fields
+    const documentData = toJS(document.data)
+    let { draft, code, original, stylesheet } = documentData
+
+    // Parse out each field and convert to target format
     code = JSON.parse(code)
+    draft = JSON.parse(draft)
+    console.log('Current draft state? ', draft)
     original = JSON.parse(original)
     stylesheet = JSON.parse(stylesheet)
+
+    // Build a state to initialize the child's 'Draft' mode
     const contentState = convertFromRaw(draft)
-    const initialState = EditorState.createWithContent(contentState)
-    let editorRef = this.editor.current
-    // If there is no editor.current it is because this.props.document is null and we are rendering a <CircularProgress />
-    if (!editorRef) return
-    editorRef.editorState = initialState
-    editorRef.stylesheet = stylesheet
-    editorRef.original = original
-    editorRef.code = code
+    const editorState = EditorState.createWithContent(contentState)
+
+    // Set all initial values for each child
+    try {
+      editorRef.current.setCode(code)
+      editorRef.current.setBlocks(draft) // document.data.draft is already the equivalent of blocks
+      editorRef.current.setOriginal(code)
+      editorRef.current.setStylesheet(stylesheet)
+      editorRef.current.setEditorState(editorState)
+    } catch (error) {
+      console.warn('There is no DraftView in EditorView. Make sure on is in the render statement and you pass down draftRef from DocumentEditor')
+    }
+  }, [])
+
+  // Supply callbacks that the Editor can invoke interally with key commands
+  const handleSave = () => {
+    props.store.save(id)
   }
 
-  // the setMode() function switches between 'Original', 'Draft' and 'Code' modes in the <Editor />
-  setMode(name) {
-    this.editor.current.mode = name
+  const handlePublish = () => {
+    console.log('handled publishing')
   }
 
-  render() {
-    const { document, store, id } = this.props
-    const mode = this.editor.current ? this.editor.current.mode : 'draft'
-    const noData = document.isLoading
+  const handleDuplicate = () => {
+    console.log('handled duplication')
+  }
 
+  // Setup an Autosave Timer
+  useEffect(() => {
+    // const timer = setInterval(() => {
+    //   if (id) props.store.save(id)
+    // }, 60000)
+    return () => { }//clearInterval(timer)
+  }, [])
+
+  if (document) {
     return (
-      <>
-        {noData
-          // No Document, duck safely out with a loader, just incase (... should already provided from [doc].js )
-          ? <CircularProgress />
-          // Yay Document! Render the Editor
-          : (
-            <>
-              {/* You can replace what is below here with another draft editor intead of <Editor /> if you wanted to */}
-              <Editor ref={this.editor} saveFn={() => store.save(id)} >
-                <ButtonGroup variant="outlined">
-                  <Button color={ mode === 'original' ? 'secondary' : 'primary' } onClick={() => this.setMode('original')}>Original</Button>
-                  <Button color={ mode === 'draft' ? 'secondary' : 'primary' } onClick={() => this.setMode('draft')}>Draft</Button>
-                  <Button color={ mode === 'code' ? 'secondary' : 'primary' } onClick={() => this.setMode('code')}>Code</Button>
-                  <Button color={ mode === 'blocks' ? 'secondary' : 'primary' } onClick={() => this.setMode('blocks')}>Blocks</Button>
-                </ButtonGroup>
-              </Editor>
-            </>
-          )
+      <EditorView
+        editorRef={editorRef}
+        draftRef={draftRef}
+        mode={mode}
+        handleSave={handleSave}
+        handlePublish={handlePublish}
+        handleDuplicate={handleDuplicate}
+        children={
+          <ModeSwitcher {...{ mode, setMode }} />
         }
-      </>
+      />
     )
   }
+
 }
 
-export default DocumentEditor
+export default compose(
+  inject('store'),
+  observer
+)(DocumentEditor)
+
+
+
+
+// Auxillary Components
+
+function ModeSwitcher({ mode, setMode }) {
+  return (
+    <ButtonGroup variant="outlined">
+      <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => setMode('original')}>Paper</Button>
+      <Button color={mode === 'draft' ? 'secondary' : 'primary'} onClick={() => setMode('draft')}>Editor</Button>
+      {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
+      <Button color={mode === 'code' ? 'secondary' : null} onClick={() => setMode('code')}>Code</Button>
+      <Button color={mode === 'blocks' ? 'secondary' : null} onClick={() => setMode('blocks')}>Blocks</Button>
+    </ButtonGroup>
+  )
+}
+
+
+
+// <RichEditor
+//   document={document}
+//   //TODO: @BP, The following props must be defined before I can use them like in EditorView
+//   editorRef={editorRef}
+//   draftState={state} //INFO: @MP, this can be fixed. I know it doesn't work if you untoggle RichEditor
+// ></RichEditor>

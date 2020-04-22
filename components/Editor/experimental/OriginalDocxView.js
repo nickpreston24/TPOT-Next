@@ -5,7 +5,7 @@ import ReactHtmlParser from "react-html-parser";
 
 @inject('store')
 @observer
-class Original extends React.Component {
+class OriginalDocxView extends React.Component {
 
     state = {
         loading: true,
@@ -17,11 +17,11 @@ class Original extends React.Component {
         if (!this.state.domTree) {
             if (this.props.state) {
                 const reactTree = await ReactHtmlParser(this.props.state)
-                this.setState({ 
+                this.setState({
                     loading: false,
                     domTree: reactTree
-                 })
-            }   
+                })
+            }
         }
     }
 
@@ -34,7 +34,7 @@ class Original extends React.Component {
                 <Box maxWidth={800} display="block">
                     {loading
                         ? <CircularProgress />
-                        : <>{ domTree }</>
+                        : <>{domTree}</>
                     }
                 </Box>
             </Box>
@@ -42,4 +42,4 @@ class Original extends React.Component {
     }
 }
 
-export default Original
+export default OriginalDocxView

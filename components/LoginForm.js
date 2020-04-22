@@ -37,7 +37,7 @@ class LoginForm extends Component {
             name: 'email',
             label: 'Email',
             placeholder: 'Insert Email',
-            rules: 'required|email|string|between:5,25',
+            rules: 'required|email|string|between:5,30',
         }, {
             name: 'password',
             label: 'Password',
