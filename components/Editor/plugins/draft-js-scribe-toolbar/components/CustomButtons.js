@@ -20,43 +20,51 @@ import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import LinkIcon from '@material-ui/icons/Link';
 import Zoom from '@material-ui/core/Zoom';
 import { observer } from 'mobx-react'
+import { RichUtils } from 'draft-js'
 
 
 // Create the visual characteristics of the button and map the parent schema's functionality to it
 
-class BaseButton extends Component {
+// class BaseButton extends Component {
     
-}
+// }
 
-export const BaseButton = observer(props => {
-    // console.log("Button Props", props)
-    const { icon: SvgIcon, toggleInlineStyle, toggleBlockType, isActive, label, inlineStyle, onMouseDown } = props
-    console.log(props)
+export const BaseButton = props => {
+    const { icon: SvgIcon, toggleInlineStyle, toggleBlockType, toggleEffect, isActive, label, inlineStyle, onMouseDown } = props
+
+    const active = isActive()
+    console.log(active)
+
     return (
         <Tooltip title={label} TransitionComponent={Zoom} arrow>
             <Button
-                onClick={!!toggleInlineStyle ? toggleInlineStyle : toggleBlockType}
-                onMouseDown={onMouseDown}
-                style={{ minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }}
+                onClick={toggleEffect}
+                style={{ minWidth: 40, minHeight: 40, color: active ? 'dodgerblue' : '#000' }}
             >
                 <SvgIcon />
             </Button>
         </Tooltip>
     )
-})
+}
 
 // Pick a schema to creat certain types of buttons. Schema is determined by config.type
 
 export const generateButton = config => props => {
+    // console.log("GENERATE", config, props)
     // const { style, label } = config
     // console.log('Config/Props Generator', config, props)
 
     // console.log(createStyleButton(config))
     // const mapping = createStyleButton(config)
     // const Component = props => withProps({ ...props, ...createStyleButton(config) })(BaseButton)
+    const Component = () => <BaseButton {...{...props }} />
     const mappedProps = createStyleButton(config)(props)
-    const Component = withProps(mappedProps)(BaseButton)
-    return <Component />
+    // console.log('MAPPED', mappedProps)
+    return <BaseButton {...props} {...mappedProps} />
+    // const Component = withProps(mappedProps)(BaseButton)
+    // return <Component />
+
+
     // return <><BaseButton {...{...props, ...mappedProps}} /></>
     // return withProps({ children: <BaseButton {...{ config: config.icon }} /> })(createStyleButton({ style: config.style, label:config.label }))
 }
@@ -71,12 +79,9 @@ const createStyleButton = config => props => {
     return {
         icon,
         label,
-        isActive: () => {
-            console.log(props.getEditorState().getCurrentInlineStyle())
-            return props.getEditorState && props.getEditorState().getCurrentInlineStyle().has('BOLD')
-        },
+        isActive: () => props.getEditorState().getCurrentInlineStyle().has(type),
         toggleEffect: event => {
-            event.preventDefault();
+            event.preventDefault()
             props.setEditorState(
                 RichUtils.toggleInlineStyle(
                     props.getEditorState(), type
