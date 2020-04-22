@@ -22,7 +22,9 @@ class Toolbar extends React.Component {
             getEditorState: store.getItem('getEditorState'),
             getReadOnly: store.getItem('getReadOnly'),
             setReadOnly: store.getItem('setReadOnly'),
-            getEditorRef: store.getItem('getEditorRef')
+            getEditorRef: store.getItem('getEditorRef'),
+            customStylePrefix: store.getItem('customStylePrefix'),
+            customStyleFunctions: store.getItem('customStyleFunctions'),
         };
 
         return (
@@ -33,8 +35,8 @@ class Toolbar extends React.Component {
                 <ParagraphButton {...childProps} />
                 <HeadingThreeButton {...childProps} />
                 <HeadingFourButton {...childProps} />
-                {/* <ColorTextButton {...childProps} /> */}
-                {/* <HighlightButton {...childProps} /> */}
+                <ColorTextButton {...childProps} />
+                <HighlightButton {...childProps} />
                 <Quotebutton {...childProps} />
                 {/* <LinkButton {...childProps} /> */}
                 {/* <DividerButton {...childProps} /> */}

@@ -5,12 +5,12 @@ import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solari
 
 const BlocksView = ({ hidden = true, state }) => {
 
-    if (!state) 
+    if (!state)
         return null
-        
+
     const printedJSON = JSON.stringify(state, null, 4);
 
-    return <Box flexGrow={1} display={hidden ? 'none' : 'flex'} justifyContent="center">
+    return (<Box flexGrow={1} display={hidden ? 'none' : 'flex'} position="absolute" justifyContent="center">
         <Box display="block" maxWidth={800}>
             <SyntaxHighlighter language='json' children={printedJSON} style={solarizedLight} lineProps={{
                 style: {
@@ -26,7 +26,7 @@ const BlocksView = ({ hidden = true, state }) => {
                 background: 'transparent'
             }} />
         </Box>
-    </Box>
+    </Box>)
 };
 
 export default BlocksView

@@ -26,7 +26,7 @@ import { RichUtils } from 'draft-js'
 // Create the visual characteristics of the button and map the parent schema's functionality to it
 
 export const BaseButton = props => {
-    
+
     const { icon: SvgIcon, toggleEffect, isActive, label } = props
 
     const active = isActive()
@@ -54,6 +54,8 @@ export const generateButton = config => props => {
         buttonProps = createInlineStyleButton(config)(props)
     } else if (schema == 'block') {
         buttonProps = createBlockStyleButton(config)(props)
+    } else if (schema == 'custom') {
+        buttonProps = createCustomStyleButton(config)(props)
     }
 
     const Component = withProps(buttonProps)(BaseButton)
@@ -74,7 +76,7 @@ const createInlineStyleButton = config => props => {
             event.preventDefault()
             props.setEditorState(
                 RichUtils.toggleInlineStyle(
-                    props.getEditorState(), 
+                    props.getEditorState(),
                     type
                 )
             );
@@ -93,6 +95,32 @@ const createBlockStyleButton = config => props => {
                 RichUtils.toggleBlockType(
                     props.getEditorState(),
                     type
+                )
+            );
+        }
+    }
+}
+
+// Enables custom inline styles for FontSize, Color, and Highlight
+const createCustomStyleButton = config => props => {
+    const { type } = config
+    return {
+        ...config,
+        isActive: () => (RichUtils.getCurrentBlockType(props.getEditorState()) === type),
+        toggleEffect: (event, value) => {
+            event.preventDefault();
+            const PREFIX = props.customStylePrefix
+            const CUSTOM_PROP = type
+            const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${'#FF0099'}`
+            const CUSTOM_ATTRB = `${'#FF0099'}`
+            // Register the custom style name in the editor's stylesheet before you apply it
+            let customStyleMap = props.getProps().customStyleMap
+            customStyleMap = Object.assign(customStyleMap, { [`${CUSTOM_NAME}`]: { [`${CUSTOM_PROP}`]: CUSTOM_ATTRB } })
+            // Toggle the style using the attribute name (ex:  #FF0099, 24PX, LIME, etc.)
+            props.setEditorState(
+                props.customStyleFunctions[`${CUSTOM_PROP}`].toggle(
+                    props.getEditorState(),
+                    CUSTOM_ATTRB.toUpperCase()
                 )
             );
         }
@@ -186,9 +214,9 @@ export const HeadingThreeButton = generateButton({
 })
 
 export const ColorTextButton = generateButton({
-    type: 'BOLD',
+    type: 'color',
     label: 'Color Text',
-    schema: 'inline',
+    schema: 'custom',
     icon: FormatColorTextIcon,
 })
 
