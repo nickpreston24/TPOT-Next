@@ -1,4 +1,4 @@
-const NotReadyMessage = message => {
+const UnderConstruction = message => {
     console.warn(message) // for devs.  TODO: replace with our custom logger
     return <div>
         <p>This view could not be rendered properly.  We're sorry for the inconvenience!</p>
@@ -10,4 +10,4 @@ const NotReadyMessage = message => {
     </div>; // for Users
 }
 
-export default NotReadyMessage;
+export default UnderConstruction;

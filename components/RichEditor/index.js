@@ -2,7 +2,7 @@ import { EditorState, Modifier, RichUtils, convertFromRaw } from "draft-js";
 import { useRef, useState } from "react";
 import { Box } from '@material-ui/core'
 import { toJS } from 'mobx'
-import NotReadyMessage from '../Editor/components/NotReadyMessage'
+import UnderConstruction from '../Editor/components/UnderConstruction'
 
 import { SubmitButton } from "./buttons/SubmitButton";
 
@@ -42,20 +42,20 @@ export const RichEditor = ({
 ) => {
 
   if (!document) {
-    return NotReadyMessage(new ArgumentNullReferenceError("document").message)
+    return UnderConstruction(new ArgumentNullReferenceError("document").message)
   }
 
-  // if (!draftState)
-  //   return NotReady('draftState was not provided')
+  if (!draftState)
+    return UnderConstruction('draftState was not provided')
 
-  // if (!editorRef) 
-  //   return NotReady('editorRef was not provided')
+  if (!editorRef)
+    return UnderConstruction('editorRef was not provided')
 
   // console.log('Current document: ', document)
 
-  if (!draftState || !editorRef) {
+  if (!draftState) {
     console.log('draftState: ', draftState, 'editorRef:', editorRef)
-    return <div>Not Ready!</div>
+    return UnderConstruction("Draft state wasn't ready")
   }
 
   editorRef = editorRef || useRef(null);

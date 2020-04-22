@@ -50,13 +50,13 @@ class Document extends Component {
                 title={`TPOT Scribe - Edit - ${doc}`}
                 details={() => <DocumentDetails {...{ document }} />}
               >
-                <DocumentEditor {...{ document, id: doc }} />
+                {/* <DocumentEditor {...{ document, id: doc }} /> */}
                 {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                 All of the classes below can be pulled out on their own and they 
                 self manage. If you pass down refs to them, you can control them. :D */}
                 {/* <EditorView /> */}
                 {/* <DraftView /> */}
-                {/* <RichEditor document={document} /> */}
+                <RichEditor document={document} />
               </Dashboard>
             </DocumentForm>
           )}
