@@ -11,19 +11,22 @@ class Toolbar extends React.Component {
 
     render() {
 
-        var _props = this.props,
-            theme = _props.theme,
-            store = _props.store;
+        const { props } = this
+        const { store } = props
 
-        var childProps = {
-            getEditorState: store.getItem('getEditorState'),
-            setEditorState: store.getItem('setEditorState'),
+        const childProps = {
             selection: store.getItem('selection'),
-            onOverrideContent: this.onOverrideContent
+            getPlugins: store.getItem('getPlugins'),
+            getProps: store.getItem('getProps'),
+            setEditorState: store.getItem('setEditorState'),
+            getEditorState: store.getItem('getEditorState'),
+            getReadOnly: store.getItem('getReadOnly'),
+            setReadOnly: store.getItem('setReadOnly'),
+            getEditorRef: store.getItem('getEditorRef')
         };
 
         return (
-            <Box height="100%" width="100%" display="block" flexDirection="row" overflow="hidden" boxShadow={2}>
+            <Box width="100%" display="flex" flexDirection="row" overflow="hidden" mt="20px" mb="10px">
                 <BoldButton {...childProps} />
                 <ItalicButton {...childProps} />
                 <UnderlineButton {...childProps} />

@@ -48,15 +48,15 @@ export const BaseButton = props => {
 export const generateButton = config => props => {
 
     const { schema } = config
-    let mappedProps = {}
+    let buttonProps = {}
 
     if (schema == 'inline') {
-        mappedProps = createInlineStyleButton(config)(props)
+        buttonProps = createInlineStyleButton(config)(props)
     } else if (schema == 'block') {
-        mappedProps = createBlockStyleButton(config)(props)
+        buttonProps = createBlockStyleButton(config)(props)
     }
 
-    const Component = withProps(mappedProps)(BaseButton)
+    const Component = withProps(buttonProps)(BaseButton)
     return <Component {...props} />
 }
 

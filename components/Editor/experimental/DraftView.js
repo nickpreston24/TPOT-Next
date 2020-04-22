@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Box, CircularProgress } from '@material-ui/core'
+import { Box, CircularProgress, Portal } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 import { baseStyleMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
@@ -33,6 +33,7 @@ const DraftView = props => {
 
     // Validate props
     const hidden = props.hidden
+    const children = props.children || (() => null)
     const handleSave = props.handleSave || (() => null)
     const handlePublish = props.handlePublish || (() => null)
     const handleDuplicate = props.handleDuplicate || (() => null)
@@ -103,13 +104,15 @@ const DraftView = props => {
         draftRef.current = { ...draftRef.current, ..._this }
     }, [])
 
+    const toolbarRef = React.useRef(null)
+
     return (
-        <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-            <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
-                {/* <Toolbar forward={draftRef.current} /> */}
+        <Box height="100%">
+            <Box position="relative" zIndex={1200} width="100%" display="flex" justifyContent="center">
+                <Box id="Toolbar Container" ref={toolbarRef} width={820} position="relative" zIndex={1200}/>
             </Box>
-            <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
-                <Box display="flex" width={800} >
+            <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'scroll' }} >
+                <Box width={800} display="flex" order="reverse">
                     <Editor
                         ref={draftRef}
                         plugins={plugins}
@@ -120,11 +123,34 @@ const DraftView = props => {
                         handleKeyCommand={handleKeyCommand}
                         placeholder={"Start typing to begin..."}
                     />
-                    <ScribeToolbar />
+                    <Portal container={toolbarRef.current}>
+                        <ScribeToolbar />
+                    </Portal>
                 </Box>
             </Box>
         </Box>
     )
+
+    // return (
+    //     <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'scroll' }} >
+    //         <Box id="Toolbar Container" ref={toolbarRef} position="relative" zIndex={1200} width="100%" height="100%" border={4} borderColor="red" />
+    //         <Box width={800} display="flex" order="reverse">
+    //             <Editor
+    //                 ref={draftRef}
+    //                 plugins={plugins}
+    //                 onChange={onChange}
+    //                 editorState={editorState}
+    //                 customStyleMap={stylesheet}
+    //                 keyBindingFn={myKeyBindingFn}
+    //                 handleKeyCommand={handleKeyCommand}
+    //                 placeholder={"Start typing to begin..."}
+    //             />
+    //             <Portal container={toolbarRef.current}>
+    //                 <ScribeToolbar />
+    //             </Portal>
+    //         </Box>
+    //     </Box>
+    // )
 }
 
 // Add Type Safety for Props
@@ -170,177 +196,177 @@ export default DraftView
 
 
 
-const DraftViewFC = props => {
+// const DraftViewFC = props => {
 
-    const editorRef = React.createRef()
+//     const editorRef = React.createRef()
 
-    // const [state, setState] = useState({
-    //     editorState: EditorState.createEmpty(),
-    //     stylesheet: baseStyleMap
-    // });
+//     // const [state, setState] = useState({
+//     //     editorState: EditorState.createEmpty(),
+//     //     stylesheet: baseStyleMap
+//     // });
 
-    /// OR,    
-    const [editorState, setEditorState] = useState(EditorState.createEmpty);
-    const [stylesheet, setStylesheet] = useState(baseStyleMap);
-    const [blocks, setBlocks] = useState(convertToRaw(editorState.getCurrentContent()));
-    const [code, setCode] = useState('I am code');
+//     /// OR,    
+//     const [editorState, setEditorState] = useState(EditorState.createEmpty);
+//     const [stylesheet, setStylesheet] = useState(baseStyleMap);
+//     const [blocks, setBlocks] = useState(convertToRaw(editorState.getCurrentContent()));
+//     const [code, setCode] = useState('I am code');
 
-    onChange = nextEditorState => setState(nextEditorState)
+//     onChange = nextEditorState => setState(nextEditorState)
 
-    const handleKeyCommand = command => {
-        console.log('command: ', command)
-        if (command === 'save') {
-            this.props.saveFn()
-            return 'handled';
-        }
-        if (command === 'publish') {
-            // this.props.publishFn()
-            return 'handled';
-        }
-        return 'not-handled';
-    }
+//     const handleKeyCommand = command => {
+//         console.log('command: ', command)
+//         if (command === 'save') {
+//             this.props.saveFn()
+//             return 'handled';
+//         }
+//         if (command === 'publish') {
+//             // this.props.publishFn()
+//             return 'handled';
+//         }
+//         return 'not-handled';
+//     }
 
-    // TODO: @Braden - If for save/publish, first include the CTRL button.  Leave out of MVP.
-    const myKeyBindingFn = (event) => {
-        const { hasCommandModifier } = KeyBindingUtil
-        if (event.keyCode === 83 /* `S` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'save' }
-        if (event.keyCode === 80 /* `P` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'publish' }
-        return getDefaultKeyBinding(event)
-    }
+//     // TODO: @Braden - If for save/publish, first include the CTRL button.  Leave out of MVP.
+//     const myKeyBindingFn = (event) => {
+//         const { hasCommandModifier } = KeyBindingUtil
+//         if (event.keyCode === 83 /* `S` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'save' }
+//         if (event.keyCode === 80 /* `P` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'publish' }
+//         return getDefaultKeyBinding(event)
+//     }
 
-    render = () => {
-        const { hidden } = props;
-        const editorState = props.editorState;
-        return <Box
-            style={{ boxSizing: 'border-box', overflowY: 'hidden' }}
-            display={hidden ? 'none' : 'flex'}
-            flexGrow={1}
-            flexDirection="column"
-            alignItems="center"
-            flexWrap="nowrap"
-            bgcolor="background.paper"
-        >
-            <Box
-                style={{ boxSizing: 'border-box' }}
-                display="flex"
-                width="100%"
-            >
-                <Toolbar forward={editorRef.current} />
-            </Box>
-            <Box
-                style={{ overflowY: 'scroll' }}
-                flexGrow={1}
-                display="flex"
-                width="100%"
-                justifyContent="center"
-            >
-                <Box display="flex"
-                    width={800}>
-                    {!!editorState ? <Editor
-                        ref={editorRef}
-                        editorState={editorState}
-                        customStyleMap={props.stylesheet}
-                        onChange={onChange}
-                        handleKeyCommand={handleKeyCommand}
-                        // keyBindingFn={this.myKeyBindingFn}
-                        plugins={plugins} /> : <div>Letters Could not be Loaded</div>}
-                </Box>
-            </Box>
-        </Box>
-    }
-};
+//     render = () => {
+//         const { hidden } = props;
+//         const editorState = props.editorState;
+//         return <Box
+//             style={{ boxSizing: 'border-box', overflowY: 'hidden' }}
+//             display={hidden ? 'none' : 'flex'}
+//             flexGrow={1}
+//             flexDirection="column"
+//             alignItems="center"
+//             flexWrap="nowrap"
+//             bgcolor="background.paper"
+//         >
+//             <Box
+//                 style={{ boxSizing: 'border-box' }}
+//                 display="flex"
+//                 width="100%"
+//             >
+//                 <Toolbar forward={editorRef.current} />
+//             </Box>
+//             <Box
+//                 style={{ overflowY: 'scroll' }}
+//                 flexGrow={1}
+//                 display="flex"
+//                 width="100%"
+//                 justifyContent="center"
+//             >
+//                 <Box display="flex"
+//                     width={800}>
+//                     {!!editorState ? <Editor
+//                         ref={editorRef}
+//                         editorState={editorState}
+//                         customStyleMap={props.stylesheet}
+//                         onChange={onChange}
+//                         handleKeyCommand={handleKeyCommand}
+//                         // keyBindingFn={this.myKeyBindingFn}
+//                         plugins={plugins} /> : <div>Letters Could not be Loaded</div>}
+//                 </Box>
+//             </Box>
+//         </Box>
+//     }
+// };
 
-@inject('store')
-@observer
-class LegacyDraftView extends React.Component {
+// @inject('store')
+// @observer
+// class LegacyDraftView extends React.Component {
 
-    editorRef = React.createRef()
+//     editorRef = React.createRef()
 
-    state = {
-        editorState: EditorState.createEmpty(),
-        stylesheet: baseStyleMap
-    }
+//     state = {
+//         editorState: EditorState.createEmpty(),
+//         stylesheet: baseStyleMap
+//     }
 
-    onChange = (editorState) => {
-        this.setState({
-            editorState,
-        })
-    }
+//     onChange = (editorState) => {
+//         this.setState({
+//             editorState,
+//         })
+//     }
 
-    set editorState(editorState) {
-        this.setState({ editorState })
-    }
+//     set editorState(editorState) {
+//         this.setState({ editorState })
+//     }
 
-    get editorState() {
-        return this.state.editorState
-    }
+//     get editorState() {
+//         return this.state.editorState
+//     }
 
-    set stylesheet(stylesheet) {
-        this.setState({ stylesheet })
-    }
+//     set stylesheet(stylesheet) {
+//         this.setState({ stylesheet })
+//     }
 
-    get stylesheet() {
-        return this.state.stylesheet
-    }
+//     get stylesheet() {
+//         return this.state.stylesheet
+//     }
 
-    get blocks() {
-        return convertToRaw(this.state.editorState.getCurrentContent())
-    }
+//     get blocks() {
+//         return convertToRaw(this.state.editorState.getCurrentContent())
+//     }
 
-    get code() {
-        return 'I am code'
-    }
+//     get code() {
+//         return 'I am code'
+//     }
 
-    handleKeyCommand(command) {
-        console.log('command: ', command)
-        if (command === 'save') {
-            this.props.saveFn()
-            return 'handled';
-        }
-        if (command === 'publish') {
-            // this.props.publishFn()
-            return 'handled';
-        }
-        return 'not-handled';
-    }
+//     handleKeyCommand(command) {
+//         console.log('command: ', command)
+//         if (command === 'save') {
+//             this.props.saveFn()
+//             return 'handled';
+//         }
+//         if (command === 'publish') {
+//             // this.props.publishFn()
+//             return 'handled';
+//         }
+//         return 'not-handled';
+//     }
 
-    // TODO: @Braden - If for save/publish, first include the CTRL button.  Leave out of MVP.
-    myKeyBindingFn(e) {
-        // console.log('key binding()')
-        const { hasCommandModifier } = KeyBindingUtil
-        if (e.keyCode === 83 /* `S` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'save' }
-        if (e.keyCode === 80 /* `P` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'publish' }
-        return getDefaultKeyBinding(e)
-    }
+//     // TODO: @Braden - If for save/publish, first include the CTRL button.  Leave out of MVP.
+//     myKeyBindingFn(e) {
+//         // console.log('key binding()')
+//         const { hasCommandModifier } = KeyBindingUtil
+//         if (e.keyCode === 83 /* `S` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'save' }
+//         if (e.keyCode === 80 /* `P` key */ && hasCommandModifier(e)) { e.preventDefault(); return 'publish' }
+//         return getDefaultKeyBinding(e)
+//     }
 
-    render() {
-        const { hidden } = this.props
-        const editorState = this.state.editorState;
-        return (
-            <Box display={hidden ? 'none' : 'flex'} flexGrow={1} flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-                <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
-                    <Toolbar forward={this.editorRef.current} />
-                </Box>
-                <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
-                    <Box display="flex" width={800} >
-                        {
-                            !!editorState ?
-                                <Editor
-                                    ref={this.editorRef}
-                                    editorState={editorState}
-                                    customStyleMap={this.state.stylesheet}
-                                    onChange={this.onChange}
-                                    handleKeyCommand={this.handleKeyCommand}
-                                    // keyBindingFn={this.myKeyBindingFn}
-                                    plugins={plugins}
-                                />
-                                : <div>Letters Could not be Loaded</div>
-                        }
-                    </Box>
-                </Box>
-            </Box>
-        )
-    }
-}
+//     render() {
+//         const { hidden } = this.props
+//         const editorState = this.state.editorState;
+//         return (
+//             <Box display={hidden ? 'none' : 'flex'} flexGrow={1} flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+//                 <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
+//                     <Toolbar forward={this.editorRef.current} />
+//                 </Box>
+//                 <Box display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
+//                     <Box display="flex" width={800} >
+//                         {
+//                             !!editorState ?
+//                                 <Editor
+//                                     ref={this.editorRef}
+//                                     editorState={editorState}
+//                                     customStyleMap={this.state.stylesheet}
+//                                     onChange={this.onChange}
+//                                     handleKeyCommand={this.handleKeyCommand}
+//                                     // keyBindingFn={this.myKeyBindingFn}
+//                                     plugins={plugins}
+//                                 />
+//                                 : <div>Letters Could not be Loaded</div>
+//                         }
+//                     </Box>
+//                 </Box>
+//             </Box>
+//         )
+//     }
+// }
 
-// export default myEditor
+// // export default myEditor
