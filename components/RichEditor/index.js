@@ -1,7 +1,5 @@
 import { EditorState, Modifier, RichUtils, convertFromRaw } from "draft-js";
 import { useRef, useState } from "react";
-import { Box } from '@material-ui/core'
-import { toJS } from 'mobx'
 import UnderConstruction from '../Editor/components/UnderConstruction'
 
 import { SubmitButton } from "./buttons/SubmitButton";
@@ -34,11 +32,17 @@ let publish = null; //TODO: use Publisher class
  * A rich text Draft Editor that uses Draft JS Plugins library  
  */
 export const RichEditor = ({
+
   // Required props:
-  document
+  // document
   // Optional props:
-  , draftState = sampleEditorState
-  , editorRef = null }
+  draftState = sampleEditorState
+  , editorRef = null
+}
+
+  // From DraftView:
+
+
 ) => {
 
   if (!document) {
@@ -58,7 +62,7 @@ export const RichEditor = ({
     return UnderConstruction("Draft state wasn't ready")
   }
 
-  editorRef = editorRef || useRef(null);
+  // editorRef = editorRef || useRef(null);
 
   const { root, content } = styles;
 
@@ -150,8 +154,6 @@ export const RichEditor = ({
       <UndoButton />
       <RedoButton />
 
-      {/* <Box display="flex" flexGrow={1} height="400%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} > */}
-      {/* <Box display={'flex'} width="300%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: 'scroll' }}> */}
       <div style={content} >
         <Editor
           /* Required */
@@ -167,8 +169,6 @@ export const RichEditor = ({
           onFocus={logState(editorState)}
         />
       </div>
-      {/* </Box> */}
-      {/* </Box> */}
 
       {!!publish && <SubmitButton
         onClick={publish}>Publish to TPOT</SubmitButton>}

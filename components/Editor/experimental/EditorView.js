@@ -1,12 +1,10 @@
-import React, { useState, useEffect, forwardRef, useRef, useCallback } from 'react'
-import { Box, CircularProgress } from '@material-ui/core'
+import React, { useState, useEffect } from 'react'
+import { Box } from '@material-ui/core'
 import OriginalDocxView from '../experimental/OriginalDocxView'
 import BlocksView from '../experimental/BlocksView'
 import DraftView from '../experimental/DraftView'
 import CodeView from '../experimental/CodeView'
-import { compose, toClass, flattenProp, withHandlers, withState, lifecycle } from 'recompose'
-import { observer } from 'mobx-react'
-import { Editor, EditorState, convertToRaw } from 'draft-js'
+import { toClass } from 'recompose'
 
 // The <Editor /> component is wrapper class that meshes together a DraftJS
 // editor plus several visualizers. Most of its methods are an abstraction
@@ -175,72 +173,6 @@ const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
 
 
 
-const EditorViewFC = props => {
-
-    // Validate props
-    const mode = props.mode || 'draft'
-    const children = props.children || (() => <></>)
-    const handleSave = props.handleSave || (() => null)
-    const handlePublish = props.handlePublish || (() => null)
-    const handleDuplicate = props.handleDuplicate || (() => null)
-
-    // Use the parent's refs if available otherwise use internal ones
-    const editorRef = props.editorRef || React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
-    const draftRef = props.draftRef || React.useRef(null) // Will return the child which contains the Vanilla DraftJS Editor
-
-    const [code, setCode] = useState('');
-    const [blocks, setBlocks] = useState({});
-    const [original, setOriginal] = useState('');
-
-    // REQUIRED:
-    // Semantically define additional component properties on mount
-    useEffect(() => {
-        const _this = {
-            // Getters
-            getCode: () => code,
-            getBlocks: () => blocks,
-            getOriginal: () => original,
-            getRawState: () => draftRef.current.getRawState,
-            getStylesheet: () => draftRef.current.getStylesheet,
-            // getEditorState: () => draftRef.current.getEditorState,
-            getDraftEditor: () => draftRef.current,
-            // Setters
-            setCode: setCode,
-            setBlocks: setBlocks,
-            setOriginal: setOriginal,
-            // setEditorState: draftRef.current.setEditorState,
-            setStylesheet: draftRef.current.setStylesheet,
-            // Actions:
-            handleSave: draftRef.current.handleSave,
-            handlePublish: draftRef.current.handlePublish,
-            handleDuplicate: draftRef.current.handleDuplicate,
-        }
-        // Map additional component properties to this reference
-        editorRef.current = { ...editorRef.current, ..._this }
-    }, [])
-
-    // Additional props to pass to Draft and other Views
-    const states = {
-        mode,
-        code,
-        original,
-        blocks
-    }
-    const handles = {
-        handleSave,
-        handlePublish,
-        handleDuplicate
-    }
-
-    // Map all props onto the Stateless Functional Component
-    return (
-        <RenderedComponentFC
-            ref={editorRef}
-            draftRef={draftRef}
-            {...{ states, handles, children }}
-        />
-    )
-}
 
 // export default EditorView
 
@@ -256,9 +188,8 @@ const EditorViewFC = props => {
 //////////////////////////////////
 
 // toClass() wrapps the FC up so that it can be used with references (See Line: 99)
-const RenderedComponentFC = toClass(({ draftRef, states, handles, children }) => {
+const RenderedComponentFC = toClass(({ draftRef, states }) => {
 
-    const { mode, code, original, blocks } = states
 
     return (
         <DraftView draftRef={draftRef} />
