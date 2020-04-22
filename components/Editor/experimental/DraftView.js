@@ -6,13 +6,13 @@ import { inject, observer } from 'mobx-react'
 // import plugins from '../functions/plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil, ContentState } from 'draft-js';
 import { Toolbar } from '../components/Toolbar';
-// import { RichEditor } from '../../RichEditor';
+import { RichEditor } from '../../RichEditor';
 
 
 /** MP's Imports from RichEditor */
 import { Modifier, RichUtils, convertFromRaw } from "draft-js";
 import { useRef } from "react";
-import UnderConstruction from '../components/UnderConstruction'
+import { UnderConstruction } from '../../../pages/404'
 // import { SubmitButton } from "./buttons/SubmitButton";
 
 
@@ -25,17 +25,17 @@ import {
     , InlineStyleControls
     , ColorPicker
     , getBlockStyle
-  } from '../../RichEditor/plugins';
-  
-  import {
+} from '../../RichEditor/plugins';
+
+import {
     generateHtmlFromEditorState
     , getJsonFromRaw
     , logState
-  
-  } from '../../RichEditor/functions'
 
-  import styles, { colorStyleMap } from '../../RichEditor/styles'
-  import { ArgumentNullReferenceError } from "../../Errors";
+} from '../../RichEditor/functions'
+
+import styles, { colorStyleMap } from '../../RichEditor/styles'
+import { ArgumentNullReferenceError } from "../../Errors";
 
 
 // The <DraftView /> component is the primary view mode of the <EditorView /> It
@@ -154,10 +154,10 @@ const DraftView = props => {
 
                     {/* <RichEditor
                         editorRef={draftRef}
-                        plugins={plugins}
-                        onChange={onChange}
+                        // plugins={plugins}
+                        // onChange={onChange}
                         draftState={editorState}
-                        customStyleMap={stylesheet}
+                        // customStyleMap={stylesheet}
                         keyBindingFn={myKeyBindingFn}
                         handleKeyCommand={handleKeyCommand}
                         placeholder={"Start typing to begin..."}

@@ -1,6 +1,6 @@
 import { EditorState, Modifier, RichUtils, convertFromRaw } from "draft-js";
 import { useRef, useState } from "react";
-import UnderConstruction from '../Editor/components/UnderConstruction'
+import { UnderConstruction } from '../../pages/404'
 
 import { SubmitButton } from "./buttons/SubmitButton";
 
@@ -50,7 +50,7 @@ export const RichEditor = ({
   }
 
   if (!draftState)
-    return UnderConstruction('draftState was not provided')
+    return UnderConstruction('draftState was not provided') // TODO: use a 404 here.
 
   if (!editorRef)
     return UnderConstruction('editorRef was not provided')

@@ -21,7 +21,7 @@ import createUndoPlugin from 'draft-js-undo-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin';
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
-import UnderConstruction from '../../Editor/components/UnderConstruction';
+import {UnderConstruction} from '../../../pages/404';
 // import createFocusPlugin from 'draft-js-focus-plugin';
 // import createAlignmentPlugin from 'draft-js-alignment-plugin';
 // import editorStyles from './editorStyles.css';
