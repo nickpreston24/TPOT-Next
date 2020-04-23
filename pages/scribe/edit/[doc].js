@@ -7,8 +7,8 @@ import DocumentForm from "../../../components/DocumentForm";
 import DocumentEditor from "../../../components/DocumentEditor";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from "../../../components/RichEditor";
-import EditorView from "../../../components/Editor/experimental/EditorView";
-import DraftView from "../../../components/Editor/experimental/DraftView";
+import EditorView from "../../../components/Editor/views/EditorView";
+import DraftView from "../../../components/Editor/views/DraftView";
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides

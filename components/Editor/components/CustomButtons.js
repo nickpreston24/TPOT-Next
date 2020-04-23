@@ -70,10 +70,11 @@ export const BaseButton = props => {
     )
 }
 
-// Pick a schema to creat certain types of buttons. Schema is determined by config.type
+// Pick a schema to create certain types of buttons. Schema is determined by config.type
 
 export const generateButton = config => {
-    const { icon, style, type, label, schema } = config
+    const { icon, style, type = 'BorderedBox' , label, schema } = config
+    // console.log({ icon, style, type, label, schema })
     if (!schema) return
 
 

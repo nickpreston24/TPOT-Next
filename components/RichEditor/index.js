@@ -12,7 +12,8 @@ import {
   , BlockStyleControls
   , InlineStyleControls
   , ColorPicker
-  , getBlockStyle
+  , getBlockStyle,
+  ToolbarMP
 } from './plugins';
 
 import {
@@ -25,7 +26,7 @@ import {
 import Editor from 'draft-js-plugins-editor';
 import styles, { colorStyleMap } from './styles'
 import { ArgumentNullReferenceError } from "../Errors";
-
+// import { Toolbar } from '../Editor/components/Toolbar'
 let publish = null; //TODO: use Publisher class
 
 /* 
@@ -95,7 +96,7 @@ export const RichEditor = ({
     // console.log('toggled color:', toggledColor);
 
     const selection = editorState.getSelection();
-    console.log('selection: ', selection);
+    // console.log('selection: ', selection);
 
     const nextContentState = Object.keys(colorStyleMap)
       .reduce((contentState, color) => {
@@ -134,6 +135,7 @@ export const RichEditor = ({
   return (
     <div className="RichEditor-root" style={root}>
 
+      <ToolbarMP />
       <BlockStyleControls
         editorState={editorState}
         onToggle={toggleBlockType}
@@ -188,3 +190,14 @@ export const RichEditor = ({
   );
 
 };
+
+
+
+
+
+
+
+
+
+
+

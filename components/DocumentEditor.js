@@ -1,7 +1,7 @@
 import { inject, observer } from 'mobx-react'
 import React, { Component, useState, useEffect, useRef } from 'react'
 import { withForm } from './DocumentForm'
-import EditorView from './Editor/experimental/EditorView'
+import EditorView from './Editor/views/EditorView'
 import { convertFromRaw, EditorState } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'

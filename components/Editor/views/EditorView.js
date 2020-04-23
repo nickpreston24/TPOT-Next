@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Box } from '@material-ui/core'
-import OriginalDocxView from '../experimental/OriginalDocxView'
-import BlocksView from '../experimental/BlocksView'
-import DraftView from '../experimental/DraftView'
-import CodeView from '../experimental/CodeView'
+import OriginalDocxView from '../views/OriginalDocxView'
+import BlocksView from '../views/BlocksView'
+import DraftView from '../views/DraftView'
+import CodeView from '../views/CodeView'
 import { toClass } from 'recompose'
 
 // The <Editor /> component is wrapper class that meshes together a DraftJS

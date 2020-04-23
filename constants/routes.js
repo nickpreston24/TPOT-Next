@@ -1,7 +1,8 @@
 export const LANDING = '/';
 export const LOGIN = '/login'
-export const HOME = '/toolbox';
 export const ACCOUNT = '/account'
-export const SCRIBE = '/toolbox/scribe'
-export const EDIT = '/toolbox/scribe/edit'
-export const DOC = '/toolbox/scribe/edit/[doc]'
+export const SCRIBE = '/scribe'
+export const EDIT = '/scribe/edit'
+export const DOC = '/scribe/edit/[doc]'
+export const CHECKOUT = "/scribe/checkout"
+export const TPOT = "http://www.thepathoftruth.com"

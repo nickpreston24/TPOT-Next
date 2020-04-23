@@ -5,7 +5,7 @@ import { baseStyleMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
 import { EditorState, convertToRaw, getDefaultKeyBinding, usesMacOSHeuristics, isOptionKeyCommand, isCtrlKeyCommand, KeyBindingUtil, ContentState } from 'draft-js';
 import { Toolbar } from '../components/Toolbar';
-import { RichEditor } from '../../RichEditor';
+// import { RichEditor } from '../../RichEditor';
 
 
 /** MP's Imports from RichEditor */
@@ -134,7 +134,7 @@ const DraftView = props => {
         console.log('toggled color:', toggledColor);
         // console.log(editorState)
         const selection = editorState.getSelection();
-        console.log('selection: ', selection);
+        // console.log('selection: ', selection);
 
         const nextContentState = Object.keys(colorStyleMap)
             .reduce((contentState, color) => {
@@ -195,9 +195,9 @@ const DraftView = props => {
 
     return (
         <Box display={hidden ? 'none' : 'flex'} flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-            <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
+            {/* <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
                 <Toolbar forward={draftRef.current} />
-            </Box>
+            </Box> */}
             <Box display="flex" width="100%" style={{ boxSizing: 'border-box' }} >
 
                 <div style={controls}>
@@ -309,7 +309,6 @@ const DraftViewFC = props => {
         return 'not-handled';
     }
 
-    // TODO: @Braden - If for save/publish, first include the CTRL button.  Leave out of MVP.
     const myKeyBindingFn = (event) => {
         const { hasCommandModifier } = KeyBindingUtil
         if (event.keyCode === 83 /* `S` key */ && hasCommandModifier(event)) { event.preventDefault(); return 'save' }
