@@ -7,6 +7,8 @@ import withAuthorization from './hoc'
 import { initFirestorter, Document } from 'firestorter'
 import { observable, toJS } from 'mobx'
 
+import { convertFile } from '../../components/Editor/functions/converter'
+
 class Firebase {
 
     @observable authUser = null
@@ -181,6 +183,57 @@ class Firebase {
                 .catch(reject)
         })
     }
+
+    upload = async (file) => {
+
+        // Run conversion:        
+        let html = await convertFile(file);
+        console.log(!!html && html);
+
+        if (!html)
+            return;
+
+        // Upload to Cloud Storage:
+        let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`);
+        fileRef.put(file)
+            .then(snapshot => {
+
+                var fileName = file.name;
+                var { ...emptyPaper } = new Paper({
+                    docx: `${file.name}`,
+                    title: file.name,
+                    status: "not-started",
+                    date_modified: Date.now(),
+                    date_uploaded: Date.now(),
+                    author: null,
+                    draft_state: {
+                        original: html,
+                        editor: null,
+                        code: null,
+                    },
+                    excerpt: null
+                })
+
+                console.log(emptyPaper);
+
+                db.collection('sessions')
+                    .doc(emptyPaper.slug)
+                    .set(emptyPaper)
+                    .catch(console.error)
+
+                alert(!!snapshot
+                    ? `Yay! File ${fileName} uploaded successfully!`
+                    : `Fail! ${fileName} could not be uploaded!`)
+
+                console.log(`Downloading ${fileName}`);
+                download(fileName)
+            })
+            .catch((error) => {
+                console.log(error.message);
+                alert('There was a problem uploading this file.')
+            })
+    }
+
 
 }
 

@@ -24,7 +24,7 @@ const htmlFolder = 'tmp'
  * Cloud File Provider
  * Allows any subscribers to interact with Cloud Storage files
  */
-const CloudStorageProvider = ({ db, firebase }) => {
+export const CloudStorageProvider = ({ db, firebase }) => {
 
     const storageRef = firebase.storage().ref();
 
@@ -131,4 +131,4 @@ class Paper {
     }
 }
 
-export default CloudStorageProvider
+export default CloudStorageProvider;

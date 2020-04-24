@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
+import { LandingLayout } from '../components/experimental/Layout'
 import Head from 'next/head'
 // import Dashboard from '../components/Dashboard'
-import { ZeitCard } from '../components/ZeitCard'
-import * as ROUTES from '../constants/routes'
 
 class App extends Component {
   render() {
@@ -22,7 +21,7 @@ class App extends Component {
             Get started by Checking out a Document!
           </p>
 
-          <CardLayout />
+          <LandingLayout />
         </main>
 
         <style jsx>{`
@@ -144,29 +143,4 @@ class App extends Component {
   }
 }
 
-const CardLayout = () => {
-
-  return (
-    <div className="grid">
-
-      <ZeitCard
-        url={ROUTES.SCRIBE}
-        title="Scribe"
-        text='Click here use the Letter Editor!'
-      />
-      <ZeitCard
-        url={ROUTES.TPOT}
-        title="TPOT"
-        text='The Path of Truth'
-      />
-
-
-    </div>
-
-
-  )
-}
-
-
 export default App
-

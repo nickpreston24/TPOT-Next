@@ -45,7 +45,6 @@ const HeaderTabs = () => {
 }
 
 const LinkTab = ({ icon, label, href }) => {
-    console.log({ icon, label, href })
     const router = useRouter()
     return (
         <Tab

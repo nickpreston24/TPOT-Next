@@ -13,7 +13,7 @@ const walk = require('domwalk')
 
 // This is only used for parentUntil (just write a quick utility, It is expensive to import JQuery this way)
 // const $ = window.jQuery = require('jquery')
-const getParentsUntil = require('./jquery');
+const getParentsUntil = require('./jQueryAdapter');
 
 //  TESTING RESULTS
 
@@ -44,6 +44,7 @@ export async function convertFile(file) {
     return new Promise((resolve, reject) => {
 
         var reader = new FileReader();
+        console.log(`Attempting to read blob/file ${file.name}` );
         
         reader.readAsArrayBuffer(file);
 
