@@ -11,17 +11,12 @@ import SimpleDialog from '../Editor/buttons/SimpleDialog'
 import Typography from '@material-ui/core/Typography';
 import { uploadLocalFile } from '../Editor/functions/uploader'
 import FileBrowser from './FileBrowser'
-
-import {
-  PublishedDocument
-  , LastWordpressPost
-} from '../../components/Editor/functions/Publisher'
+import { publish } from '../../components/Editor/functions/Publisher'
 
 // : Component usually plugged into the details prop in a Dashboard.
 // : Displays the most important information and actions available to
 // : the user from withimport Contributors from './ContributorsSection';
 // in the Dashboard.import { PublishedDocument } from '../Editor/functions/Publisher';
-
 
 const DocumentDetails = ({ store, form, document }) => {
 
@@ -49,23 +44,13 @@ const DocumentDetails = ({ store, form, document }) => {
 
   status = status == 'in-progress' ? 'Ready for publishing' : 'In progress'
 
-  const publish = () => {
+  const handlePublish = () => {
     const documentData = toJS(data)
     let { code } = documentData
-
     // Parse out each field and convert to target format
     let html = JSON.parse(code)
     // console.log('html, ', html, 'code: ', code, documentData)
-
-    new PublishedDocument(
-      new LastWordpressPost(10), html
-      // true, html
-    )
-
-    // new LastWordpressPost(10).call();
-
-    // console.log(editorRef, editorRef.code)
-    // alert('published')
+    publish(html)
   }
 
   const handleClickOpen = () => {
@@ -101,12 +86,9 @@ const DocumentDetails = ({ store, form, document }) => {
           </Box>
         </Box>
         <Box display="flex" width="100%" my={2} color="white">
-          <Box flexGrow={1} pr={2} >
-            {/* <Button fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>
-              <UploadDialog />
-            </Button> */}
+          <Box flexGrow={1} pr={2} >            
             <Button
-              onClick={publish}
+              onClick={handlePublish}
               fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>
               Publish
             </Button>
@@ -122,13 +104,6 @@ const DocumentDetails = ({ store, form, document }) => {
               onClose={handleClose}
             />
             {true && <FileBrowser onSelected={handleFileSelected} />}
-            {/* <Button
-              onClick={() =>
-                <UploadDialog />
-              }
-              fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#101012' }}>
-              Upload
-              </Button> */}
           </Box>
           {/* <Box width={90}>
             <Button color="inherit" fullWidth variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#a2a9b1' }}>
