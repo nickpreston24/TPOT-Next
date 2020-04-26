@@ -1,10 +1,10 @@
-export const SubmitButton = props => {
+export const SubmitButton = ({ onClick, children, pallete }) => {
   return (
     <span>
-      <button type="submit" onClick={props.onClick}>
-        {props.children}
+      <button type="submit" onClick={onClick}>
+        {children}
       </button>
-      {/* <style jsx>{`
+      {pallete && <style jsx>{`
         button{
             border: "2px solid" + ${pallete.primary.teal};
             color:${pallete.primary.white};
@@ -30,7 +30,9 @@ export const SubmitButton = props => {
             margin:0.2em auto;
            }
           } 
-      `}</style> */}
+      `}</style>}
     </span>
   );
 };
+
+export default SubmitButton;

@@ -2,9 +2,8 @@ import { Document as FireStorterDocument } from "firestorter";
 import { inject, observer } from "mobx-react";
 import React, { Component } from "react";
 import Dashboard from "../../../components/Dashboard";
-import DocumentDetails from "../../../components/DocumentDetails";
-import DocumentForm from "../../../components/DocumentForm";
-import DocumentEditor from "../../../components/DocumentEditor";
+import { DocumentDetails, DocumentForm, DocumentEditor } from "../../../components/Document";
+
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from "../../../components/RichEditor";
 import EditorView from "../../../components/Editor/views/EditorView";

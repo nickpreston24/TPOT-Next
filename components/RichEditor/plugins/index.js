@@ -1,4 +1,4 @@
-import { PrimaryButton } from '../buttons/PrimaryButton'
+import { PrimaryButton } from '../buttons'
 import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
 import { Box, withStyles } from '@material-ui/core'
 

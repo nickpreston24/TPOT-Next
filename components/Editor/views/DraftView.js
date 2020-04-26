@@ -226,15 +226,15 @@ const DraftView = props => {
                 display="flex" flexGrow={1} width="100%" justifyContent="center" style={{ overflowY: 'scroll' }}>
                 <Box display="flex" width={800} >
                     <div
-                        className="RichEditor-root"
-                        style={root}
+                        // className="RichEditor-root"
+                        // style={root}
                     >
                         <Editor
                             ref={draftRef}
                             plugins={plugins}
                             onChange={onChange}
                             editorState={editorState}
-                            customStyleMap={colorStyleMap}
+                            customStyleMap={stylesheet}
                             keyBindingFn={myKeyBindingFn}
                             handleKeyCommand={handleKeyCommand}
                             placeholder={"Start typing to begin..."}
@@ -347,7 +347,7 @@ const DraftViewFC = props => {
                     {!!editorState ? <Editor
                         ref={editorRef}
                         editorState={editorState}
-                        customStyleMap={props.stylesheet}
+                        customStyleMap={stylesheet}
                         onChange={onChange}
                         handleKeyCommand={handleKeyCommand}
                         onFocus={logState(editorState)}

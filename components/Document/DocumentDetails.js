@@ -5,68 +5,38 @@ import { inject, observer } from 'mobx-react';
 import moment from 'moment'
 import React, { useContext } from 'react'
 import { compose } from 'recompose'
-import { withForm } from '../components/DocumentForm'
-import SimpleDialog from '../components/Editor/buttons/SimpleDialog'
+import { withForm } from './DocumentForm'
+import Contributors from './ContributorsSection'
+import SimpleDialog from '../Editor/buttons/SimpleDialog'
 import Typography from '@material-ui/core/Typography';
-import { uploadLocalFile } from './Editor/functions/uploader'
+import { uploadLocalFile } from '../Editor/functions/uploader'
+import FileBrowser from './FileBrowser'
+
+import {
+  PublishedDocument
+  , LastWordpressPost
+} from '../../components/Editor/functions/Publisher'
 
 // : Component usually plugged into the details prop in a Dashboard.
 // : Displays the most important information and actions available to
-// : the user from within the Dashboard.
+// : the user from withimport Contributors from './ContributorsSection';
+// in the Dashboard.import { PublishedDocument } from '../Editor/functions/Publisher';
+
 
 const DocumentDetails = ({ store, form, document }) => {
 
   const { data } = document
-
   let { status, date_modified } = data
 
-  const { fb } = store
+  // const { fb } = store
   // console.log('fb', !!fb);
 
-  const { upload } = fb;
+  // const { upload } = fb;
   // console.log('upload', upload);
 
   console.count('Document Details render')
 
-  const loaders = ['disk', 'google'
-    // {
-    //   name: 'disk',
-    //   handler: () => { console.log('n/a') }
-    // },
-    // {
-    //   name: 'google',
-    //   handler: () => { console.log('n/a') }
-    // },
-  ]
-
-  // const loaders = Object.entries({
-  //   disk: {
-  //     name: "From Disk",
-  //     description: "Open a file from your computer's hard drive",
-  //     // icon: HardDrive,
-  //     enabled: true,
-  //     handler: (event) => {
-  //       const file = selectFile(event)
-  //       upload(file)
-  //     }
-  //   },
-  //   googleDrive: {
-  //     name: "Coming Soon",
-  //     description: "Open a file from your linked Google Drive folder",
-  //     // icon: GoogleDrive,
-  //     enabled: false,
-  //     handler: (event) => { }
-  //   }
-  //   // {
-  //   //     name: "Clipboard",
-  //   //     description:
-  //   //         "Opens a window where you can paste in the content of a word document",
-  //   //     icon: ClipBoard,
-  //   //     handler: () => {
-  //   //         this.handleSelection("clipboard");
-  //   //     }
-  //   // }
-  // })
+  const loaders = ['disk', 'google']
 
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(loaders[0]);
@@ -79,9 +49,24 @@ const DocumentDetails = ({ store, form, document }) => {
 
   status = status == 'in-progress' ? 'Ready for publishing' : 'In progress'
 
-  // const selectFile = (event) => {
-  //   return event.target.files[0];
-  // }
+  const publish = () => {
+    const documentData = toJS(data)
+    let { code } = documentData
+
+    // Parse out each field and convert to target format
+    let html = JSON.parse(code)
+    // console.log('html, ', html, 'code: ', code, documentData)
+
+    new PublishedDocument(
+      new LastWordpressPost(10), html
+      // true, html
+    )
+
+    // new LastWordpressPost(10).call();
+
+    // console.log(editorRef, editorRef.code)
+    // alert('published')
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -120,7 +105,9 @@ const DocumentDetails = ({ store, form, document }) => {
             {/* <Button fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>
               <UploadDialog />
             </Button> */}
-            <Button fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>
+            <Button
+              onClick={publish}
+              fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>
               Publish
             </Button>
             {/* <UploadDialog /> */}
@@ -134,7 +121,7 @@ const DocumentDetails = ({ store, form, document }) => {
               open={open}
               onClose={handleClose}
             />
-            {true && <FilePicker onSelected={handleFileSelected} />}
+            {true && <FileBrowser onSelected={handleFileSelected} />}
             {/* <Button
               onClick={() =>
                 <UploadDialog />
@@ -152,20 +139,7 @@ const DocumentDetails = ({ store, form, document }) => {
         <Box display="flex" color="#a6aab1">{`Last saved ${date_modified}`}</Box>
       </Box>
       <Divider />
-      <Box py={2} px={3}>
-        <Box mr="4px" py={1}>Contributors</Box>
-        <Box display="flex" py={1}>
-          <Box pr={1}>
-            <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar1.png" />
-          </Box>
-          <Box pr={1}>
-            <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar5.png" />
-          </Box>
-          <Box pr={1}>
-            <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar7.png" />
-          </Box>
-        </Box>
-      </Box>
+      <Contributors />
       <Divider />
       <Box pt={3} px={3}>
         <InputFields {...{ form }} />
@@ -188,6 +162,7 @@ const InputFields = observer(({ form }) => {
     <Box flexDirection="column" >
       <form onSubmit={form.onSubmit}>
         <Box height={70}>
+          Paper Title:
           <TextField
             fullWidth
             error={form.$(`title`).hasError}
@@ -196,6 +171,7 @@ const InputFields = observer(({ form }) => {
           />
         </Box>
         <Box height={70}>
+          File Name:
           <TextField
             fullWidth
             error={form.$(`slug`).hasError}
@@ -204,6 +180,7 @@ const InputFields = observer(({ form }) => {
           />
         </Box>
         <Box height={70}>
+          Description:
           <TextField
             multiline
             fullWidth
@@ -216,15 +193,3 @@ const InputFields = observer(({ form }) => {
     </Box>
   )
 })
-
-const FilePicker = ({ setSelectedFile, onSelected }) => {
-  const setFile = (event) => {
-    console.log('event: ', event)
-    const file = event.target.files[0];
-
-    console.log('file:', file)
-    // setSelectedFile(file)
-    onSelected(file);
-  }
-  return <input type="file" onChange={setFile} />;
-}
