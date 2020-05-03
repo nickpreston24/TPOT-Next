@@ -46,7 +46,7 @@ export const baseStyleMap = {
 const blockRenderMap = Immutable.Map({
     // When the editor sees a block of type x, render the block using the following html tag
     'paragraph': {
-        element: 'p'
+        element: 'div'
     },
     'header-one': {
         element: 'h1'
@@ -82,10 +82,10 @@ const blockRenderMap = Immutable.Map({
         element: 'blockquote'
     },
     'indent': {
-        element: 'p'
+        element: 'div'
     },
     'block': {
-        element: 'p'
+        element: 'div'
     },
 });
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Box, CircularProgress, Portal } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
-import { baseStyleMap } from '../functions/utilities'
+import { baseStyleMap, blockRenderMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
 import plugins, { ScribeToolbar } from '../plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
@@ -119,6 +119,7 @@ const DraftView = props => {
                         onChange={onChange}
                         editorState={editorState}
                         customStyleMap={stylesheet}
+                        blockRenderMap={blockRenderMap}
                         keyBindingFn={myKeyBindingFn}
                         handleKeyCommand={handleKeyCommand}
                         placeholder={"Start typing to begin..."}
