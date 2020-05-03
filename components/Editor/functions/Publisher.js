@@ -17,95 +17,12 @@ const wpapi = new WPAPI({
 
 const DEFAULT_AUTHOR = 10; //Victor
 
-/**
-   * Publishes html content to wordpress
-   *   If post already exists, update with latest contents.
-   *   Else, create it, then update it.
-   */
-export class PublishedDocument extends AsyncObject {
-
-    disabledMsg = "Sorry, publish feature is disabled for now.";
-
-    constructor(authorId = -1, pageContents = {}, latestPage = null) {
-        super(authorId, pageContents)
-
-        if (!pageContents || !Object.keys(pageContents).length > 0)
-            throw new Error("Received no contents to publish!");
-    }
-
-    asyncCall() {
-        return (authorId, pageContents) => {
-
-            if (!html)
-                return;
-
-            if (pageContents.isEmpty())
-                return;
-
-            console.log(pageContents.isEmpty());
-            console.log('last post? ', !!latestPage)
-            // console.log(pageContents)
-            // return;      
-
-            if (!!latestPage) {
-                wpapi.pages()
-                    .author(authorId)
-                    .id(latestPage.id)
-                    .update(pageContents)
-                    .then(function (response) {
-                        console.log('response: ', response)
-                        console.log(response.id);
-                    })
-                    .catch(error => {
-                        if (!!error)
-                            console.error("Error occured when updating a page in WordPress: ", error);
-                    });
-            }
-            else {
-                wpapi.pages()
-                    .author(authorId)
-                    .create(pageContents)
-                    .then(function (response) {
-                        console.log('response: ', response)
-                        console.log('WordPress paper id: ', response.id);
-                        this.id = id;
-                    })
-                    .catch(error => {
-                        if (!!error)
-                            console.error("Error occured when posting a new page to WordPress: ", error);
-                    });
-            }
-        }
-    }
-
-    // Return the Id of the paper just published
-    onResult(result) {
-        return this.id;
-    }
-}
-
-export class LastWordpressPost extends AsyncObject {
-    constructor(authorId) {
-        super(authorId);
-    }
-
-    asyncCall() {
-        console.log('test')
-        return (authorId = 10) =>
-            wpapi.pages()
-                .author(authorId)
-                .id(26510);
-    }
-
-    onResult = () => this.lastPost;
-}
-
 export function publish(html = '<p></p>', authorId = 10) {
 
     wpapi.pages()
         .author(authorId)
         .id(26510)
-
+        // .id(99999) //fake id
         .then(latestPage => {
 
             console.log('result', latestPage);
@@ -119,7 +36,7 @@ export function publish(html = '<p></p>', authorId = 10) {
                     .update(pageContents)
                     .then(function (response) {
                         console.log('response (on update): ', response)
-                        console.log(response.id);
+                        console.log('WordPress paper id: ', response.id);
                     })
                     .catch(error => {
                         if (!!error)
@@ -146,7 +63,7 @@ export function publish(html = '<p></p>', authorId = 10) {
 export function getSamplePageContent(html) {
     // console.log('publishing html:\n', html);
     let slug = 'sample-slug'; //TODO: use your slug making function
-    let title = 'sample-title'; // TODO: get from UI
+    let title = 'sample-title-2'; // TODO: get from UI
     let excerpt = 'lorem ipsum'; // TODO: get from UI
     const pageContents = {
         content: html,
@@ -157,6 +74,91 @@ export function getSamplePageContent(html) {
     return pageContents;
 }
 
+
+
+
+/**
+   * Publishes html content to wordpress
+   *   If post already exists, update with latest contents.
+   *   Else, create it, then update it.
+   */
+// export class PublishedDocument extends AsyncObject {
+
+//     disabledMsg = "Sorry, publish feature is disabled for now.";
+
+//     constructor(authorId = -1, pageContents = {}, latestPage = null) {
+//         super(authorId, pageContents)
+
+//         if (!pageContents || !Object.keys(pageContents).length > 0)
+//             throw new Error("Received no contents to publish!");
+//     }
+
+//     asyncCall() {
+//         return (authorId, pageContents) => {
+
+//             if (!html)
+//                 return;
+
+//             if (pageContents.isEmpty())
+//                 return;
+
+//             console.log(pageContents.isEmpty());
+//             console.log('last post? ', !!latestPage)
+//             // console.log(pageContents)
+//             // return;      
+
+//             if (!!latestPage) {
+//                 wpapi.pages()
+//                     .author(authorId)
+//                     .id(latestPage.id)
+//                     .update(pageContents)
+//                     .then(function (response) {
+//                         console.log('response: ', response)
+//                         console.log(response.id);
+//                     })
+//                     .catch(error => {
+//                         if (!!error)
+//                             console.error("Error occured when updating a page in WordPress: ", error);
+//                     });
+//             }
+//             else {
+//                 wpapi.pages()
+//                     .author(authorId)
+//                     .create(pageContents)
+//                     .then(function (response) {
+//                         console.log('response: ', response)
+//                         console.log('WordPress paper id: ', response.id);
+//                         this.id = id;
+//                     })
+//                     .catch(error => {
+//                         if (!!error)
+//                             console.error("Error occured when posting a new page to WordPress: ", error);
+//                     });
+//             }
+//         }
+//     }
+
+//     // Return the Id of the paper just published
+//     onResult(result) {
+//         return this.id;
+//     }
+// }
+
+// export class LastWordpressPost extends AsyncObject {
+//     constructor(authorId) {
+//         super(authorId);
+//     }
+
+//     asyncCall() {
+//         console.log('test')
+//         return (authorId = 10) =>
+//             wpapi.pages()
+//                 .author(authorId)
+//                 .id(26510);
+//     }
+
+//     onResult = () => this.lastPost;
+// }
 
 // export class PublishedDocument extends AsyncObject {
 
