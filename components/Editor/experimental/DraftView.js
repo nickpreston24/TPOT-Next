@@ -4,7 +4,7 @@ import { Box, CircularProgress, Portal } from '@material-ui/core'
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 import { baseStyleMap, blockRenderMap } from '../functions/utilities'
 import { inject, observer } from 'mobx-react'
-import plugins, { ScribeToolbar } from '../plugins'
+import plugins, { ScribeToolbar, Toolbar } from '../plugins'
 import { EditorState, convertToRaw, getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
 
 // The <DraftView /> component is the primary view mode of the <EditorView /> It
@@ -126,6 +126,7 @@ const DraftView = props => {
                     />
                     <Portal container={toolbarRef.current}>
                         <ScribeToolbar />
+                        {/* <Toolbar /> */}
                     </Portal>
                 </Box>
             </Box>

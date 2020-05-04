@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Box, Button, Tooltip } from '@material-ui/core'
-import { withProps } from 'recompose'
+import { Box, Button as MuiButton, Tooltip } from '@material-ui/core'
+import { compose, withProps } from 'recompose'
 import FormatBoldIcon from '@material-ui/icons/FormatBold'
 import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
@@ -20,114 +20,167 @@ import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import LinkIcon from '@material-ui/icons/Link';
 import Zoom from '@material-ui/core/Zoom';
 import { observer } from 'mobx-react'
+import { observable } from 'mobx'
 import { RichUtils } from 'draft-js'
+
 
 
 // Create the visual characteristics of the button and map the parent schema's functionality to it
 
-export const BaseButton = props => {
+const BaseButton = compose(
+    observer
+)(
+    class BaseButton extends React.Component {
 
-    const { icon: SvgIcon, toggleEffect, isActive, label } = props
+        preventBubblingUp = event => event.preventDefault()
 
-    const active = isActive()
+        isActive = () => this.props.isActive(this)
 
-    return (
-        <Tooltip title={label} TransitionComponent={Zoom} arrow>
-            <Button
-                onMouseDown={toggleEffect}
-                style={{ minWidth: 40, minHeight: 40, color: active ? 'dodgerblue' : '#000' }}
-            >
-                <SvgIcon />
-            </Button>
-        </Tooltip>
-    )
+        toggleEffect = event => {
+            event.preventDefault()
+            this.props.toggleEffect(this)
+        }
+
+        render() {
+            const { props, preventBubblingUp, toggleEffect, isActive } = this
+            const { type } = props
+            const style = { minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }
+            const Icon = props.icon
+            // const className = this.styleIsActive()
+
+            //   ? clsx(theme.button, theme.active)
+            //   : theme.button;
+            // console.log(this.props)
+            return (
+                <Box p={2} border={1} borderColor="green"
+                    // className={theme.buttonWrapper}
+                    style={style}
+                    onMouseDown={preventBubblingUp}
+                >
+                    <MuiButton
+                        // className={className}
+                        style={style}
+                        onClick={toggleEffect}
+                        type="button"
+                        children={<Icon />}
+                    />
+                </Box>
+            )
+        }
+    }
+)
+
+class ReactiveIcon extends React.Component {
+    shouldComponentUpdate() {
+        return true
+    }
+    // shouldComponentUpdate(nextProps) {
+    //     const { props } = this
+    //     console.log(props.active !== nextProps.active)
+    //     if (props.active !== nextProps.active) {
+    //         return true
+    //     } else {
+    //         return false
+    //     }
+    // }
+
+    render() {
+        const { props } = this
+        const { icon, toggleEffect, isActive, label } = props
+
+        const Icon = props.icon
+
+        // console.log('icon render')
+
+        const active = true
+
+        return (
+            <Box p={2} border={1} borderColor="blue">
+                <Icon style={{ color: active ? 'dodgerblue' : '#000' }} />
+            </Box>
+        )
+    }
 }
 
-// Pick a schema to create certain types of buttons. Schema is determined by config.type
 
-export const generateButton = config => props => {
+// //       SCHEMAS
+// ////////////////////////////
+// // Makes props that will be wrapped with the BaseButton
+
+const createInlineStyleButton = config => ({
+    isActive: _this =>
+        _this.props.activeInlineStyles &&
+        _this.props.activeInlineStyles.includes(config.type),
+    toggleEffect: _this => {
+        _this.props.setEditorState(
+            RichUtils.toggleInlineStyle(
+                _this.props.getEditorState(),
+                config.type
+            )
+        )
+    }
+})
+
+
+const createBlockStyleButton = config => ({
+    isActive: _this =>
+        _this.props.activeBlockStyle &&
+        _this.props.activeBlockStyle === config.type,
+    toggleEffect: _this => {
+        _this.props.setEditorState(
+            RichUtils.toggleBlockType(
+                _this.props.getEditorState(),
+                config.type
+            )
+        )
+    }
+})
+
+const createCustomStyleButton = config => ({
+    isActive: _this => {
+        const PREFIX = _this.props.customStylePrefix
+        const CUSTOM_PROP = config.type
+        const CUSTOM_ATTRB = config.value
+        const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${CUSTOM_ATTRB}`
+        return _this.props.activeInlineStyles && _this.props.activeInlineStyles.includes(CUSTOM_NAME)
+    },
+    toggleEffect: _this => {
+        const PREFIX = _this.props.customStylePrefix
+        const CUSTOM_PROP = config.type
+        const CUSTOM_ATTRB = config.value
+        const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${CUSTOM_ATTRB}`
+        // Register the custom style name in the editor's stylesheet before you apply it
+        let customStyleMap = _this.props.getProps().customStyleMap
+        customStyleMap = Object.assign(customStyleMap, { [`${CUSTOM_NAME}`]: { [`${CUSTOM_PROP}`]: CUSTOM_ATTRB } })
+        // Toggle the style using the attribute name (ex:  #FF0099, 24PX, LIME, etc.)
+        _this.props.setEditorState(
+            _this.props.customStyleFunctions[`${CUSTOM_PROP}`].toggle(
+                _this.props.getEditorState(),
+                CUSTOM_ATTRB.toUpperCase()
+            )
+        )
+    }
+})
+
+
+const generateButton = config => {
 
     const { schema } = config
-    let buttonProps = {}
+    let externalProps = {}
 
     if (schema == 'inline') {
-        buttonProps = createInlineStyleButton(config)(props)
+        externalProps = createInlineStyleButton(config)
     } else if (schema == 'block') {
-        buttonProps = createBlockStyleButton(config)(props)
+        externalProps = createBlockStyleButton(config)
     } else if (schema == 'custom') {
-        buttonProps = createCustomStyleButton(config)(props)
+        externalProps = createCustomStyleButton(config)
     }
 
-    const Component = withProps(buttonProps)(BaseButton)
-    return <Component {...props} />
+    const ButtonWithEffect = withProps(externalProps)(BaseButton)
+    return withProps(config)(ButtonWithEffect)
+
 }
 
-
-//       SCHEMAS
-////////////////////////////
-// Makes props that will be wrapped with the BaseButton
-
-const createInlineStyleButton = config => props => {
-    const { type } = config
-    return {
-        ...config,
-        isActive: () => props.getEditorState().getCurrentInlineStyle().has(type),
-        toggleEffect: event => {
-            event.preventDefault()
-            props.setEditorState(
-                RichUtils.toggleInlineStyle(
-                    props.getEditorState(),
-                    type
-                )
-            );
-        }
-    }
-}
-
-const createBlockStyleButton = config => props => {
-    const { type } = config
-    return {
-        ...config,
-        isActive: () => (RichUtils.getCurrentBlockType(props.getEditorState()) === type),
-        toggleEffect: event => {
-            event.preventDefault();
-            props.setEditorState(
-                RichUtils.toggleBlockType(
-                    props.getEditorState(),
-                    type
-                )
-            );
-        }
-    }
-}
-
-// Enables custom inline styles for FontSize, Color, and Highlight
-const createCustomStyleButton = config => props => {
-    const { type } = config
-    return {
-        ...config,
-        isActive: () => (RichUtils.getCurrentBlockType(props.getEditorState()) === type),
-        toggleEffect: (event, value) => {
-            event.preventDefault();
-            const PREFIX = props.customStylePrefix
-            const CUSTOM_PROP = type
-            const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${'#FF0099'}`
-            const CUSTOM_ATTRB = `${'#FF0099'}`
-            // Register the custom style name in the editor's stylesheet before you apply it
-            let customStyleMap = props.getProps().customStyleMap
-            customStyleMap = Object.assign(customStyleMap, { [`${CUSTOM_NAME}`]: { [`${CUSTOM_PROP}`]: CUSTOM_ATTRB } })
-            // Toggle the style using the attribute name (ex:  #FF0099, 24PX, LIME, etc.)
-            props.setEditorState(
-                props.customStyleFunctions[`${CUSTOM_PROP}`].toggle(
-                    props.getEditorState(),
-                    CUSTOM_ATTRB.toUpperCase()
-                )
-            );
-        }
-    }
-}
-
-// Create all the custom Button exports for the module
 
 export const BoldButton = generateButton({
     type: 'BOLD',
@@ -214,6 +267,7 @@ export const HeadingThreeButton = generateButton({
 })
 
 export const ColorTextButton = generateButton({
+    value: '#FF0099',
     type: 'color',
     label: 'Color Text',
     schema: 'custom',
@@ -221,9 +275,10 @@ export const ColorTextButton = generateButton({
 })
 
 export const HighlightButton = generateButton({
-    type: 'BOLD',
+    value: '#FF0099',
+    type: 'background',
     label: 'Highlight Text',
-    schema: 'inline',
+    schema: 'custom',
     icon: BorderColorIcon,
 })
 

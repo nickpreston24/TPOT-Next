@@ -3,6 +3,16 @@ import createStore from './functions/createStore';
 import createStyles from 'draft-js-custom-styles';
 import Toolbar from './components/Toolbar';
 
+export const ActiveStylesContext = React.createContext(null);
+
+export const ActiveStylesProvider = ActiveStylesContext.Provider
+
+export const withActiveStyles = Component => props => (
+  <ActiveStylesContext.Consumer>
+    {activeStyles => <Component {...props} activeStyles={activeStyles} />}
+  </ActiveStylesContext.Consumer>
+)
+
 export default (config = {}) => {
   const store = createStore({});
 
@@ -18,16 +28,17 @@ export default (config = {}) => {
       store.updateItem('getProps', pluginFunctions.getProps);
       store.updateItem('setEditorState', pluginFunctions.setEditorState);
       store.updateItem('getEditorState', pluginFunctions.getEditorState);
-      store.updateItem('getReadOnly', pluginFunctions.getReadOnly);
-      store.updateItem('setReadOnly', pluginFunctions.setReadOnly);
-      store.updateItem('getEditorRef', pluginFunctions.getEditorRef);
-      store.updateItem('customStyleFunctions', styles)
-      store.updateItem('customStylePrefix', PREFIX)
+      store.updateItem('customStyleFunctions', styles);
+      store.updateItem('customStylePrefix', PREFIX);
+      store.updateItem('activeInline', []);
+      store.updateItem('activeBlock', '');
     },
 
     // Re-Render the text-toolbar on selection change
     onChange: editorState => {
       store.updateItem('selection', editorState.getSelection());
+      // console.log('\n')
+      // console.log('selection changed')
       return editorState;
     },
 
