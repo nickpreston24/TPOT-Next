@@ -30,15 +30,11 @@ export default (config = {}) => {
       store.updateItem('getEditorState', pluginFunctions.getEditorState);
       store.updateItem('customStyleFunctions', styles);
       store.updateItem('customStylePrefix', PREFIX);
-      store.updateItem('activeInline', []);
-      store.updateItem('activeBlock', '');
     },
 
     // Re-Render the text-toolbar on selection change
     onChange: editorState => {
       store.updateItem('selection', editorState.getSelection());
-      // console.log('\n')
-      // console.log('selection changed')
       return editorState;
     },
 
