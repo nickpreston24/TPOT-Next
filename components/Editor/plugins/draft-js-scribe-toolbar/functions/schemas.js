@@ -1,4 +1,4 @@
-
+import { RichUtils } from 'draft-js'
 
 /* ////////////////////////////////////////////////////// */
 /*                         SCHEMAS                        */
@@ -96,7 +96,6 @@ export const createCustomStyleButton = config => ({
         return props.activeInlineStyles && props.activeInlineStyles.includes(STYLE_NAME)
     },
     toggleEffect: props => {
-        console.log(props)
         const PREFIX = props.customStylePrefix // CONFIG
         const CSS_PROPERTY = config.type // color
         const CSS_VALUE = config.value // #FF0099

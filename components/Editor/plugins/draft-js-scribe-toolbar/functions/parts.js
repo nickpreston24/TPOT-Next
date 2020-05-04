@@ -1,8 +1,8 @@
 import React from 'react'
-import { Box, Button as MuiButton, Tooltip, Menu, MenuItem } from '@material-ui/core'
+import { Box, Button as MuiButton, Tooltip, Popover } from '@material-ui/core'
 import { compose } from 'recompose'
-import Zoom from '@material-ui/core/Zoom';
 import { observer } from 'mobx-react'
+import Zoom from '@material-ui/core/Zoom';
 
 
 /* --------------------- ICON BUTTON -------------------- */
@@ -33,7 +33,7 @@ const IconButton = compose(
 const GroupButton = compose(
     observer
 )(
-    ({ preventBubblingUp, group, options, childElement, elementProps, isActive: active, ...rest }) => {
+    ({ preventBubblingUp, group, options, childElement, elementProps, Palette, isActive: active, ...rest }) => {
 
         const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -63,20 +63,155 @@ const GroupButton = compose(
                 </EffectWrapper>
             </Box >
             {menuOpened && (
-                <Menu
-                    anchorEl={anchorEl}
+                <Popover
                     keepMounted
                     open={menuOpened}
                     onClose={handleClose}
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
                 >
-                    {groupItems.map((ChildButton, index) => (
-                        <MenuItem key={index}>
-                            <ChildButton {...childProps} />
-                        </MenuItem>
-                    ))}
-                </Menu>
+                    <Box display="relative" width="100%" height={10} bgcolor='#21304a' />
+                    <Palette>
+                        {groupItems.map((ChildButton, index) => (
+                            <ChildButton key={index} {...childProps} />
+                        ))}
+                    </Palette>
+                </Popover>
             )}
         </>
+    }
+)
+
+
+/* -------------------- COLOR SWATCH -------------------- */
+
+// The most common visual element in the toolbar. Renders a purely visual icon element
+export const ColorSwatch = compose(
+    observer
+)(
+    ({ isActive, value }) => {
+        const active = isActive()
+        const style = { color: active ? 'dodgerblue' : '#000', boxSizing: "border-box" }
+        return (
+            <Box
+                style={style}
+                p={0}
+                m={0}
+                boxShadow={active ? 3 : 1}
+                border={active ? 2 : 0.3}
+                borderColor="lightgrey"
+                minHeight={22}
+                minWidth={22}
+                maxHeight={22}
+                maxWidth={22}
+                bgcolor={value}
+                borderRadius="50%"
+            />
+        )
+    }
+)
+
+
+/* -------------------- COLOR PALETTE ------------------- */
+
+// The most common visual element in the toolbar. Renders a purely visual icon element
+export const ColorPalette = compose(
+    observer
+)(
+    ({ children }) => {
+        const style = { overflow: 'show' }
+        let childrenArray = React.Children.toArray(children)
+        let row1 = childrenArray.splice(0, 5)
+        let row2 = childrenArray.splice(0, 5)
+        let row3 = childrenArray.splice(0, 5)
+
+        const ChildRow = ({ rowChildren }) => (
+            <Box
+                height={30}
+                justifyContent="space-evenly"
+                alignItems="center"
+                display="flex"
+                width="100%"
+            >
+                {rowChildren.map((child, index) => (
+                    <Box
+                        key={index}
+                        display="flex"
+                    >
+                        {child}
+                    </Box>
+                ))}
+            </Box>
+        )
+        return (
+            <Box
+                style={style}
+                height={100}
+                width={165}
+                p={1}
+                mb={0.75}
+                flexWrap="wrap"
+                alignContent="flex-end"
+                display="flex"
+            >
+                <ChildRow rowChildren={row1} />
+                <ChildRow rowChildren={row2} />
+                <ChildRow rowChildren={row3} />
+            </Box>
+        )
+    }
+)
+
+
+/* ------------------ HIGHLIGHT PALETTE ----------------- */
+
+// The most common visual element in the toolbar. Renders a purely visual icon element
+export const HighlightPalette = compose(
+    observer
+)(
+    ({ children }) => {
+        const style = { overflow: 'show' }
+        let childrenArray = React.Children.toArray(children)
+
+        const ChildRow = ({ rowChildren }) => (
+            <Box
+                height={30}
+                justifyContent="space-evenly"
+                alignItems="center"
+                display="flex"
+                width="100%"
+            >
+                {rowChildren.map((child, index) => (
+                    <Box
+                        key={index}
+                        display="flex"
+                    >
+                        {child}
+                    </Box>
+                ))}
+            </Box>
+        )
+        return (
+            <Box
+                style={style}
+                height={35}
+                width={165}
+                p={1}
+                mb={0.75}
+                flexWrap="wrap"
+                alignContent="flex-end"
+                display="flex"
+            >
+                <ChildRow rowChildren={childrenArray} />
+            </Box>
+        )
     }
 )
 
@@ -105,7 +240,7 @@ const EffectWrapper = compose(
 )
 
 
-/* --------------------- MAIN BUTTON -------------------- */
+/* ----------------- MAIN ACTION BUTTON ----------------- */
 
 // Gets props from the generator and based on the config, chooses which family of button to render and apply props to
 const ActionWrappedButton = compose(
@@ -122,14 +257,22 @@ const ActionWrappedButton = compose(
             props.toggleEffect(props)
         }
 
-        const { type, label, schema, icon, group } = props
+        const { value, type, label, schema, icon, group, Element } = props
 
         const wrapperProps = {
             toggleEffect, preventBubblingUp, label, group
         }
 
         const elementProps = {
-            isActive, type, label, schema, icon
+            isActive, value, type, label, schema, icon
+        }
+
+        if (Element) {
+            return (
+                <EffectWrapper {...wrapperProps}>
+                    <Element {...elementProps} />
+                </EffectWrapper>
+            )
         }
 
         if (group) {

@@ -1,6 +1,5 @@
 import React from "react";
 import { RichUtils } from 'draft-js'
-import { compose } from 'recompose'
 import { Box } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import {
@@ -18,8 +17,6 @@ import {
     NumberButton,
     BulletButton,
     IndentIcon,
-    ColorTextButton,
-    HighlightButton,
     Quotebutton,
     EmojiIcon,
     LinkButton,
@@ -49,8 +46,6 @@ const Toolbar = props => {
         activeInlineStyles, activeBlockStyle
     }
 
-    console.log('toolbar render')
-
     return (
         <Box width="100%" display="flex" flexDirection="row" overflow="hidden" mt="20px" mb="10px">
             <BoldButton {...childProps} />
@@ -60,7 +55,6 @@ const Toolbar = props => {
             <HeadingThreeButton {...childProps} />
             <HeadingFourButton {...childProps} />
             <ColorsButton {...childProps} />
-            <ColorTextButton {...childProps} />
             <HighlightsButton {...childProps} />
             <Quotebutton {...childProps} />
             {/* <LinkButton {...childProps} /> */}

@@ -16,6 +16,11 @@ import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import LinkIcon from '@material-ui/icons/Link';
 import { generateButton } from '../functions/generator'
+import {
+    ColorSwatch,
+    ColorPalette,
+    HighlightPalette
+} from '../functions/parts'
 
 
 /* ////////////////////////////////////////////////////// */
@@ -106,22 +111,6 @@ export const HeadingThreeButton = generateButton({
     icon: FormatSizeIcon,
 })
 
-export const ColorTextButton = generateButton({
-    value: '#FF0099',
-    type: 'color',
-    label: 'Color Text',
-    schema: 'custom',
-    icon: FormatColorTextIcon,
-})
-
-export const HighlightButton = generateButton({
-    value: '#FF0099',
-    type: 'background',
-    label: 'Highlight Text',
-    schema: 'custom',
-    icon: BorderColorIcon,
-})
-
 export const Quotebutton = generateButton({
     type: 'blockquote',
     label: 'Block Quote',
@@ -166,9 +155,10 @@ export const LinkButton = generateButton({
 export const HighlightsButton = generateButton({
     custom: true,
     type: 'background',
-    label: 'Color Text',
+    label: 'Highlight',
     schema: 'inline',
-    icon: FormatColorTextIcon,
+    Palette: HighlightPalette, 
+    icon: BorderColorIcon,
     options: [
         '#FFFFFF', '#FFF4A3', '#FFA3D5', '#A3D4FF', '#BDFFA3'
     ],
@@ -180,7 +170,7 @@ export const HighlightsButton = generateButton({
                     type: 'background',
                     label: `Highlight ${value}`,
                     schema: 'custom',
-                    icon: FormatQuoteIcon,
+                    Element: ColorSwatch,
                 })
             )
             return items
@@ -193,6 +183,7 @@ export const ColorsButton = generateButton({
     type: 'color',
     label: 'Color Text',
     schema: 'inline',
+    Palette: ColorPalette, 
     icon: FormatColorTextIcon,
     options: [
         '#000000', '#660000', '#990066', '#FFC000', '#00DBA8',
@@ -207,7 +198,7 @@ export const ColorsButton = generateButton({
                     type: 'color',
                     label: `Color ${value}`,
                     schema: 'custom',
-                    icon: FormatQuoteIcon,
+                    Element: ColorSwatch,
                 })
             )
             return items

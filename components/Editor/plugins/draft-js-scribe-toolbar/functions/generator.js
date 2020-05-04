@@ -1,6 +1,6 @@
-import { withProps } from 'recompose'
 import { createGroupButton, createInlineStyleButton, createBlockStyleButton, createCustomStyleButton } from './schemas'
 import ActionWrappedButton from './parts'
+import { withProps } from 'recompose'
 
 export const generateButton = config => {
 
