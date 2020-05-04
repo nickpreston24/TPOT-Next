@@ -25,9 +25,45 @@ import { RichUtils } from 'draft-js'
 
 
 
-// Create the visual characteristics of the button and map the parent schema's functionality to it
+// The most common visual element in the toolbar. Renders a purely visual icon element
+const IconButton = compose(
+    observer
+)(
+    ({ isActive, icon }) => {
+        const style = { minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }
+        const Icon = icon
+        return (
+            <MuiButton
+                style={style}
+                type="button"
+                children={
+                    <Icon />
+                }
+            />
+        )
+    }
+)
 
-const BaseButton = compose(
+// Wraps up the generator's props to a clickable area. Renders a child inside, ex: IconButton, GroupButton, Palette, etc.
+const EffectWrapper = compose(
+    observer
+)(
+    ({ toggleEffect, preventBubblingUp, label, children }) => (
+        <Box
+            onClick={toggleEffect}
+            onMouseDown={preventBubblingUp}
+        >
+            <Tooltip title={label} TransitionComponent={Zoom} arrow>
+                <Box>
+                    {children}
+                </Box>
+            </Tooltip>
+        </Box >
+    )
+)
+
+// Gets props from the generator and based on the config, chooses which family of button to render and apply props to
+const ActionWrappedButton = compose(
     observer
 )(
     props => {
@@ -41,68 +77,58 @@ const BaseButton = compose(
             props.toggleEffect(props)
         }
 
-        const { type, label, schema } = props
-        const style = { minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }
-        const Icon = props.icon
+        const { type, label, schema, icon } = props
+
+        const wrapperProps = {
+            toggleEffect, preventBubblingUp, label
+        }
+
+        const elementProps = {
+            isActive, type, label, schema, icon
+        }
 
         return (
-
-            <Box p={2} border={1} borderColor="green"
-                // className={theme.buttonWrapper}
-                style={style}
-                onMouseDown={preventBubblingUp}
-            >
-                <Tooltip title={label} TransitionComponent={Zoom} arrow>
-                    <MuiButton
-                        // className={className}
-                        style={style}
-                        onClick={toggleEffect}
-                        type="button"
-                        children={<Icon />}
-                    />
-                </Tooltip>
-            </Box >
+            <EffectWrapper {...wrapperProps}>
+                <IconButton {...elementProps} />
+            </EffectWrapper>
         )
     }
 )
 
-class ReactiveIcon extends React.Component {
-    shouldComponentUpdate() {
-        return true
-    }
-    // shouldComponentUpdate(nextProps) {
-    //     const { props } = this
-    //     console.log(props.active !== nextProps.active)
-    //     if (props.active !== nextProps.active) {
-    //         return true
-    //     } else {
-    //         return false
-    //     }
-    // }
+// class ReactiveIcon extends React.Component {
+//     shouldComponentUpdate() {
+//         return true
+//     }
+//     // shouldComponentUpdate(nextProps) {
+//     //     const { props } = this
+//     //     console.log(props.active !== nextProps.active)
+//     //     if (props.active !== nextProps.active) {
+//     //         return true
+//     //     } else {
+//     //         return false
+//     //     }
+//     // }
 
-    render() {
-        const { props } = this
-        const { icon, toggleEffect, isActive, label } = props
+//     render() {
+//         const { props } = this
+//         const { icon, toggleEffect, isActive, label } = props
 
-        const Icon = props.icon
+//         const Icon = props.icon
 
-        // console.log('icon render')
+//         // console.log('icon render')
 
-        const active = true
+//         const active = true
 
-        return (
-            <Box p={2} border={1} borderColor="blue">
-                <Icon style={{ color: active ? 'dodgerblue' : '#000' }} />
-            </Box>
-        )
-    }
-}
+//         return (
+//             <Box p={2} border={1} borderColor="blue">
+//                 <Icon style={{ color: active ? 'dodgerblue' : '#000' }} />
+//             </Box>
+//         )
+//     }
+// }
 
 
-// //       SCHEMAS
-// ////////////////////////////
-// // Makes props that will be wrapped with the BaseButton
-
+// A schema that creates the props needed for an [INLINE] button ('BOLD', 'ITALIC', etc.)
 const createInlineStyleButton = config => ({
     isActive: props =>
         props.activeInlineStyles &&
@@ -117,7 +143,7 @@ const createInlineStyleButton = config => ({
     }
 })
 
-
+// A schema that creates the props needed for a [BLOCK] button ('heading-four', 'blockquote', etc.)
 const createBlockStyleButton = config => ({
     isActive: props =>
         props.activeBlockStyle &&
@@ -132,27 +158,58 @@ const createBlockStyleButton = config => ({
     }
 })
 
+
+// A schema that creates the props needed for a [CUSTOM] button
+// !IMPORTANT! - Uses functions created at plugin initilization
+// These functions are from the 'draft-js-custom-styles' library
+// via createStyles(['font-size', 'color', 'background'], PREFIX)
+// The result is an object, customStyleFunctions, which contains
+// three sets of functions, { color, fontSize, and background }
+// EX: The set called 'color', contains functions for toggling on
+// and off a Draft InlineStyle. Example:
+//
+// customStyleFunctions.color.toggle(
+//      editorState,
+//      'CUSTOM_COLOR_#FF0099'
+// )
+//
+// The schema below though handles as many cases as you want. When
+// creating a button config, just put the name of the JSS property
+// you want DraftJS to handle, as well as the value you want: EX:
+// { type: 'backgroundColor', value: '#FF0099', ...rest of config }
+
 const createCustomStyleButton = config => ({
     isActive: props => {
-        const PREFIX = props.customStylePrefix
-        const CUSTOM_PROP = config.type
-        const CUSTOM_ATTRB = config.value
-        const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${CUSTOM_ATTRB}`
-        return props.activeInlineStyles && props.activeInlineStyles.includes(CUSTOM_NAME)
+        const PREFIX = props.customStylePrefix // CONFIG
+        const CSS_PROPERTY = config.type // color
+        const CSS_VALUE = config.value // #FF0099
+        const STYLE_NAME = `${PREFIX}${CSS_PROPERTY.toUpperCase()}_${CSS_VALUE}` // CUSTOM_COLOR_#FF0099
+        return props.activeInlineStyles && props.activeInlineStyles.includes(STYLE_NAME)
     },
     toggleEffect: props => {
-        const PREFIX = props.customStylePrefix
-        const CUSTOM_PROP = config.type
-        const CUSTOM_ATTRB = config.value
-        const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${CUSTOM_ATTRB}`
+        const PREFIX = props.customStylePrefix // CONFIG
+        const CSS_PROPERTY = config.type // color
+        const CSS_VALUE = config.value // #FF0099
+        const STYLE_NAME = `${PREFIX}${CSS_PROPERTY.toUpperCase()}_${CSS_VALUE}` // CUSTOM_COLOR_#FF0099
+
         // Register the custom style name in the editor's stylesheet before you apply it
         let customStyleMap = props.getProps().customStyleMap
-        customStyleMap = Object.assign(customStyleMap, { [`${CUSTOM_NAME}`]: { [`${CUSTOM_PROP}`]: CUSTOM_ATTRB } })
-        // Toggle the style using the attribute name (ex:  #FF0099, 24PX, LIME, etc.)
+        customStyleMap = Object.assign(customStyleMap,
+            // Editor's customStyleMap
+            {
+                //  'BOLD': { fontWeight: 'bold' },
+                //  'ITALIC': { fontStyle: 'italic' },
+                //  'UNDERLINE': { textDecoration: 'underline' },
+                [`${STYLE_NAME}`]: { [`${CSS_PROPERTY}`]: CSS_VALUE }
+                //  ... etc.
+            }
+        )
+
+        // Toggle the style using its stylesheet name (ex:  'CUSTOM_COLOR_#FF0099', 'CUSTOM_FONTSIZE_24PX', etc.)
         props.setEditorState(
-            props.customStyleFunctions[`${CUSTOM_PROP}`].toggle(
+            props.customStyleFunctions[`${CSS_PROPERTY}`].toggle(
                 props.getEditorState(),
-                CUSTOM_ATTRB.toUpperCase()
+                CSS_VALUE.toUpperCase()
             )
         )
     }
@@ -172,8 +229,8 @@ const generateButton = config => {
         externalProps = createCustomStyleButton(config)
     }
 
-    const ButtonWithEffect = withProps(externalProps)(BaseButton)
-    return withProps(config)(ButtonWithEffect)
+    const ButtonWithEffects = withProps(externalProps)(ActionWrappedButton)
+    return withProps(config)(ButtonWithEffects)
 
 }
 
