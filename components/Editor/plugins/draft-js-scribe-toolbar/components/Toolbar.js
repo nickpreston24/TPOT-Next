@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { observer, Provider } from 'mobx-react';
 import { compose, withProps } from 'recompose';
 import { Box, withStyles, Button } from '@material-ui/core'
-import { BoldButton, ItalicButton, UnderlineButton, AlignLeftButton, AlignCenterButton, AlignRightButton, HeadingFourButton, HeadingThreeButton, ParagraphButton, NumberButton, BulletButton, IndentIcon, ColorTextButton, HighlightButton, Quotebutton, EmojiIcon, LinkButton, MoreButton, DividerButton } from './CustomButtons'
+import { BoldButton, ItalicButton, UnderlineButton, AlignLeftButton, AlignCenterButton, AlignRightButton, ColorsButton, HighlightsButton, HeadingFourButton, HeadingThreeButton, ParagraphButton, NumberButton, BulletButton, IndentIcon, ColorTextButton, HighlightButton, Quotebutton, EmojiIcon, LinkButton, MoreButton, DividerButton } from './CustomButtons'
 import { observable, toJS } from 'mobx';
 import { RichUtils } from 'draft-js'
 // import { Toolbar } from '../../index'
@@ -269,7 +269,7 @@ const Toolbar = props => {
     // console.log(childProps)
 
     return (
-        <Box width="100%" display="flex" flexDirection="row" overflow="hidden" mt="20px" mb="10px" p={4} border={1} borderColor="red">
+        <Box width="100%" display="flex" flexDirection="row" overflow="hidden" mt="20px" mb="10px">
             {/* <Provider inlineStyles={activeInlineStyles}> */}
             {/* <ActiveStylesProvider activeStyles={activeStyles}> */}
             {/* <OldButton {...childProps} />
@@ -323,8 +323,9 @@ const Toolbar = props => {
             <ParagraphButton {...childProps} />
             <HeadingThreeButton {...childProps} />
             <HeadingFourButton {...childProps} />
+            <ColorsButton {...childProps} />
             <ColorTextButton {...childProps} />
-            <HighlightButton {...childProps} />
+            <HighlightsButton {...childProps} />
             <Quotebutton {...childProps} />
             {/* <LinkButton {...childProps} /> */}
             {/* <DividerButton {...childProps} /> */}

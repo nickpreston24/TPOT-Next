@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Box, Button as MuiButton, Tooltip } from '@material-ui/core'
+import { Box, Button as MuiButton, Tooltip, Menu, MenuItem } from '@material-ui/core'
 import { compose, withProps } from 'recompose'
 import FormatBoldIcon from '@material-ui/icons/FormatBold'
 import FormatItalicIcon from '@material-ui/icons/FormatItalic'
@@ -44,22 +44,78 @@ const IconButton = compose(
     }
 )
 
+
+// The second most common visual element in the toolbar. Renders a IconButton + a Palette child
+const GroupButton = compose(
+    observer
+)(
+    ({ preventBubblingUp, group, options, childElement, elementProps, isActive: active, ...rest }) => {
+
+        const [anchorEl, setAnchorEl] = React.useState(null);
+
+        const handleOpen = event => setAnchorEl(event.currentTarget)
+        const handleClose = () => setAnchorEl(null);
+
+        const groupItems = group(options)
+
+        const { type, label, schema, icon } = elementProps
+        const menuOpened = Boolean(anchorEl)
+        const ClickableElement = childElement
+        const toggleEffect = handleOpen
+        const childProps = rest
+
+        const isActive = () => active(rest)
+
+        const wrapperProps = { toggleEffect, preventBubblingUp, label }
+        const clickableProps = { isActive, type, label, schema, icon }
+
+        return <>
+            <Box
+                onMouseDown={preventBubblingUp}
+                onClick={handleOpen}
+            >
+                <EffectWrapper {...wrapperProps}>
+                    <ClickableElement {...clickableProps} />
+                </EffectWrapper>
+            </Box >
+            {menuOpened && (
+                <Menu
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={menuOpened}
+                    onClose={handleClose}
+                >
+                    {groupItems.map((ChildButton, index) => (
+                        <MenuItem key={index}>
+                            <ChildButton {...childProps} />
+                        </MenuItem>
+                    ))}
+                </Menu>
+            )}
+        </>
+    }
+)
+
+
 // Wraps up the generator's props to a clickable area. Renders a child inside, ex: IconButton, GroupButton, Palette, etc.
 const EffectWrapper = compose(
     observer
 )(
-    ({ toggleEffect, preventBubblingUp, label, children }) => (
-        <Box
-            onClick={toggleEffect}
-            onMouseDown={preventBubblingUp}
-        >
-            <Tooltip title={label} TransitionComponent={Zoom} arrow>
-                <Box>
-                    {children}
-                </Box>
-            </Tooltip>
-        </Box >
-    )
+    ({ toggleEffect, preventBubblingUp, label, children }) => {
+        const handleEffect = toggleEffect || (() => null)
+        return (
+            <Box
+                onClick={handleEffect}
+                onMouseDown={preventBubblingUp}
+            >
+                <Tooltip title={label} TransitionComponent={Zoom} arrow>
+                    <Box>
+                        {children}
+                    </Box>
+                </Tooltip>
+            </Box >
+        )
+    }
 )
 
 // Gets props from the generator and based on the config, chooses which family of button to render and apply props to
@@ -77,14 +133,24 @@ const ActionWrappedButton = compose(
             props.toggleEffect(props)
         }
 
-        const { type, label, schema, icon } = props
+        const { type, label, schema, icon, group } = props
 
         const wrapperProps = {
-            toggleEffect, preventBubblingUp, label
+            toggleEffect, preventBubblingUp, label, group
         }
 
         const elementProps = {
             isActive, type, label, schema, icon
+        }
+
+        if (group) {
+            return (
+                <GroupButton
+                    {...{ ...props, ...wrapperProps }}
+                    elementProps={elementProps}
+                    childElement={IconButton}
+                />
+            )
         }
 
         return (
@@ -158,6 +224,28 @@ const createBlockStyleButton = config => ({
     }
 })
 
+// A schema that creates the props needed for any group button where group is a function.
+const createGroupButton = config => ({
+    isActive: props => {
+
+        let types = config.options
+
+        // Override types names only for buttons created with the customStyles module
+        if (config.custom) {
+            types = config.options.map( option => `${props.customStylePrefix}${config.type.toUpperCase()}_${option}` )
+        }
+
+        if (config.schema === 'inline') {
+            return props.activeInlineStyles &&
+                props.activeInlineStyles.some( style => types.includes(style))
+        }
+        if (config.schema === 'block') {
+            return props.activeBlockStyle &&
+                types.some( type => props.activeBlockStyle === type )
+        }
+    }
+})
+
 
 // A schema that creates the props needed for a [CUSTOM] button
 // !IMPORTANT! - Uses functions created at plugin initilization
@@ -187,6 +275,7 @@ const createCustomStyleButton = config => ({
         return props.activeInlineStyles && props.activeInlineStyles.includes(STYLE_NAME)
     },
     toggleEffect: props => {
+        console.log(props)
         const PREFIX = props.customStylePrefix // CONFIG
         const CSS_PROPERTY = config.type // color
         const CSS_VALUE = config.value // #FF0099
@@ -218,18 +307,20 @@ const createCustomStyleButton = config => ({
 
 const generateButton = config => {
 
-    const { schema } = config
-    let externalProps = {}
+    const { schema, group } = config
+    let parentProps = {}
 
-    if (schema == 'inline') {
-        externalProps = createInlineStyleButton(config)
+    if (group) {
+        parentProps = createGroupButton(config)
+    } else if (schema == 'inline') {
+        parentProps = createInlineStyleButton(config)
     } else if (schema == 'block') {
-        externalProps = createBlockStyleButton(config)
+        parentProps = createBlockStyleButton(config)
     } else if (schema == 'custom') {
-        externalProps = createCustomStyleButton(config)
+        parentProps = createCustomStyleButton(config)
     }
 
-    const ButtonWithEffects = withProps(externalProps)(ActionWrappedButton)
+    const ButtonWithEffects = withProps(parentProps)(ActionWrappedButton)
     return withProps(config)(ButtonWithEffects)
 
 }
@@ -369,6 +460,60 @@ export const LinkButton = generateButton({
     schema: 'block',
     icon: LinkIcon,
 })
+
+
+export const HighlightsButton = generateButton({
+    custom: true,
+    type: 'background',
+    label: 'Color Text',
+    schema: 'inline',
+    icon: FormatColorTextIcon,
+    options: [
+        '#FFFFFF', '#FFF4A3', '#FFA3D5', '#A3D4FF', '#BDFFA3'
+    ],
+    group: options => (
+        options.reduce((items, value) => {
+            items.push(
+                generateButton({
+                    value: value,
+                    type: 'background',
+                    label: `Highlight ${value}`,
+                    schema: 'custom',
+                    icon: FormatQuoteIcon,
+                })
+            )
+            return items
+        }, [])
+    )
+})
+
+export const ColorsButton = generateButton({
+    custom: true,
+    type: 'color',
+    label: 'Color Text',
+    schema: 'inline',
+    icon: FormatColorTextIcon,
+    options: [
+        '#000000', '#660000', '#990066', '#FFC000', '#00DBA8',
+        '#660066', '#336600', '#FFFFFF', '#6033F1', '#0000FF',
+        '#E00000', '#000099', '#ED7D31', '#0080FF', '#717171'
+    ],
+    group: options => (
+        options.reduce((items, value) => {
+            items.push(
+                generateButton({
+                    value: value,
+                    type: 'color',
+                    label: `Color ${value}`,
+                    schema: 'custom',
+                    icon: FormatQuoteIcon,
+                })
+            )
+            return items
+        }, [])
+    )
+})
+
 
 
 // { type: 'inline', label: 'Bold', style: 'BOLD', icon: <BoldIcon /> },
