@@ -30,33 +30,29 @@ import { RichUtils } from 'draft-js'
 const BaseButton = compose(
     observer
 )(
-    class BaseButton extends React.Component {
+    props => {
 
-        preventBubblingUp = event => event.preventDefault()
+        const preventBubblingUp = event => event.preventDefault()
 
-        isActive = () => this.props.isActive(this)
+        const isActive = () => props.isActive(props)
 
-        toggleEffect = event => {
+        const toggleEffect = event => {
             event.preventDefault()
-            this.props.toggleEffect(this)
+            props.toggleEffect(props)
         }
 
-        render() {
-            const { props, preventBubblingUp, toggleEffect, isActive } = this
-            const { type } = props
-            const style = { minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }
-            const Icon = props.icon
-            // const className = this.styleIsActive()
+        const { type, label, schema } = props
+        const style = { minWidth: 40, minHeight: 40, color: isActive() ? 'dodgerblue' : '#000' }
+        const Icon = props.icon
 
-            //   ? clsx(theme.button, theme.active)
-            //   : theme.button;
-            // console.log(this.props)
-            return (
-                <Box p={2} border={1} borderColor="green"
-                    // className={theme.buttonWrapper}
-                    style={style}
-                    onMouseDown={preventBubblingUp}
-                >
+        return (
+
+            <Box p={2} border={1} borderColor="green"
+                // className={theme.buttonWrapper}
+                style={style}
+                onMouseDown={preventBubblingUp}
+            >
+                <Tooltip title={label} TransitionComponent={Zoom} arrow>
                     <MuiButton
                         // className={className}
                         style={style}
@@ -64,9 +60,9 @@ const BaseButton = compose(
                         type="button"
                         children={<Icon />}
                     />
-                </Box>
-            )
-        }
+                </Tooltip>
+            </Box >
+        )
     }
 )
 
@@ -108,13 +104,13 @@ class ReactiveIcon extends React.Component {
 // // Makes props that will be wrapped with the BaseButton
 
 const createInlineStyleButton = config => ({
-    isActive: _this =>
-        _this.props.activeInlineStyles &&
-        _this.props.activeInlineStyles.includes(config.type),
-    toggleEffect: _this => {
-        _this.props.setEditorState(
+    isActive: props =>
+        props.activeInlineStyles &&
+        props.activeInlineStyles.includes(config.type),
+    toggleEffect: props => {
+        props.setEditorState(
             RichUtils.toggleInlineStyle(
-                _this.props.getEditorState(),
+                props.getEditorState(),
                 config.type
             )
         )
@@ -123,13 +119,13 @@ const createInlineStyleButton = config => ({
 
 
 const createBlockStyleButton = config => ({
-    isActive: _this =>
-        _this.props.activeBlockStyle &&
-        _this.props.activeBlockStyle === config.type,
-    toggleEffect: _this => {
-        _this.props.setEditorState(
+    isActive: props =>
+        props.activeBlockStyle &&
+        props.activeBlockStyle === config.type,
+    toggleEffect: props => {
+        props.setEditorState(
             RichUtils.toggleBlockType(
-                _this.props.getEditorState(),
+                props.getEditorState(),
                 config.type
             )
         )
@@ -137,25 +133,25 @@ const createBlockStyleButton = config => ({
 })
 
 const createCustomStyleButton = config => ({
-    isActive: _this => {
-        const PREFIX = _this.props.customStylePrefix
+    isActive: props => {
+        const PREFIX = props.customStylePrefix
         const CUSTOM_PROP = config.type
         const CUSTOM_ATTRB = config.value
         const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${CUSTOM_ATTRB}`
-        return _this.props.activeInlineStyles && _this.props.activeInlineStyles.includes(CUSTOM_NAME)
+        return props.activeInlineStyles && props.activeInlineStyles.includes(CUSTOM_NAME)
     },
-    toggleEffect: _this => {
-        const PREFIX = _this.props.customStylePrefix
+    toggleEffect: props => {
+        const PREFIX = props.customStylePrefix
         const CUSTOM_PROP = config.type
         const CUSTOM_ATTRB = config.value
         const CUSTOM_NAME = `${PREFIX}${CUSTOM_PROP.toUpperCase()}_${CUSTOM_ATTRB}`
         // Register the custom style name in the editor's stylesheet before you apply it
-        let customStyleMap = _this.props.getProps().customStyleMap
+        let customStyleMap = props.getProps().customStyleMap
         customStyleMap = Object.assign(customStyleMap, { [`${CUSTOM_NAME}`]: { [`${CUSTOM_PROP}`]: CUSTOM_ATTRB } })
         // Toggle the style using the attribute name (ex:  #FF0099, 24PX, LIME, etc.)
-        _this.props.setEditorState(
-            _this.props.customStyleFunctions[`${CUSTOM_PROP}`].toggle(
-                _this.props.getEditorState(),
+        props.setEditorState(
+            props.customStyleFunctions[`${CUSTOM_PROP}`].toggle(
+                props.getEditorState(),
                 CUSTOM_ATTRB.toUpperCase()
             )
         )
