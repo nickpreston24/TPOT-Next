@@ -1,25 +1,23 @@
 ### Integration Checklist
 
 - [x] Upon clicking the Checkout button, redirect to the scribe/edit page
-- [ ] Upon loading the edit page, load whatever draft state thats in the context
-  - [ ] Convert current Document Editor to a functional component or a Next variant of such.
-  - [ ] Pass the resulting document draft state JSON/raw to editor state and pass it into RichEditor
-  - [ ] Copy your uploader context code into a .js 
-    - [ ] - See: uploader.js and complete it
-    
+- [x] Upon loading the edit page, load whatever draft state thats in the context
+  - [x] Convert current Document Editor to a functional component or a Next variant of such.
+  - [x] Pass the resulting document draft state JSON/raw to editor state and pass it into RichEditor
+  - [x] Copy your uploader context code into a .js 
+    - [x] - See: uploader.js and complete it    
   - [x] Test that a simple piece of data can be red from Checkout.js and updated from _app.js or other.
 
-- [ ] 
-
-- [ ] Re-attach the Upload button from TPOT-Toolbox
-  - [ ] Create a modal asking "Edit this now?" (tickbox) - [Y] runs conversion and loads into Editor  [N] Uploads to Firebase Storage (ignoring conversio)
+- [x] Re-attach the Upload button from TPOT-Toolbox
+  - [ ] Create a modal asking "Edit this now?" (tickbox) - [Y] runs conversion and loads into Editor  [N] Uploads to Firebase Storage (ignoring conversion)
 
 - [x] Upon clicking the Publish button,
   - [x] If the Page hasn't been created yet (see slug, wp_post_id, etc.), create it and store the returned wordpress page Id AND User in firestore
   - [x] If the Page DOES exist, use wpapi's update method instead of Create().
-  - [ ] Update the EDITOR's draft state according to the wordpress_page_id AND the current user - both must be correct or throw an Error.
-- [ ] Update the FIREBASES's draft state according to the wordpress_page_id AND the current user - both must be correct or throw an Error.
 
+#### Wordpress Identification and Association:
+  - [ ] Update the EDITOR's draft state according to the wordpress_page_id AND the current user - both must be correct or throw an Error.
+  - [ ] Update the FIREBASES's draft state according to the wordpress_page_id AND the current user - both must be correct or throw an Error.
   - [ ] Associate a firebase user with a wp_author_id
   - [ ] Then, associate a session with a wp_author_id once it's reached the 'published/staged level' ('staged' being the level right before being Victor & Translation) 
 - [ ] FINALLY, update the Checkout State of a finalized paper to 'published' status.  (In wordpress, this will depend on the author for a final publish, e.g. Victor)
