@@ -35,7 +35,6 @@ const DocumentDetails = ({ store, form, document }) => {
 
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(loaders[0]);
-  const [selectedFile, setSelectedFile] = React.useState(null);
 
   if (date_modified) {
     date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
