@@ -5,11 +5,9 @@
  */
 
 import React from 'react'
-import firebase from 'firebase';
-import { Paper } from '../../apps/Scribe/models/Paper'
-import { convertFile } from '../utilities/converter';
+// import firebase from 'firebase';
+import { convertFile } from '../components/Editor/functions/converter';
 
-let db = firebase.firestore()
 
 export const CloudStorage = React.createContext()
 const firebaseApiKey = process.env.REACT_APP_FIREBASE_STORAGE_API_KEY || null
@@ -18,15 +16,17 @@ if (!firebaseApiKey) {
     console.warn('Invalid api key, could not initialize this context!');
 }
 
-const storageRef = firebase.storage().ref();
 const uploadsFolder = 'originals'
 const htmlFolder = 'tmp'
+
 
 /**
  * Cloud File Provider
  * Allows any subscribers to interact with Cloud Storage files
  */
-const CloudStorageProvider = (props) => {
+export const CloudStorageProvider = ({ db, firebase }) => {
+
+    const storageRef = firebase.storage().ref();
 
     const upload = async (file) => {
 
@@ -119,4 +119,16 @@ const CloudStorageProvider = (props) => {
     )
 }
 
-export default CloudStorageProvider
+class Paper {
+    constructor(props) {
+        Object.assign(this, { ...props });
+        this.status = this.status || 'in-progress';
+        this.slug = (this.slug || this.title)
+            .replace(/\s/g, '-') //Spaces first,
+            .replace(/[,?*#!:;_]/g, '-') // then specials
+            .replace('.docx', '')
+            .trim();
+    }
+}
+
+export default CloudStorageProvider;

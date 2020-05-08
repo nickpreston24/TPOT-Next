@@ -1,6 +1,6 @@
 import { EditorState, Modifier, RichUtils, convertFromRaw } from "draft-js";
 import { useRef, useState } from "react";
-import UnderConstruction from '../Editor/components/UnderConstruction'
+import { UnderConstruction } from '../../pages/404'
 
 import { SubmitButton } from "./buttons/SubmitButton";
 
@@ -12,7 +12,8 @@ import {
   , BlockStyleControls
   , InlineStyleControls
   , ColorPicker
-  , getBlockStyle
+  , getBlockStyle,
+  ToolbarMP
 } from './plugins';
 
 import {
@@ -25,7 +26,7 @@ import {
 import Editor from 'draft-js-plugins-editor';
 import styles, { colorStyleMap } from './styles'
 import { ArgumentNullReferenceError } from "../Errors";
-
+// import { Toolbar } from '../Editor/components/Toolbar'
 let publish = null; //TODO: use Publisher class
 
 /* 
@@ -50,10 +51,10 @@ export const RichEditor = ({
   }
 
   if (!draftState)
-    return UnderConstruction('draftState was not provided')
+    return UnderConstruction('draftState was not provided') // TODO: use a 404 here.
 
-  if (!editorRef)
-    return UnderConstruction('editorRef was not provided')
+  // if (!editorRef)
+  //   return UnderConstruction('editorRef was not provided')
 
   // console.log('Current document: ', document)
 
@@ -134,6 +135,7 @@ export const RichEditor = ({
   return (
     <div className="RichEditor-root" style={root}>
 
+      <ToolbarMP />
       <BlockStyleControls
         editorState={editorState}
         onToggle={toggleBlockType}
@@ -188,3 +190,14 @@ export const RichEditor = ({
   );
 
 };
+
+
+
+
+
+
+
+
+
+
+

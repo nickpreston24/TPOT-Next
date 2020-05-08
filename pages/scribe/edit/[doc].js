@@ -2,13 +2,12 @@ import { Document as FireStorterDocument } from "firestorter";
 import { inject, observer } from "mobx-react";
 import React, { Component } from "react";
 import Dashboard from "../../../components/Dashboard";
-import DocumentDetails from "../../../components/DocumentDetails";
-import DocumentForm from "../../../components/DocumentForm";
-import DocumentEditor from "../../../components/DocumentEditor";
+import { DocumentDetails, DocumentForm, DocumentEditor } from "../../../components/Document";
+
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { RichEditor } from "../../../components/RichEditor";
-import EditorView from "../../../components/Editor/experimental/EditorView";
-import DraftView from "../../../components/Editor/experimental/DraftView";
+import EditorView from "../../../components/Editor/views/EditorView";
+import DraftView from "../../../components/Editor/views/DraftView";
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides
@@ -50,6 +49,7 @@ class Document extends Component {
                 details={() => <DocumentDetails {...{ document }} />}
               >
                 <DocumentEditor {...{ document, id: doc }} />
+                {/* <RichEditor/> */}
               </Dashboard>
             </DocumentForm>
           )}

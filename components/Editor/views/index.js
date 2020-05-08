@@ -120,17 +120,16 @@ export class EditorView extends React.Component {
         return !!this.draftRef.current ? this.draftRef.current.blocks : ''
     }
 
-
     render() {
-        if (!!this && !!this.draftRef.current)
-            console.log('setters and getters:',
-                'stylesheet', this.stylesheet
-                , "blocks", this.blocks
-                , "code", this.code
-                , "original", this.original
-                , "mode", this.mode
-                , "editorState", this.editorState
-            )
+        // if (!!this && !!this.draftRef.current)
+        //     console.log('setters and getters:',
+        //         'stylesheet', this.stylesheet
+        //         , "blocks", this.blocks
+        //         , "code", this.code
+        //         , "original", this.original
+        //         , "mode", this.mode
+        //         , "editorState", this.editorState
+        //     )
 
         const { mode, code, draftRef, original, blocks } = this
         const { saveFn, children } = this.props

@@ -11,17 +11,17 @@ export const uploadLocalFile = async (file, store) => {
     const storageRef = await store.fb.storage.ref()
 
     const getDocumentMetadata = (storageRef, filepath) => {
-        return new Promise(resolve => {
-            storageRef.child(filepath).getMetadata()
-                .then(metadata => resolve(metadata))
-                .catch(error => resolve())
-        })
+        return storageRef.child(filepath).getMetadata();
     }
+
+    console.log('file.name', file);
 
     const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
 
-    if (existingDoc) {
-        console.error('Document already uploaded, exiting: ', existingDoc)
+    console.log('existingDoc.fullPath', existingDoc.fullPath);
+
+    if (existingDoc && file.name === existingDoc.fullPath) {
+        console.warn('Document already uploaded, exiting: ', existingDoc)
         store.notify('Document already uploaded', 'error')
         return
     }
@@ -44,9 +44,9 @@ export const uploadLocalFile = async (file, store) => {
 
     // Create a session in firebase for the document
     if (!html) {
-        console.error(`There is no html input to convert: ${html}`)
+        console.warn(`There is no html input to convert: ${html}`)
     } else {
-        console.warn(`Converting Document: ${title}`)
+        console.info(`Converting Document: ${title}`)
     }
 
     // Get results from Draft and other utilities
@@ -56,7 +56,7 @@ export const uploadLocalFile = async (file, store) => {
     const codeState = draftContentToHtml(editorState, newContentState)
 
     // Build a full Document in the '/sessions' Collection
-    const doc = await new Collection('sessions').add({
+    const document = await new Collection('sessions').add({
         status: 'not-started',
         contributors: store.authUser.email,
         date_uploaded: new Date(),
@@ -71,14 +71,14 @@ export const uploadLocalFile = async (file, store) => {
         excerpt: ''
     })
 
-    if (!doc) {
-        console.error(`Session failed to create entry: ${doc}`)
+    if (!document) {
+        console.warn(`Session failed to create entry: ${document}`)
     } else {
-        console.warn(`Session created, with id: ${doc.id}\n`)
+        console.info(`Session created, with id: ${document.id}\n`)
     }
 
     // Since the document doesn't already exist
-    console.warn(`Uploading Document to Storage: ${file.name}`)
+    console.info(`Uploading Document to Storage: ${file.name}`)
 
     const snapshot = await store
         .fb
@@ -100,15 +100,15 @@ export const uploadLocalFile = async (file, store) => {
         console.error(`Could not get download URL: ${downloadURL}`)
         return
     }
-    
-    await doc.update({
+
+    await document.update({
         docx: downloadURL
     })
 
-    console.warn(
-        `Document Converted and Uploaded Successfully!:\n`, 
-        '\nDownload URL\n', downloadURL, 
-        '\n\nDocument Data', toJS(doc.data)
+    console.info(
+        `Document Converted and Uploaded Successfully!:\n`,
+        '\nDownload URL\n', downloadURL,
+        '\n\nDocument Data', toJS(document.data)
     )
 
     store.notify('Document uploaded successfully!', 'info')

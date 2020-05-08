@@ -1,25 +1,28 @@
-import { PrimaryButton } from '../buttons'
+import { PrimaryButton } from '../buttons/PrimaryButton'
 import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
-import { Box, withStyles } from '@material-ui/core'
 
 /** Draft JS plugins */
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
-// import {
-//     ItalicButton,
-//     BoldButton,
-//     UnderlineButton,
-//     CodeButton,
-//     HeadlineOneButton,
-//     HeadlineTwoButton,
-//     HeadlineThreeButton,
-//     UnorderedListButton,
-//     OrderedListButton,
-//     BlockquoteButton,
-//     CodeBlockButton,
-// } from 'draft-js-buttons';
+import {
+    ItalicButton,
+    BoldButton,
+    UnderlineButton,
+    CodeButton,
+    HeadlineOneButton,
+    HeadlineTwoButton,
+    HeadlineThreeButton,
+    UnorderedListButton,
+    OrderedListButton,
+    BlockquoteButton,
+    CodeBlockButton,
+} from 'draft-js-buttons';
 
 import createUndoPlugin from 'draft-js-undo-plugin';
-import createLinkifyPlugin from 'draft-js-linkify-plugin';
+import createLinkifyPlugin from 'draft-js-linkify-plugin'
+import createRichButtonsPlugin from 'draft-js-richbuttons-plugin'
+ 
+export const linkifyPlugin = createLinkifyPlugin()
+export const richButtonsPlugin = createRichButtonsPlugin() 
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
 import { UnderConstruction } from '../../../pages/404';
@@ -29,29 +32,18 @@ const { Toolbar } = staticToolbarPlugin;
 
 const undoPlugin = createUndoPlugin();
 
-const linkifyPlugin = createLinkifyPlugin({
-    //property 'component' renders the component you want, instead of the normal anchor tag:
-    // TODO: @MP, provide an onClick function.
-    component: (props) => (
-        <a {...props} onClick={() => {
-            console.log(props)
-            // alert('Clicked on link!')
-        }} />
-    )
-});
+// const linkifyPlugin = createLinkifyPlugin({
+//     //property 'component' renders the component you want, instead of the normal anchor tag:
+//     // TODO: @MP, provide an onClick function.
+//     component: (props) => (
+//         <a {...props} onClick={() => {
+//             console.log(props)
+//             // alert('Clicked on link!')
+//         }} />
+//     )
+// });
 
-import createRichButtonsPlugin from 'draft-js-richbuttons-plugin';
-
-const richButtonsPlugin = createRichButtonsPlugin();
-
-const {
-    // inline buttons
-    ItalicButton, BoldButton, MonospaceButton, UnderlineButton,
-    // block buttons
-    ParagraphButton, BlockquoteButton, CodeButton, OLButton, ULButton, H1Button, H2Button, H3Button, H4Button, H5Button, H6Button
-} = richButtonsPlugin;
-
-export const plugins = [linkifyPlugin, undoPlugin, staticToolbarPlugin, richButtonsPlugin];
+export const plugins = [linkifyPlugin, undoPlugin, staticToolbarPlugin];
 export const { UndoButton, RedoButton } = undoPlugin;
 
 let sampleText = "Hello there!"
@@ -112,17 +104,6 @@ export const BlockStyleControls = ({ editorState, onToggle }) => {
         </div>
     );
 };
-
-export const ToolbarMP = () => <div className="myToolbar">
-    {/* <Box height="100%" width="100%" display="flex" flexDirection="row" overflow="hidden" boxShadow={2}> */}
-    <BoldButton />
-    <ItalicButton />
-
-    <H2Button />
-    <ULButton />
-    <OLButton />
-    {/* </Box> */}
-</div>
 
 export const ColorPicker = ({ editorState, onToggle }) => {
 
@@ -188,6 +169,9 @@ export const InlineStyleControls = props => {
         </div>
     );
 };
+
+
+
 
 // import createFocusPlugin from 'draft-js-focus-plugin';
 // import createAlignmentPlugin from 'draft-js-alignment-plugin';

@@ -1,11 +1,7 @@
-import { Button } from '@material-ui/core'
+import { Button } from   '@material-ui/core'
+export const PrimaryButton = props => {
 
-
-
-
-const PrimaryButton = props => {
-
-  const palette = props.palette;
+  // const palette = props.palette;
 
   // if(!palette)
   //   throw new Error("Missing a color palette!");
@@ -26,10 +22,11 @@ const PrimaryButton = props => {
     className += " RichEditor-activeButton";
   }
 
+
   return (
     <span className={className} onMouseDown={onToggle}>
       <button onClick={props.onClick}>{props.children || props.label}</button>
-      {pallete && <style jsx>{`
+      {/* <style jsx>{`
         button{
             border: "2px solid" + ${pallete.primary.teal};
             color:${pallete.primary.blue};
@@ -55,17 +52,14 @@ const PrimaryButton = props => {
             margin:0.2em auto;
            }
           } 
-      `}</style>}
+      `}</style> */}
     </span>
   );
-
-
-
 
   // return (
   //   <Button onClick={props.onClick}>{props.children || props.label}</Button>
   //   );
-  {/* <span className={className} onMouseDown={onToggle}>
+    {/* <span className={className} onMouseDown={onToggle}>
       <button onClick={props.onClick}>{props.children || props.label}</button>
       <style jsx>{
         
@@ -123,7 +117,3 @@ const PrimaryButton = props => {
       `}</style>
     </span> */}
 };
-
-
-export default PrimaryButton;
-

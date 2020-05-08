@@ -1,13 +1,10 @@
 import { inject, observer } from 'mobx-react'
-import React, { Component, useState, useEffect, useRef } from 'react'
-import { withForm } from './DocumentForm'
-import EditorView from './Editor/experimental/EditorView'
+import React, { useState, useEffect, useRef } from 'react'
+import EditorView from '../Editor/views/EditorView'
 import { convertFromRaw, EditorState } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { RichEditor } from './RichEditor'
-import { NullReferenceError } from './Errors'
 import { compose } from 'recompose'
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
@@ -50,7 +47,6 @@ function DocumentEditor(props) {
     // Parse out each field and convert to target format
     code = JSON.parse(code)
     draft = JSON.parse(draft)
-    console.log('Current draft state? ', draft)
     original = JSON.parse(original)
     stylesheet = JSON.parse(stylesheet)
 
@@ -113,9 +109,6 @@ export default compose(
   inject('store'),
   observer
 )(DocumentEditor)
-
-
-
 
 // Auxillary Components
 

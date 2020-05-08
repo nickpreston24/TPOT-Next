@@ -65,7 +65,7 @@ class LoginForm extends Component {
                     forgot(values)
                 }
             },
-            onError(form) {
+            onError() {
                 store.notify('Form has errors!', 'error')
             }
         }
@@ -87,7 +87,7 @@ class LoginForm extends Component {
 
 export default LoginForm
 
-const InputFields = observer(({ form, mode }) => {
+const InputFields = observer(({ form }) => {
     const fields = Object.keys(toJS(form.fields))
     return (
         <Box flexDirection="column">
@@ -117,7 +117,7 @@ const ResetText = () =>
         <p>An email will be send to the email registered with your account. Clicking on the link will send you to a webpage where you can reset your password. Be sure to check your spam folder if you do not see the request!</p>
     </Box>
 
-const NavText = observer(({ form, mode }) => (
+const NavText = observer(({ mode }) => (
     <>
         {mode == 'login' && (<>
             <Box><Link href="/login?mode=forgot"><a>Forgot Your Password?</a></Link></Box>
@@ -127,7 +127,7 @@ const NavText = observer(({ form, mode }) => (
     </>
 ))
 
-const FormButton = observer(({ form, mode }) => (
+const FormButton = observer(({ form }) => (
     <Button
         fullWidth
         color="primary"
