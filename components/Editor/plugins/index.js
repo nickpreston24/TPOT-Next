@@ -1,5 +1,6 @@
 import { PrimaryButton } from '../buttons/PrimaryButton'
 import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
+import createScribeToolbarPlugin from './draft-js-scribe-toolbar'
 
 /** Draft JS plugins */
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
@@ -20,9 +21,9 @@ import {
 import createUndoPlugin from 'draft-js-undo-plugin';
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
 import createRichButtonsPlugin from 'draft-js-richbuttons-plugin'
- 
+
 export const linkifyPlugin = createLinkifyPlugin()
-export const richButtonsPlugin = createRichButtonsPlugin() 
+export const richButtonsPlugin = createRichButtonsPlugin()
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
 import { UnderConstruction } from '../../../pages/404';
@@ -43,7 +44,6 @@ const undoPlugin = createUndoPlugin();
 //     )
 // });
 
-export const plugins = [linkifyPlugin, undoPlugin, staticToolbarPlugin];
 export const { UndoButton, RedoButton } = undoPlugin;
 
 let sampleText = "Hello there!"
@@ -187,14 +187,29 @@ export const InlineStyleControls = props => {
 //   focusPlugin.decorator,
 // );
 
-  // TODO: Unsure what to do, should I plug it in somewhere?
-  // const handlePastedText = (text, styles, editorState) => {
-  //     setEditorState({
-  //         editorState: removeEditorStyles(text, editorState),
-  //     });
-  // };
+// TODO: Unsure what to do, should I plug it in somewhere?
+// const handlePastedText = (text, styles, editorState) => {
+//     setEditorState({
+//         editorState: removeEditorStyles(text, editorState),
+//     });
+// };
 
-  // const alterColorMap = colorStyleMap.map(x => {
-  //   console.log('alt color', x.color);
-  //   return x.;
-  // })
+// const alterColorMap = colorStyleMap.map(x => {
+//   console.log('alt color', x.color);
+//   return x.;
+// })
+
+/** Toolbar Plugin - BP */
+export const scribeToolbarPlugin = createScribeToolbarPlugin()
+
+export const { ScribeToolbar } = scribeToolbarPlugin
+
+
+const plugins = [
+    linkifyPlugin
+    , undoPlugin
+    , staticToolbarPlugin
+    , scribeToolbarPlugin
+];
+
+export default plugins;

@@ -1,6 +1,7 @@
-import { inject, observer } from 'mobx-react'
-import React, { useState, useEffect, useRef } from 'react'
 import EditorView from '../Editor/views/EditorView'
+import { inject, observer, PropTypes as MobXPropTypes } from 'mobx-react'
+import React, { useState, useEffect, useRef } from 'react'
+import PropTypes from 'prop-types'
 import { convertFromRaw, EditorState } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
@@ -102,7 +103,12 @@ function DocumentEditor(props) {
       />
     )
   }
+}
 
+DocumentEditor.propTypes = {
+  id: PropTypes.string.isRequired,
+  store: MobXPropTypes.objectOrObservableObject.isRequired,
+  document: MobXPropTypes.objectOrObservableObject.isRequired,
 }
 
 export default compose(
@@ -110,9 +116,11 @@ export default compose(
   observer
 )(DocumentEditor)
 
+
+
 // Auxillary Components
 
-function ModeSwitcher({ mode, setMode }) {
+const ModeSwitcher = ({ mode, setMode }) => {
   return (
     <ButtonGroup variant="outlined">
       <Button color={mode === 'original' ? 'secondary' : 'primary'} onClick={() => setMode('original')}>Paper</Button>
@@ -123,6 +131,13 @@ function ModeSwitcher({ mode, setMode }) {
     </ButtonGroup>
   )
 }
+
+ModeSwitcher.propTypes = {
+  mode: PropTypes.string.isRequired,
+  setMode: PropTypes.func.isRequired,
+}
+
+
 
 
 

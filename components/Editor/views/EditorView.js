@@ -5,6 +5,7 @@ import BlocksView from '../views/BlocksView'
 import DraftView from '../views/DraftView'
 import CodeView from '../views/CodeView'
 import { toClass } from 'recompose'
+import PropTypes from 'prop-types'
 
 // The <Editor /> component is wrapper class that meshes together a DraftJS
 // editor plus several visualizers. Most of its methods are an abstraction
@@ -116,6 +117,26 @@ const EditorView = props => {
     )
 }
 
+// Add Type Safety for Props
+EditorView.propTypes = {
+    mode: PropTypes.string,
+    handleSave: PropTypes.func,
+    handlePublish: PropTypes.func,
+    handleDuplicate: PropTypes.func,
+    children: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.object
+    ]),
+    editorRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.object })
+    ]),
+    draftRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.object })
+    ])
+}
+
 export default EditorView
 
 
@@ -130,20 +151,56 @@ const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
 
     return (
         <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-            <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" height="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
+            <Box display="block" width="100%" height="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
                 <OriginalDocxView state={original} hidden={mode !== 'original'} />
-                <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
-                 {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
+                <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} children={children} />
+                {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
                 <CodeView state={code} hidden={mode !== 'code'} />
                 <BlocksView state={blocks} hidden={mode !== 'blocks'} />
             </Box>
-            <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
+            <Box display="flex" justifyContent="center" p={1}>
                 {children}
             </Box>
         </Box>
     )
+
+    // return (
+    //     <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+    //         <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" height="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
+    //             <OriginalDocxView state={original} hidden={mode !== 'original'} />
+    //             <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
+    //             {/* !IMPORTANT: These modes below all work, but will likely only be used by ADMINS */}
+    //             <CodeView state={code} hidden={mode !== 'code'} />
+    //             <BlocksView state={blocks} hidden={mode !== 'blocks'} />
+    //         </Box>
+    //         <Box display="flex" justifyContent="center" p={1}>
+    //             {children}
+    //         </Box>
+    //     </Box>
+    // )
 })
 
+RenderedComponent.propTypes = {
+    children: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.object
+    ]),
+    states: PropTypes.shape({
+        mode: PropTypes.string,
+        code: PropTypes.string,
+        original: PropTypes.string,
+        blocks: PropTypes.object
+    }),
+    handles: PropTypes.shape({
+        handleSave: PropTypes.func,
+        handlePublish: PropTypes.func,
+        handleDuplicate: PropTypes.func
+    }),
+    draftRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.object })
+    ])
+}
 
 
 
@@ -174,118 +231,129 @@ const RenderedComponent = toClass(({ draftRef, states, handles, children }) => {
 
 
 
-// export default EditorView
-
-
-
-
-
-
-
-
-
-// RENDERED COMPONENT
-//////////////////////////////////
-
-// toClass() wrapps the FC up so that it can be used with references (See Line: 99)
-const RenderedComponentFC = toClass(({ draftRef, states }) => {
-
-
-    return (
-        <DraftView draftRef={draftRef} />
-        // <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-        //     <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
-        //         {/* <OriginalDocxView state={original} hidden={mode !== 'original'} /> */}
-        //         <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
-        //         {/* <CodeView state={code} hidden={mode !== 'code'} />
-        //         <BlocksView state={blocks} hidden={mode !== 'blocks'} /> */}
-        //     </Box>
-        //     <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
-        //         {children}
-        //     </Box>
-        // </Box>
-    )
-})
-
-
-
-
-
-// export default compose(
-//     observer
-// )(EditorView)
-
-// class EditorView extends React.Component {
-
-//     draftRef = React.createRef()
-
-//     state = {
-//         mode: 'draft',
-//         code: null,
-//     }
-
-//     set mode(mode) {
-//         this.setState({ mode })
-//     }
-
-//     get mode() {
-//         return this.state.mode
-//     }
-
-//     set editorState(editorState) {
-//         this.draftRef.current.editorState = editorState
-//     }
-
-//     get editorState() {
-//         return this.draftRef.current.editorState
-//     }
-
-//     set code(code) {
-//         this.setState({ code })
-//     }
-
-//     get code() {
-//         return this.state.code
-//     }
-
-//     set original(original) {
-//         this.setState({ original })
-//     }
-
-//     get original() {
-//         return this.state.original
-//     }
-
-//     set stylesheet(stylesheet) {
-//         this.draftRef.current.stylesheet = stylesheet
-//     }
-
-//     get stylesheet() {
-//         return this.draftRef.current.stylesheet
-//     }
-
-//     get blocks() {
-//         return !!this.draftRef.current ? this.draftRef.current.blocks : ''
-//     }
-
-//     render() {
-//         const { mode, code, draftRef, original, blocks } = this
-//         const { saveFn, children } = this.props
-
-//         return (
-//             <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
-//                 <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
-//                     <OriginalDocxView state={original} hidden={mode !== 'original'} />
-//                     <DraftView ref={draftRef} hidden={mode !== 'draft'} saveFn={saveFn} />
-//                     <CodeView state={code} hidden={mode !== 'code'} />
-//                     <BlocksView state={blocks} hidden={mode !== 'blocks'} />
-//                 </Box>
-//                 <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
-//                     {children}
-//                 </Box>
-//             </Box>
-//         )
-//     }
+//     // Map all props onto the Stateless Functional Component
+//     return (
+//         <RenderedComponentFC
+//             ref={editorRef}
+//             draftRef={draftRef}
+//             {...{ states, handles, children }}
+//         />
+//     )
 // }
 
-// export default EditorView
+// // export default EditorView
+
+
+
+
+
+
+
+
+
+// // RENDERED COMPONENT
+// //////////////////////////////////
+
+// // toClass() wrapps the FC up so that it can be used with references (See Line: 99)
+// const RenderedComponentFC = toClass(({ draftRef, states, handles, children }) => {
+
+//     const { mode, code, original, blocks } = states
+
+//     return (
+//         <DraftView draftRef={draftRef} />
+//         // <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+//         //     <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
+//         //         {/* <OriginalDocxView state={original} hidden={mode !== 'original'} /> */}
+//         //         <DraftView draftRef={draftRef} hidden={mode !== 'draft'} {...handles} />
+//         //         {/* <CodeView state={code} hidden={mode !== 'code'} />
+//         //         <BlocksView state={blocks} hidden={mode !== 'blocks'} /> */}
+//         //     </Box>
+//         //     <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
+//         //         {children}
+//         //     </Box>
+//         // </Box>
+//     )
+// })
+
+
+
+
+
+// // export default compose(
+// //     observer
+// // )(EditorView)
+
+// // class EditorView extends React.Component {
+
+// //     draftRef = React.createRef()
+
+// //     state = {
+// //         mode: 'draft',
+// //         code: null,
+// //     }
+
+// //     set mode(mode) {
+// //         this.setState({ mode })
+// //     }
+
+// //     get mode() {
+// //         return this.state.mode
+// //     }
+
+// //     set editorState(editorState) {
+// //         this.draftRef.current.editorState = editorState
+// //     }
+
+// //     get editorState() {
+// //         return this.draftRef.current.editorState
+// //     }
+
+// //     set code(code) {
+// //         this.setState({ code })
+// //     }
+
+// //     get code() {
+// //         return this.state.code
+// //     }
+
+// //     set original(original) {
+// //         this.setState({ original })
+// //     }
+
+// //     get original() {
+// //         return this.state.original
+// //     }
+
+// //     set stylesheet(stylesheet) {
+// //         this.draftRef.current.stylesheet = stylesheet
+// //     }
+
+// //     get stylesheet() {
+// //         return this.draftRef.current.stylesheet
+// //     }
+
+// //     get blocks() {
+// //         return !!this.draftRef.current ? this.draftRef.current.blocks : ''
+// //     }
+
+// //     render() {
+// //         const { mode, code, draftRef, original, blocks } = this
+// //         const { saveFn, children } = this.props
+
+// //         return (
+// //             <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
+// //                 <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>
+// //                     <OriginalDocxView state={original} hidden={mode !== 'original'} />
+// //                     <DraftView ref={draftRef} hidden={mode !== 'draft'} saveFn={saveFn} />
+// //                     <CodeView state={code} hidden={mode !== 'code'} />
+// //                     <BlocksView state={blocks} hidden={mode !== 'blocks'} />
+// //                 </Box>
+// //                 <Box display="flex" justifyContent="center" width="100%" style={{ boxSizing: 'border-box' }} p={1} boxShadow={3} borderColor="grey">
+// //                     {children}
+// //                 </Box>
+// //             </Box>
+// //         )
+// //     }
+// // }
+
+// // export default EditorView

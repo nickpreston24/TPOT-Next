@@ -18,8 +18,6 @@ const config = {
     messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
 };
 
-console.log('config', config);
-
 class Firebase {
 
     @observable authUser = null
