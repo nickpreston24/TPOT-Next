@@ -1,6 +1,6 @@
 import React from 'react'
 import Dashboard from '../../components/Dashboard'
-import { ZeitCard } from '../../components/experimental/ZeitCard'
+import { ZeitCard } from '../../components/experimental'
 import * as ROUTES from '../../constants/routes'
 
 const Edit = () => (
