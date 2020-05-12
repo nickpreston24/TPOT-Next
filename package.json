@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "export": "next export",
-    "serve": "serve out"
+    "serve": "serve out",
+    "clean": "rm -rf node_modules && rm package-lock.json yarn-error.log yarn.lock && yarn"
   },
   "dependencies": {
     "@cuties/cutie": "^1.7.6",
