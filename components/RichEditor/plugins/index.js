@@ -3,7 +3,7 @@ import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
 import { Box, withStyles } from '@material-ui/core'
 
 /** Draft JS plugins */
-import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
+import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor'
 // import {
 //     ItalicButton,
 //     BoldButton,
@@ -18,16 +18,16 @@ import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
 //     CodeBlockButton,
 // } from 'draft-js-buttons';
 
-import createUndoPlugin from 'draft-js-undo-plugin';
-import createLinkifyPlugin from 'draft-js-linkify-plugin';
+import createUndoPlugin from 'draft-js-undo-plugin'
+import createLinkifyPlugin from 'draft-js-linkify-plugin'
 
-import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
-import { UnderConstruction } from '../../../pages/404';
+import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
+import { UnderConstruction } from '../../../pages/404'
 
-const staticToolbarPlugin = createToolbarPlugin();
-const { Toolbar } = staticToolbarPlugin;
+const staticToolbarPlugin = createToolbarPlugin()
+const { Toolbar } = staticToolbarPlugin
 
-const undoPlugin = createUndoPlugin();
+const undoPlugin = createUndoPlugin()
 
 const linkifyPlugin = createLinkifyPlugin({
     //property 'component' renders the component you want, instead of the normal anchor tag:
@@ -38,62 +38,62 @@ const linkifyPlugin = createLinkifyPlugin({
             // alert('Clicked on link!')
         }} />
     )
-});
+})
 
-import createRichButtonsPlugin from 'draft-js-richbuttons-plugin';
+import createRichButtonsPlugin from 'draft-js-richbuttons-plugin'
 
-const richButtonsPlugin = createRichButtonsPlugin();
+const richButtonsPlugin = createRichButtonsPlugin()
 
 const {
     // inline buttons
     ItalicButton, BoldButton, MonospaceButton, UnderlineButton,
     // block buttons
     ParagraphButton, BlockquoteButton, CodeButton, OLButton, ULButton, H1Button, H2Button, H3Button, H4Button, H5Button, H6Button
-} = richButtonsPlugin;
+} = richButtonsPlugin
 
-export const plugins = [linkifyPlugin, undoPlugin, staticToolbarPlugin, richButtonsPlugin];
-export const { UndoButton, RedoButton } = undoPlugin;
+export const plugins = [linkifyPlugin, undoPlugin, staticToolbarPlugin, richButtonsPlugin]
+export const { UndoButton, RedoButton } = undoPlugin
 
-let sampleText = "Hello there!"
+let sampleText = 'Hello there!'
 
 export const sampleEditorState = createEditorStateWithText(sampleText)
 
 const BLOCK_TYPES = [
-    { label: "H1", style: "header-one" },
-    { label: "H2", style: "header-two" },
-    { label: "H3", style: "header-three" },
-    { label: "H4", style: "header-four" },
-    { label: "H5", style: "header-five" },
-    { label: "H6", style: "header-six" },
-    { label: '"', style: "blockquote" },
-    { label: "*-", style: "unordered-list-item" },
-    { label: "1..3", style: "ordered-list-item" },
+    { label: 'H1', style: 'header-one' },
+    { label: 'H2', style: 'header-two' },
+    { label: 'H3', style: 'header-three' },
+    { label: 'H4', style: 'header-four' },
+    { label: 'H5', style: 'header-five' },
+    { label: 'H6', style: 'header-six' },
+    { label: '"', style: 'blockquote' },
+    { label: '*-', style: 'unordered-list-item' },
+    { label: '1..3', style: 'ordered-list-item' },
 
     // TODO: @MP, Finish Strikethrough and highlighter
     // { label: "-S-", style: "STRIKETHROUGH" },
     // { label: "-S-", style: "line-through" }
     // { label: "Code Block", style: "code-block" }
-];
+]
 
 export const getBlockStyle = block => {
     switch (block.getType()) {
-        case "blockquote":
-            return "RichEditor-blockquote";
+        case 'blockquote':
+            return 'RichEditor-blockquote'
         default:
-            return null;
+            return null
     }
-};
+}
 
 export const BlockStyleControls = ({ editorState, onToggle }) => {
 
     if (!editorState)
-        throw new EditorStateNotFoundError();
+        throw new EditorStateNotFoundError()
 
-    const selection = editorState.getSelection();
+    const selection = editorState.getSelection()
     const blockType = editorState
         .getCurrentContent()
         .getBlockForKey(selection.getStartKey())
-        .getType();
+        .getType()
 
     return (
         <div className="RichEditor-controls">
@@ -110,8 +110,8 @@ export const BlockStyleControls = ({ editorState, onToggle }) => {
                 )
             })}
         </div>
-    );
-};
+    )
+}
 
 export const ToolbarMP = () => <div className="myToolbar">
     {/* <Box height="100%" width="100%" display="flex" flexDirection="row" overflow="hidden" boxShadow={2}> */}
@@ -127,9 +127,9 @@ export const ToolbarMP = () => <div className="myToolbar">
 export const ColorPicker = ({ editorState, onToggle }) => {
 
     if (!editorState)
-        throw new EditorStateNotFoundError();
+        throw new EditorStateNotFoundError()
 
-    var currentStyle = editorState.getCurrentInlineStyle();
+    var currentStyle = editorState.getCurrentInlineStyle()
 
     return (
         <div>
@@ -163,17 +163,17 @@ var COLORS = [
     // { label: 'Giraffe', style: 'giraffe' },
     // { label: 'Mutt', style: 'doggie' },
     // { label: 'Taters', style: 'taters' },
-];
+]
 
 var INLINE_STYLES = [
-    { label: "Bold", style: "BOLD" },
-    { label: "Italic", style: "ITALIC" },
-    { label: "Underline", style: "UNDERLINE" },
-    { label: "Monospace", style: "CODE" }
-];
+    { label: 'Bold', style: 'BOLD' },
+    { label: 'Italic', style: 'ITALIC' },
+    { label: 'Underline', style: 'UNDERLINE' },
+    { label: 'Monospace', style: 'CODE' }
+]
 
 export const InlineStyleControls = props => {
-    var currentStyle = props.editorState.getCurrentInlineStyle();
+    var currentStyle = props.editorState.getCurrentInlineStyle()
     return (
         <div className="RichEditor-controls">
             {INLINE_STYLES.map(type => (
@@ -186,8 +186,8 @@ export const InlineStyleControls = props => {
                 />
             ))}
         </div>
-    );
-};
+    )
+}
 
 // import createFocusPlugin from 'draft-js-focus-plugin';
 // import createAlignmentPlugin from 'draft-js-alignment-plugin';

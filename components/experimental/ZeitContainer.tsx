@@ -1,12 +1,12 @@
-import { FC } from 'react';
-import { BasicProps } from './BasicProps';
+import { FC } from 'react'
+import { BasicProps } from './BasicProps'
 
 export interface ZeitContainerProps extends BasicProps {
     color?: string;
     backgroundColor?: string;
     height: number;
     width: number;
-}
+}  
 
 const ZeitContainer: FC<ZeitContainerProps> = ({
     children
@@ -21,4 +21,4 @@ const ZeitContainer: FC<ZeitContainerProps> = ({
     </div>
 }
 
-export default ZeitContainer;
+export default ZeitContainer

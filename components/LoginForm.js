@@ -121,9 +121,9 @@ const NavText = observer(({ mode }) => (
     <>
         {mode == 'login' && (<>
             <Box><Link href="/login?mode=forgot"><a>Forgot Your Password?</a></Link></Box>
-            <Box>{`Not a member yet? `}<Link href="/login?mode=register"><a>Create an Account</a></Link></Box>
+            <Box>{'Not a member yet? '}<Link href="/login?mode=register"><a>Create an Account</a></Link></Box>
         </>)}
-        {mode != 'login' && <Box>{`Already Have an Account? `}<Link href="/login"><a>Log In</a></Link></Box>}
+        {mode != 'login' && <Box>{'Already Have an Account? '}<Link href="/login"><a>Log In</a></Link></Box>}
     </>
 ))
 

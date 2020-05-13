@@ -18,4 +18,4 @@ class HeaderAppDropdown extends Component {
     }
 }
 
-export default HeaderAppDropdown;
+export default HeaderAppDropdown

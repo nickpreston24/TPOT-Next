@@ -6,20 +6,20 @@ export const PrimaryButton = props => {
   // if(!palette)
   //   throw new Error("Missing a color palette!");
 
-  const toggle = props.onToggle || function () { }; // for the strange case where this is null.
-  const style = props.style;
+  const toggle = props.onToggle || function () { } // for the strange case where this is null.
+  const style = props.style
 
   // console.log(toggle, style)
 
   const onToggle = event => {
-    event.preventDefault();
+    event.preventDefault()
     toggle(style)
-  };
+  }
 
-  let className = "RichEditor-styleButton";
+  let className = 'RichEditor-styleButton'
 
   if (props.active) {
-    className += " RichEditor-activeButton";
+    className += ' RichEditor-activeButton'
   }
 
 
@@ -54,7 +54,7 @@ export const PrimaryButton = props => {
           } 
       `}</style> */}
     </span>
-  );
+  )
 
   // return (
   //   <Button onClick={props.onClick}>{props.children || props.label}</Button>
@@ -116,4 +116,4 @@ export const PrimaryButton = props => {
           } 
       `}</style>
     </span> */}
-};
+}

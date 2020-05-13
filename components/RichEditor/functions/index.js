@@ -1,18 +1,18 @@
 import { ContentState, convertFromHTML, convertToRaw } from 'draft-js'
 import { colorStyleMap } from '../styles'
-import draftToHtml from 'draftjs-to-html';
+import draftToHtml from 'draftjs-to-html'
 import { toJS } from 'mobx'
 import { EditorStateNotFoundError, ArgumentNullReferenceError } from '../../Errors'
 
 // TODO: Move to a constants.js
-const draftToHtmlPrefix = "color-";
+const draftToHtmlPrefix = 'color-'
 
 const focus = () => editorRef.current.focus()
 
 const logState = editorState => {
     if (!editorState) throw new EditorStateNotFoundError()
-    console.log("Current state:", editorState.toJS());
-};
+    console.log('Current state:', editorState.toJS())
+}
 
 const transformInlineStyles = (rawContentState) => {
 
@@ -25,11 +25,11 @@ const transformInlineStyles = (rawContentState) => {
             .filter(range => currentColors.includes(range.style))
             // Rename the colors to be prefixed properly for compatibility with draftToHtml as inline styles
             .map(inlineStyle => {
-                let styleName = inlineStyle.style;
-                let foundStyle = colorStyleMap[styleName].color;
-                let renamedInlineColor = draftToHtmlPrefix + foundStyle;
+                let styleName = inlineStyle.style
+                let foundStyle = colorStyleMap[styleName].color
+                let renamedInlineColor = draftToHtmlPrefix + foundStyle
                 inlineStyle.style = renamedInlineColor
-            }));
+            }))
 }
 
 
@@ -51,7 +51,7 @@ export const toggleColor = (editorState, toggledColor = 'black') => {
 
     // console.log('toggled color:', toggledColor);
 
-    const selection = editorState.getSelection();
+    const selection = editorState.getSelection()
     // console.log('selection: ', selection);
 
     const nextContentState = Object.keys(colorStyleMap)
@@ -66,7 +66,7 @@ export const toggleColor = (editorState, toggledColor = 'black') => {
         'change-inline-style'
     )
 
-    const currentStyle = editorState.getCurrentInlineStyle();
+    const currentStyle = editorState.getCurrentInlineStyle()
 
     // Unset the style override for the current color:
     if (selection.isCollapsed()) {
@@ -85,7 +85,7 @@ export const toggleColor = (editorState, toggledColor = 'black') => {
         )
     }
 
-    return nextEditorState;
+    return nextEditorState
 }
 
 
@@ -93,13 +93,13 @@ export const toggleColor = (editorState, toggledColor = 'black') => {
  * Generate EditorState from a given html string
  */
 const getEditorStateFromHtml = (html = null) => {
-    const blocksFromHTML = convertFromHTML(html);
+    const blocksFromHTML = convertFromHTML(html)
     const state = ContentState.createFromBlockArray(
         blocksFromHTML.contentBlocks,
         blocksFromHTML.entityMap,
-    );
+    )
 
-    return EditorState.createWithContent(state);
+    return EditorState.createWithContent(state)
 }
 
 
@@ -119,7 +119,7 @@ const generateHtmlFromEditorState = (editorState) => {
 
     const rawContentState = convertToRaw(editorState.getCurrentContent())
     // console.log('rawContentState', rawContentState);
-    transformInlineStyles(rawContentState);
+    transformInlineStyles(rawContentState)
     return draftToHtml(rawContentState)
 }
 
@@ -127,8 +127,8 @@ const getJsonFromRaw = editorState => {
     if (!editorState)
         throw new EditorStateNotFoundError()
 
-    return JSON.stringify(convertToRaw(editorState.getCurrentContent()));
-};
+    return JSON.stringify(convertToRaw(editorState.getCurrentContent()))
+}
 
 export {
     getEditorStateFromHtml,

@@ -11,14 +11,14 @@ export const uploadLocalFile = async (file, store) => {
     const storageRef = await store.fb.storage.ref()
 
     const getDocumentMetadata = (storageRef, filepath) => {
-        return storageRef.child(filepath).getMetadata();
+        return storageRef.child(filepath).getMetadata()
     }
 
-    console.log('file.name', file);
+    console.log('file.name', file)
 
     const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
 
-    console.log('existingDoc.fullPath', existingDoc.fullPath);
+    console.log('existingDoc.fullPath', existingDoc.fullPath)
 
     if (existingDoc && file.name === existingDoc.fullPath) {
         console.warn('Document already uploaded, exiting: ', existingDoc)
@@ -33,7 +33,7 @@ export const uploadLocalFile = async (file, store) => {
         .replace(/[,?*#!:;_]/g, ' ') // then specials
         .replace(/[\(\)\[\]\{\}]/g, '') // then then braces
         .replace('.docx', '')
-        .trim();
+        .trim()
 
     let slug = (title)
         .replace(/\s/g, '-')
@@ -106,7 +106,7 @@ export const uploadLocalFile = async (file, store) => {
     })
 
     console.info(
-        `Document Converted and Uploaded Successfully!:\n`,
+        'Document Converted and Uploaded Successfully!:\n',
         '\nDownload URL\n', downloadURL,
         '\n\nDocument Data', toJS(document.data)
     )

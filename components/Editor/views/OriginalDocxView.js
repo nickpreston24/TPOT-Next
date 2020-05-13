@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, CircularProgress } from '@material-ui/core'
 import { inject, observer } from 'mobx-react'
-import ReactHtmlParser from "react-html-parser";
+import ReactHtmlParser from 'react-html-parser'
 
 @inject('store')
 @observer

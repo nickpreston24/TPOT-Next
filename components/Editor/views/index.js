@@ -20,16 +20,16 @@ export const EditorViewFC = ({
     children
 }) => {
 
-    const draftRef = React.createRef();
+    const draftRef = React.createRef()
 
     // const [state, setState] = useState({ mode: 'draft', code: null, });
     /// OR,
-    const [mode, setMode] = useState('draft');
-    const [code, setCode] = useState(null);
-    const [original, setOriginal] = useState(null);
-    const [editorState, setEditorState] = useState(draftRef.current.editorState);
-    const [stylesheet, setStylesheet] = useState(draftRef.current.stylesheet);
-    const [blocks, setBlocks] = useState(!!draftRef.current ? draftRef.current.blocks : '');
+    const [mode, setMode] = useState('draft')
+    const [code, setCode] = useState(null)
+    const [original, setOriginal] = useState(null)
+    const [editorState, setEditorState] = useState(draftRef.current.editorState)
+    const [stylesheet, setStylesheet] = useState(draftRef.current.stylesheet)
+    const [blocks, setBlocks] = useState(!!draftRef.current ? draftRef.current.blocks : '')
 
     render = () => {
 
@@ -44,7 +44,7 @@ export const EditorViewFC = ({
         //     )
 
         // const { mode, code, draftRef, original, blocks } = this;
-        console.log('render (EditorView)');
+        console.log('render (EditorView)')
         return <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{
             boxSizing: 'border-box',
             overflowY: 'hidden'
@@ -63,9 +63,9 @@ export const EditorViewFC = ({
             }} p={1} boxShadow={3} borderColor="grey">
                 {children}
             </Box>
-        </Box>;
+        </Box>
     }
-};
+}
 
 export class EditorView extends React.Component {
 

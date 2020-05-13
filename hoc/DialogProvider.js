@@ -1,5 +1,5 @@
-import React from 'react';
-import { observer, inject } from 'mobx-react';
+import React from 'react'
+import { observer, inject } from 'mobx-react'
 import { withDialog } from 'muibox'
 import { DialogProvider as DialogBox } from 'muibox'
 

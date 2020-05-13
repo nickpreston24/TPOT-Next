@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Portal } from '@material-ui/core'
-import Editor from 'draft-js-plugins-editor';
+import Editor from 'draft-js-plugins-editor'
 import { baseStyleMap, blockRenderMap } from '../functions/utilities'
-import { EditorState, convertToRaw, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
+import { EditorState, convertToRaw, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js'
 import plugins, { ScribeToolbar, Toolbar } from '../plugins'
 
 /** MP's Imports from RichEditor */
@@ -14,7 +14,7 @@ import plugins, { ScribeToolbar, Toolbar } from '../plugins'
 
 // import { plugins } from '../plugins';
 
-console.log('plugins', plugins);
+console.log('plugins', plugins)
 
 // The <DraftView /> component is the primary view mode of the <EditorView /> It
 // may also be used in a standalone app. All state managment is best done with
@@ -75,25 +75,25 @@ const DraftView = props => {
     // TODO @ MP - Merge the two handleKeys
     const handleKeyCommand = (command, state) => {
         console.info(`Editor Call Action --> ${command}`)
-        if (command === 'save') { handleSave(); return 'handled'; }
-        if (command === 'publish') { handlePublish(); return 'handled'; }
-        if (command === 'duplicate') { handleDuplicate(); return 'handled'; }
+        if (command === 'save') { handleSave(); return 'handled' }
+        if (command === 'publish') { handlePublish(); return 'handled' }
+        if (command === 'duplicate') { handleDuplicate(); return 'handled' }
 
-        const nextState = RichUtils.handleKeyCommand(state, command);
+        const nextState = RichUtils.handleKeyCommand(state, command)
 
         if (nextState) {
-            onChange(nextState);
-            return "handled";
+            onChange(nextState)
+            return 'handled'
         }
 
-        return 'not-handled';
+        return 'not-handled'
     }
 
 
 
     const onChange = nextstate => {
-        setEditorState(nextstate);
-    };
+        setEditorState(nextstate)
+    }
 
     // Focus / Blur the editor during mount and un-mount
     useEffect(() => {
@@ -101,7 +101,7 @@ const DraftView = props => {
             focus()
             return () => blur()
         }
-    }, []);
+    }, [])
 
 
 
@@ -143,7 +143,7 @@ const DraftView = props => {
                         blockRenderMap={blockRenderMap}
                         keyBindingFn={myKeyBindingFn}
                         handleKeyCommand={handleKeyCommand}
-                        placeholder={"Start typing to begin..."}
+                        placeholder={'Start typing to begin...'}
                     />
                     <Portal container={toolbarRef.current}>
                         <ScribeToolbar />

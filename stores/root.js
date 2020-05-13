@@ -1,16 +1,16 @@
-import { action, observable, computed, autorun, toJS } from 'mobx'
+import { action, observable, computed } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
 import Firebase from '../services/firebase'
-import { toast } from 'react-toastify';
-import { Collection, Document } from 'firestorter'
-import { confirmSignout, confirmSetAside } from '../components/DialogMessages';
+import { toast } from 'react-toastify'
+import { Collection } from 'firestorter'
+import { confirmSignout, confirmSetAside } from '../components/DialogMessages'
 
 // This needs to go before this root store has time to be populated by a provider
 // Firebase.init()
 
 // Determine mode for client or server data serving 
 const isServer = typeof window === 'undefined'
-// eslint-disable-next-line react-hooks/rules-of-hooks
+
 useStaticRendering(isServer)
 
 // Main MobX store class for app-wide use.
@@ -50,7 +50,7 @@ export class Store {
   @action signIn = async userInfo => {
     const { email, password } = userInfo
     this.fb.signIn(email, password)
-      .then(user => this.notify('Welcome, Enjoy your stay!', 'success'))
+      .then(() => this.notify('Welcome, Enjoy your stay!', 'success'))
       .catch(error => this.notify(error.message, 'error'))
   }
 
@@ -72,7 +72,7 @@ export class Store {
   @action register = userInfo => {
     const { first, last, email, password } = userInfo
     this.fb.register(first, last, email, password)
-      .then(user => {
+      .then(() => {
         this.notify('Registration Successful!', 'success')
         this.notify('Admin approval needed before you can login')
       })
@@ -88,13 +88,13 @@ export class Store {
   /////////////////////////
 
   @action callNotify = () => {
-    this.notify("Wow so easy !")
+    this.notify('Wow so easy !')
   }
 
   @action notify = (msg, mode) => {
     let toaster = !!mode ? toast[mode] : toast
     toaster(msg, {
-      position: "bottom-left",
+      position: 'bottom-left',
       autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -107,7 +107,7 @@ export class Store {
   //       Dialogs       //
   /////////////////////////
 
-  @action confirmSetAside = async (router, url) => {
+  @action confirmSetAside = async () => {
     return new Promise((resolve, reject) => {
       this.dialog.confirm(confirmSetAside)
         .then(() => {
@@ -142,29 +142,29 @@ export class Store {
 
   @action save = (id) => {
     this.fb.save(id)
-      .then(result => {
+      .then(() => {
         this.notify('Document saved sucessfully!', 'info')
       })
-      .catch(error => this.notify('Document could not save!', 'error'))
+      .catch(() => this.notify('Document could not save!', 'error'))
   }
 
   @action checkout = (id) => {
     this.fb.checkout(id)
-      .then(result => {
+      .then(() => {
         this.notify('Document loaded sucessfully!', 'info')
       })
-      .catch(error => this.notify('Document not free to edit!', 'error'))
+      .catch(() => this.notify('Document not free to edit!', 'error'))
   }
 
   @action unlock = (id) => {
     this.fb.unlock(id)
-      .then(result => {
+      .then(() => {
         this.notify('Document unlocked. You may Start Editing!', 'warning')
       })
-      .catch(error => this.notify('Could not unlock Document', 'error'))
+      .catch(() => this.notify('Could not unlock Document', 'error'))
   }
 
-  @action setAside = (document) => {
+  @action setAside = () => {
     this.notify('Set Aside, returning to Checkout', 'success')
     // Save the current document and change the status to 'in-progress'
   }

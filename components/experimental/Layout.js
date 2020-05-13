@@ -1,15 +1,15 @@
 // import { ZeitContainer, ZeitButton, ZeitCard } from './container.tsx'
 import { SCRIBE, TPOT } from '../../constants/routes'
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
 import ZeitContainer from './ZeitContainer.tsx'
 import ZeitCard from './ZeitCard.tsx'
-import ZeitButton from './ZeitButton.tsx';
+import ZeitButton from './ZeitButton.tsx'
 
 
-const notify = (message = "", mode = null) => {
+const notify = (message = '', mode = null) => {
     let toaster = !!mode ? toast[mode] : toast
     toaster(message, {
-        position: "bottom-left",
+        position: 'bottom-left',
         autoClose: 4000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -23,8 +23,8 @@ export const LandingLayout = () => {
         <div className="grid">
             <ZeitContainer >
                 <ZeitButton
-                    text="Click here for Slofee"
-                    onClick={() => notify("Ping!")}
+                    text="Click here for Coffee!"
+                    onClick={() => notify('Ping!')}
                     // backgroundColor="rgba(75, 0, 130, 1.0)"
                     color="rgba(0,161,225,.9)"
                 />

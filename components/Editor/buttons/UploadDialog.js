@@ -1,9 +1,9 @@
-import InputButton from './InputButton';
-import Dialog from "@material-ui/core/Dialog";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
-import React, { useState, useContext } from "react";
+import InputButton from './InputButton'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import Grid from '@material-ui/core/Grid'
+import { withStyles } from '@material-ui/core/styles'
+import React, { useState, useContext } from 'react'
 import { inject, observer } from 'mobx-react'
 
 // import GoogleDrive from "../../../media/hdd.png";
@@ -22,41 +22,41 @@ const styles = theme => ({
         // height: ,
     },
     icon: {
-        display: "block",
-        position: "relative",
-        left: "50%",
-        transform: "translateX(-50%)",
+        display: 'block',
+        position: 'relative',
+        left: '50%',
+        transform: 'translateX(-50%)',
         height: 64,
         fontSize: 80,
         paddingTop: 64,
         paddingBottom: 32
     },
     grid: {
-        "& button": {
-            color: "#555",
-            transition: "all 0s linear 0s !important",
-            position: "relative",
-            left: "50%",
-            transform: "translateX(-50%)"
+        '& button': {
+            color: '#555',
+            transition: 'all 0s linear 0s !important',
+            position: 'relative',
+            left: '50%',
+            transform: 'translateX(-50%)'
         },
-        "&:hover": {
-            "& button": {
+        '&:hover': {
+            '& button': {
                 color: theme.palette.primary.contrastText,
                 background: theme.palette.primary.main,
-                transition: "all 0s linear 0s !important"
+                transition: 'all 0s linear 0s !important'
             }
         },
-        width: "32.9999%"
+        width: '32.9999%'
     },
     textbox: {
         marginTop: 32,
         marginBottom: 48
     }
-});
+})
 
 const UploadDialog = observer(({ classes, store, loaders = [] }) => {
 
-    console.log('store', store, 'loaders', loaders);
+    console.log('store', store, 'loaders', loaders)
 
     return (
         <Dialog
@@ -73,8 +73,8 @@ const UploadDialog = observer(({ classes, store, loaders = [] }) => {
             disablePortal
         >
             {Object.values(loaders).map(option => {
-                const { name, enabled, handler } = option;
-                const { grid } = classes;
+                const { name, enabled, handler } = option
+                const { grid } = classes
 
                 return (
                     <div>
@@ -105,7 +105,7 @@ class Store {
 
     constructor({ lettersStore }) {
 
-        console.log('CloudStorage', CloudStorage);
+        console.log('CloudStorage', CloudStorage)
 
         // this.cloud = useContext(CloudStorage);
         // this.lettersStore = lettersStore
@@ -114,8 +114,8 @@ class Store {
 
     loaders = {
         disk: {
-            name: "From Disk",
-            description: "Open a file from your computer's hard drive",
+            name: 'From Disk',
+            description: 'Open a file from your computer\'s hard drive',
             // icon: HardDrive, //ERROR: Module parse failed: Unexpected character '�' (1:0)     :'{
             //You may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders
             enabled: true,
@@ -125,8 +125,8 @@ class Store {
             }
         },
         googleDrive: {
-            name: "Coming Soon",
-            description: "Open a file from your linked Google Drive folder",
+            name: 'Coming Soon',
+            description: 'Open a file from your linked Google Drive folder',
             // icon: GoogleDrive,  //ERROR: Module parse failed: Unexpected character '�' (1:0)     :'{
             //You may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders
             enabled: false,
@@ -145,8 +145,8 @@ class Store {
 
 
     selectFile = (event) => {
-        return event.target.files[0];
+        return event.target.files[0]
     }
 }
 
-export default inject('store')(withStyles(styles)(UploadDialog));
+export default inject('store')(withStyles(styles)(UploadDialog))

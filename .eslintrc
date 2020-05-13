@@ -1,5 +1,9 @@
 {
     "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
     "plugins": [
         "@typescript-eslint"
     ],
@@ -12,5 +16,5 @@
             2,
             "single"
         ]
-    }
+    },
 }

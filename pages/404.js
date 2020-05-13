@@ -20,7 +20,7 @@ export const UnderConstruction = (message = '') => {
                 <href a='harvesthavenapps@gmail.com'> harvesthavenapps@gmail.com</href>
             </b>
         </p>
-    </div>; // for Users
+    </div> // for Users
 }
 
-export default NotFoundPage;
+export default NotFoundPage

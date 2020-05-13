@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button as MuiButton, Tooltip, Popover } from '@material-ui/core'
 import { compose } from 'recompose'
 import { observer } from 'mobx-react'
-import Zoom from '@material-ui/core/Zoom';
+import Zoom from '@material-ui/core/Zoom'
 
 
 /* --------------------- ICON BUTTON -------------------- */
@@ -35,10 +35,10 @@ const GroupButton = compose(
 )(
     ({ preventBubblingUp, group, options, childElement, elementProps, Palette, isActive: active, ...rest }) => {
 
-        const [anchorEl, setAnchorEl] = React.useState(null);
+        const [anchorEl, setAnchorEl] = React.useState(null)
 
         const handleOpen = event => setAnchorEl(event.currentTarget)
-        const handleClose = () => setAnchorEl(null);
+        const handleClose = () => setAnchorEl(null)
 
         const groupItems = group(options)
 
@@ -98,7 +98,7 @@ export const ColorSwatch = compose(
 )(
     ({ isActive, value }) => {
         const active = isActive()
-        const style = { color: active ? 'dodgerblue' : '#000', boxSizing: "border-box" }
+        const style = { color: active ? 'dodgerblue' : '#000', boxSizing: 'border-box' }
         return (
             <Box
                 style={style}
