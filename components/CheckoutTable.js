@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { uploadLocalFile } from './Editor/functions/uploader';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import DescriptionIcon from '@material-ui/icons/Description';
-import EditIcon from '@material-ui/icons/Edit';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import { withStyles } from '@material-ui/styles';
-import { Collection } from 'firestorter';
-import MaterialTable from 'material-table';
-import { action, autorun, observable, toJS } from 'mobx';
-import { inject, observer } from 'mobx-react';
-import moment from 'moment';
-import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core';
+import React, { Component } from 'react'
+import { compose } from 'recompose'
+import { uploadLocalFile } from './Editor/functions/uploader'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'
+import DescriptionIcon from '@material-ui/icons/Description'
+import EditIcon from '@material-ui/icons/Edit'
+import LockOpenIcon from '@material-ui/icons/LockOpen'
+import { withStyles } from '@material-ui/styles'
+import { Collection } from 'firestorter'
+import MaterialTable from 'material-table'
+import { action, autorun, observable, toJS } from 'mobx'
+import { inject, observer } from 'mobx-react'
+import moment from 'moment'
+import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -40,7 +40,7 @@ export const CheckoutTable = compose(
         @observable totalCount = 0
 
         @action countTotalDocs = async () => {
-            let collection = await new Collection("sessions", { mode: 'off' }).fetch()
+            let collection = await new Collection('sessions', { mode: 'off' }).fetch()
             this.totalCount = collection.docs.length
         }
 
@@ -110,7 +110,7 @@ export const CheckoutTable = compose(
                 let id = document.id
                 let { status, date_modified, date_uploaded, contributors } = entry
                 let date_modified_timestamp = date_modified
-                status = status || 'in-progress';
+                status = status || 'in-progress'
                 if (!date_modified || !date_uploaded) { return }
                 date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
                 date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
@@ -363,7 +363,7 @@ export const TableDetails = compose(
                                     <b>Document</b>
                                 </Box>
                                 <Box height={30}></Box>
-                                <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
+                                <Box display="flex" flexGrow={1} style={{ color: 'dodgerblue !important' }}>
                                     <MLink
                                         href={`${docx}`}
                                         key={id}

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { convertFromRaw, EditorState } from 'draft-js'
 import { toJS } from 'mobx'
 import { Button, ButtonGroup } from '@material-ui/core'
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { compose } from 'recompose'
 
 // Document editor is a shim that connects our feature-rich DraftJS editor to
@@ -35,7 +35,7 @@ function DocumentEditor(props) {
   const draftRef = useRef(null) // Access functions that affect the Vanilla Draft Editor
 
   // Create local states
-  const [mode, setMode] = useState('draft');
+  const [mode, setMode] = useState('draft')
 
   // Initialize the EditorViews's data for all
   // types (original, draft, code, etc.)

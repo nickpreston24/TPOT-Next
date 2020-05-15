@@ -32,5 +32,5 @@ export const SubmitButton = props => {
           } 
       `}</style> */}
     </span>
-  );
-};
+  )
+}

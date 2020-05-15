@@ -8,18 +8,18 @@ import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
 import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft'
 import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter'
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight'
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import RemoveIcon from '@material-ui/icons/Remove';
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
-import FormatColorTextIcon from '@material-ui/icons/FormatColorText';
-import BorderColorIcon from '@material-ui/icons/BorderColor';
-import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
-import FormatSizeIcon from '@material-ui/icons/FormatSize';
-import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
-import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
-import LinkIcon from '@material-ui/icons/Link';
-import Zoom from '@material-ui/core/Zoom';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
+import RemoveIcon from '@material-ui/icons/Remove'
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
+import FormatColorTextIcon from '@material-ui/icons/FormatColorText'
+import BorderColorIcon from '@material-ui/icons/BorderColor'
+import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease'
+import FormatSizeIcon from '@material-ui/icons/FormatSize'
+import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions'
+import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
+import LinkIcon from '@material-ui/icons/Link'
+import Zoom from '@material-ui/core/Zoom'
 
 
 // Create the visual characteristics of the button and map the parent schema's functionality to it

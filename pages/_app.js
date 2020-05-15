@@ -4,7 +4,7 @@ import React from 'react'
 import { withAuthorization } from '../services/firebase'
 import { fetchInitialStoreState, Store } from '../stores/root'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'
 // import { DialogProvider } from 'muibox'
 import DialogProvider from '../hoc/DialogProvider'
 

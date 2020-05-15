@@ -20,4 +20,4 @@ const Header = () => (
     </Box>
 )
 
-export default Header;
+export default Header

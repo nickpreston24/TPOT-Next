@@ -16,7 +16,7 @@ const config = {
     projectId: process.env.REACT_APP_PROJECT_ID,
     storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
     messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-};
+}
 
 class Firebase {
 
@@ -171,7 +171,7 @@ class Firebase {
             await requestedDocument.fetch()
             let { status } = requestedDocument.data
             if (['not-started', 'in-progress'].includes(status)) {
-                this.redirect("/scribe/edit/[doc]", `/scribe/edit/${id}`)
+                this.redirect('/scribe/edit/[doc]', `/scribe/edit/${id}`)
                 // href={"/scribe/edit/[doc]"}
                 // as={`/scribe/edit/${id}`}
                 resolve()
@@ -197,22 +197,22 @@ class Firebase {
     upload = async (file) => {
 
         // Run conversion:        
-        let html = await convertFile(file);
-        console.log(!!html && html);
+        let html = await convertFile(file)
+        console.log(!!html && html)
 
         if (!html)
-            return;
+            return
 
         // Upload to Cloud Storage:
-        let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`);
+        let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`)
         fileRef.put(file)
             .then(snapshot => {
 
-                var fileName = file.name;
+                var fileName = file.name
                 var { ...emptyPaper } = new Paper({
                     docx: `${file.name}`,
                     title: file.name,
-                    status: "not-started",
+                    status: 'not-started',
                     date_modified: Date.now(),
                     date_uploaded: Date.now(),
                     author: null,
@@ -224,7 +224,7 @@ class Firebase {
                     excerpt: null
                 })
 
-                console.log(emptyPaper);
+                console.log(emptyPaper)
 
                 db.collection('sessions')
                     .doc(emptyPaper.slug)
@@ -235,11 +235,11 @@ class Firebase {
                     ? `Yay! File ${fileName} uploaded successfully!`
                     : `Fail! ${fileName} could not be uploaded!`)
 
-                console.log(`Downloading ${fileName}`);
+                console.log(`Downloading ${fileName}`)
                 download(fileName)
             })
             .catch((error) => {
-                console.log(error.message);
+                console.log(error.message)
                 alert('There was a problem uploading this file.')
             })
     }
@@ -249,4 +249,4 @@ class Firebase {
 
 export default Firebase
 
-export { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser, withAuthorization };
+export { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser, withAuthorization }

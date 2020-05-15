@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ZeitContainerProps } from './ZeitContainer';
+import { ZeitContainerProps } from './ZeitContainer'
 
 interface ButtonProps extends ZeitContainerProps {
     onClick: () => void;
@@ -15,6 +15,6 @@ const ZeitButton: FC<ButtonProps> = ({
         title={text}
         style={{ backgroundColor, color }}
         onClick={onClick}>{text}</button>
-}
+} 
 
-export default ZeitButton;
+export default ZeitButton

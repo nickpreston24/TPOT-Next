@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 
-export const FirebaseContext = React.createContext(null);
+export const FirebaseContext = React.createContext(null)
 
 export const FirebaseProvider = FirebaseContext.Provider
 
@@ -12,7 +12,7 @@ export const withFirebase = Component => props => (
 )
 
 
-export const AuthUserContext = React.createContext(null);
+export const AuthUserContext = React.createContext(null)
 
 export const AuthUserProvider = AuthUserContext.Provider
 

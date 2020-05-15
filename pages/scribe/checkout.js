@@ -4,7 +4,7 @@ import Dashboard from '../../components/Dashboard'
 import { inject, observer } from 'mobx-react'
 import { compose } from 'recompose'
 import { CheckoutTable } from '../../components/CheckoutTable'
-import { Box, Chip } from '@material-ui/core';
+import { Box, Chip } from '@material-ui/core'
 
 const Checkout = props => {
   const { store } = props

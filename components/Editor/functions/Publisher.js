@@ -4,8 +4,8 @@ import { generateHtmlFromEditorState } from '../../RichEditor/functions'
 import ExtendableError from '../../Errors'
 import WPAPI from 'wpapi'
 
-class WordPressNotInitializedException extends ExtendableError { message = "Wordpress has not been initialized!" }
-class PaperNotFoundException extends ExtendableError { message = "Could not find the Paper you're looking for..." }
+class WordPressNotInitializedException extends ExtendableError { message = 'Wordpress has not been initialized!' }
+class PaperNotFoundException extends ExtendableError { message = 'Could not find the Paper you\'re looking for...' }
 
 
 // TODO: Temporary - Refactor this to be DB configurable:
@@ -13,9 +13,9 @@ const wpapi = new WPAPI({
     endpoint: 'https://www.thepathoftruth.com/wp-json',
     username: 'michael.n.preston@gmail.com',
     password: 'Mercury2020!!' //TODO: init w/ process.env or firebase
-});
+})
 
-const DEFAULT_AUTHOR = 10; //Victor
+const DEFAULT_AUTHOR = 10 //Victor
 
 export function publish(html = '<p></p>', authorId = 10) {
 
@@ -25,9 +25,9 @@ export function publish(html = '<p></p>', authorId = 10) {
         // .id(99999) //fake id
         .then(latestPage => {
 
-            console.log('result', latestPage);
+            console.log('result', latestPage)
 
-            let pageContents = getSamplePageContent(html);
+            let pageContents = getSamplePageContent(html)
 
             if (!!latestPage) {
                 wpapi.pages()
@@ -36,12 +36,12 @@ export function publish(html = '<p></p>', authorId = 10) {
                     .update(pageContents)
                     .then(function (response) {
                         console.log('response (on update): ', response)
-                        console.log('WordPress paper id: ', response.id);
+                        console.log('WordPress paper id: ', response.id)
                     })
                     .catch(error => {
                         if (!!error)
-                            console.error("Error occured when updating a page in WordPress: ", error);
-                    });
+                            console.error('Error occured when updating a page in WordPress: ', error)
+                    })
             }
             else {
                 wpapi.pages()
@@ -49,29 +49,29 @@ export function publish(html = '<p></p>', authorId = 10) {
                     .create(pageContents)
                     .then(function (response) {
                         console.log('response (on create): ', response)
-                        console.log('WordPress paper id: ', response.id);
+                        console.log('WordPress paper id: ', response.id)
                         // this.id = id;
                     })
                     .catch(error => {
                         if (!!error)
-                            console.error("Error occured when posting a new page to WordPress: ", error);
-                    });
+                            console.error('Error occured when posting a new page to WordPress: ', error)
+                    })
             }
         })
 }
 
 export function getSamplePageContent(html) {
     // console.log('publishing html:\n', html);
-    let slug = 'sample-slug'; //TODO: use your slug making function
-    let title = 'sample-title-2'; // TODO: get from UI
-    let excerpt = 'lorem ipsum'; // TODO: get from UI
+    let slug = 'sample-slug' //TODO: use your slug making function
+    let title = 'sample-title-2' // TODO: get from UI
+    let excerpt = 'lorem ipsum' // TODO: get from UI
     const pageContents = {
         content: html,
         slug,
         title,
         excerpt
-    };
-    return pageContents;
+    }
+    return pageContents
 }
 
 

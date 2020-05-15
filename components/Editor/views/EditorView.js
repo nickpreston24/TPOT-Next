@@ -49,9 +49,9 @@ const EditorView = props => {
     const editorRef = props.editorRef || React.useRef(null) // Will return this component which contains Original, Code, Draft, etc.
     const draftRef = props.draftRef || React.useRef(null) // Will return the child, DraftView which contains the Vanilla DraftJS Editor
 
-    const [code, setCode] = useState('');
-    const [blocks, setBlocks] = useState({});
-    const [original, setOriginal] = useState('');
+    const [code, setCode] = useState('')
+    const [blocks, setBlocks] = useState({})
+    const [original, setOriginal] = useState('')
 
     // REQUIRED:
     // Semantically define additional component properties on mount that are accessible by a parent referencing EditorView
