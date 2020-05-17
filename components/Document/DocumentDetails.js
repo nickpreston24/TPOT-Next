@@ -11,7 +11,7 @@ import SimpleDialog from '../Editor/buttons/SimpleDialog'
 import Typography from '@material-ui/core/Typography'
 import { uploadLocalFile } from '../Editor/functions/uploader'
 import FileBrowser from './FileBrowser'
-import { publish } from '../../components/Editor/functions/Publisher'
+// import { publish } from '../Editor/functions/publisher'
 
 // : Component usually plugged into the details prop in a Dashboard.
 // : Displays the most important information and actions available to

@@ -3,8 +3,13 @@ import { SCRIBE, TPOT } from '../../constants/routes'
 import { toast } from 'react-toastify'
 import ZeitContainer from './ZeitContainer.tsx'
 import ZeitCard from './ZeitCard.tsx'
-import ZeitButton from './ZeitButton.tsx'
 
+import { Paper } from '../../models/paper'
+const paper = new Paper('Test')
+
+const dto = { title: 'CookieS!', url: 'http://thepathoftruth.com', color: 'umbrella' }
+paper.deserialize(dto)
+console.log(paper)
 
 const notify = (message = '', mode = null) => {
     let toaster = !!mode ? toast[mode] : toast
@@ -22,13 +27,6 @@ export const LandingLayout = () => {
     return (
         <div className="grid">
             <ZeitContainer >
-                <ZeitButton
-                    text="Click here for Coffee!"
-                    onClick={() => notify('Ping!')}
-                    // backgroundColor="rgba(75, 0, 130, 1.0)"
-                    color="rgba(0,161,225,.9)"
-                />
-                <br />
                 <ZeitCard
                     url={SCRIBE}
                     title="Scribe"

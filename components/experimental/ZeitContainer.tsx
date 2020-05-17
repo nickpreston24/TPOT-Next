@@ -1,14 +1,15 @@
 import { FC } from 'react'
 import { BasicProps } from './BasicProps'
 
-export interface ZeitContainerProps extends BasicProps {
+/* The Base required Props for a Zeit* UI component */
+export interface ZeitComponentProps extends BasicProps {
     color?: string;
     backgroundColor?: string;
     height: number;
     width: number;
 }  
 
-const ZeitContainer: FC<ZeitContainerProps> = ({
+const ZeitContainer: FC<ZeitComponentProps> = ({
     children
     , backgroundColor
     , color

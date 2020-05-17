@@ -1,16 +1,16 @@
-import { BasicProps } from "./BasicProps"
+import { BasicProps } from './BasicProps'
 
 interface ZeitCardProps extends BasicProps {
     url: string;
     title?: string;
 }
 
-const ZeitCard: React.FC<ZeitCardProps> = ({ url = null, title = "", text = "" }) => {
+const ZeitCard: React.FC<ZeitCardProps> = ({ url = null, title = '', text = '' }) => {
     return (
         !title
             ? <></>
             : <>
-                <a href={url || "_"} className="card">
+                <a href={url || '_'} className="card">
                     {title && <h3>{title}</h3>}
                     {text && <p>{text}</p>}
                 </a>
@@ -56,4 +56,4 @@ const ZeitCard: React.FC<ZeitCardProps> = ({ url = null, title = "", text = "" }
     )
 }
 
-export default ZeitCard;
+export default ZeitCard

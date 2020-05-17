@@ -1,4 +1,3 @@
-
 import { AsyncObject } from '@cuties/cutie'
 import { generateHtmlFromEditorState } from '../../RichEditor/functions'
 import ExtendableError from '../../Errors'
@@ -25,7 +24,7 @@ export function publish(html = '<p></p>', authorId = 10) {
         // .id(99999) //fake id
         .then(latestPage => {
 
-            console.log('result', latestPage)
+            console.log('latestPage', latestPage)
 
             let pageContents = getSamplePageContent(html)
 

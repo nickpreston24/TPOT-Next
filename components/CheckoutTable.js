@@ -13,6 +13,8 @@ import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core'
 
+import StatusChip from '../components/StatusChip'
+
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
 // documents available through a paginated table. It is reactive so that when somebody
@@ -72,7 +74,7 @@ export const CheckoutTable = compose(
 
             filter = filter != -1 ? 'title' : 'status'
             direction = filter != -1 ? 'asc' : direction
-            
+
             await this.countTotalDocs()
             await this.updateQuery(
                 collectionRef => {
@@ -83,18 +85,26 @@ export const CheckoutTable = compose(
 
                 }
             )
-            
+
             this.setLoading(false)
         })
 
-
         render() {
             const { store } = this.props
+            // console.log('paper.status :>> ', paper.status)
+
+
 
             const columns = [
                 { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
                 { title: 'Document', field: 'title', type: 'string', searchable: true },
-                { title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => <StatusChip status={paper.status} /> },
+                {
+                    title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => {
+                        const status = paper.status
+                        console.log('status (checkout) :>> ', status)
+                        return <StatusChip status={status} />
+                    }
+                },
                 { title: 'Last Edited', field: 'date_modified', type: 'string', searchable: false },
                 { title: 'Author', field: 'author', type: 'string', searchable: false },
                 { title: 'Uploaded', field: 'date_uploaded', type: 'string', searchable: false, hidden: true },
@@ -184,38 +194,8 @@ export const CheckoutTable = compose(
     }
 )
 
-const statusMap = {
-    'in-progress': 'In Progress',
-    'not-started': 'Not Started',
-    'checked-out': 'Checked Out',
-    'published': 'Published',
-}
-
-const labelColors = {
-    'in-progress': '#c3e3ff',
-    'not-started': '#ffe8c6',
-    'checked-out': '#ffc6c8',
-    'published': '#c6ffc6',
-}
-
-const rest = (ms) =>
-    new Promise(rs => (
-        setTimeout(() => {
-            rs()
-        }, ms)
-    ))
-
-
 const DocxIcon = () =>
     <DescriptionIcon style={{ color: '#0000008a' }} />
-
-const StatusChip = ({ status }) => {
-    const label = statusMap[status]
-    const color = labelColors[status]
-    return (
-        <Chip {...{ label }} style={{ background: color }} />
-    )
-}
 
 // An alternate Paper component to fix overflow clipping in the X direction on rows that have no data
 const StyledTableBody = withStyles({

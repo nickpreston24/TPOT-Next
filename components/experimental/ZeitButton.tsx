@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import { ZeitContainerProps } from './ZeitContainer'
+import { ZeitComponentProps } from './ZeitContainer'
 
-interface ButtonProps extends ZeitContainerProps {
+interface ButtonProps extends ZeitComponentProps {
     onClick: () => void;
 }
 
