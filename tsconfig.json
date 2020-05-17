@@ -4,7 +4,9 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ES2019",
+      "ES2019.Array",
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -27,7 +29,9 @@
   },
   "include": [
     "pages/**/*",
-    "stores/**/*"
+    "models/**/*",
+    "components/**/*"
+    // "stores/**/*",
   ],
   "exclude": [
     "node_modules",

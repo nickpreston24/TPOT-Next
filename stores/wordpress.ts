@@ -1,7 +1,6 @@
 import { observable, action, computed, reaction } from 'mobx'
 import { createContext } from 'react'
 import { Paper, WordPressPaper } from '../models/paper'
-// import { wordpressCredentials } from '../../../kiyap/client/src/experimental/firebase/tpot/db'
 import WPAPI from 'wpapi'
 import Firebase from '../services/firebase'
 
@@ -83,7 +82,6 @@ export class PublishService {
                 reject(err)
             })
     }
-
 }
 
 export class FakePaperStore {
