@@ -18,7 +18,4 @@ const Checkout = props => {
   )
 }
 
-export default compose(
-  inject('store'),
-  observer
-)(Checkout)
+export default Checkout

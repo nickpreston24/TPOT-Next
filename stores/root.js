@@ -23,6 +23,7 @@ export class Store {
   /////////////////////////
 
   constructor() {
+    console.count('Store init()')
     this.fb = new Firebase()
   }
 
@@ -86,11 +87,7 @@ export class Store {
   /////////////////////////
   //    Notifications    //
   /////////////////////////
-
-  @action callNotify = () => {
-    this.notify('Wow so easy !')
-  }
-
+  
   @action notify = (msg, mode) => {
     let toaster = !!mode ? toast[mode] : toast
     toaster(msg, {
@@ -170,6 +167,9 @@ export class Store {
   }
 
 }
+
+// Singleton export of Store
+export const store = new Store()
 
 // Required for NextJS override even if empty
 
