@@ -27,7 +27,8 @@
   },
   "include": [
     "pages/**/*",
-    "stores/**/*"
+    "stores/**/*",
+    "components/**/*"
   ],
   "exclude": [
     "node_modules",

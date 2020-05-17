@@ -4,8 +4,6 @@ import { inject, observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import Page from './Page'
 
-@inject('store')
-@observer
 class Dashboard extends Component {
 
   render() {

@@ -124,7 +124,7 @@ const DocumentDetails = ({ store, form, document }) => {
 
 export default compose(
   inject('store'),
-  observer,
+  // observer,
   withForm
 )(DocumentDetails)
 

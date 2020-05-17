@@ -101,7 +101,7 @@ export const CheckoutTable = compose(
                 {
                     title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => {
                         const status = paper.status
-                        console.log('status (checkout) :>> ', status)
+                        // console.log('status (checkout) :>> ', status)
                         return <StatusChip status={status} />
                     }
                 },
