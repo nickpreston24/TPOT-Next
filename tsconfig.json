@@ -4,7 +4,9 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ES2019",
+      "ES2019.Array"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -16,7 +18,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "sourceMap": true,
     "declaration": true,
     "noUnusedLocals": false,

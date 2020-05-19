@@ -1,5 +1,8 @@
-import Paper from './paper.ts'
+import { Paper } from './paper.ts'
+import { scriptureParser, Scripture } from './scripture'
 
 module.exports = {
-    Paper
+    Paper,
+    Scripture,
+    scriptureParser
 }
