@@ -2,12 +2,22 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
-import withAuthorization from './hoc'
-import { initFirestorter, Document } from 'firestorter'
-import { observable, toJS } from 'mobx'
 
+import { initFirestorter, Document } from 'firestorter'
+
+import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
+import withAuthorization from './withAuthorization'
+import { observable } from 'mobx'
 import { convertFile } from '../../components/Editor/functions/converter'
+
+/** MP's imports for export */
+
+// import { auth } from './firebase'
+
+// IDEA: ^^^ break apart this mega-class into smaller services dependent on individual firebase API functions
+
+/** End */
+
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -45,7 +55,7 @@ class Firebase {
 
     }
 
-    register = (first, last, email, password) => {
+    register = (email, password) => {
         return new Promise((resolve, reject) => {
             this.auth.createUserWithEmailAndPassword(email, password)
                 .then((newUser) => {
@@ -249,4 +259,14 @@ class Firebase {
 
 export default Firebase
 
-export { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser, withAuthorization }
+export {
+    FirebaseContext
+    , AuthUserContext
+
+    , FirebaseProvider
+    , AuthUserProvider
+
+    , withFirebase
+    , withAuthUser
+    , withAuthorization
+}
