@@ -7,7 +7,7 @@ export interface ZeitComponentProps extends BasicProps {
     backgroundColor?: string;
     height: number;
     width: number;
-}  
+}
 
 const ZeitContainer: FC<ZeitComponentProps> = ({
     children

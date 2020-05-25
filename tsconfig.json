@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext",
+      "es2015",
+      "es2016",
+      "es2017",
       "ES2019",
       "ES2019.Array"
     ],
@@ -18,7 +21,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "sourceMap": true,
     "declaration": true,
     "noUnusedLocals": false,
@@ -30,7 +33,9 @@
   "include": [
     "pages/**/*",
     "stores/**/*",
-    "components/**/*"
+    "components/**/*",
+    "services/**/*",
+    "models/**/*"
   ],
   "exclude": [
     "node_modules",

@@ -1,11 +1,20 @@
 import { BasicProps } from './BasicProps'
+import { FC } from 'react';
 
 interface ZeitCardProps extends BasicProps {
     url: string;
     title?: string;
+    text?: string;
 }
 
-const ZeitCard: React.FC<ZeitCardProps> = ({ url = null, title = '', text = '' }) => {
+const ZeitCard: FC<ZeitCardProps> = (
+    {
+        url = null
+        , title = ''
+        , text = ''
+    }: {
+        url: string, title: string, text: string
+    }) => {
     return (
         !title
             ? <></>

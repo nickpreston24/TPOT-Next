@@ -12,10 +12,11 @@ import Link from 'next/link'
 @observer
 @withRouter
 class LoginForm extends Component {
-
+    
     render() {
 
         const { router, store } = this.props
+        console.log('router.query.mode :>> ', router.query.mode);
         const { signIn, forgot, register } = store
         const mode = router.query.mode || 'login'
 
@@ -37,7 +38,7 @@ class LoginForm extends Component {
             name: 'email',
             label: 'Email',
             placeholder: 'Insert Email',
-            rules: 'required|email|string|between:5,30',
+            rules: 'required|email|string|between:5,50',
         }, {
             name: 'password',
             label: 'Password',

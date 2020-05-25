@@ -33,6 +33,17 @@ class Firebase {
     @observable authUser = null
     @observable router = null
 
+    // Singleton support:
+    static instance = null;
+
+    static getInstance() {
+        if (!Firebase.instance){
+            console.count('Firebase API -- init()')
+            Firebase.instance = new Firebase();
+        }
+        return this.instance;
+    }
+
     constructor() {
         if (!firebase.apps.length) {
             firebase.initializeApp(config)
@@ -259,8 +270,14 @@ class Firebase {
 
 export default Firebase
 
+const firebaseApi = Firebase.getInstance();
+
 export {
-    FirebaseContext
+
+    // Full API singleton:
+    firebaseApi
+
+    , FirebaseContext
     , AuthUserContext
 
     , FirebaseProvider
