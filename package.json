@@ -14,6 +14,8 @@
     "reset-npm-proxy": "npm config delete http-proxy && npm config delete https-proxy && npm config rm proxy && npm config rm https-proxy && set HTTP_PROXY=null && set HTTPS_PROXY=null"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^19.0.2",
+    "@ckeditor/ckeditor5-react": "^2.1.0",
     "@cuties/cutie": "^1.7.6",
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
