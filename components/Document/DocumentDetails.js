@@ -1,17 +1,17 @@
 import { Avatar, Box, Button, Divider, TextField } from '@material-ui/core'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { toJS } from 'mobx'
-import { inject, observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 import React, { useContext } from 'react'
 import { compose } from 'recompose'
 import { withForm } from './DocumentForm'
 import Contributors from './ContributorsSection'
 import SimpleDialog from '../Editor/buttons/SimpleDialog'
-import Typography from '@material-ui/core/Typography';
+import Typography from '@material-ui/core/Typography'
 import { uploadLocalFile } from '../Editor/functions/uploader'
 import FileBrowser from './FileBrowser'
-import { publish } from '../../components/Editor/functions/Publisher'
+import { publish } from '../Editor/functions/publisher'
 
 // : Component usually plugged into the details prop in a Dashboard.
 // : Displays the most important information and actions available to
@@ -33,8 +33,8 @@ const DocumentDetails = ({ store, form, document }) => {
 
   const loaders = ['disk', 'google']
 
-  const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(loaders[0]);
+  const [open, setOpen] = React.useState(false)
+  const [selectedValue, setSelectedValue] = React.useState(loaders[0])
 
   if (date_modified) {
     date_modified = new store.fb.firebase.firestore.Timestamp(date_modified.seconds, date_modified.nanoseconds)
@@ -53,13 +53,13 @@ const DocumentDetails = ({ store, form, document }) => {
   }
 
   const handleClickOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   const handleClose = (value) => {
-    setOpen(false);
-    setSelectedValue(value);
-  };
+    setOpen(false)
+    setSelectedValue(value)
+  }
 
   const handleFileSelected = async (file) => {
     console.log('uploading...', file)
@@ -124,7 +124,7 @@ const DocumentDetails = ({ store, form, document }) => {
 
 export default compose(
   inject('store'),
-  observer,
+  // observer,
   withForm
 )(DocumentDetails)
 
@@ -139,18 +139,18 @@ const InputFields = observer(({ form }) => {
           Paper Title:
           <TextField
             fullWidth
-            error={form.$(`title`).hasError}
-            helperText={form.$(`title`).error}
-            {...form.$(`title`).bind({ onBlur: () => onBlur(form) })}
+            error={form.$('title').hasError}
+            helperText={form.$('title').error}
+            {...form.$('title').bind({ onBlur: () => onBlur(form) })}
           />
         </Box>
         <Box height={70}>
           File Name:
           <TextField
             fullWidth
-            error={form.$(`slug`).hasError}
-            helperText={form.$(`slug`).error}
-            {...form.$(`slug`).bind({ onBlur: () => onBlur(form) })}
+            error={form.$('slug').hasError}
+            helperText={form.$('slug').error}
+            {...form.$('slug').bind({ onBlur: () => onBlur(form) })}
           />
         </Box>
         <Box height={70}>
@@ -158,9 +158,9 @@ const InputFields = observer(({ form }) => {
           <TextField
             multiline
             fullWidth
-            error={form.$(`excerpt`).hasError}
-            helperText={form.$(`excerpt`).error}
-            {...form.$(`excerpt`).bind({ onBlur: () => onBlur(form) })}
+            error={form.$('excerpt').hasError}
+            helperText={form.$('excerpt').error}
+            {...form.$('excerpt').bind({ onBlur: () => onBlur(form) })}
           />
         </Box>
       </form>

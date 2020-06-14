@@ -19,7 +19,7 @@ class WrittenFile extends AsyncObject {
 
 class ReadDataByPath extends AsyncObject {
 
-    constructor(path, encoding) { super(path, encoding); }
+    constructor(path, encoding) { super(path, encoding) }
 
     asyncCall = () => fs.readFile
 }

@@ -12,10 +12,11 @@ import Link from 'next/link'
 @observer
 @withRouter
 class LoginForm extends Component {
-
+    
     render() {
 
         const { router, store } = this.props
+        console.log('router.query.mode :>> ', router.query.mode);
         const { signIn, forgot, register } = store
         const mode = router.query.mode || 'login'
 
@@ -37,7 +38,7 @@ class LoginForm extends Component {
             name: 'email',
             label: 'Email',
             placeholder: 'Insert Email',
-            rules: 'required|email|string|between:5,30',
+            rules: 'required|email|string|between:5,50',
         }, {
             name: 'password',
             label: 'Password',
@@ -121,9 +122,9 @@ const NavText = observer(({ mode }) => (
     <>
         {mode == 'login' && (<>
             <Box><Link href="/login?mode=forgot"><a>Forgot Your Password?</a></Link></Box>
-            <Box>{`Not a member yet? `}<Link href="/login?mode=register"><a>Create an Account</a></Link></Box>
+            <Box>{'Not a member yet? '}<Link href="/login?mode=register"><a>Create an Account</a></Link></Box>
         </>)}
-        {mode != 'login' && <Box>{`Already Have an Account? `}<Link href="/login"><a>Log In</a></Link></Box>}
+        {mode != 'login' && <Box>{'Already Have an Account? '}<Link href="/login"><a>Log In</a></Link></Box>}
     </>
 ))
 

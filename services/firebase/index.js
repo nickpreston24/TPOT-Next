@@ -2,12 +2,22 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
-import withAuthorization from './hoc'
-import { initFirestorter, Document } from 'firestorter'
-import { observable, toJS } from 'mobx'
 
+import { initFirestorter, Document } from 'firestorter'
+
+import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
+import withAuthorization from './withAuthorization'
+import { observable } from 'mobx'
 import { convertFile } from '../../components/Editor/functions/converter'
+
+/** MP's imports for export */
+
+// import { auth } from './firebase'
+
+// IDEA: ^^^ break apart this mega-class into smaller services dependent on individual firebase API functions
+
+/** End */
+
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -16,12 +26,23 @@ const config = {
     projectId: process.env.REACT_APP_PROJECT_ID,
     storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
     messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-};
+}
 
 class Firebase {
 
     @observable authUser = null
     @observable router = null
+
+    // Singleton support:
+    static instance = null;
+
+    static getInstance() {
+        if (!Firebase.instance){
+            console.count('Firebase API -- init()')
+            Firebase.instance = new Firebase();
+        }
+        return this.instance;
+    }
 
     constructor() {
         if (!firebase.apps.length) {
@@ -45,7 +66,7 @@ class Firebase {
 
     }
 
-    register = (first, last, email, password) => {
+    register = (email, password) => {
         return new Promise((resolve, reject) => {
             this.auth.createUserWithEmailAndPassword(email, password)
                 .then((newUser) => {
@@ -171,7 +192,7 @@ class Firebase {
             await requestedDocument.fetch()
             let { status } = requestedDocument.data
             if (['not-started', 'in-progress'].includes(status)) {
-                this.redirect("/scribe/edit/[doc]", `/scribe/edit/${id}`)
+                this.redirect('/scribe/edit/[doc]', `/scribe/edit/${id}`)
                 // href={"/scribe/edit/[doc]"}
                 // as={`/scribe/edit/${id}`}
                 resolve()
@@ -197,22 +218,22 @@ class Firebase {
     upload = async (file) => {
 
         // Run conversion:        
-        let html = await convertFile(file);
-        console.log(!!html && html);
+        let html = await convertFile(file)
+        console.log(!!html && html)
 
         if (!html)
-            return;
+            return
 
         // Upload to Cloud Storage:
-        let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`);
+        let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`)
         fileRef.put(file)
             .then(snapshot => {
 
-                var fileName = file.name;
+                var fileName = file.name
                 var { ...emptyPaper } = new Paper({
                     docx: `${file.name}`,
                     title: file.name,
-                    status: "not-started",
+                    status: 'not-started',
                     date_modified: Date.now(),
                     date_uploaded: Date.now(),
                     author: null,
@@ -224,7 +245,7 @@ class Firebase {
                     excerpt: null
                 })
 
-                console.log(emptyPaper);
+                console.log(emptyPaper)
 
                 db.collection('sessions')
                     .doc(emptyPaper.slug)
@@ -235,11 +256,11 @@ class Firebase {
                     ? `Yay! File ${fileName} uploaded successfully!`
                     : `Fail! ${fileName} could not be uploaded!`)
 
-                console.log(`Downloading ${fileName}`);
+                console.log(`Downloading ${fileName}`)
                 download(fileName)
             })
             .catch((error) => {
-                console.log(error.message);
+                console.log(error.message)
                 alert('There was a problem uploading this file.')
             })
     }
@@ -249,4 +270,20 @@ class Firebase {
 
 export default Firebase
 
-export { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser, withAuthorization };
+const firebaseApi = Firebase.getInstance();
+
+export {
+
+    // Full API singleton:
+    firebaseApi
+
+    , FirebaseContext
+    , AuthUserContext
+
+    , FirebaseProvider
+    , AuthUserProvider
+
+    , withFirebase
+    , withAuthUser
+    , withAuthorization
+}

@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Divider, TextField } from '@material-ui/core'
+import { Avatar, Box } from '@material-ui/core'
 
 const Contributors = () =>
 <Box py={2} px={3}>

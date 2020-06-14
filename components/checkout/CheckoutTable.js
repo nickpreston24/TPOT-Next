@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { uploadLocalFile } from './Editor/functions/uploader';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import DescriptionIcon from '@material-ui/icons/Description';
-import EditIcon from '@material-ui/icons/Edit';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import { withStyles } from '@material-ui/styles';
-import { Collection } from 'firestorter';
-import MaterialTable from 'material-table';
-import { action, autorun, observable, toJS } from 'mobx';
-import { inject, observer } from 'mobx-react';
-import moment from 'moment';
-import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core';
+import React, { Component } from 'react'
+import { compose } from 'recompose'
+import { uploadLocalFile } from '../Editor/functions/uploader'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'
+import DescriptionIcon from '@material-ui/icons/Description'
+import EditIcon from '@material-ui/icons/Edit'
+import LockOpenIcon from '@material-ui/icons/LockOpen'
+import { withStyles } from '@material-ui/styles'
+import { Collection } from 'firestorter'
+import MaterialTable from 'material-table'
+import { action, autorun, observable, toJS } from 'mobx'
+import { inject, observer } from 'mobx-react'
+import moment from 'moment'
+import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core'
+
+import StatusChip from '../StatusChip'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -40,7 +42,7 @@ export const CheckoutTable = compose(
         @observable totalCount = 0
 
         @action countTotalDocs = async () => {
-            let collection = await new Collection("sessions", { mode: 'off' }).fetch()
+            let collection = await new Collection('sessions', { mode: 'off' }).fetch()
             this.totalCount = collection.docs.length
         }
 
@@ -72,7 +74,7 @@ export const CheckoutTable = compose(
 
             filter = filter != -1 ? 'title' : 'status'
             direction = filter != -1 ? 'asc' : direction
-            
+
             await this.countTotalDocs()
             await this.updateQuery(
                 collectionRef => {
@@ -83,18 +85,26 @@ export const CheckoutTable = compose(
 
                 }
             )
-            
+
             this.setLoading(false)
         })
 
-
         render() {
             const { store } = this.props
+            // console.log('paper.status :>> ', paper.status)
+
+
 
             const columns = [
                 { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
                 { title: 'Document', field: 'title', type: 'string', searchable: true },
-                { title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => <StatusChip status={paper.status} /> },
+                {
+                    title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => {
+                        const status = paper.status
+                        // console.log('status (checkout) :>> ', status)
+                        return <StatusChip status={status} />
+                    }
+                },
                 { title: 'Last Edited', field: 'date_modified', type: 'string', searchable: false },
                 { title: 'Author', field: 'author', type: 'string', searchable: false },
                 { title: 'Uploaded', field: 'date_uploaded', type: 'string', searchable: false, hidden: true },
@@ -110,7 +120,7 @@ export const CheckoutTable = compose(
                 let id = document.id
                 let { status, date_modified, date_uploaded, contributors } = entry
                 let date_modified_timestamp = date_modified
-                status = status || 'in-progress';
+                status = status || 'in-progress'
                 if (!date_modified || !date_uploaded) { return }
                 date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
                 date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
@@ -184,38 +194,8 @@ export const CheckoutTable = compose(
     }
 )
 
-const statusMap = {
-    'in-progress': 'In Progress',
-    'not-started': 'Not Started',
-    'checked-out': 'Checked Out',
-    'published': 'Published',
-}
-
-const labelColors = {
-    'in-progress': '#c3e3ff',
-    'not-started': '#ffe8c6',
-    'checked-out': '#ffc6c8',
-    'published': '#c6ffc6',
-}
-
-const rest = (ms) =>
-    new Promise(rs => (
-        setTimeout(() => {
-            rs()
-        }, ms)
-    ))
-
-
 const DocxIcon = () =>
     <DescriptionIcon style={{ color: '#0000008a' }} />
-
-const StatusChip = ({ status }) => {
-    const label = statusMap[status]
-    const color = labelColors[status]
-    return (
-        <Chip {...{ label }} style={{ background: color }} />
-    )
-}
 
 // An alternate Paper component to fix overflow clipping in the X direction on rows that have no data
 const StyledTableBody = withStyles({
@@ -363,7 +343,7 @@ export const TableDetails = compose(
                                     <b>Document</b>
                                 </Box>
                                 <Box height={30}></Box>
-                                <Box display="flex" flexGrow={1} style={{ color: "dodgerblue !important" }}>
+                                <Box display="flex" flexGrow={1} style={{ color: 'dodgerblue !important' }}>
                                     <MLink
                                         href={`${docx}`}
                                         key={id}

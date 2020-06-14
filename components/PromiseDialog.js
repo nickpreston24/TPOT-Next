@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
 import Box from '@material-ui/core/Box'
-import HeaderTabs from './HeaderTabs'
-import HeaderAppDropdown from './HeaderAppDropdown'
-import HeaderUserLogin from './HeaderUserLogin'
+import HeaderTabs from './header/HeaderTabs'
+import HeaderAppDropdown from './header/HeaderAppDropdown'
+import HeaderUserLogin from './header/HeaderUserLogin'
 import { inject, observer } from 'mobx-react'
 import { observable, action, computed, autorun, reaction, toJS } from 'mobx'
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Paper from '@material-ui/core/Paper';
-import Draggable from 'react-draggable';
+import Button from '@material-ui/core/Button'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Paper from '@material-ui/core/Paper'
+import Draggable from 'react-draggable'
 import { compose } from 'recompose'
 
 // #2d374a
@@ -77,7 +77,7 @@ function PaperComponent(props) {
         <Draggable cancel={'[class*="MuiDialogContent-root"]'}>
             <Paper {...props} />
         </Draggable>
-    );
+    )
 }
 
 const CustomDialog = compose(

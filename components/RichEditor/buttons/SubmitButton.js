@@ -32,7 +32,7 @@ export const SubmitButton = ({ onClick, children, pallete }) => {
           } 
       `}</style>}
     </span>
-  );
-};
+  )
+}
 
-export default SubmitButton;
+export default SubmitButton

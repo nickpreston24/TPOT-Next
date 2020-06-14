@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import Box from '@material-ui/core/Box'
 import { Tabs, Tab } from '@material-ui/core'
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined'
 import ViewQuiltOutlinedIcon from '@material-ui/icons/ViewQuiltOutlined'
-import * as ROUTES from '../constants/routes'
+import * as ROUTES from '../../constants/routes'
 
 const HeaderTabs = () => {
+
     const router = useRouter()
     const splitroute = router.pathname.split('/')
     const route = splitroute[splitroute.length - 1]
@@ -44,11 +45,18 @@ const HeaderTabs = () => {
     )
 }
 
-const LinkTab = ({ icon, label, href }) => {
+type LinkTabProps = {
+    icon: ReactNode | any,
+    label: string,
+    href: string,
+};
+
+const LinkTab: FC<LinkTabProps> = ({ icon, label, href }) => {
     const router = useRouter()
     return (
         <Tab
-            {...{ icon, label }}
+            icon={icon}
+            label={label}
             component="a"
             onClick={(e) => router.push(href)}
         />

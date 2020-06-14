@@ -1,4 +1,4 @@
-import PrimaryButton  from './PrimaryButton';
+import PrimaryButton  from './PrimaryButton'
 import SubmitButton from './SubmitButton'
 
 export {

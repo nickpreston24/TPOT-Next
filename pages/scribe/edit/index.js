@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-// import Link from 'next/link'
 import Dashboard from '../../../components/Dashboard'
-import { ZeitCard } from '../../../components/experimental/ZeitCard'
+import ZeitCard from '../../../components/experimental/ZeitCard'
 import * as ROUTES from '../../../constants/routes'
 
 const Checkout = () => (

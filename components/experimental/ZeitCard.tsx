@@ -1,10 +1,25 @@
-/** The Default Next Card from create-next-app */
-export const ZeitCard = ({ url = null, title = "", text = "" }) => {
+import { BasicProps } from './BasicProps'
+import { FC } from 'react';
+
+interface ZeitCardProps extends BasicProps {
+    url: string;
+    title?: string;
+    text?: string;
+}
+
+const ZeitCard: FC<ZeitCardProps> = (
+    {
+        url = null
+        , title = ''
+        , text = ''
+    }: {
+        url: string, title: string, text: string
+    }) => {
     return (
         !title
             ? <></>
             : <>
-                <a href={url || "_"} className="card">
+                <a href={url || '_'} className="card">
                     {title && <h3>{title}</h3>}
                     {text && <p>{text}</p>}
                 </a>
@@ -49,3 +64,5 @@ export const ZeitCard = ({ url = null, title = "", text = "" }) => {
             </>
     )
 }
+
+export default ZeitCard

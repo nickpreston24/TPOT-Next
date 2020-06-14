@@ -1,16 +1,16 @@
-import MobxReactForm from "mobx-react-form";
-import dvr from "mobx-react-form/lib/validators/DVR";
-import React, { Component } from "react";
-import validatorjs from "validatorjs";
-import { inject, observer } from "mobx-react";
-import { toJS } from "mobx";
+import MobxReactForm from 'mobx-react-form'
+import dvr from 'mobx-react-form/lib/validators/DVR'
+import React, { Component } from 'react'
+import validatorjs from 'validatorjs'
+import { inject, observer } from 'mobx-react'
+import { toJS } from 'mobx'
 
 // : DocumentForm is a wrapper that provides a prop, {form} that can be used by
 // : the Editor and Details Panel. Includes pretty good validaton, but more can
 // : be added, with something like Typescript to mirror the schema that is in
 // : Firebase but validating it locally here to get it perfect on every submit. 
 
-@inject("store")
+@inject('store')
 @observer
 class DocumentForm extends Component {
 
@@ -32,7 +32,7 @@ class DocumentForm extends Component {
     }
 
     render() {
-        const { document, store, children } = this.props;
+        const { document, store, children } = this.props
         const { authUser } = store
 
         // No Document! Not safe to do anything beyond this point
@@ -41,10 +41,10 @@ class DocumentForm extends Component {
                 <p>{`
                     Document was not recieved from [Doc].js page. Cannot safely provide the {form} prop to Editor 
                     or Details pane. User is currently ${
-                    !!authUser ? "Authorized 😀" : "Not Authenticated! 💩"
+                    !!authUser ? 'Authorized 😀' : 'Not Authenticated! 💩'
                     }
                 `}</p>
-            );
+            )
         }
         // Yay! Document. We can do ANYTHING because it is 100% loaded now :)
         else {
@@ -61,7 +61,7 @@ class DocumentForm extends Component {
                 <FormProvider value={form}>
                     <ObservedChildren {...{ children }} />
                 </FormProvider>
-            );
+            )
         }
     }
 }
@@ -169,16 +169,16 @@ function createForm( document, store, data ) {
 
 const ObservedChildren = observer(({ children, document }) =>
     React.cloneElement(children, { document })
-);
+)
 
-export default DocumentForm;
+export default DocumentForm
 
-export const FormContext = React.createContext(null);
+export const FormContext = React.createContext(null)
 
-export const FormProvider = FormContext.Provider;
+export const FormProvider = FormContext.Provider
 
 export const withForm = (Component) => (props) => (
     <FormContext.Consumer>
         {(value) => <Component {...props} form={value} />}
     </FormContext.Consumer>
-);
+)

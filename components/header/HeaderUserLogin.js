@@ -6,14 +6,14 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import { withRouter } from 'next/router'
 
-@inject('store')
-@observer
+// @inject('store')
+// @observer
 @withRouter
 class HeaderUserLogin extends Component {
 
     render() {
-        const { store, router } = this.props
-        const { signOut } = store
+        // const { store, router } = this.props
+        // const { signOut } = store
         return (
             <Box pr={2} height="100%" display="flex" justifyContent="flex-end" alignItems="center" color="white">
                 <Avatar alt="Remy Sharp" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar1.png" style={{ height: 32, width: 32 }} />
@@ -21,9 +21,9 @@ class HeaderUserLogin extends Component {
                 <IconButton color="inherit" aria-label="add to shopping cart" onClick={() => router.push('/account')}>
                     <SettingsOutlinedIcon />
                 </IconButton>
-                <IconButton color="inherit" aria-label="add to shopping cart" onClick={signOut}>
+                {/* <IconButton color="inherit" aria-label="add to shopping cart" onClick={signOut}>
                     <ExitToAppIcon />
-                </IconButton>
+                </IconButton> */}
             </Box>
         )
     }

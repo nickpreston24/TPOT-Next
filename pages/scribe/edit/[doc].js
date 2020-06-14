@@ -1,11 +1,11 @@
-import { Document as FireStorterDocument } from "firestorter";
-import { observer, PropTypes as MobXPropTypes } from "mobx-react";
-import React, { useState } from "react";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { compose } from "recompose";
-import PropTypes from 'prop-types';
-import Dashboard from "../../../components/Dashboard";
-import { DocumentDetails, DocumentForm, DocumentEditor } from "../../../components/Document";
+import { Document as FireStorterDocument } from 'firestorter'
+import { observer, PropTypes as MobXPropTypes } from 'mobx-react'
+import React, { useState } from 'react'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { compose } from 'recompose'
+import PropTypes from 'prop-types'
+import Dashboard from '../../../components/Dashboard'
+import { DocumentDetails, DocumentForm, DocumentEditor } from '../../../components/Document'
 
 // : Document is the dynamic route page for Scribe's editable documents
 // : It fetches data for the given paper based on the route and provides
@@ -44,7 +44,7 @@ const Page = props => {
             </DocumentForm>
           )}
       </>
-    );
+    )
   }
 
   return (

@@ -1,14 +1,14 @@
 import React from 'react'
 import { Box, CircularProgress } from '@material-ui/core'
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solarized-light';
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solarized-light'
 
 const CodeView = ({ hidden, state }) => {
 
     if (!state)
         return null
 
-    const children = state || '';
+    const children = state || ''
     return <Box flexGrow={1} display={hidden ? 'none' : 'flex'} justifyContent="center">
         <Box display="block" maxWidth={800}>
             <SyntaxHighlighter language='html' children={children} style={solarizedLight} lineProps={{
@@ -23,7 +23,7 @@ const CodeView = ({ hidden, state }) => {
                 background: 'transparent'
             }} />
         </Box>
-    </Box>;
-};
+    </Box>
+}
 
 export default CodeView

@@ -1,8 +1,8 @@
-import { EditorState, Modifier, RichUtils, convertFromRaw } from "draft-js";
-import { useRef, useState } from "react";
+import { EditorState, Modifier, RichUtils, convertFromRaw } from 'draft-js'
+import { useRef, useState } from 'react'
 import { UnderConstruction } from '../../pages/404'
 
-import { SubmitButton } from "./buttons/SubmitButton";
+import { SubmitButton } from './buttons/SubmitButton'
 
 import {
   plugins
@@ -14,7 +14,7 @@ import {
   , ColorPicker
   , getBlockStyle,
   ToolbarMP
-} from './plugins';
+} from './plugins'
 
 import {
   generateHtmlFromEditorState
@@ -23,11 +23,11 @@ import {
 
 } from './functions'
 
-import Editor from 'draft-js-plugins-editor';
+import Editor from 'draft-js-plugins-editor'
 import styles, { colorStyleMap } from './styles'
-import { ArgumentNullReferenceError } from "../Errors";
+import { ArgumentNullReferenceError } from '../Errors'
 // import { Toolbar } from '../Editor/components/Toolbar'
-let publish = null; //TODO: use Publisher class
+let publish = null //TODO: use Publisher class
 
 /* 
  * A rich text Draft Editor that uses Draft JS Plugins library  
@@ -47,7 +47,7 @@ export const RichEditor = ({
 ) => {
 
   if (!document) {
-    return UnderConstruction(new ArgumentNullReferenceError("document").message)
+    return UnderConstruction(new ArgumentNullReferenceError('document').message)
   }
 
   if (!draftState)
@@ -60,42 +60,42 @@ export const RichEditor = ({
 
   if (!draftState) {
     console.log('draftState: ', draftState, 'editorRef:', editorRef)
-    return UnderConstruction("Draft state wasn't ready")
+    return UnderConstruction('Draft state wasn\'t ready')
   }
 
   // editorRef = editorRef || useRef(null);
 
-  const { root, content } = styles;
+  const { root, content } = styles
 
-  const [editorState, setEditorState] = useState(sampleEditorState);
+  const [editorState, setEditorState] = useState(sampleEditorState)
 
   const handleKeyCommand = (command, state) => {
-    const nextState = RichUtils.handleKeyCommand(state, command);
+    const nextState = RichUtils.handleKeyCommand(state, command)
 
     if (nextState) {
-      onChange(nextState);
-      return "handled";
+      onChange(nextState)
+      return 'handled'
     }
 
-    return "not-handled";
-  };
+    return 'not-handled'
+  }
 
   const toggleBlockType = type => {
-    onChange(RichUtils.toggleBlockType(editorState, type));
-  };
+    onChange(RichUtils.toggleBlockType(editorState, type))
+  }
 
   const toggleInlineStyle = type => {
-    onChange(RichUtils.toggleInlineStyle(editorState, type));
-  };
+    onChange(RichUtils.toggleInlineStyle(editorState, type))
+  }
 
   const onChange = nextstate => {
-    setEditorState(nextstate);
-  };
+    setEditorState(nextstate)
+  }
 
   const toggleColor = (toggledColor) => {
     // console.log('toggled color:', toggledColor);
 
-    const selection = editorState.getSelection();
+    const selection = editorState.getSelection()
     // console.log('selection: ', selection);
 
     const nextContentState = Object.keys(colorStyleMap)
@@ -110,7 +110,7 @@ export const RichEditor = ({
       'change-inline-style'
     )
 
-    const currentStyle = editorState.getCurrentInlineStyle();
+    const currentStyle = editorState.getCurrentInlineStyle()
 
     // Unset the style override for the current color:
     if (selection.isCollapsed()) {
@@ -130,7 +130,7 @@ export const RichEditor = ({
     }
 
     onChange(nextEditorState)
-  };
+  }
 
   return (
     <div className="RichEditor-root" style={root}>
@@ -187,9 +187,9 @@ export const RichEditor = ({
       </div>
 
     </div>
-  );
+  )
 
-};
+}
 
 
 
