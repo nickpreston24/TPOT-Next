@@ -4,6 +4,7 @@ import { ZeitCard } from '../../components/experimental'
 import * as ROUTES from '../../constants/routes'
 
 const Edit = () => (
+  // <MobxProvider store={store}>
   <Dashboard title="TPOT Scribe">  
     <ZeitCard
       url={ROUTES.CHECKOUT}
@@ -16,6 +17,7 @@ const Edit = () => (
       text='Go Back to Toolbox Home'
     />
   </Dashboard>
+  // </MobxProvider>  
 )
 
 export default Edit

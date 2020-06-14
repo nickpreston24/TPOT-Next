@@ -1,5 +1,4 @@
-import { SCRIBE, TPOT } from '../../constants/routes'
-import { toast } from 'react-toastify'
+import { SCRIBE, TPOT, ACCOUNT, HOME } from '../../constants/routes'
 import ZeitContainer from './ZeitContainer.tsx'
 import ZeitCard from './ZeitCard.tsx'
 
@@ -22,22 +21,21 @@ import ZeitCard from './ZeitCard.tsx'
 
 // console.log('scripture :>> ', scripture)
 
-const notify = (message = '', mode = null) => {
-    let toaster = !!mode ? toast[mode] : toast
-    toaster(message, {
-        position: 'bottom-left',
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-    })
-}
 
 export const LandingLayout = () => {
     return (
         <div className="grid">
             <ZeitContainer >
+                <ZeitCard
+                    url="home"
+                    title="Home"
+                    text='Go Home'
+                />
+                <ZeitCard
+                    url={ACCOUNT}
+                    title="Account"
+                    text='Go to your Account'
+                />
                 <ZeitCard
                     url={SCRIBE}
                     title="Scribe"

@@ -36,3 +36,6 @@ yarn-error.log*
 
 # Local Netlify folder
 .netlify
+
+# test folder (allow once we use mocha, chai, etc.)
+test

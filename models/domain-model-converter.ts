@@ -4,7 +4,7 @@ export interface Type<T> extends Function {
 
 // Transforms API data (DTOs) to and from Domain Models (User, Paper, et al)
 // SRC: https://coryrylan.com/blog/rich-domain-models-with-typescript
-export default class DomainConverter {
+export default class DomainModelConverter {
     static fromDto<T>(domainModel: Type<T>, dto: any) {
         const instance = Object.create(domainModel.prototype)
         instance.state = dto

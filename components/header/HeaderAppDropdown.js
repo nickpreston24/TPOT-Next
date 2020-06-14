@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import Box from '@material-ui/core/Box'
 import { Avatar, Divider } from '@material-ui/core'
-import { inject, observer } from 'mobx-react'
+// import { inject, observer } from 'mobx-react'
 
-@inject('store')
-@observer
+// @inject('store')
+// @observer
 class HeaderAppDropdown extends Component {
 
     render() {

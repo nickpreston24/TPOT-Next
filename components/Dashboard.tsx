@@ -1,5 +1,5 @@
-import { FC, Component } from 'react'
-import Header from './Header'
+import { FC, Component, ReactNode, ElementType } from 'react'
+import { Header } from './header'
 import { inject, observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import Page from './Page'
@@ -28,10 +28,10 @@ import Page from './Page'
 //   }
 // }
 
-interface DashboardProps {
+type DashboardProps = {
   title: string,
-  children: any,
-  details?: string
+  children: ElementType | ReactNode,
+  details?: string | Function
 }
 
 const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {

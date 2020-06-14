@@ -1,20 +1,9 @@
 import { observable, action, computed, reaction } from 'mobx'
 import { createContext } from 'react'
-import { Paper, WordPressPaper } from '../models/paper'
+import { Paper } from '../models/paper'
 import WPAPI from 'wpapi'
-import Firebase from '../services/firebase'
-
-export interface WordPressOptions {
-    endpoint: string,
-    username: string,
-    password: string
-}
-
-export interface WordpressSession {
-    firebaseUserId: string,
-    paper: WordPressPaper,
-    session?: Session;
-}
+import { FirebaseUserService } from '../services/wordpress'
+import { WordPressConfig } from '../models/wordpress/WordPressConfig'
 
 /* A representation of the current Session as it relates to a Wordpress Post */
 export interface Session {
@@ -23,23 +12,6 @@ export interface Session {
     code?: string,
     excerpt?: string,
     //... docx, etc.
-}
-
-export class FirebaseUserService {
-    db: any
-
-    constructor(db: Firebase) {
-        this.db = db
-    }
-
-    getFirebaseUser = (id: number) => {
-        this.db.collection('users')
-            .doc(id)
-            .get()
-            .then((documentSnapshot) => {
-                console.log(documentSnapshot.data())
-            })
-    }
 }
 
 /**
@@ -58,7 +30,7 @@ export class PublishService {
     firebaseUserService: FirebaseUserService
 
     constructor(
-        options: WordPressOptions
+        options: WordPressConfig
         , firebaseUserService: FirebaseUserService
     ) {
         this.firebaseUserService = firebaseUserService
@@ -67,20 +39,22 @@ export class PublishService {
         console.log(this.wpapi)
     }
 
-    getWordPressCredentials(db: any) {
-        db.collection('public')
+    async getWordPressCredentials(db: any) {
+        let snapshot = await db.collection('public')
             .doc('wp-credentials')
             .get()
-            .then((documentSnapshot) => {
-                if (!!documentSnapshot) {
-                    resolve(documentSnapshot.data())
-                } else {
-                    resolve(null)
-                }
-            })
-            .catch(err => {
-                reject(err)
-            })
+
+        // .then((documentSnapshot) => {
+        //     if (!!documentSnapshot) {
+        //         resolve(documentSnapshot.data())
+        //     } else {
+        //         resolve(null)
+        //     }
+        // })
+        // .catch(err => {
+        //     reject(err)
+        // })
+        return snapshot.data()
     }
 }
 

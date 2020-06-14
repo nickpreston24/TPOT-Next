@@ -1,4 +1,4 @@
-import ExtendableError from './base'
+import ExtendableError from './base-error'
 
 /** The following are custom Exceptions/Errors for throwing in Scribe */
 

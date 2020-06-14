@@ -5,7 +5,8 @@
         "sourceType": "module",
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "@babel/plugin-proposal-decorators"
     ],
     "rules": {
         "semi": [
