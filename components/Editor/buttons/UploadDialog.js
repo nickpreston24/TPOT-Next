@@ -4,7 +4,7 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import React, { useState, useContext } from 'react'
-import { inject, observer } from 'mobx-react'
+import {  observer } from 'mobx-react'
 
 // import GoogleDrive from "../../../media/hdd.png";
 // import HardDrive from "../../../media/hdd.png";
@@ -149,4 +149,4 @@ class Store {
     }
 }
 
-export default inject('store')(withStyles(styles)(UploadDialog))
+export default (withStyles(styles)(UploadDialog))

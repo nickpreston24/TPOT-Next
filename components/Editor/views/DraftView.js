@@ -323,7 +323,6 @@ export default DraftView
 //     }
 // };
 
-// @inject('store')
 // @observer
 // class LegacyDraftView extends React.Component {
 

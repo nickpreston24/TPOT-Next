@@ -34,12 +34,10 @@ class MobxApp extends App {
     let { Component, pageProps } = this.props
     let AuthorizedApp = withAuthorization(Component)
     return (
-      <MobxProvider store={this.state.store}>
         <DialogProvider>
           <AuthorizedApp {...pageProps} />
           <ToastContainer newestOnTop />
         </DialogProvider>
-      </MobxProvider>
     )
   }
 }

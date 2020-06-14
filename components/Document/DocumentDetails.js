@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Divider, TextField } from '@material-ui/core'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { toJS } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import {  observer } from 'mobx-react'
 import moment from 'moment'
 import React, { useContext } from 'react'
 import { compose } from 'recompose'
@@ -85,7 +85,7 @@ const DocumentDetails = ({ store, form, document }) => {
           </Box>
         </Box>
         <Box display="flex" width="100%" my={2} color="white">
-          <Box flexGrow={1} pr={2} >            
+          <Box flexGrow={1} pr={2} >
             <Button
               onClick={handlePublish}
               fullWidth color="inherit" variant="contained" style={{ boxShadow: 'none', textTransform: 'unset', background: '#16c98d' }}>
@@ -123,8 +123,7 @@ const DocumentDetails = ({ store, form, document }) => {
 }
 
 export default compose(
-  inject('store'),
-  // observer,
+  observer,
   withForm
 )(DocumentDetails)
 

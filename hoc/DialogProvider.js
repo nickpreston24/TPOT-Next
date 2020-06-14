@@ -9,8 +9,6 @@ const DialogProvider = props => (
     </DialogBox>
 )
 
-@inject('store')
-@observer
 class DialogConsumer extends React.Component {
 
     componentDidMount() {

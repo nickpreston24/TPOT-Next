@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { LandingLayout } from '../components/experimental/Layout'
 import Head from 'next/head'
-// import Dashboard from '../components/Dashboard'
 
 class App extends Component {
   render() {
@@ -14,7 +13,7 @@ class App extends Component {
         <main>
 
           <h1 className="title">
-            Welcome to <a href="https://tpot.netlify.app">TPOT Toolbox!</a>
+            Welcome to TPOT Toolbox!
           </h1>
 
           <p className="description">

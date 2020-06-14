@@ -111,12 +111,7 @@ DocumentEditor.propTypes = {
   document: MobXPropTypes.objectOrObservableObject.isRequired,
 }
 
-export default compose(
-  inject('store'),
-  observer
-)(DocumentEditor)
-
-
+export default compose(observer)(DocumentEditor)
 
 // Auxillary Components
 

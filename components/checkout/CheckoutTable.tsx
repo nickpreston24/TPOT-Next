@@ -6,7 +6,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import { withStyles } from '@material-ui/styles'
 import MaterialTable, { Column } from 'material-table'
 import { action, autorun, observable, toJS } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import moment from 'moment'
 import { Box, Button, Chip, Link as MLink, Paper } from '@material-ui/core'
 
@@ -22,10 +22,7 @@ import TableDetails from './TableDetails'
 // document to firestore for editing. It is also offers a way to download documents.
 
 
-export const CheckoutTable = compose(
-    inject('store'),
-    observer
-)(
+export const CheckoutTable = compose(observer)(
     class CheckoutTable extends Component {
 
         tableRef = React.createRef()

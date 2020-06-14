@@ -1,9 +1,5 @@
 import React, { Component } from 'react'
 import Box from '@material-ui/core/Box'
-import HeaderTabs from './header/HeaderTabs'
-import HeaderAppDropdown from './header/HeaderAppDropdown'
-import HeaderUserLogin from './header/HeaderUserLogin'
-import { inject, observer } from 'mobx-react'
 import { observable, action, computed, autorun, reaction, toJS } from 'mobx'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
@@ -16,8 +12,6 @@ import Draggable from 'react-draggable'
 import { compose } from 'recompose'
 
 // #2d374a
-@inject('store')
-@observer
 class DialogContainer extends Component {
 
     dialogPortal = React.createRef()
@@ -81,7 +75,6 @@ function PaperComponent(props) {
 }
 
 const CustomDialog = compose(
-    inject('store'),
     observer
 )(props => {
 

@@ -8,10 +8,10 @@ import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { withStyles } from '@material-ui/styles'
 import { Collection } from 'firestorter'
 import MaterialTable from 'material-table'
-import { action, autorun, observable, toJS } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import { action, autorun, toJS } from 'mobx'
+import { observer } from 'mobx-react'
 import moment from 'moment'
-import { Box, Button, Chip, Collapse, Link as MLink, Paper } from '@material-ui/core'
+import { Box, Button, Collapse, Link as MLink, Paper } from '@material-ui/core'
 
 import StatusChip from '../StatusChip'
 
@@ -22,10 +22,7 @@ import StatusChip from '../StatusChip'
 // It is the springboard for checking out a document, unlocking, or uploading a new
 // document to firestore for editing. It is also offers a way to download documents.
 
-export const CheckoutTable = compose(
-    inject('store'),
-    observer
-)(
+export const CheckoutTable = compose(observer)(
     class CheckoutTable extends Component {
 
         tableRef = React.createRef()
@@ -69,7 +66,7 @@ export const CheckoutTable = compose(
 
         queryBuilder = autorun(async () => {
 
-            let { page, pageSize, filter, direction, prevDocument } = this
+            let { pageSize, filter, direction, prevDocument } = this
             this.setLoading(true)
 
             filter = filter != -1 ? 'title' : 'status'
@@ -237,10 +234,7 @@ const UploadButton = observer(({ store }) => {
  * It displays additional information on dropdown of a row item. Clicking on
  * it also reveals actions that can be taken, like editing or unlocking the doc.
  */
-export const TableDetails = compose(
-    inject('store'),
-    observer
-)(
+export const TableDetails = compose(observer)(
     class extends Component {
 
         /**

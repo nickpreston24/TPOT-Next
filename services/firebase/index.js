@@ -7,6 +7,8 @@ import { initFirestorter, Document } from 'firestorter'
 
 import { FirebaseContext, FirebaseProvider, withFirebase, AuthUserContext, AuthUserProvider, withAuthUser } from './context'
 import withAuthorization from './withAuthorization'
+// import withAuthentication from './withAuthentication'
+
 import { observable } from 'mobx'
 import { convertFile } from '../../components/Editor/functions/converter'
 

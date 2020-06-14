@@ -1,4 +1,4 @@
-import { inject, observer } from "mobx-react"
+import { observer } from "mobx-react"
 import { Component } from "react"
 import { Collapse, Box, Button, Chip, Link as MLink, Paper } from "@material-ui/core"
 import EditIcon from '@material-ui/icons/Edit'
@@ -16,10 +16,7 @@ import { store } from "../../stores/root"
  * It displays additional information on dropdown of a row item. Clicking on
  * it also reveals actions that can be taken, like editing or unlocking the doc.
  */
-const TableDetails = compose(
-    inject('store'),
-    observer
-)(
+const TableDetails = compose(observer)(
     class extends Component {
         allowUnlock: boolean
         open: boolean

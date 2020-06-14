@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
 import Box from '@material-ui/core/Box'
 import { Avatar, IconButton } from '@material-ui/core'
-import { observer, inject } from 'mobx-react'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import { withRouter } from 'next/router'
 
-// @inject('store')
-// @observer
 @withRouter
 class HeaderUserLogin extends Component {
 

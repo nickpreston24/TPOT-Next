@@ -8,11 +8,9 @@ import { toJS } from 'mobx'
 import { withRouter } from 'next/router'
 import Link from 'next/link'
 
-@inject('store')
-@observer
 @withRouter
 class LoginForm extends Component {
-    
+
     render() {
 
         const { router, store } = this.props

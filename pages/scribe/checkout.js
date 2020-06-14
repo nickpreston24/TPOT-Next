@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Dashboard from '../../components/Dashboard'
-import { inject, observer } from 'mobx-react'
+import {  observer } from 'mobx-react'
 import { compose } from 'recompose'
 import { CheckoutTable } from '../../components/checkout'
 import { Box, Chip } from '@material-ui/core'
