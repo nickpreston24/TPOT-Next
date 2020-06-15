@@ -5,6 +5,19 @@
   ],
   "plugins": [
     [
+      "module-resolver",
+      {
+        "root": "./",
+        "alias": {
+          "@services": "./services",
+          "@stores": "./stores",
+          "@components": "./components",
+          "@hooks": "./hooks",
+          "@constants": "./constants"
+        }
+      }
+    ],
+    [
       "@babel/plugin-proposal-decorators",
       {
         "legacy": true

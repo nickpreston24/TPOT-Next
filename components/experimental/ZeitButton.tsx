@@ -9,7 +9,7 @@ const ZeitButton: FC<ButtonProps> = ({
     color
     , backgroundColor
     , onClick
-    , text = 'click'
+    , text
 }) => {
     return <button
         title={text}

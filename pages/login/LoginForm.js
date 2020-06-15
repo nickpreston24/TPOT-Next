@@ -1,4 +1,4 @@
-import { observer, inject } from 'mobx-react'
+import { observer } from 'mobx-react'
 import MobxReactForm from 'mobx-react-form'
 import dvr from 'mobx-react-form/lib/validators/DVR'
 import React, { Component } from 'react'

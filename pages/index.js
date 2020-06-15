@@ -1,29 +1,30 @@
 import React, { Component } from 'react'
 import { LandingLayout } from '../components/experimental/Layout'
 import Head from 'next/head'
+// import { withAuthentication } from '../services/session'
 
-class App extends Component {
-  render() {
-    return (
-      <div title="TPOT Toolbox" className="container">
-        <Head>
-          <title>TPOT ToolBox</title>
-          <link rel="icon" href="favicon.ico" />
-        </Head>
-        <main>
+const App = () => {
+  // render() {
+  return (
+    <div title="TPOT Toolbox" className="container">
+      <Head>
+        <title>TPOT ToolBox</title>
+        <link rel="icon" href="favicon.ico" />
+      </Head>
+      <main>
 
-          <h1 className="title">
-            Welcome to TPOT Toolbox!
+        <h1 className="title">
+          Welcome to TPOT Toolbox!
           </h1>
 
-          <p className="description">
-            Get started by Checking out a Document!
+        <p className="description">
+          Get started by Checking out a Document!
           </p>
 
-          <LandingLayout />
-        </main>
+        <LandingLayout />
+      </main>
 
-        <style jsx>{`
+      <style jsx>{`
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;
@@ -120,9 +121,9 @@ class App extends Component {
         }
 
         `}
-        </style>
+      </style>
 
-        <style jsx global>{`
+      <style jsx global>{`
           html,
           body {
             padding: 0;
@@ -135,11 +136,11 @@ class App extends Component {
             box-sizing: border-box;
           }
         `}
-        </style>
+      </style>
 
-      </div>
-    )
-  }
+    </div>
+  )
 }
+// }
 
 export default App

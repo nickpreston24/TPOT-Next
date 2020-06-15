@@ -1,26 +1,30 @@
 import React from 'react'
 import Link from 'next/link'
 import Dashboard from '../../components/Dashboard'
-import {  observer } from 'mobx-react'
-import { compose } from 'recompose'
+// import { observer } from 'mobx-react'
+// import { compose } from 'recompose'
 import { CheckoutTable } from '../../components/checkout'
 import { Box, Chip } from '@material-ui/core'
+import { useAuth } from '@hooks'
+import { tableState } from '@components/checkout/TableState'
 
 const Checkout = props => {
-  const { store } = props
-  console.log('store :>> ', store);
-  const { sessions } = store
+  
+  const auth = useAuth();
+
+  const { sessions } = tableState
+
+  console.log('sessions :>> ', sessions);
   return (
-      
-        <Dashboard title="TPOT Scribe - Checkout">
-        <div>
-          {/* <h1>The candy man can</h1> */}
-            <Box width="100%" pt={4} display="flex" justifyContent="center">
-              <CheckoutTable {...{ sessions }} />
-            </Box>
-        </div>
-        </Dashboard>
-      
+
+    <Dashboard title="TPOT Scribe - Checkout">
+      <div>
+        <Box width="100%" pt={4} display="flex" justifyContent="center">
+          <CheckoutTable {...{ sessions }} />
+        </Box>
+      </div>
+    </Dashboard>
+
   )
 }
 

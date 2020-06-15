@@ -2,8 +2,15 @@ import { SCRIBE, TPOT, ACCOUNT, HOME, LOGIN } from '../../constants/routes'
 import ZeitContainer from './ZeitContainer.tsx'
 import ZeitCard from './ZeitCard.tsx'
 
+// import { useAuth } from '@hooks'
+
 export const LandingLayout = () => {
+
+    // const auth = useAuth();
+    // console.log('auth :>> ', auth);
+
     return (
+
         <div className="grid">
             <ZeitContainer >
                 <ZeitCard
