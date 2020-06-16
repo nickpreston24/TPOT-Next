@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
 import Dashboard from '../../../components/Dashboard'
-import Editor from 'tpot-scribe-editor'
+import Editor from '../../../components/CKEditor'
 import Button from '@material-ui/core/Button'
 
 const Page = props => {

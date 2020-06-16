@@ -68,19 +68,21 @@ export class PublishService {
     }
 
     getWordPressCredentials(db: any) {
-        db.collection('public')
-            .doc('wp-credentials')
-            .get()
-            .then((documentSnapshot) => {
-                if (!!documentSnapshot) {
-                    resolve(documentSnapshot.data())
-                } else {
-                    resolve(null)
-                }
-            })
-            .catch(err => {
-                reject(err)
-            })
+        return new Promise((resolve, reject) =>
+            db.collection('public')
+                .doc('wp-credentials')
+                .get()
+                .then((documentSnapshot) => {
+                    if (!!documentSnapshot) {
+                        resolve(documentSnapshot.data())
+                    } else {
+                        resolve(null)
+                    }
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        )
     }
 }
 

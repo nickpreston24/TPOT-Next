@@ -23,6 +23,7 @@
     "@material-ui/lab": "^4.0.0-alpha.53",
     "@material-ui/styles": "^4.9.14",
     "@zeit/next-css": "^1.0.1",
+    "ckeditor5-build-fully-featured": "file:./packages/ckeditor5-build-fully-featured",
     "create-node": "^2.0.3",
     "domwalk": "^1.1.0",
     "dotenv": "^8.2.0",
