@@ -1,9 +1,9 @@
-import 'ckeditor5-build-fully-featured/sample/styles.css'
+import '../../packages/ckeditor5-build-fully-featured/sample/styles.css'
 import React, { useRef } from 'react'
 import CKEditor from '@ckeditor/ckeditor5-react'
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector'
 // import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document'
-import DecoupledEditor from 'ckeditor5-build-fully-featured'
+import DecoupledEditor from '../../packages/ckeditor5-build-fully-featured'
 
 
 
