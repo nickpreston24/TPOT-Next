@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import MaterialTable from 'material-table'
-import { Box } from '@material-ui/core'
+import { Box, Chip } from '@material-ui/core'
 import columns from './columns'
 import StyledTableBody from './StyledTableBody'
 import { observer } from 'mobx-react'
@@ -8,6 +8,9 @@ import { observable, toJS } from 'mobx'
 import UploadButton from './UploadButton'
 import moment from 'moment'
 import SessionStore from '../../stores/SessionStore'
+import * as ROUTES from '@routes'
+import ZeitLinkButton, { ButtonLink } from '@components/experimental'
+import StatusChip from '../StatusChip'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -23,7 +26,6 @@ export const CheckoutTable = observer(() => {
     const [data, setData] = useState([]);
 
     const sessionStore = useContext(SessionStore);
-    // console.log('sessionStore :>> ', toJS(sessionStore.sessions.docs))
 
     const {
         sessions
@@ -48,9 +50,14 @@ export const CheckoutTable = observer(() => {
 
     useEffect(() => {
         console.log('loading data...')
-        let data = []
-        // console.log('sessions :>> ', sessions.docs);
-        sessions.docs.map(document => {
+        let results = [
+            // {
+            //     id: 2,
+            //     status: 'in-progress'
+            // }
+        ]
+        console.log('array :>> ', toJS(sessions.docs));
+        toJS(sessions.docs).map(document => {
             console.log('document :>> ', document);
             let entry = toJS(document.data)
             let id = document.id
@@ -60,7 +67,7 @@ export const CheckoutTable = observer(() => {
             if (!date_modified || !date_uploaded) { return }
             date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
             date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-            data.push({
+            results.push({
                 ...entry,
                 id,
                 status,
@@ -71,14 +78,44 @@ export const CheckoutTable = observer(() => {
             })
         })
 
-        console.log('data :>> ', data);
-    }, [data]);
+        console.log('data :>> ', results);
+
+        setData(results)
+    }, []);
 
 
 
     return (
         <Box fontFamily="'Poppins', sans-serif" width={900}>
-            <MaterialTable
+            <div>
+                {
+                    sessions.docs.map((doc) => {
+                        let { status, date_modified, date_uploaded, title } = doc.data
+                        let id = doc.id;
+                        let date_modified_timestamp = date_modified
+                        status = status || 'in-progress'
+                        if (!date_modified || !date_uploaded) { return }
+                        date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
+                        date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
+                        console.log('id:', `/scribe/edit/${id}`)
+                        return (
+                            <>
+                                <h5>{title} - {id}</h5>
+                                <StatusChip status={status} />
+                                <Chip
+                                    label='Check out'
+                                    title={title}
+                                    component={ButtonLink}
+                                    href='/scribe/edit/[doc]'
+                                    as={`/scribe/edit/${id}`}
+                                    clickable
+                                />
+                            </>
+                        )
+                    })
+                }
+            </div>
+            {/* <MaterialTable
                 title="Checkout"
                 columns={columns}
                 data={data}
@@ -87,7 +124,7 @@ export const CheckoutTable = observer(() => {
                 onChangePage={changePage}
                 onChangeRowsPerPage={changeRowsPerPage}
                 onOrderChange={orderChange}
-                detailPanel={paper => <TableDetails {...{ paper, store }} />}
+                detailPanel={paper => <TableDetails paper={paper} />}
                 components={{ Container: props => <StyledTableBody {...props} /> }}
                 options={{
                     // search: search,
@@ -128,7 +165,7 @@ export const CheckoutTable = observer(() => {
                         onClick: () => null
                     }
                 ]}
-            />
+            /> */}
         </Box>
     )
 })

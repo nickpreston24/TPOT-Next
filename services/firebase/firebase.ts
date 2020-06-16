@@ -201,18 +201,15 @@ export const db = app.firestore();
 //         // })
 //     }
 
-//     unlock = async id => {
-//         return new Promise(async (resolve, reject) => {
-//             // console.log(`Unlock Document by ID: ${id}`)
-//             // let requestedDocument = new Document(`sessions/${id}`)
-//             // await requestedDocument.fetch()
-//             // requestedDocument.update({
-//             //     status: 'in-progress'
-//             // })
-//             //     .then(resolve)
-//             //     .catch(reject)
-//         })
-//     }
+export const unlock = async id => {
+    // return new Promise(async (resolve, reject) => {
+    console.log(`Unlock Document by ID: ${id}`)
+    let requestedDocument = new Document(`sessions/${id}`)
+    await requestedDocument.fetch()
+    return requestedDocument.update({
+        status: 'in-progress'
+    })
+}
 
 //     // upload = async (file) => {
 

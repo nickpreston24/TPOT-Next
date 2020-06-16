@@ -16,7 +16,8 @@
           "@constants": "./constants",
           "@helpers": "./helpers",
           "@plugins": "./components/Editor/plugins",
-          "@contexts": "./contexts"
+          "@contexts": "./contexts",
+          "@routes": "./constants/routes"
         }
       }
     ],

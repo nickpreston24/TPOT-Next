@@ -2,11 +2,30 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@app/*": [
-                "app/*"
+            "@components": [
+                "./components",
+                "./components/experimental"
             ],
-            "@internals/": [
-                "internals/"
+            "@services": [
+                "./services"
+            ],
+            "@stores": [
+                "./stores"
+            ],
+            "@hooks": [
+                "./hooks"
+            ],
+            "@constants": [
+                "./constants"
+            ],
+            "@helpers": [
+                "./helpers"
+            ],
+            "@plugins": [
+                "./components/Editor/plugins"
+            ],
+            "@contexts": [
+                "./contexts"
             ]
         }
     },

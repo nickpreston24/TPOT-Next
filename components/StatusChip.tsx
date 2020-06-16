@@ -21,6 +21,8 @@ const StatusChip: FC<ChipProps> = (props: ChipProps) => {
 
 // An adapter method that converts our dash-delimited status values to strings our Enums and Labels can recognize
 const toTitleCase = (text: string, delimiter: string = ' ') => {
+    if (!text)
+        throw new Error('Text cannot be null')
     let sentence = text.toLowerCase().split(delimiter)
     for (let i = 0; i < sentence.length; i++) {
         sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1)

@@ -9,7 +9,6 @@ import { details } from './DetailState'
 
 
 /**
- * @param {*} store
  * @descripion 
  * TableDetails is a class that is plugged in as a prop for the CheckoutTable
  * It displays additional information on dropdown of a row item. Clicking on
@@ -56,7 +55,7 @@ const TableDetails = compose(observer)(
         render() {
             // const { store, paper } = this.props
             // let { allowUnlock } = this
-            let { checkout, unlock } = store
+            // let { checkout, unlock } = store
             let { id, slug, excerpt, docx, date_uploaded, filename } = this.paper
             docx = !!docx ? docx : ''
             filename = !!filename ? filename : 'Document'
