@@ -13,7 +13,9 @@
           "@stores": "./stores",
           "@components": "./components",
           "@hooks": "./hooks",
-          "@constants": "./constants"
+          "@constants": "./constants",
+          "@helpers":"./helpers",
+          "@plugins":"./components/Editor/plugins"
         }
       }
     ],

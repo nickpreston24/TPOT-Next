@@ -1,6 +1,7 @@
 import { CheckoutStatus, CheckoutColors } from '../constants/session-statuses'
 import { Chip } from '@material-ui/core'
 import { FC } from 'react'
+import { getKeyByValue } from '@helpers/ObjectHelpers'
 
 interface ChipProps {
     status: string
@@ -18,8 +19,6 @@ const StatusChip: FC<ChipProps> = (props: ChipProps) => {
     )
 }
 
-const getKeyByValue: any = (obj: any, value: string) => Object.entries(obj).find(([, name]) => value === name)
-
 // An adapter method that converts our dash-delimited status values to strings our Enums and Labels can recognize
 const toTitleCase = (text: string, delimiter: string = ' ') => {
     let sentence = text.toLowerCase().split(delimiter)
@@ -29,9 +28,6 @@ const toTitleCase = (text: string, delimiter: string = ' ') => {
     return sentence.join(' ')
 }
 
-// const toPascalCase = (word: string) =>
-//     word.replace(/(\w)(\w*)/g, // split into word character groups
-//         (group1, group2) =>
-//             group1.toUpperCase() + group2.toLowerCase()) // make second group(s) uppercased
+
 
 export default StatusChip
