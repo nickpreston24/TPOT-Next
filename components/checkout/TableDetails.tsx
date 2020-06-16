@@ -6,7 +6,6 @@ import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { compose } from 'recompose'
 
 import { details } from './DetailState'
-import { store } from "../../stores/root"
 
 
 /**

@@ -6,23 +6,20 @@ import Dashboard from '../../components/Dashboard'
 import { CheckoutTable } from '../../components/checkout'
 import { Box, Chip } from '@material-ui/core'
 import { useAuth } from '@hooks'
-import { tableState } from '@components/checkout/TableState'
+import { SessionProvider } from '@contexts/Session'
+// import { sessionStore } from '../../stores/SessionStore'
 
 const Checkout = props => {
-  
+
   const auth = useAuth();
+  // console.log('sessions :>> ', sessionStore);
 
-  const { sessions } = tableState
-
-  console.log('sessions :>> ', sessions);
   return (
 
     <Dashboard title="TPOT Scribe - Checkout">
-      <div>
-        <Box width="100%" pt={4} display="flex" justifyContent="center">
-          <CheckoutTable {...{ sessions }} />
-        </Box>
-      </div>
+      <Box width="100%" pt={4} display="flex" justifyContent="center">
+        <CheckoutTable />
+      </Box>
     </Dashboard>
 
   )

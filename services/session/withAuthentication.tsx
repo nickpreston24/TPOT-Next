@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-// import { AuthUserContext } from '../session';
 import { AuthUserContext } from '../firebase/AuthUserContext';
-// import { withFirebase } from '../firebase';
-
 import { firebase } from "../firebase";
 
 interface InterfaceProps {

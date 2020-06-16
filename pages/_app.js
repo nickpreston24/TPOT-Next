@@ -1,24 +1,21 @@
 import React from 'react'
-import App from 'next/app'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { Provider as MobxProvider } from 'mobx-react'
-import { withAuthentication } from '../services/session'
-
 import { ProvideAuth } from '../hooks/useAuth'
 
+// import App from 'next/app'
+// import { Provider as MobxProvider } from 'mobx-react'
 // import { withAuthentication } from '../services/session'
 // import { fetchInitialStoreState, store } from '../stores/Root.ts'
 // import DialogProvider from '../hoc/DialogProvider'
-
 
 const MobxApp = (props) => {
 
   /* Page Props ver. */
 
   let { Component, pageProps } = props
-  let AuthorizedApp = withAuthentication(Component)
-  console.log('pageProps :>> ', pageProps);
+  // let AuthorizedApp = withAuthentication(Component)
+  // console.log('pageProps :>> ', pageProps);
 
   return (
     <ProvideAuth>

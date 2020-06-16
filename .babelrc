@@ -14,8 +14,9 @@
           "@components": "./components",
           "@hooks": "./hooks",
           "@constants": "./constants",
-          "@helpers":"./helpers",
-          "@plugins":"./components/Editor/plugins"
+          "@helpers": "./helpers",
+          "@plugins": "./components/Editor/plugins",
+          "@contexts": "./contexts"
         }
       }
     ],

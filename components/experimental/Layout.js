@@ -12,12 +12,7 @@ export const LandingLayout = () => {
     return (
 
         <div className="grid">
-            <ZeitContainer >
-                <ZeitCard
-                    url="home"
-                    title="Home"
-                    text='Go Home'
-                />
+            <ZeitContainer >                
                 <ZeitCard
                     url={LOGIN}
                     title="Login"

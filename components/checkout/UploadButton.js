@@ -3,7 +3,8 @@ import { uploadLocalFile } from '../Editor/functions/uploader';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { observer } from 'mobx-react';
 import { Box } from '@material-ui/core';
-const UploadButton = observer(({ store }) => {
+
+const UploadButton = () => {
     return (
         <Box width={24} height={20} p={0} m={0} mt="4px" display="flex" alignItems="center" justifyContent="center">
             <input
@@ -17,11 +18,13 @@ const UploadButton = observer(({ store }) => {
                     let file = files[0];
                     if (!file)
                         return;
-                    uploadLocalFile(file, store);
+                    uploadLocalFile(file);
                 }} />
             <label htmlFor="upload-button-input" style={{ margin: 12 }}>
                 <CloudUploadIcon />
             </label>
         </Box>
     );
-});
+};
+
+export default UploadButton

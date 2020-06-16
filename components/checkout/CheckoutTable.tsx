@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { compose } from 'recompose'
-import { uploadLocalFile } from '../Editor/functions/uploader'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 import { withStyles } from '@material-ui/styles'
@@ -11,8 +10,6 @@ import moment from 'moment'
 import { Box, Button, Chip, Link as MLink, Paper } from '@material-ui/core'
 
 import columns from './columns';
-import { tableState } from './TableState'
-import { store } from '../../stores/Root';
 import TableDetails from './TableDetails'
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
