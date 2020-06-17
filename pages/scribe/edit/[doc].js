@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
 import Dashboard from '../../../components/Dashboard'
-import Editor from '../../../components/CKEditor'
+import Editor from 'tpot-scribe-editor'
 import Button from '@material-ui/core/Button'
 
 const Page = props => {
@@ -21,7 +21,7 @@ const Page = props => {
       // details={() => <DocumentDetails {...{ document }} />}
     >
       <Button onClick={getHTML}>Get Editor HTML</Button>
-      <Editor ref={ref} style={{width: '100%'}}/>
+      <Editor ref={ref} />
     </Dashboard>
   )
 }
