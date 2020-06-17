@@ -15,7 +15,7 @@ import { Box, Button, Collapse, Link as MLink, Paper } from '@material-ui/core'
 
 import StatusChip from '../StatusChip'
 
-import { details } from './DetailState'
+import { details } from '../../stores/DocumentDetailStore'
 
 /**
  * @param {*} store

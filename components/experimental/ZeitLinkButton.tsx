@@ -14,7 +14,7 @@ export type ButtonLinkProps = Omit<ButtonProps, 'href' | 'classes'> &
     Pick<LinkProps, 'href' | 'as' | 'prefetch'>
 
 export const ButtonLink = React.forwardRef<ButtonLinkProps, any>(
-    ({ href, as, prefetch, ...props }, ref) => (
+    ({ href = '/', as = '/', prefetch, ...props }, ref) => (
         <Link href={href} as={as} prefetch={prefetch} passHref>
             <Button ref={ref} {...props} />
         </Link>

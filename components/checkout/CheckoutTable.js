@@ -48,17 +48,16 @@ export const CheckoutTable = observer(() => {
 
     } = sessionStore;
 
+
+    // TODO: Set results to the data array for render.
     useEffect(() => {
-        console.log('loading data...')
         let results = [
             // {
             //     id: 2,
             //     status: 'in-progress'
             // }
         ]
-        console.log('array :>> ', toJS(sessions.docs));
         toJS(sessions.docs).map(document => {
-            console.log('document :>> ', document);
             let entry = toJS(document.data)
             let id = document.id
             let { status, date_modified, date_uploaded, contributors } = entry
@@ -78,12 +77,8 @@ export const CheckoutTable = observer(() => {
             })
         })
 
-        console.log('data :>> ', results);
-
         setData(results)
     }, []);
-
-
 
     return (
         <Box fontFamily="'Poppins', sans-serif" width={900}>

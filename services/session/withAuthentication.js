@@ -7,11 +7,7 @@ import { AuthUserContext } from '../firebase/AuthUserContext';
 
 // const withAuthentication = Component => {
 
-
-
 //     const [authUser, setAuthUser] = useState(null);
-
-
 //     return (
 //         <AuthUserContext.Provider value={authUser}>
 //             <Component />

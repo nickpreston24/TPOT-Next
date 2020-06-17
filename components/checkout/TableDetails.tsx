@@ -5,7 +5,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { compose } from 'recompose'
 
-import { details } from './DetailState'
+import { details } from '../../stores/DocumentDetailStore'
 
 
 /**

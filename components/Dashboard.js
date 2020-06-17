@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import {Header} from './header'
+import { Header } from './header'
 import Box from '@material-ui/core/Box'
 import Page from './Page'
 
 class Dashboard extends Component {
 
   render() {
-    const { children, title, details } = this.props    
+    const { children, title, details } = this.props
 
     return (
       <Page title={title}>

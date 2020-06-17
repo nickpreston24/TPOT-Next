@@ -1,27 +1,37 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
+import { Document as FireStorterDocument } from 'firestorter'
+import { observer } from 'mobx-react'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { compose } from 'recompose'
+import Dashboard from '@components/Dashboard'
+// import { DocumentDetails, DocumentForm, DocumentEditor } from '@components/Document'
 import PropTypes from 'prop-types'
-import Dashboard from '../../../components/Dashboard'
 import Editor from 'tpot-scribe-editor'
-import Button from '@material-ui/core/Button'
+import { Box } from '@material-ui/core'
+import { WordPressToolbar } from './WordPressToolbar'
 
 const Page = props => {
 
   const { id } = props
 
-  const ref = useRef(null)
+  const ckeditorRef = useRef(null)
 
-  const getHTML = () => {
-    const HTML = ref.current.editor.getData()
+  const getHtml = () => {
+    const HTML = ckeditorRef.current.editor.getData()
     console.log(HTML)
   }
 
   return (
     <Dashboard
       title={`TPOT Scribe - Edit - ${id}`}
-      // details={() => <DocumentDetails {...{ document }} />}
+    // details={() => <DocumentDetails {...{ document }} />}
     >
-      <Button onClick={getHTML}>Get Editor HTML</Button>
-      <Editor ref={ref} />
+      <Box
+        height="100%"
+      >
+        <Editor ref={ckeditorRef} />
+        <WordPressToolbar {...{ getHtml }} />
+      </Box>
     </Dashboard>
   )
 }
@@ -38,15 +48,6 @@ Page.getInitialProps = async context => {
 }
 
 export default Page
-
-// import { Document as FireStorterDocument } from 'firestorter'
-// import { observer, PropTypes as MobXPropTypes } from 'mobx-react'
-// import React, { useState } from 'react'
-// import CircularProgress from '@material-ui/core/CircularProgress'
-// import { compose } from 'recompose'
-// import PropTypes from 'prop-types'
-// import Dashboard from '../../../components/Dashboard'
-// import { DocumentDetails, DocumentForm, DocumentEditor } from '../../../components/Document'
 
 // // : Document is the dynamic route page for Scribe's editable documents
 // // : It fetches data for the given paper based on the route and provides
