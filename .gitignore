@@ -7,6 +7,7 @@
 
 # testing
 /coverage
+/test
 
 # next.js
 /.next/
@@ -35,4 +36,4 @@ yarn-error.log*
 .idea/
 
 # Local Netlify folder
-.netlify
+.netlify/
