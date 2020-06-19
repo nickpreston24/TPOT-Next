@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
-import { LandingLayout } from '../components/experimental/Layout'
+import { Layout } from '../components/experimental/Layout'
 import Head from 'next/head'
-// import { withAuthentication } from '../services/session'
 
 const App = () => {
-  // render() {
   return (
     <div title="TPOT Toolbox" className="container">
       <Head>
@@ -21,7 +19,7 @@ const App = () => {
           Get started by Checking out a Document!
           </p>
 
-        <LandingLayout />
+        <Layout />
       </main>
 
       <style jsx>{`
@@ -141,6 +139,5 @@ const App = () => {
     </div>
   )
 }
-// }
 
 export default App

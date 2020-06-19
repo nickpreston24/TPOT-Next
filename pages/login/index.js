@@ -7,6 +7,8 @@ import { useAuth } from "@hooks"
 import { ZeitLinkButton, ZeitButton, ButtonLink } from "@components/experimental"
 import { Chip } from '@material-ui/core'
 
+import ProductList from "@bit/tpot-next.react-tutorial.product-list"
+
 const Login = () => {
 
     const auth = useAuth();
@@ -34,7 +36,7 @@ const Login = () => {
                 clickable
 
             />
-
+            <ProductList />
             {/* <ZeitLinkButton
                 label='Go Back'
                 title='test'
