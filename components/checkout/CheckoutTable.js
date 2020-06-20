@@ -49,7 +49,7 @@ export const CheckoutTable = observer(() => {
     } = sessionStore;
 
 
-    // TODO: Set results to the data array for render.
+    // TODO: Set results to the data array for render in checkout's render().
     useEffect(() => {
         let results = [
             // {
@@ -84,7 +84,7 @@ export const CheckoutTable = observer(() => {
         <Box fontFamily="'Poppins', sans-serif" width={900}>
             <div>
                 {
-                    sessions.docs.map((doc) => {
+                    sessions.docs.map((doc, index) => {
                         let { status, date_modified, date_uploaded, title } = doc.data
                         let id = doc.id;
                         let date_modified_timestamp = date_modified
@@ -94,7 +94,7 @@ export const CheckoutTable = observer(() => {
                         date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
                         console.log('id:', `/scribe/edit/${id}`)
                         return (
-                            <>
+                            <div key={index}>
                                 <h5>{title} - {id}</h5>
                                 <StatusChip status={status} />
                                 <Chip
@@ -105,7 +105,7 @@ export const CheckoutTable = observer(() => {
                                     as={`/scribe/edit/${id}`}
                                     clickable
                                 />
-                            </>
+                            </div>
                         )
                     })
                 }
