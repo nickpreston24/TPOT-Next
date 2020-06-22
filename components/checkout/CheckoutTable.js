@@ -11,6 +11,7 @@ import SessionStore from '../../stores/SessionStore'
 import * as ROUTES from '@routes'
 import ZeitLinkButton, { ButtonLink } from '@components/experimental'
 import StatusChip from '../StatusChip'
+import { useSessions } from '@hooks'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -18,70 +19,76 @@ import StatusChip from '../StatusChip'
 // else is editing a document, you will see the table update with the status change.
 // It is the springboard for checking out a document, unlocking, or uploading a new
 // document to firestore for editing. It is also offers a way to download documents.
-// @observer
-// export 
-export const CheckoutTable = observer(() => {
+
+const CheckoutTable = observer(() => {
 
     const tableRef = React.createRef()
-    const [data, setData] = useState([]);
 
-    const sessionStore = useContext(SessionStore);
+    const sessions = useSessions();
+    // console.log('sessions (from hook) :>> ', sessions.docs.length);
 
-    const {
-        sessions
-        , loading
-        , prevDocument
-        , page
-        , pageSize
-        , filter
-        , direction
-        , query
-        , totalCount
+    // const [data, setData] = useState([]);
 
-        , changePage
-        , changeRowsPerPage
-        , setTotalCount
-        , updateQuery
-        , queryBuilder
-        , setLoading
-        , orderChange
+    // const sessionStore = useContext(SessionStore);
 
-    } = sessionStore;
+    // const {
+    //     sessions
+    //     , loading
+    //     , prevDocument
+    //     , page
+    //     , pageSize
+    //     , filter
+    //     , direction
+    //     , query
+    //     , totalCount
+
+    //     , changePage
+    //     , changeRowsPerPage
+    //     , setTotalCount
+    //     , updateQuery
+    //     , queryBuilder
+    //     , setLoading
+    //     , orderChange
+
+    // } = sessionStore;
 
 
-    // TODO: Set results to the data array for render in checkout's render().
-    useEffect(() => {
-        let results = [
-            // {
-            //     id: 2,
-            //     status: 'in-progress'
-            // }
-        ]
-        toJS(sessions.docs).map(document => {
-            let entry = toJS(document.data)
-            let id = document.id
-            let { status, date_modified, date_uploaded, contributors } = entry
-            let date_modified_timestamp = date_modified
-            status = status || 'in-progress'
-            if (!date_modified || !date_uploaded) { return }
-            date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-            date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-            results.push({
-                ...entry,
-                id,
-                status,
-                date_modified,
-                date_uploaded,
-                date_modified_timestamp,
-                author: contributors,
-            })
-        })
+    // // TODO: Set results to the data array for render in checkout's render().
+    // useEffect(() => {
+    //     let results = [
+    //         // {
+    //         //     id: 2,
+    //         //     status: 'in-progress'
+    //         // }
+    //     ]
+    //     toJS(sessions.docs).map(document => {
+    //         let entry = toJS(document.data)
+    //         let id = document.id
+    //         let { status, date_modified, date_uploaded, contributors } = entry
+    //         let date_modified_timestamp = date_modified
+    //         status = status || 'in-progress'
+    //         if (!date_modified || !date_uploaded) { return }
+    //         date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
+    //         date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
+    //         results.push({
+    //             ...entry,
+    //             id,
+    //             status,
+    //             date_modified,
+    //             date_uploaded,
+    //             date_modified_timestamp,
+    //             author: contributors,
+    //         })
+    //     })
 
-        setData(results)
-    }, []);
+    //     setData(results)
+    // }, []);
 
     return (
-        <Box fontFamily="'Poppins', sans-serif" width={900}>
+        // <Box fontFamily="'Poppins', sans-serif" width={900}>
+            <Row
+                align
+             >
             <div>
                 {
                     sessions.docs.map((doc, index) => {
@@ -92,7 +99,7 @@ export const CheckoutTable = observer(() => {
                         if (!date_modified || !date_uploaded) { return }
                         date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
                         date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-                        {/* console.log('id:', `/scribe/edit/${id}`) */}
+                        {/* console.log('id:', `/scribe/edit/${id}`) */ }
                         return (
                             <div key={index}>
                                 <h5>{title} - {id}</h5>
@@ -110,6 +117,8 @@ export const CheckoutTable = observer(() => {
                     })
                 }
             </div>
+
+
             {/* <MaterialTable
                 title="Checkout"
                 columns={columns}
@@ -161,6 +170,9 @@ export const CheckoutTable = observer(() => {
                     }
                 ]}
             /> */}
-        </Box>
+            </Row>
+        // </Box>
     )
 })
+
+export default CheckoutTable;

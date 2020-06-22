@@ -26,7 +26,7 @@ export interface WordPressPaper extends WordPressPost {
 * My best understanding is that Paper is specialized Post.
 * I'm keeping Post alive just in case I need to support it.
 */
-export class Paper extends Post implements WordPressPaper{
+export class Paper extends Post implements WordPressPaper {
 
     title: string;
     url: string;
@@ -36,15 +36,14 @@ export class Paper extends Post implements WordPressPaper{
     content: string;
 
     constructor(title: string = null, url: string = null) {
-        super()
-        Object.assign(this, { title, url })
+        super({ title, url })
     }
 
     static Create(): Paper {
         return new Paper()
     }
 
-    // Sample:
+    // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:
     private validName(name: string) {
         if (name.length > 0 && /^[a-zA-Z]+$/.test(name)) {
             return true

@@ -62,8 +62,6 @@ const Login = () => {
                         handleChange,
                         handleBlur,
                         handleSubmit,
-                        isSubmitting,
-                        /* and other goodies */
                     }) => (
                             <form onSubmit={handleSubmit}>
                                 <input
@@ -86,7 +84,6 @@ const Login = () => {
                                 <br />
                                 <ZeitButton
                                     type="submit"
-                                    disabled={isSubmitting} // FIXME: Roll this into ZeitButton's props.
                                     text='Sign In'
                                 />
                                 <Chip

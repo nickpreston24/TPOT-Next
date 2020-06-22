@@ -1,7 +1,10 @@
-import { Collection, Mode } from 'firestorter'
-import { observable, action, autorun } from 'mobx'
-import '@services/firebase'
+// import { Collection, Mode } from 'firestorter'
+import { observable, action, autorun, computed } from 'mobx'
+// import '@services/firebase'
 import { createContext } from 'react'
+
+import '@services/firebase'
+import { Collection } from 'firestorter'
 
 class SessionStore {
 
@@ -15,12 +18,20 @@ class SessionStore {
     @observable query = null
     @observable totalCount = 0
 
-    @action countTotalDocs = async () => {
-        // let options = new ICollectionOptions {{Mode.Off}}
-        let collection = await new Collection('sessions', {
-            // Mode = Mode.Off                
-        }).fetch()
-        this.totalCount = collection.docs.length
+    //     @action countTotalDocs = async () => {
+    //         // let options = new ICollectionOptions {{Mode.Off}}
+    //         console.log('This is the Collection you are looking for ... ')
+    // console.log('this.sessions.docs.length :>> ', this.sessions.docs.length);
+    //         return this.sessions.docs.length
+
+    //         // let collection = await new Collection('sessions', {
+    //         //     // Mode = Mode.Off                
+    //         // }).fetch()
+    //         // this.totalCount = collection.docs.length
+    //     }
+
+    @computed get count() {
+        return this.sessions.docs.length
     }
 
     @action orderChange = (colID, direction) => {
@@ -51,7 +62,7 @@ class SessionStore {
         filter = !!filter ? 'title' : 'status'
         direction = !!filter ? 'asc' : direction
 
-        await this.countTotalDocs()
+        // await this.countTotalDocs()
         await this.updateQuery(
             collectionRef => {
                 return collectionRef
@@ -72,4 +83,5 @@ class SessionStore {
 // export default Sessions;
 
 
-export default createContext(new SessionStore());
+// export default createContext(new SessionStore());
+export default SessionStore;
