@@ -1,4 +1,4 @@
-import Firebase from '.'
+import Firebase from '../firebase'
 
 export class FirebaseUserService {
     db: any

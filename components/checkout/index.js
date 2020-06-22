@@ -1,4 +1,4 @@
-import { CheckoutTable } from './CheckoutTable.tsx'
+import { CheckoutTable } from './CheckoutTable'
 
 export {
     CheckoutTable

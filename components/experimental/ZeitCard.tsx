@@ -12,9 +12,11 @@ const ZeitCard: FC<ZeitCardProps> = (
         url = null
         , title = ''
         , text = ''
-    }: {
-        url: string, title: string, text: string
-    }) => {
+    }
+    // : {
+    //     url: string, title: string, text: string
+    // } // idk why I did this, but hey, it worked before!
+    ) => {
     return (
         !title
             ? <></>
@@ -32,7 +34,7 @@ const ZeitCard: FC<ZeitCardProps> = (
                     text-align: left;
                     color: inherit;
                     text-decoration: none;
-                    border: 1px solid #eaeaea;
+                    // border: 1px solid #eaeaea;
                     border-radius: 10px;
                     transition: color 0.15s ease, border-color 0.15s ease;
                 }

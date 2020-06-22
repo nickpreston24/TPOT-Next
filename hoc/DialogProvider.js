@@ -1,16 +1,17 @@
 import React from 'react'
-import { observer, inject } from 'mobx-react'
 import { withDialog } from 'muibox'
 import { DialogProvider as DialogBox } from 'muibox'
 
+
+/**
+ * MP: What is this, why do we need it and why does it require a store?
+ */
 const DialogProvider = props => (
     <DialogBox>
         <WithDialogConsumer {...props}/>
     </DialogBox>
 )
 
-@inject('store')
-@observer
 class DialogConsumer extends React.Component {
 
     componentDidMount() {

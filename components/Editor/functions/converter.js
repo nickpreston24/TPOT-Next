@@ -388,6 +388,7 @@ const flattenStyles = async (baseDom, augDom) => {
             // $('#cat')[0].children
             // element.children
 
+            console.log('getParentsUntil :>> ', getParentsUntil);
             let blockChildren = getParentsUntil(icingNode.parentElement, 'div')[0].children
             //TODO: figure out why, even though blockChildren 1 and 2 are identical, the targetElements is undefined at line 403
 //            console.log('until result', blockChildren);

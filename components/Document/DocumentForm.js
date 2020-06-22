@@ -2,7 +2,7 @@ import MobxReactForm from 'mobx-react-form'
 import dvr from 'mobx-react-form/lib/validators/DVR'
 import React, { Component } from 'react'
 import validatorjs from 'validatorjs'
-import { inject, observer } from 'mobx-react'
+import {  observer } from 'mobx-react'
 import { toJS } from 'mobx'
 
 // : DocumentForm is a wrapper that provides a prop, {form} that can be used by
@@ -10,8 +10,6 @@ import { toJS } from 'mobx'
 // : be added, with something like Typescript to mirror the schema that is in
 // : Firebase but validating it locally here to get it perfect on every submit. 
 
-@inject('store')
-@observer
 class DocumentForm extends Component {
 
     // Actions to take when the document page is mounted

@@ -9,12 +9,15 @@ const ZeitButton: FC<ButtonProps> = ({
     color
     , backgroundColor
     , onClick
-    , text = 'click'
+    , text
+    , ...rest
 }) => {
     return <button
         title={text}
         style={{ backgroundColor, color }}
-        onClick={onClick}>{text}</button>
-} 
+        onClick={onClick}>{text}
+        {/* {... { rest }} */}
+    </button>
+}
 
 export default ZeitButton

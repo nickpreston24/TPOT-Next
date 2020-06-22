@@ -14,6 +14,10 @@
     "reset-npm-proxy": "npm config delete http-proxy && npm config delete https-proxy && npm config rm proxy && npm config rm https-proxy && set HTTP_PROXY=null && set HTTPS_PROXY=null"
   },
   "dependencies": {
+    "@bit/bit.envs.compilers.react-typescript": "^3.1.53",
+    "@ckeditor/ckeditor5-build-classic": "^19.0.2",
+    "@ckeditor/ckeditor5-build-decoupled-document": "^19.0.2",
+    "@ckeditor/ckeditor5-react": "^2.1.0",
     "@cuties/cutie": "^1.7.6",
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
@@ -21,6 +25,7 @@
     "@material-ui/styles": "^4.9.14",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-typescript": "^1.1.1",
+    "babel-plugin-module-resolver": "^4.0.0",
     "create-node": "^2.0.3",
     "domwalk": "^1.1.0",
     "dotenv": "^8.2.0",
@@ -52,6 +57,7 @@
     "file2html-ooxml": "^0.2.2",
     "firebase": "^6.6.2",
     "firestorter": "^2.0.1",
+    "formik": "^2.1.4",
     "global": "^4.4.0",
     "immutable": "^4.0.0-rc.12",
     "mammoth-colors": "^1.0.2",
@@ -69,6 +75,7 @@
     "react-toastify": "^6.0.4",
     "recompose": "^0.30.0",
     "rxjs": "^6.5.5",
+    "simple-flexbox": "^2.3.1",
     "snake-case": "^3.0.3",
     "validatorjs": "^3.18.1",
     "wpapi": "^1.2.1"
@@ -79,10 +86,16 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@ckeditor/ckeditor5-inspector": "^2.1.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^7.0.0",
     "netlify-cli": "^2.51.0",
     "typescript": "^3.9.2"
+  },
+  "bit": {
+    "env": {},
+    "componentsDefaultDirectory": "components/{name}",
+    "packageManager": "npm"
   }
 }

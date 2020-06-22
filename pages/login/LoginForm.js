@@ -1,4 +1,4 @@
-import { observer, inject } from 'mobx-react'
+import { observer } from 'mobx-react'
 import MobxReactForm from 'mobx-react-form'
 import dvr from 'mobx-react-form/lib/validators/DVR'
 import React, { Component } from 'react'
@@ -8,11 +8,9 @@ import { toJS } from 'mobx'
 import { withRouter } from 'next/router'
 import Link from 'next/link'
 
-@inject('store')
-@observer
 @withRouter
 class LoginForm extends Component {
-    
+
     render() {
 
         const { router, store } = this.props

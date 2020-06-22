@@ -19,17 +19,17 @@ const UserCard = ({
                     <li>
                         <a href={`https://github.com/${login}?tab=repositories`}>
                             <strong>{public_repos}</strong>Repos
-          </a>
+                        </a>
                     </li>
                     <li>
                         <a href={`https://gist.github.com/${login}`}>
                             <strong>{public_gists}</strong>Gists
-          </a>
+                        </a>
                     </li>
                     <li>
                         <a href={`https://github.com/${login}/followers`}>
                             <strong>{followers}</strong>Followers
-          </a>
+                        </a>
                     </li>
                 </ul>
             </div>

@@ -1,25 +1,20 @@
-import { inject, observer } from "mobx-react"
+import { observer } from "mobx-react"
 import { Component } from "react"
 import { Collapse, Box, Button, Chip, Link as MLink, Paper } from "@material-ui/core"
 import EditIcon from '@material-ui/icons/Edit'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { compose } from 'recompose'
 
-import { details } from './DetailState'
-import { store } from "../../stores/root"
+import { details } from '../../stores/DocumentDetailStore'
 
 
 /**
- * @param {*} store
  * @descripion 
  * TableDetails is a class that is plugged in as a prop for the CheckoutTable
  * It displays additional information on dropdown of a row item. Clicking on
  * it also reveals actions that can be taken, like editing or unlocking the doc.
  */
-const TableDetails = compose(
-    inject('store'),
-    observer
-)(
+const TableDetails = compose(observer)(
     class extends Component {
         allowUnlock: boolean
         open: boolean
@@ -60,7 +55,7 @@ const TableDetails = compose(
         render() {
             // const { store, paper } = this.props
             // let { allowUnlock } = this
-            let { checkout, unlock } = store
+            // let { checkout, unlock } = store
             let { id, slug, excerpt, docx, date_uploaded, filename } = this.paper
             docx = !!docx ? docx : ''
             filename = !!filename ? filename : 'Document'

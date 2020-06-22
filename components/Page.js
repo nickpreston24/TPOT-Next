@@ -1,14 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
-import { observer } from 'mobx-react'
-import { compose } from 'recompose'
 import { Box } from '@material-ui/core'
 
 // : This component ensures that we always have a full height and width container for each page
 
-const Page = compose(
-  observer
-)(
+const Page = (
   ({ children, title }) =>
     <div>
       <Head>

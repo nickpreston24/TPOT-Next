@@ -1,5 +1,5 @@
 import EditorView from '../Editor/views/EditorView'
-import { inject, observer, PropTypes as MobXPropTypes } from 'mobx-react'
+import {  observer, PropTypes as MobXPropTypes } from 'mobx-react'
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { convertFromRaw, EditorState } from 'draft-js'
@@ -111,12 +111,7 @@ DocumentEditor.propTypes = {
   document: MobXPropTypes.objectOrObservableObject.isRequired,
 }
 
-export default compose(
-  inject('store'),
-  observer
-)(DocumentEditor)
-
-
+export default compose(observer)(DocumentEditor)
 
 // Auxillary Components
 

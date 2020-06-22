@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "baseUrl": ".",
+    "target": "es2020",
     "lib": [
       "dom",
       "dom.iterable",
@@ -35,7 +36,8 @@
     "stores/**/*",
     "components/**/*",
     "services/**/*",
-    "models/**/*"
+    "models/**/*",
+    "helpers/**/*"
   ],
   "exclude": [
     "node_modules",

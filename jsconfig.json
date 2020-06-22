@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@components": [
+                "./components",
+                "./components/experimental"
+            ],
+            "@services": [
+                "./services"
+            ],
+            "@stores": [
+                "./stores"
+            ],
+            "@hooks": [
+                "./hooks"
+            ],
+            "@constants": [
+                "./constants"
+            ],
+            "@helpers": [
+                "./helpers"
+            ],
+            "@plugins": [
+                "./components/Editor/plugins"
+            ],
+            "@contexts": [
+                "./contexts"
+            ]
+        }
+    },
+    "exclude": [
+        "out",
+    ]
+}

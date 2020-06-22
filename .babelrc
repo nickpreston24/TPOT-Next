@@ -5,6 +5,23 @@
   ],
   "plugins": [
     [
+      "module-resolver",
+      {
+        "root": "./",
+        "alias": {
+          "@services": "./services",
+          "@stores": "./stores",
+          "@components": "./components",
+          "@hooks": "./hooks",
+          "@constants": "./constants",
+          "@helpers": "./helpers",
+          "@plugins": "./components/Editor/plugins",
+          "@contexts": "./contexts",
+          "@routes": "./constants/routes"
+        }
+      }
+    ],
+    [
       "@babel/plugin-proposal-decorators",
       {
         "legacy": true

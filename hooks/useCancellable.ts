@@ -38,7 +38,7 @@ export function useCancellationToken(): CancellationToken {
     setMovies(result)
 }, [setMovies], cancellationToken)
  */
-export default function useCancellableEffect(action: () => void, dependencies: any[], cancellationToken: CancellationToken) {
+export function useCancellableEffect(action: () => void, dependencies: any[], cancellationToken: CancellationToken) {
     useEffect(() => {
         action()
     }, [...dependencies, cancellationToken])

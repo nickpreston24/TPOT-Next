@@ -1,7 +1,9 @@
 import { Collection, Mode } from 'firestorter'
 import { observable, action, autorun } from 'mobx'
+import '@services/firebase'
+import { createContext } from 'react'
 
-export default class TableState {
+class SessionStore {
 
     @observable sessions = new Collection('sessions')
     @observable loading = false
@@ -64,4 +66,10 @@ export default class TableState {
     })
 }
 
-export const tableState = new TableState();
+// export const sessionStore = new SessionStore();
+
+// const Sessions = createContext(new SessionStore());
+// export default Sessions;
+
+
+export default createContext(new SessionStore());

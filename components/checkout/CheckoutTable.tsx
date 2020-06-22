@@ -1,18 +1,15 @@
 import React, { Component } from 'react'
 import { compose } from 'recompose'
-import { uploadLocalFile } from '../Editor/functions/uploader'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 import { withStyles } from '@material-ui/styles'
 import MaterialTable, { Column } from 'material-table'
 import { action, autorun, observable, toJS } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import moment from 'moment'
 import { Box, Button, Chip, Link as MLink, Paper } from '@material-ui/core'
 
 import columns from './columns';
-import { tableState } from './TableState'
-import { store } from '../../stores/Root';
 import TableDetails from './TableDetails'
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -22,10 +19,7 @@ import TableDetails from './TableDetails'
 // document to firestore for editing. It is also offers a way to download documents.
 
 
-export const CheckoutTable = compose(
-    inject('store'),
-    observer
-)(
+export const CheckoutTable = compose(observer)(
     class CheckoutTable extends Component {
 
         tableRef = React.createRef()
