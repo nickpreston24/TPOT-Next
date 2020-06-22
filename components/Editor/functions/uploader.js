@@ -4,27 +4,63 @@ import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from
 import { EditorState, convertToRaw } from 'draft-js'
 import { toJS } from 'mobx'
 
-export const uploadLocalFile = async (file, store) => {
+/** TODO: @MP: Trim this firebase stuff down to bare minumum. 
+ *  We don't need everything and the kitchen sink, 
+ *  but I'm confused as to what parts are firebase, db, auth, etc. 
+ *  and how to properly init and use them,
+ *  thanks to guides renaming each as each other. */
+
+import app from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'firebase/storage'
+import { initFirestorter } from 'firestorter'
+// import { convertFile } from '../../components/Editor/functions/converter'
+
+const config = {
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_DATABASE_URL,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+}
+
+
+if (!app.apps.length) {
+    app.initializeApp(config);
+
+    initFirestorter({ firebase: app })
+    console.count('Firebase API -- init()')
+}
+
+import firebase from 'firebase'
+
+// console.log('firebase :>> ', firebase);
+
+export const uploadLocalFile = async (file, userName = null) => {
 
     // Check to make sure document has not already been uploaded before
 
-    const storageRef = await store.fb.storage.ref()
+    const storageRef = await firebase.storage().ref()
+    console.log('storageRef :>> ', storageRef);
 
     const getDocumentMetadata = (storageRef, filepath) => {
         return storageRef.child(filepath).getMetadata()
     }
 
-    console.log('file.name', file)
+    console.log('file name', file.name)
 
-    const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
+    // const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
+    //     .catch(console.error)
 
-    console.log('existingDoc.fullPath', existingDoc.fullPath)
+    // console.log('existingDoc.fullPath', existingDoc.fullPath)
 
-    if (existingDoc && file.name === existingDoc.fullPath) {
-        console.warn('Document already uploaded, exiting: ', existingDoc)
-        store.notify('Document already uploaded', 'error')
-        return
-    }
+    // if (existingDoc && file.name === existingDoc.fullPath) {
+    //     console.warn('Document already uploaded, exiting: ', existingDoc)
+    //     notify('Document already uploaded', 'error')
+    //     return
+    // }
 
     // Start formulating properties of the new document
 
@@ -35,12 +71,17 @@ export const uploadLocalFile = async (file, store) => {
         .replace('.docx', '')
         .trim()
 
+    console.log('title :>> ', title);
+
     let slug = (title)
         .replace(/\s/g, '-')
         .toLowerCase()
 
+    console.log('slug :>> ', slug);
+
     // Get the full, unadultured local conversion result
     let html = await convertFile(file)
+    console.log('html :>> ', !!html);
 
     // Create a session in firebase for the document
     if (!html) {
@@ -58,7 +99,7 @@ export const uploadLocalFile = async (file, store) => {
     // Build a full Document in the '/sessions' Collection
     const document = await new Collection('sessions').add({
         status: 'not-started',
-        contributors: store.authUser.email,
+        contributors: userName,
         date_uploaded: new Date(),
         date_modified: new Date(),
         draft: JSON.stringify(draftState),
@@ -80,10 +121,7 @@ export const uploadLocalFile = async (file, store) => {
     // Since the document doesn't already exist
     console.info(`Uploading Document to Storage: ${file.name}`)
 
-    const snapshot = await store
-        .fb
-        .storage
-        .ref()
+    const snapshot = await storageRef
         .child(`${file.name}`)
         .put(file)
         .then()
@@ -110,7 +148,5 @@ export const uploadLocalFile = async (file, store) => {
         '\nDownload URL\n', downloadURL,
         '\n\nDocument Data', toJS(document.data)
     )
-
-    store.notify('Document uploaded successfully!', 'info')
 
 }

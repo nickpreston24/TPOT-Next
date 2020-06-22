@@ -3,15 +3,23 @@ import { Button, Box } from '@material-ui/core';
 import { ButtonLink } from 'components/experimental/ZeitLinkButton';
 import * as ROUTES from '@routes'
 import { Selector } from '@components/dialogs'
+import UploadButton from 'components/buttons/UploadButton';
 
 export const WordPressToolbar = (props) => {
 
     const onClose = (item) => {
         setOpen(false);
-        console.log(item);    
+        console.log(item);
     }
-    const onSelected = (item) => console.log(item);
-    const options = ['google', 'copy-paste', 'upload']
+
+    const onSelected = (selectedOption) => {
+        // console.log('selectedOption :>> ', selectedOption);
+        setoption(selectedOption)
+    };
+
+    // TODO: Use simple enum string values:
+    const uploadOptions = ['Drive', 'Google', 'Copy-paste']
+    const [option, setoption] = useState(uploadOptions[1]);
     const [open, setOpen] = useState(false);
 
     // console.log('props :>> ', props);
@@ -28,12 +36,15 @@ export const WordPressToolbar = (props) => {
             Upload a Document
         </Button>
 
+        {option === 'Drive' && <UploadButton />}
+
         <Selector
             open={open}
-            options={options}
+            options={uploadOptions}
             onCloseFn={onClose}
             onSelectFn={onSelected}
-        />
+        ></Selector>
+
         <Button
             href={ROUTES.CHECKOUT}
             as={ROUTES.CHECKOUT}

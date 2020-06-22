@@ -5,7 +5,7 @@ import columns from './columns'
 import StyledTableBody from './StyledTableBody'
 import { observer } from 'mobx-react'
 import { observable, toJS } from 'mobx'
-import UploadButton from './UploadButton'
+// import UploadButton from '../buttons/UploadButton'
 import moment from 'moment'
 import SessionStore from '../../stores/SessionStore'
 import * as ROUTES from '@routes'
@@ -92,7 +92,7 @@ export const CheckoutTable = observer(() => {
                         if (!date_modified || !date_uploaded) { return }
                         date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
                         date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-                        console.log('id:', `/scribe/edit/${id}`)
+                        {/* console.log('id:', `/scribe/edit/${id}`) */}
                         return (
                             <div key={index}>
                                 <h5>{title} - {id}</h5>

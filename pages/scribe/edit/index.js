@@ -15,4 +15,4 @@ const Checkout = () => (
 // Legacy:
 {/* <h1>Edit!</h1>      
 Load Document from <Link href="/scribe/checkout"><a>Checkout</a></Link> */}
-export default Checkout
+// export default Checkout

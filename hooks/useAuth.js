@@ -30,7 +30,7 @@ function useProvideAuth() {
     // Wrap any Firebase methods we want to use making sure
     // to save the user to state.
     const signin = (email, password) => {
-
+console.log('email :>> ', email);
         return firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
@@ -51,12 +51,15 @@ function useProvideAuth() {
     };
 
     const signout = () => {
+        console.log('Laterz!')
         return firebase
             .auth()
             .signOut()
             .then(() => {
                 setUser(false);
-            });
+                console.log('user :>> ', !!user);
+            })
+            .catch(console.error);
     };
 
     const sendPasswordResetEmail = email => {
@@ -102,6 +105,7 @@ function useProvideAuth() {
         signup,
         signout,
         sendPasswordResetEmail,
-        confirmPasswordReset
+        confirmPasswordReset,
+        firebase
     }
 }

@@ -11,13 +11,7 @@ const App = () => {
       </Head>
       <main>
 
-        <h1 className="title">
-          Welcome to TPOT Toolbox!
-          </h1>
-
-        <p className="description">
-          Get started by Checking out a Document!
-          </p>
+        <h3 className="title">Welcome to TPOT Toolbox!</h3>
 
         <Layout />
       </main>

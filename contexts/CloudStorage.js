@@ -7,6 +7,7 @@
 import React from 'react'
 // import firebase from 'firebase';
 import { convertFile } from '../components/Editor/functions/converter'
+import { notify } from 'components/experimental/Toasts'
 
 
 export const CloudStorage = React.createContext()
@@ -65,7 +66,7 @@ export const CloudStorageProvider = ({ db, firebase }) => {
                     .set(emptyPaper)
                     .catch(console.error)
 
-                alert(!!snapshot
+                notify(!!snapshot
                     ? `Yay! File ${fileName} uploaded successfully!`
                     : `Fail! ${fileName} could not be uploaded!`)
 

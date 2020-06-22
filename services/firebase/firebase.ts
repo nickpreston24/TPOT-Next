@@ -211,55 +211,55 @@ export const unlock = async id => {
     })
 }
 
-//     // upload = async (file) => {
+export const upload = async (file) => {
 
-//     //     // Run conversion:        
-//     //     let html = await convertFile(file)
-//     //     console.log(!!html && html)
+    //     // Run conversion:        
+    //     let html = await convertFile(file)
+    //     console.log(!!html && html)
 
-//     //     if (!html)
-//     //         return
+    //     if (!html)
+    //         return
 
-//     //     // Upload to Cloud Storage:
-//     //     let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`)
-//     //     fileRef.put(file)
-//     //         .then(snapshot => {
+    //     // Upload to Cloud Storage:
+    //     let fileRef = storageRef.child(`${uploadsFolder}/${file.name}`)
+    //     fileRef.put(file)
+    //         .then(snapshot => {
 
-//     //             var fileName = file.name
-//     //             var { ...emptyPaper } = new Paper({
-//     //                 docx: `${file.name}`,
-//     //                 title: file.name,
-//     //                 status: 'not-started',
-//     //                 date_modified: Date.now(),
-//     //                 date_uploaded: Date.now(),
-//     //                 author: null,
-//     //                 draft_state: {
-//     //                     original: html,
-//     //                     editor: null,
-//     //                     code: null,
-//     //                 },
-//     //                 excerpt: null
-//     //             })
+    //             var fileName = file.name
+    //             var { ...emptyPaper } = new Paper({
+    //                 docx: `${file.name}`,
+    //                 title: file.name,
+    //                 status: 'not-started',
+    //                 date_modified: Date.now(),
+    //                 date_uploaded: Date.now(),
+    //                 author: null,
+    //                 draft_state: {
+    //                     original: html,
+    //                     editor: null,
+    //                     code: null,
+    //                 },
+    //                 excerpt: null
+    //             })
 
-//     //             console.log(emptyPaper)
+    //             console.log(emptyPaper)
 
-//     //             this.db.collection('sessions')
-//     //                 .doc(emptyPaper.slug)
-//     //                 .set(emptyPaper)
-//     //                 .catch(console.error)
+    //             this.db.collection('sessions')
+    //                 .doc(emptyPaper.slug)
+    //                 .set(emptyPaper)
+    //                 .catch(console.error)
 
-//     //             alert(!!snapshot
-//     //                 ? `Yay! File ${fileName} uploaded successfully!`
-//     //                 : `Fail! ${fileName} could not be uploaded!`)
+    //             alert(!!snapshot
+    //                 ? `Yay! File ${fileName} uploaded successfully!`
+    //                 : `Fail! ${fileName} could not be uploaded!`)
 
-//     //             console.log(`Downloading ${fileName}`)
-//     //             download(fileName)
-//     //         })
-//     //         .catch((error) => {
-//     //             console.log(error.message)
-//     //             alert('There was a problem uploading this file.')
-//     //         })
-//     // }
+    //             console.log(`Downloading ${fileName}`)
+    //             download(fileName)
+    //         })
+    //         .catch((error) => {
+    //             console.log(error.message)
+    //             alert('There was a problem uploading this file.')
+    //         })
+}
 
 // }
 

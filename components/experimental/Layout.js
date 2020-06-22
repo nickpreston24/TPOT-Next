@@ -1,42 +1,61 @@
-import { SCRIBE, TPOT, ACCOUNT, HOME, LOGIN } from '../../constants/routes'
 import ZeitContainer from './ZeitContainer.tsx'
 import ZeitCard from './ZeitCard.tsx'
 import { Box } from '@material-ui/core'
+import { Row } from 'simple-flexbox'
+import { SCRIBE, TPOT, LOGIN } from '@routes'
+import { useAuth } from '@hooks'
 
-// import { useAuth } from '@hooks'
+const actionTexts = {
+    checkout: 'Checking out a Document',
+    login: 'Logging in',
+}
 
 export const Layout = () => {
 
-    // const auth = useAuth();
-    // console.log('auth :>> ', auth);
+    const auth = useAuth();
+    let isAuthenticated = !!auth?.user || false;
+
+    console.log('authenticated? :>> ', isAuthenticated);
+
+    let action = isAuthenticated ? actionTexts.checkout : actionTexts.login;
 
     return (
 
         <div className="grid">
-            <Box height="100%">
+            {/* <Box height="100%"> */}
+            <p className="description">
+                {`Get started by ${action}`}
+            </p>
+            <Row
+                horizontal="center"
+            >
                 <ZeitContainer >
-                    <ZeitCard
-                        url={LOGIN}
-                        title="Login"
-                        text='Login to Toolbox'
-                    />
+                    {!isAuthenticated &&
+                        <ZeitCard
+                            url={LOGIN}
+                            title="Login"
+                            text='Login to Toolbox'
+                        />}
                     {/* <ZeitCard
                     url={ACCOUNT}
                     title="Account"
                     text='Go to your Account'
                 /> */}
-                    <ZeitCard
-                        url={SCRIBE}
-                        title="Scribe"
-                        text='Click here use the Letter Editor!'
-                    />
+                    {isAuthenticated &&
+                        <ZeitCard
+                            url={SCRIBE}
+                            title="Scribe"
+                            text='Click here use the Letter Editor!'
+                        />
+                    }
                     <ZeitCard
                         url={TPOT}
                         title="TPOT"
                         text='The Path of Truth'
                     />
                 </ZeitContainer>
-            </Box>
+                {/* </Box> */}
+            </Row>
         </div>
     )
 }

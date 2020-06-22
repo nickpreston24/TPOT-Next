@@ -55,10 +55,11 @@ const Selector: FC<DialogProps> = ({
     if (!onCloseFn)
         onCloseFn = noop
 
-    if (!onSelectFn)
+    // console.log('onSelectFn :>> ', onSelectFn);
+    if (!onSelectFn) {
         onSelectFn = noop
+    }
 
-    // const [open, setOpen] = React.useState(false)
     let [selectedValue, setSelectedValue] = React.useState(options[0])
     const classes = useStyles()
 
@@ -69,7 +70,7 @@ const Selector: FC<DialogProps> = ({
 
     // Do something with value on click
     const handleListItemClick = (value) => {
-        setSelectedValue(value)
+        onSelectFn(value)
         onCloseFn(value)
     }
 

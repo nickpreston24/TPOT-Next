@@ -3,10 +3,14 @@ import DocxIcon from './DocxIcon';
 
 const columns =
     [
-        { field: 'Icon', searchable: false, export: false, render: () => <DocxIcon /> },
+        {
+            field: 'Icon', searchable: false, export: false,
+            render: () => <DocxIcon />
+        },
         { title: 'Document', field: 'title', type: 'string', searchable: true },
         {
-            title: 'Status', field: 'status', type: 'string', searchable: false, render: paper => {
+            title: 'Status', field: 'status', type: 'string', searchable: false,
+            render: paper => {
                 const status = paper.status
                 // console.log('status (checkout) :>> ', status)
                 return <StatusChip status={status} />
