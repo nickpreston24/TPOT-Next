@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 
 const WrappedEditor = React.forwardRef((props, ref) => {
     const [Editor, setEditor] = useState(false)
@@ -6,11 +7,15 @@ const WrappedEditor = React.forwardRef((props, ref) => {
     useEffect(() => {
         let ScribeEditor = require('./editor').default
         setEditor(ScribeEditor)
-    }, [window])
+    }, 
+    [window]
+    )
 
     if (!Editor) return <></>
 
     return <Editor ref={ref} />
 })
+
+// const WrappedEditor = dynamic(() => import('./editor'))
 
 export default WrappedEditor

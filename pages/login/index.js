@@ -9,7 +9,6 @@ import { Column, Row } from 'simple-flexbox'  // A placeholder for MUI's Box cla
 
 import Router from 'next/router'
 
-
 const Login = () => {
 
     const auth = useAuth();

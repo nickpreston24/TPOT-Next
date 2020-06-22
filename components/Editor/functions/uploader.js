@@ -4,37 +4,39 @@ import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from
 import { EditorState, convertToRaw } from 'draft-js'
 import { toJS } from 'mobx'
 
+import { firebase, db, storage } from '@services/firebase'
+
 /** TODO: @MP: Trim this firebase stuff down to bare minumum. 
  *  We don't need everything and the kitchen sink, 
  *  but I'm confused as to what parts are firebase, db, auth, etc. 
  *  and how to properly init and use them,
  *  thanks to guides renaming each as each other. */
 
-import app from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/firestore'
-import 'firebase/storage'
-import { initFirestorter } from 'firestorter'
+// import app from 'firebase/app'
+// import 'firebase/auth'
+// import 'firebase/firestore'
+// import 'firebase/storage'
+// import { initFirestorter } from 'firestorter'
 // import { convertFile } from '../../components/Editor/functions/converter'
 
-const config = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    databaseURL: process.env.REACT_APP_DATABASE_URL,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-}
+// const config = {
+//     apiKey: process.env.REACT_APP_API_KEY,
+//     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+//     databaseURL: process.env.REACT_APP_DATABASE_URL,
+//     projectId: process.env.REACT_APP_PROJECT_ID,
+//     storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+//     messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+// }
 
 
-if (!app.apps.length) {
-    app.initializeApp(config);
+// if (!app.apps.length) {
+//     app.initializeApp(config);
 
-    initFirestorter({ firebase: app })
-    console.count('Firebase API -- init()')
-}
+//     initFirestorter({ firebase: app })
+//     console.count('Firebase API -- init()')
+// }
 
-import firebase from 'firebase'
+// import firebase from 'firebase'
 
 // console.log('firebase :>> ', firebase);
 
@@ -42,7 +44,8 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     // Check to make sure document has not already been uploaded before
 
-    const storageRef = await firebase.storage().ref()
+    // const storageRef = await firebase.storage().ref()
+    const storageRef = storage.ref();
     console.log('storageRef :>> ', storageRef);
 
     const getDocumentMetadata = (storageRef, filepath) => {
@@ -111,7 +114,7 @@ export const uploadLocalFile = async (file, userName = null) => {
         slug: `letters/${slug}.htm`,
         excerpt: ''
     })
-
+    console.log('document :>> ', document);
     if (!document) {
         console.warn(`Session failed to create entry: ${document}`)
     } else {
