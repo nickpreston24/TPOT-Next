@@ -1,9 +1,9 @@
 import { action, observable, computed } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
-// import { firebaseApi } from '../../services/firebase'
+// import { firebaseApi } from '@services/firebase'
 import { toast } from 'react-toastify'
 import { Collection } from 'firestorter'
-import { confirmSignout, confirmSetAside } from '../../components/DialogMessages'
+// import { confirmSignout, confirmSetAside } from '@components/DialogMessages'
 
 // This needs to go before this root store has time to be populated by a provider
 // Firebase.init()

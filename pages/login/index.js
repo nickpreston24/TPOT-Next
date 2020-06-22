@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react'
-import * as ROUTES from '../../constants/routes';
+import * as ROUTES from '@constants/routes';
 import { useAuth } from "@hooks"
 import { ZeitButton, ButtonLink } from "@components/experimental"
 import { Chip, Box } from '@material-ui/core'
@@ -50,7 +50,6 @@ const Login = () => {
 
                         if (!!user) {
                             notify('You are now signed in!')
-                            // TODO: Redirect to Checkout
                             Router.push(ROUTES.SCRIBE)
                         }
                     }}

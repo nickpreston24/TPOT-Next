@@ -17,8 +17,8 @@ const Page = props => {
   const ckeditorRef = useRef(null)
 
   const getHtml = () => {
-    const HTML = ckeditorRef.current.editor.getData()
-    console.log(HTML)
+    const html = ckeditorRef.current.editor.getData()
+    console.log(html)
   }
 
   return (

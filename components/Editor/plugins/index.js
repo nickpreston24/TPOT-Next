@@ -1,5 +1,5 @@
 import { PrimaryButton } from '../buttons/PrimaryButton'
-import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
+import { EditorStateNotFoundError, NullReferenceError } from '@Errors'
 import createScribeToolbarPlugin from './draft-js-scribe-toolbar'
 
 /** Draft JS plugins */
@@ -26,7 +26,7 @@ export const linkifyPlugin = createLinkifyPlugin()
 export const richButtonsPlugin = createRichButtonsPlugin()
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
-import { UnderConstruction } from '../../../pages/404'
+import { UnderConstruction } from '@../pages/404'
 
 const staticToolbarPlugin = createToolbarPlugin()
 const { Toolbar } = staticToolbarPlugin

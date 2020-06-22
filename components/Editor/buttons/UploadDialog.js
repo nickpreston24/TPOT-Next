@@ -6,9 +6,9 @@ import { withStyles } from '@material-ui/core/styles'
 import React, { useState, useContext } from 'react'
 import {  observer } from 'mobx-react'
 
-// import GoogleDrive from "../../../media/hdd.png";
-// import HardDrive from "../../../media/hdd.png";
-import { CloudStorage } from '../../../contexts/CloudStorage'
+// import GoogleDrive from "@../media/hdd.png";
+// import HardDrive from "@../media/hdd.png";
+import { CloudStorage } from '@../contexts/CloudStorage'
 
 const styles = theme => ({
     root: {

@@ -1,11 +1,11 @@
 import React from 'react'
-import Dashboard from '../../components/Dashboard'
-import { ZeitCard } from '../../components/experimental'
-import * as ROUTES from '../../constants/routes'
+import { Dashboard } from '@components'
+import { ZeitCard } from '@components/experimental'
+import * as ROUTES from '@constants/routes'
 
 const Edit = () => (
   // <MobxProvider store={store}>
-  <Dashboard title="TPOT Scribe">  
+  <Dashboard title="TPOT Scribe">
     <ZeitCard
       url={ROUTES.CHECKOUT}
       title="Checkout"

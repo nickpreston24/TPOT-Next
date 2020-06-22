@@ -10,7 +10,7 @@ const actionTexts = {
     login: 'Logging in',
 }
 
-export const Layout = () => {
+const Layout = () => {
 
     const auth = useAuth();
     let isAuthenticated = !!auth?.user || false;
@@ -59,3 +59,5 @@ export const Layout = () => {
         </div>
     )
 }
+
+export default Layout;

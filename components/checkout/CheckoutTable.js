@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { Row } from 'simple-flexbox'
 import MaterialTable from 'material-table'
 import { Box, Chip } from '@material-ui/core'
 import columns from './columns'
@@ -7,11 +8,11 @@ import { observer } from 'mobx-react'
 import { observable, toJS } from 'mobx'
 // import UploadButton from '../buttons/UploadButton'
 import moment from 'moment'
-import SessionStore from '../../stores/SessionStore'
-import * as ROUTES from '@routes'
 import ZeitLinkButton, { ButtonLink } from '@components/experimental'
-import StatusChip from '../StatusChip'
+import * as ROUTES from '@routes'
+import { StatusChip } from '@components'
 import { useSessions } from '@hooks'
+
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -20,12 +21,12 @@ import { useSessions } from '@hooks'
 // It is the springboard for checking out a document, unlocking, or uploading a new
 // document to firestore for editing. It is also offers a way to download documents.
 
-const CheckoutTable = observer(() => {
+const CheckoutTable = () => {
 
     const tableRef = React.createRef()
 
-    const sessions = useSessions();
-    // console.log('sessions (from hook) :>> ', sessions.docs.length);
+    const sessions = useSessions() || [];
+    console.log('sessions (from hook) :>> ', sessions);
 
     // const [data, setData] = useState([]);
 
@@ -86,12 +87,13 @@ const CheckoutTable = observer(() => {
 
     return (
         // <Box fontFamily="'Poppins', sans-serif" width={900}>
-            <Row
-                align
-             >
+        <Row
+            alignItems="center"
+            horizontal="center"
+        >
             <div>
                 {
-                    sessions.docs.map((doc, index) => {
+                    sessions.map((doc, index) => {
                         let { status, date_modified, date_uploaded, title } = doc.data
                         let id = doc.id;
                         let date_modified_timestamp = date_modified
@@ -170,9 +172,9 @@ const CheckoutTable = observer(() => {
                     }
                 ]}
             /> */}
-            </Row>
+        </Row>
         // </Box>
     )
-})
+}
 
 export default CheckoutTable;

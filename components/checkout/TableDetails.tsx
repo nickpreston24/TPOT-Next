@@ -5,17 +5,16 @@ import EditIcon from '@material-ui/icons/Edit'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { compose } from 'recompose'
 
-import { details } from '../../stores/DocumentDetailStore'
-
-
 /**
  * @descripion 
  * TableDetails is a class that is plugged in as a prop for the CheckoutTable
  * It displays additional information on dropdown of a row item. Clicking on
  * it also reveals actions that can be taken, like editing or unlocking the doc.
  */
-const TableDetails = compose(observer)(
-    class extends Component {
+const TableDetails = {
+    
+    
+    
         allowUnlock: boolean
         open: boolean
         expand: () => boolean
@@ -128,6 +127,6 @@ const TableDetails = compose(observer)(
             )
         }
     }
-)
+
 
 export default TableDetails

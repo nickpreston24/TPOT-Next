@@ -10,9 +10,9 @@ import * as React from "react";
 // import Page from "./WordPress";
 // import "./styles.css";
 // import "./observableConfig";
-// import Dashboard from '../../components/Dashboard'
-// import { FirebaseUserService } from '../../services/firebase/firebaseUserService'
-import { wordpressUserService } from '../../services/wordpress/wordpressUserService'
+// import Dashboard from '@components/Dashboard'
+// import { FirebaseUserService } from '@services/firebase'
+import { wordpressUserService } from '@services/wordpress'
 
 wordpressUserService.getPagesFromUser(10, 0)
   .then(data => console.log('users  :>> ', data))

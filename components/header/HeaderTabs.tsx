@@ -5,7 +5,7 @@ import { Tabs, Tab } from '@material-ui/core'
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined'
 import ViewQuiltOutlinedIcon from '@material-ui/icons/ViewQuiltOutlined'
-import * as ROUTES from '../../constants/routes'
+import * as ROUTES from '@constants/routes'
 
 const HeaderTabs = () => {
 

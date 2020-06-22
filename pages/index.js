@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout } from '../components/experimental/Layout'
+import { Layout } from '@components/experimental'
 import Head from 'next/head'
 
 const App = () => {

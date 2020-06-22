@@ -3,7 +3,6 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
 import { initFirestorter } from 'firestorter'
-// import { convertFile } from '../../components/Editor/functions/converter'
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,

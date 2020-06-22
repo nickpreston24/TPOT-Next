@@ -10,7 +10,7 @@ export const useSessions = () => {
 // HOC:
 export function ProvideSessions({ children }) {
     console.log('provide sessions () ')
-    
+
     const sessionsData = useSessionsProvider();
     return <sessionsContext.Provider value={sessionsData}>{children}</sessionsContext.Provider>
 }
@@ -26,11 +26,11 @@ function useSessionsProvider() {
 
         const store = new SessionStore();
 
+        console.info('session store initialized :>> ', !!store);
         if (!!store)
             setSessionStore(store)
         else
             setSessionStore(null)
-        console.info('session store initialized :>> ', !!store);
 
         return () => {
             //TODO: Unsubscribe from firestorter Collection, if necessary.
@@ -39,6 +39,6 @@ function useSessionsProvider() {
     }, []);
 
     // Pass back only the good stuff:
-    const { sessions } = sessionStore || {};
+    const { sessions } = sessionStore || { sessions: [] };
     return sessions;
 }

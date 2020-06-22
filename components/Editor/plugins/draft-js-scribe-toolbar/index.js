@@ -1,7 +1,7 @@
 import React from 'react'
 import createStore from './functions/createStore'
 import createStyles from 'draft-js-custom-styles'
-import Toolbar from './components/Toolbar'
+import { Toolbar } from '@components'
 
 export const ActiveStylesContext = React.createContext(null)
 

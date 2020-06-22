@@ -3,7 +3,7 @@ import { createContext } from 'react'
 import { Paper } from '../models/paper'
 import WPAPI from 'wpapi'
 import { FirebaseUserService } from '../services/wordpress'
-import { WordPressConfig } from '../models/wordpress/WordPressConfig'
+import { WordPressConfig } from '@models'
 
 /* A representation of the current Session as it relates to a Wordpress Post */
 export interface Session {

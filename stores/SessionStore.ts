@@ -1,8 +1,4 @@
-// import { Collection, Mode } from 'firestorter'
 import { observable, action, autorun, computed } from 'mobx'
-// import '@services/firebase'
-import { createContext } from 'react'
-
 import '@services/firebase'
 import { Collection } from 'firestorter'
 

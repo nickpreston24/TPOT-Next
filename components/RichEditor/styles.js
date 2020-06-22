@@ -1,4 +1,4 @@
-import palette from '../../constants/palette.json'
+import palette from '@constants/palette.json'
 
 /* This object provides the styling information for our custom color styles. */
 export const colorStyleMap = {

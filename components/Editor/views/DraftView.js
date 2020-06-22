@@ -8,8 +8,8 @@ import plugins, { ScribeToolbar, Toolbar } from '../plugins'
 
 /** MP's Imports from RichEditor */
 // import { Modifier, RichUtils } from "draft-js";
-// import { RichEditor } from '../../RichEditor';
-// import { colorStyleMap } from '../../RichEditor/styles'
+// import { RichEditor } from '@RichEditor';
+// import { colorStyleMap } from '@RichEditor/styles'
 // import { SubmitButton } from "./buttons/SubmitButton";
 
 // import { plugins } from '../plugins';

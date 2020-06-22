@@ -1,4 +1,6 @@
 import WPAPI from 'wpapi'
+import { WordPressConfig } from '@models'
+
 
 // TODO: Temporary - Refactor this to be DB configurable:
 export const wpapi = new WPAPI({

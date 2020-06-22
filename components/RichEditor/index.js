@@ -1,6 +1,6 @@
 import { EditorState, Modifier, RichUtils, convertFromRaw } from 'draft-js'
 import { useRef, useState } from 'react'
-import { UnderConstruction } from '../../pages/404'
+import { UnderConstruction } from '@pages/404'
 
 import { SubmitButton } from './buttons/SubmitButton'
 

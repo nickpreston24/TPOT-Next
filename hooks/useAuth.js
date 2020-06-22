@@ -20,7 +20,9 @@ export const useAuth = () => {
 
 export function ProvideAuth({ children }) {
     const auth = useProvideAuth();
-    return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+    return !auth
+        ? <div>Auth couldn't be loaded!</div>
+        : <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
 // Provider hook that creates auth object and handles state
@@ -30,7 +32,7 @@ function useProvideAuth() {
     // Wrap any Firebase methods we want to use making sure
     // to save the user to state.
     const signin = (email, password) => {
-        
+
         return firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
@@ -56,7 +58,7 @@ function useProvideAuth() {
             .auth()
             .signOut()
             .then(() => {
-                setUser(false);
+                setUser(null);
                 console.log('user :>> ', !!user);
             })
             .catch(console.error);
@@ -87,11 +89,13 @@ function useProvideAuth() {
     //  latest auth object.
 
     useEffect(() => {
+        console.log('Activating auth...')
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            console.log('user :>> ', !!user);
             if (user) {
                 setUser(user);
             } else {
-                setUser(false);
+                setUser(null);
             }
         });
 
