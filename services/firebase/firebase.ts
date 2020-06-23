@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import { initFirestorter } from 'firestorter'
+import { initFirestorter, Document } from 'firestorter'
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,

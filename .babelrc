@@ -18,7 +18,12 @@
           "@plugins": "./components/Editor/plugins",
           "@contexts": "./contexts",
           "@routes": "./constants/routes",
-          "@models": "./models"
+          "@models": "./models",
+          "@functions": [
+            "./components/Editor/functions",
+            "./components/RichEditor/functions"
+          ],
+          "@errors": "./models/Errors"
         }
       }
     ],

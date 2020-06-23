@@ -1,7 +1,6 @@
 import { AsyncObject } from '@cuties/cutie'
-import { generateHtmlFromEditorState } from '@RichEditor/functions'
-import ExtendableError from '@Errors'
-import { wpapi } from '@../services/wordpress/api';
+import ExtendableError from '../../../models/Errors'
+import { wpapi } from '../../../services/wordpress';
 
 class WordPressNotInitializedException extends ExtendableError { message = 'Wordpress has not been initialized!' }
 class PaperNotFoundException extends ExtendableError { message = 'Could not find the Paper you\'re looking for...' }

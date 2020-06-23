@@ -1,5 +1,2 @@
-import Selector from './Selector'
-
-export {
-    Selector
-}
+export { Selector } from './Selector'
+// export { PromiseDialog } from './PromiseDialog'

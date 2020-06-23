@@ -10,16 +10,17 @@ export class WordpressUserService {
 
     getUser = (id: number) => this.wordpress.users().id(id)
 
-    getPostsFromUser = (id: number) => 
+    getPostsFromUser = (id: number) =>
         this.wordpress
-        .posts()
-        .author(id)
+            .posts()
+            .author(id)
 
-    getPagesFromUser = (id: number, limit: number = 10) => 
+    getPagesFromUser = (id: number, limit: number = 10) =>
         this.wordpress
-        .pages()
-        .author(id)
-        .perPage()
+            .pages()
+            .author(id)
+            .perPage()
 }
 
 export const wordpressUserService = new WordpressUserService(wpapi)
+export { wpapi }

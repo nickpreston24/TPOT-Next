@@ -40,5 +40,6 @@ function useSessionsProvider() {
 
     // Pass back only the good stuff:
     const { sessions } = sessionStore || { sessions: [] };
+    console.log('sessionStore :>> ', sessionStore, sessionStore.sessions);
     return sessions;
 }

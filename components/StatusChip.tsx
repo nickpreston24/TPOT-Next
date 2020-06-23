@@ -1,7 +1,7 @@
 import { CheckoutStatus, CheckoutColors } from '../constants/session-statuses'
 import { Chip } from '@material-ui/core'
 import { FC } from 'react'
-import { getKeyByValue } from '@helpers/ObjectHelpers'
+import { getKeyByValue } from '../helpers'
 
 interface ChipProps {
     status: string

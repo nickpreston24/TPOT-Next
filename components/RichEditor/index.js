@@ -25,7 +25,7 @@ import {
 
 import Editor from 'draft-js-plugins-editor'
 import styles, { colorStyleMap } from './styles'
-import { ArgumentNullReferenceError } from '../Errors'
+import { ArgumentNullReferenceError } from '../../models/Errors'
 // import { Toolbar } from '../Editor/components/Toolbar'
 let publish = null //TODO: use Publisher class
 

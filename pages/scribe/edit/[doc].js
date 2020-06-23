@@ -8,7 +8,7 @@ import Dashboard from '@components/Dashboard'
 import PropTypes from 'prop-types'
 import Editor from 'tpot-scribe-editor'
 import { Box } from '@material-ui/core'
-import { WordPressToolbar } from './WordPressToolbar'
+import WordPressToolbar from './WordPressToolbar'
 
 const Page = props => {
 

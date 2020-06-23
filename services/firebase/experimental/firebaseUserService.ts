@@ -1,13 +1,13 @@
-import Firebase from '../firebase'
+import { db } from '..'
 
 export class FirebaseUserService {
     db: any
 
-    constructor(db: Firebase) {
+    constructor() {
         this.db = db
     }
 
-    getFirebaseUser = (id: number) => {
+    getFirebaseUser = async (id: number) => {
         this.db.collection('users')
             .doc(id)
             .get()
