@@ -1,9 +1,3 @@
-import Dashboard from './Dashboard'
-import { CheckoutTable } from './checkout'
-import StatusChip from './StatusChip'
-
-export {
-    Dashboard,
-    CheckoutTable,
-    StatusChip,    
-}
+export { Dashboard } from './Dashboard'
+export { CheckoutTable } from './checkout'
+export { StatusChip } from './StatusChip'

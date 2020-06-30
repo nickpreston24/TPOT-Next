@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { uploadLocalFile } from '../Editor/functions/uploader';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 // import { observer } from 'mobx-react';
-import { Box } from '@material-ui/core';
+import { Box } from '@chakra-ui/core';
 import { convertFile } from 'components/Editor/functions/converter';
 import { notify } from 'components/experimental/Toasts';
 import { useAuth } from 'hooks/useAuth';

@@ -26,8 +26,8 @@ export const auth = firebase.auth();
 export const db = firebase.firestore();
 export const storage = firebase.storage();
 
-console.log('firestore database :>> ', Object.keys(db));
-console.log('storage database:>> ', Object.keys(storage));
+// console.log('firestore database :>> ', Object.keys(db));
+// console.log('storage database:>> ', Object.keys(storage));
 
 // db.collection("users").add({
 //     first: "Ada",

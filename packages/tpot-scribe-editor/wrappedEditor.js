@@ -6,16 +6,19 @@ const WrappedEditor = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         let ScribeEditor = require('./editor').default
+        // let ScribeEditor = dynamic(() => import('./editor'))
         setEditor(ScribeEditor)
-    }, 
-    [window]
+        console.log('CK Editor loaded.')
+    },
+        [window]
+        // [] // what if this worked?
     )
 
-    if (!Editor) return <></>
+    if (!Editor && !props) return <>Loading...</>
 
+    console.log('window.innerHeight', window.innerHeight);
     return <Editor ref={ref} />
 })
 
-// const WrappedEditor = dynamic(() => import('./editor'))
 
 export default WrappedEditor

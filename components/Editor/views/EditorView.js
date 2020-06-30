@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box } from '@material-ui/core'
+import { Box } from '@chakra-ui/core'
 import OriginalDocxView from '../views/OriginalDocxView'
 import BlocksView from '../views/BlocksView'
 import DraftView from '../views/DraftView'

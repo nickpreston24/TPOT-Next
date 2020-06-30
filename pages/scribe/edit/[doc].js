@@ -6,8 +6,8 @@ import { compose } from 'recompose'
 import Dashboard from '@components/Dashboard'
 // import { DocumentDetails, DocumentForm, DocumentEditor } from '@components/Document'
 import PropTypes from 'prop-types'
-import Editor from 'tpot-scribe-editor'
-import { Box } from '@material-ui/core'
+import Editor, { MyEditor } from 'tpot-scribe-editor'
+import { Box } from '@chakra-ui/core'
 import WordPressToolbar from './WordPressToolbar'
 
 const Page = props => {
@@ -21,6 +21,12 @@ const Page = props => {
     console.log(html)
   }
 
+  const setHtml = (html = `<p>Hello my friend, and where are you off to...?</p>`) => {
+    ckeditorRef.current.editor.setData(html);
+  }
+
+  console.log('CkEditor :>> ', MyEditor, 'editorRef: ', ckeditorRef);
+
   return (
     <Dashboard
       title={`TPOT Scribe - Edit - ${id}`}
@@ -29,7 +35,9 @@ const Page = props => {
       <Box
         height="100%"
       >
-        <Editor ref={ckeditorRef} />
+        {/* <Editor ref={ckeditorRef} /> */}
+        <MyEditor ref={ckeditorRef} />
+
         <WordPressToolbar {...{ getHtml }} />
       </Box>
     </Dashboard>

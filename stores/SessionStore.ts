@@ -1,18 +1,26 @@
 import { observable, action, autorun, computed } from 'mobx'
 import '@services/firebase'
 import { Collection } from 'firestorter'
+import { createContext } from 'react'
 
-class SessionStore {
+export class SessionStore {
 
-    @observable sessions = new Collection('sessions')
-    @observable loading = false
-    @observable prevDocument = null
-    @observable page = 0
-    @observable pageSize = 7
-    @observable filter?= ''
-    @observable direction = ''
-    @observable query = null
-    @observable totalCount = 0
+    // @observable 
+    sessions = new Collection('sessions')
+
+    /*
+        @BP: If you want, you can make these observable, though I don't
+        recommend going outside for firestorter documentation unless you have a good reason to do so.
+    */
+
+    // @observable loading = false
+    // @observable prevDocument = null
+    // @observable page = 0
+    // @observable pageSize = 7
+    // @observable filter?= ''
+    // @observable direction = ''
+    // @observable query = null
+    // @observable totalCount = 0
 
     //     @action countTotalDocs = async () => {
     //         // let options = new ICollectionOptions {{Mode.Off}}
@@ -26,51 +34,51 @@ class SessionStore {
     //         // this.totalCount = collection.docs.length
     //     }
 
-    @computed get count() {
-        return this.sessions.docs.length
-    }
+    // @computed get count() {
+    //     return this.sessions.docs.length
+    // }
 
-    @action orderChange = (colID, direction) => {
-        this.filter = colID
-        this.direction = direction
-    }
+    // @action orderChange = (colID, direction) => {
+    //     this.filter = colID
+    //     this.direction = direction
+    // }
 
-    @action setLoading = (isLoading: boolean) => this.loading = isLoading
+    // @action setLoading = (isLoading: boolean) => this.loading = isLoading
 
-    @action changePage = page =>
-        this.page = page
+    // @action changePage = page =>
+    //     this.page = page
 
-    @action changeRowsPerPage = pageSize =>
-        this.pageSize = pageSize
+    // @action changeRowsPerPage = pageSize =>
+    //     this.pageSize = pageSize
 
-    @action setTotalCount = count =>
-        this.totalCount = count
+    // @action setTotalCount = count =>
+    //     this.totalCount = count
 
-    @action updateQuery = query =>
-        this.sessions.query = query
+    // @action updateQuery = query =>
+    //     this.sessions.query = query
 
 
-    queryBuilder = autorun(async () => {
+    // queryBuilder = autorun(async () => {
 
-        let { page, pageSize, filter, direction, prevDocument } = this
-        this.setLoading(true)
+    //     let { page, pageSize, filter, direction, prevDocument } = this
+    //     this.setLoading(true)
 
-        filter = !!filter ? 'title' : 'status'
-        direction = !!filter ? 'asc' : direction
+    //     filter = !!filter ? 'title' : 'status'
+    //     direction = !!filter ? 'asc' : direction
 
-        // await this.countTotalDocs()
-        await this.updateQuery(
-            collectionRef => {
-                return collectionRef
-                    .orderBy(filter, direction)
-                    .limit(pageSize)
-                    .startAfter(prevDocument)
+    //     // await this.countTotalDocs()
+    //     await this.updateQuery(
+    //         collectionRef => {
+    //             return collectionRef
+    //                 .orderBy(filter, direction)
+    //                 .limit(pageSize)
+    //                 .startAfter(prevDocument)
 
-            }
-        )
+    //         }
+    //     )
 
-        this.setLoading(false)
-    })
+    //     this.setLoading(false)
+    // })
 }
 
 // export const sessionStore = new SessionStore();
@@ -79,5 +87,5 @@ class SessionStore {
 // export default Sessions;
 
 
-// export default createContext(new SessionStore());
+// export const sessionStoreContext =  createContext(new SessionStore());
 export default SessionStore;

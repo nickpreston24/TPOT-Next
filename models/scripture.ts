@@ -16,7 +16,6 @@ enum ScriptureType {
 
 export type Scripture = {
     scriptureType: ScriptureType,
-
 }
 
 const flatten = (array: Array<any>): Array<any> => {

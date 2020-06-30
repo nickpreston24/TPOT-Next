@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Box from '@material-ui/core/Box'
+import { Box } from '@chakra-ui/core'
 import { observable, action, computed, autorun, reaction, toJS } from 'mobx'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
@@ -95,7 +95,7 @@ const CustomDialog = compose(
         const { currentPrompt } = store
         console.log(currentPrompt)
     }
-    console.log(prompt) 
+    console.log(prompt)
     return (
         <Box>
             <h1>THIS IS TEXT</h1>

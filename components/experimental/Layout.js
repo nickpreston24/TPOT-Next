@@ -1,6 +1,8 @@
 import ZeitContainer from './ZeitContainer.tsx'
 import ZeitCard from './ZeitCard.tsx'
-import { Box } from '@material-ui/core'
+import { Box, Icon } from '@chakra-ui/core'
+import Link from 'next/link'
+import Router from 'next/router'
 import { Row } from 'simple-flexbox'
 import { SCRIBE, TPOT, LOGIN } from '@routes'
 import { useAuth } from '@hooks'
@@ -22,7 +24,6 @@ const Layout = () => {
     return (
 
         <div className="grid">
-            {/* <Box height="100%"> */}
             <p className="description">
                 {`Get started by ${action}`}
             </p>
@@ -53,8 +54,11 @@ const Layout = () => {
                         title="TPOT"
                         text='The Path of Truth'
                     />
+                    <Icon
+                        name='moon'
+                        onClick={() => Router.push('/domains')}
+                    />
                 </ZeitContainer>
-                {/* </Box> */}
             </Row>
         </div>
     )

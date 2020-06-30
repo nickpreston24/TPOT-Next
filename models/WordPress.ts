@@ -1,4 +1,8 @@
-import Model from './model'
+export interface WordPressConfig {
+    endpoint: string;
+    username: string;
+    password: string;
+}
 
 /* Basic representation of Post
 * NOTE: Should never be exported
@@ -10,7 +14,8 @@ interface WordPressPost {
     status: string
 }
 
-class Post extends Model implements WordPressPost {
+// NOTE: Should never be exported
+class Post implements WordPressPost {
     status: string;
     title: string;
     url: string;
@@ -35,13 +40,14 @@ export class Paper extends Post implements WordPressPaper {
     authorId: number;
     content: string;
 
-    constructor(title: string = null, url: string = null) {
-        super({ title, url })
-    }
+    // constructor(title: string = null, url: string = null) {
+    //     // super({ title, url })
+    //     super()
+    // }
 
-    static Create(): Paper {
-        return new Paper()
-    }
+    // static Create(): Paper {
+    //     return new Paper()
+    // }
 
     // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:
     private validName(name: string) {
@@ -51,4 +57,27 @@ export class Paper extends Post implements WordPressPaper {
             throw new Error('Invalid name format')
         }
     }
+}
+
+export interface WordpressSession {
+    firebaseUserId: string;
+    paper: WordPressPaper;
+    session?: Session;
+}
+
+
+/* The typed representation of a session (paper) from Firestore DB */
+export class Session {
+    status: string
+    contributors: string[]
+    date_uploaded: Date
+    date_modified: Date
+    draft: string
+    code: string
+    original: string
+    stylesheet: string
+    filename: string
+    title: string
+    slug: string
+    excerpt: string;
 }

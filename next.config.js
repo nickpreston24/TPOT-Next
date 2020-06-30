@@ -3,9 +3,7 @@ require('dotenv').config()
 const webpack = require('webpack')
 const path = require('path')
 
-console.log('cat')
-
-module.exports = withCSS({    
+module.exports = withCSS({
     webpack(config) {
         config.plugins.push(new webpack.EnvironmentPlugin(process.env))
 

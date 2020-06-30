@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Box from '@material-ui/core/Box'
+import { Box } from '@chakra-ui/core'
 import { Avatar, Divider } from '@material-ui/core'
 // import {  observer } from 'mobx-react'
 

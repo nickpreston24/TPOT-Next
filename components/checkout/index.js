@@ -1,6 +1,2 @@
-// import { CheckoutTable } from './CheckoutTable' //TSX
-import CheckoutTable  from './CheckoutTable' //JS
-
-export {
-    CheckoutTable
-}
+// export { CheckoutTable } from './CheckoutTable' //TSX
+export { CheckoutTable } from './CheckoutTable' //JS

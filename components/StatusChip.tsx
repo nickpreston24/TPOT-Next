@@ -7,7 +7,7 @@ interface ChipProps {
     status: string
 }
 
-const StatusChip: FC<ChipProps> = (props: ChipProps) => {
+export const StatusChip: FC<ChipProps> = (props: ChipProps) => {
 
     const { status } = props
     let [key] = getKeyByValue(CheckoutStatus, toTitleCase(status, '-')) as string

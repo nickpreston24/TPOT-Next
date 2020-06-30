@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import '@services/firebase'
 import * as firebase from "firebase/app";
 
-const authContext = createContext();
+const authContext = createContext(null);
 
 // Provider component that wraps your app and makes auth object 
 //  available to any child component that calls useAuth().

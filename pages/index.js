@@ -2,21 +2,25 @@ import React, { Component } from 'react'
 import { Layout } from '@components/experimental'
 import Head from 'next/head'
 
+import { ThemeProvider, CSSReset } from '@chakra-ui/core'
+import { customTheme } from '../constants/theme'
+
 const App = () => {
+
   return (
     <div title="TPOT Toolbox" className="container">
-      <Head>
-        <title>TPOT ToolBox</title>
-        <link rel="icon" href="favicon.ico" />
-      </Head>
-      <main>
+      <ThemeProvider theme={customTheme}>
+        <CSSReset />
+        <Head>
+          <title>TPOT ToolBox</title>
+          <link rel="icon" href="favicon.ico" />
+        </Head>
+        <main>
+          <h3 className="title">Welcome to TPOT Toolbox!</h3>
+          <Layout />
+        </main>
 
-        <h3 className="title">Welcome to TPOT Toolbox!</h3>
-
-        <Layout />
-      </main>
-
-      <style jsx>{`
+        <style jsx>{`
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;
@@ -113,9 +117,9 @@ const App = () => {
         }
 
         `}
-      </style>
+        </style>
 
-      <style jsx global>{`
+        <style jsx global>{`
           html,
           body {
             padding: 0;
@@ -128,8 +132,9 @@ const App = () => {
             box-sizing: border-box;
           }
         `}
-      </style>
+        </style>
 
+      </ThemeProvider>
     </div>
   )
 }
