@@ -38,7 +38,7 @@ const Login = () => {
                         ) {
                             errors.email = 'Invalid email address';
                         }
-                        console.log('errors', errors)
+                        // console.log('errors', errors)
                         return errors;
                     }}
                     onSubmit={async (values, { setSubmitting }) => {

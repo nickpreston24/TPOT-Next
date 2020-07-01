@@ -46,7 +46,7 @@ export const RichEditor = ({
 
 ) => {
 
-  if (!document) {
+  if (!document) {    
     return UnderConstruction(new ArgumentNullReferenceError('document').message)
   }
 

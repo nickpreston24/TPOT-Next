@@ -9,7 +9,6 @@ export const useSessions = () => useContext(sessionsContext)
 
 // HOC:
 export function ProvideSessions({ children }) {
-    console.log('provide sessions () ')
     const sessions = useSessionsProvider();
     return <sessionsContext.Provider value={sessions}>{children}</sessionsContext.Provider>
 }

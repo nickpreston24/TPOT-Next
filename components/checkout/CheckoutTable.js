@@ -19,7 +19,7 @@ export const CheckoutTable = observer(class Table extends Component {
     constructor() {
         super()
         this.collection = new Collection('sessions');
-        console.log('this.collection :>> ', this.collection);
+        // console.log('this.collection :>> ', this.collection);
     }
 
     render() {
@@ -57,8 +57,8 @@ const CheckoutItem = observer(
                             label='Checkout'
                             title={title}
                             component={ButtonLink}
-                            // href='/scribe/edit/[doc]'
-                            href={`/scribe/edit/${id}`}
+                            href='/scribe/edit/[doc]'
+                            // href={`/scribe/edit/${id}`}
                             as={`/scribe/edit/${id}`}
                             clickable
                         />

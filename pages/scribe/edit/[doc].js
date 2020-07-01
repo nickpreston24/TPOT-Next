@@ -1,57 +1,79 @@
-import React, { useRef, useState } from 'react'
-import { Document as FireStorterDocument } from 'firestorter'
-import { observer } from 'mobx-react'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { compose } from 'recompose'
+import React, { useRef } from 'react'
 import Dashboard from '@components/Dashboard'
-// import { DocumentDetails, DocumentForm, DocumentEditor } from '@components/Document'
 import PropTypes from 'prop-types'
-import Editor, { MyEditor } from 'tpot-scribe-editor'
-import { Box } from '@chakra-ui/core'
+import { MyEditor } from 'tpot-scribe-editor'
+import { Box, Stack } from '@chakra-ui/core'
 import WordPressToolbar from './WordPressToolbar'
 
-const Page = props => {
 
+const Page = (props) => {
+  console.log('props ([doc]) :>> ', props);
   const { id } = props
-
   const ckeditorRef = useRef(null)
-
   const getHtml = () => {
     const html = ckeditorRef.current.editor.getData()
     console.log(html)
   }
-
-  const setHtml = (html = `<p>Hello my friend, and where are you off to...?</p>`) => {
-    ckeditorRef.current.editor.setData(html);
-  }
-
-  console.log('CkEditor :>> ', MyEditor, 'editorRef: ', ckeditorRef);
-
   return (
-    <Dashboard
-      title={`TPOT Scribe - Edit - ${id}`}
-    // details={() => <DocumentDetails {...{ document }} />}
-    >
-      <Box
-        height="100%"
+    <Stack>
+      <Dashboard
+        title={`TPOT Scribe - Edit - ${id}`}
+      // details={() => <DocumentDetails {...{ document }} />}
       >
-        {/* <Editor ref={ckeditorRef} /> */}
-        <MyEditor ref={ckeditorRef} />
-
-        <WordPressToolbar {...{ getHtml }} />
-      </Box>
-    </Dashboard>
+        <Box>
+          <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>
+          <MyEditor ref={ckeditorRef} />
+          <WordPressToolbar {...{ getHtml }} />
+        </Box>
+      </Dashboard>
+    </Stack>
   )
 }
+
+/** Working Code */
+
+// const Page = props => {
+
+//   console.log('props ([doc]) :>> ', props);
+//   const { id } = props
+
+//   const ckeditorRef = useRef(null)
+
+//   const getHtml = () => {
+//     const html = ckeditorRef.current.editor.getData()
+//     console.log(html)
+//   }
+
+
+//   // console.log('CkEditor :>> ', MyEditor, 'editorRef: ', ckeditorRef);
+
+//   return (
+//     <Dashboard
+//       title={`TPOT Scribe - Edit - ${id}`}
+//     // details={() => <DocumentDetails {...{ document }} />}
+//     >
+//       <Box
+//         height="100%"
+//       >
+//         {/* <Editor ref={ckeditorRef} /> */}
+//         {/* <MyEditor ref={ckeditorRef} /> */}
+//         <div>Hello, CK Editor</div>
+//         <WordPressToolbar {...{ getHtml }} />
+//       </Box>
+//     </Dashboard>
+//   )
+// }
 
 Page.propTypes = {
   id: PropTypes.string.isRequired,
 }
 
-// Only the ID is needed here, but you could imagine all the goodies that could be done:
-// https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
+// // Only the ID is needed here, but you could imagine all the goodies that could be done:
+// // https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
 Page.getInitialProps = async context => {
+  console.log('context :>> ', context);
   const id = context.query.doc
+  console.log('id ([doc]) :>> ', id);
   return { id }
 }
 

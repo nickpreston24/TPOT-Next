@@ -89,9 +89,9 @@ function useProvideAuth() {
     //  latest auth object.
 
     useEffect(() => {
-        console.log('Activating auth...')
+        // console.log('Activating auth...')
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            console.log('user :>> ', !!user);
+            console.log('authUser? :>> ', !!user);
             if (user) {
                 setUser(user);
             } else {
