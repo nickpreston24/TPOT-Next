@@ -5,8 +5,6 @@ const config = {
     username: process.env.REACT_APP_WP_USERNAME,
     password: process.env.REACT_APP_WP_PASSWORD,
 }
-// console.log('config :>> ', config);
-
 
 // TODO: Temporary - Refactor this to be DB configurable:
 export const wpapi = new WPAPI(config)

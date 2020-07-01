@@ -1,17 +1,19 @@
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { ProvideAuth } from '@hooks'
+import { ProvideAuth, ProvideWordpress } from '@hooks'
 
 const MobxApp = (props) => {
-  
+
   let { Component, pageProps } = props
 
   return (
-    <ProvideAuth>
-      <Component {...pageProps} />
-      <ToastContainer newestOnTop />
-    </ProvideAuth>
+    <ProvideWordpress>
+      <ProvideAuth>
+        <Component {...pageProps} />
+        <ToastContainer newestOnTop />
+      </ProvideAuth>
+    </ProvideWordpress>
   )
 }
 

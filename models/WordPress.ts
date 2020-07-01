@@ -32,7 +32,7 @@ export interface WordPressPaper extends WordPressPost {
 * I'm keeping Post alive just in case I need to support it.
 */
 export class Paper extends Post implements WordPressPaper {
-
+    id?: number;
     title: string;
     url: string;
     tags: string[];
@@ -80,4 +80,6 @@ export class Session {
     title: string
     slug: string
     excerpt: string;
+
+    public toString = (): string => `Session: ${this.title}\n${this.code}`
 }

@@ -1,6 +1,7 @@
 
 type Constructor<T extends {} = {}> = new (...args: any[]) => T;
 export const createInstance = <T>(destinationConstructor: Constructor<T>): T => Object.assign(new destinationConstructor(), {});
+// TODO: This works - But let's update it to ONLY assign types according to keys, not every prop field that come in!
 export const toDto = <T>(source: any, destinationConstructor: Constructor<T>): T => Object.assign(new destinationConstructor(), source);
 
 /** Old Attempts */

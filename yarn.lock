@@ -2545,6 +2545,11 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
+"@types/wpapi@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/wpapi/-/wpapi-1.1.0.tgz#d66d4f8f91bf52ceec0a709c053126598abb57d2"
+  integrity sha512-PDLTnb1uMwfjj2MXf9uGMlGGK4Rm5wWgSuoMgLrlcldJStAU/baUPAkNW7n6emPUHsg7QU1YADZ5lJ3lPxV44g==
+
 "@types/yargs-parser@*":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-15.0.0.tgz#cb3f9f741869e20cce330ffbeb9271590483882d"

@@ -79,7 +79,7 @@ function useProvideAuth() {
             .auth()
             .confirmPasswordReset(code, password)
             .then(() => {
-                return true;
+                return true; // Ensures we get a pass/fail instead of void
             });
     };
 
