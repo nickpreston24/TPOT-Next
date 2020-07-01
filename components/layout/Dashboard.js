@@ -5,9 +5,9 @@ const Layout = ({children}) => {
 
     return (
         <Flex id="frame" position="absolute" height="100%" width="100%" bg="gray.100">
-            <Box position="absolute" right={0}>
+            {/* <Box position="absolute" right={0}>
                 <Button onClick={() => alert('test')} variant="outline" variantColor="telegram">Toggle Sidebar</Button>
-            </Box>
+            </Box> */}
             <Flex id="navbar" height="100%" minW={350} maxW={350} bg="dark.700" color="white" transition="width 0.3s ease-in-out 0s" overflow="hidden" whiteSpace="nowrap">
                 Navigation
             </Flex>

@@ -1,5 +1,5 @@
 import React, { FC, ReactChild, ReactNode } from 'react'
-import { Button, Flex, Heading, Stack, Icon, ButtonProps } from '@chakra-ui/core'
+import { Button, Flex, Heading, Stack, Text, ButtonProps } from '@chakra-ui/core'
 import Layout from '../layout/Dashboard'
 import SittingAtComputer from '../svg/SittingAtComputer'
 
@@ -31,16 +31,16 @@ const Template: FC<ScribeTemplateProps> = ({
     return (
         <Layout>
             <Stack align="center" spacing={8}>
-                <Heading>{title}</Heading>
+                <Heading fontWeight={300}>{title}</Heading>
                 <Flex w={400} h={400} justifyContent="center" alignItems="center">
                     <SittingAtComputer />
                 </Flex>
-                <Heading size="md">{subtitle}</Heading>
+                <Text fontSize="lg">{subtitle}</Text>
                 <Stack align="center" direction="row" spacing={6}>
-                    <Button {...primaryButtonProps}>
+                    <Button fontWeight="normal" {...primaryButtonProps} >
                         {primaryButtonProps.children}
                     </Button>
-                    <Button {...secondaryButtonProps}>
+                    <Button fontWeight="normal" {...secondaryButtonProps} >
                         {secondaryButtonProps.children}
                     </Button>
                     {children}

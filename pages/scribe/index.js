@@ -10,7 +10,7 @@ const Page = () => {
 
   return (
     <Template
-      title="Welcome to Scribe!"
+      title="Welcome to Scribe"
       subtitle="What would you like to do first?"
       primaryButtonProps={{
         children: CheckoutLink,
