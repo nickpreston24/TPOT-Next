@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, ReactChild, ReactNode } from 'react'
 import { Button, Flex, Heading, Stack, Icon, ButtonProps } from '@chakra-ui/core'
 import Layout from '../layout/Dashboard'
 import SittingAtComputer from '../svg/SittingAtComputer'
@@ -6,19 +6,26 @@ import SittingAtComputer from '../svg/SittingAtComputer'
 
 type ScribeTemplateProps = {
     title?: string,
-    /**
-     * Props applied to the back arrow [`IconButton`](/api/icon-button/) component.
-     */
     subtitle?: string,
+    children: ReactNode,
     primaryButtonProps?: Partial<ButtonProps>,
     secondaryButtonProps?: Partial<ButtonProps>
 }
 
 const Template: FC<ScribeTemplateProps> = ({
-    title,
-    subtitle,
-    primaryButtonProps,
-    secondaryButtonProps
+    title = 'Enter a Title',
+    subtitle = 'Enter a Subtitle',
+    children,
+    primaryButtonProps = {
+        children: 'Primary',
+        variantColor: 'primary',
+        variant: 'outline'
+    },
+    secondaryButtonProps = {
+        children: 'Secondary',
+        variantColor: 'primary',
+        variant: 'outline'
+    }
 }) => {
 
     return (
@@ -29,13 +36,14 @@ const Template: FC<ScribeTemplateProps> = ({
                     <SittingAtComputer />
                 </Flex>
                 <Heading size="md">{subtitle}</Heading>
-                <Stack align="center" direction="row" spacing={8}>
+                <Stack align="center" direction="row" spacing={6}>
                     <Button {...primaryButtonProps}>
-                        {primaryButtonProps.children && primaryButtonProps.children}
+                        {primaryButtonProps.children}
                     </Button>
                     <Button {...secondaryButtonProps}>
-                        {secondaryButtonProps.children && secondaryButtonProps.children}
+                        {secondaryButtonProps.children}
                     </Button>
+                    {children}
                 </Stack>
             </Stack>
         </Layout>
