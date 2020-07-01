@@ -3,13 +3,14 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ProvideAuth } from '@hooks'
 import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import customTheme from 'components/utils/Theme'
 
 const MobxApp = (props) => {
 
   let { Component, pageProps } = props
 
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={customTheme}>
       <CSSReset />
       <ProvideAuth>
         <Component {...pageProps} />

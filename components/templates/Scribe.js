@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Flex, Heading, Stack } from '@chakra-ui/core'
+import { Button, Flex, Heading, Stack, Icon } from '@chakra-ui/core'
 import Layout from '../layout/Dashboard'
 import SittingAtComputer from '../svg/SittingAtComputer'
 
