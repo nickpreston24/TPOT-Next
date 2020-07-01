@@ -2,6 +2,8 @@ import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ProvideAuth, ProvideWordpress } from '@hooks'
+import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import customTheme from 'components/utils/Theme'
 
 const MobxApp = (props) => {
 
@@ -9,10 +11,13 @@ const MobxApp = (props) => {
 
   return (
     <ProvideWordpress>
+    <ThemeProvider theme={customTheme}>
+      <CSSReset />
       <ProvideAuth>
         <Component {...pageProps} />
         <ToastContainer newestOnTop />
       </ProvideAuth>
+    </ThemeProvider>
     </ProvideWordpress>
   )
 }

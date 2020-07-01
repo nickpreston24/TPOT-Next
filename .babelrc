@@ -19,6 +19,8 @@
           "@contexts": "./contexts",
           "@routes": "./constants/routes",
           "@models": "./models",
+          "@templates": "./components/templates",
+          "@organisms": "./components/organisms",
           "@functions": [
             "./components/Editor/functions",
             "./components/RichEditor/functions"
