@@ -1,6 +1,5 @@
 import React from 'react'
-import { Box, Flex, Icon, Heading, Text, Button, Grid, Stack, Avatar, InputGroup, InputRightElement, Input, Switch } from '@chakra-ui/core'
-import ScribeLogo from '@components/svg/ScribeLogo'
+import { Flex, Icon, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch } from '@chakra-ui/core'
 
 const Header = ({children}) => {
 
@@ -21,10 +20,10 @@ const Header = ({children}) => {
                     <Stack spacing={0} align="flex-end">
                         <Text fontSize="lg" >Braden</Text>
                     </Stack>
-                    <Avatar size="sm" src="http://www.themes-lab.com/conbis/assets/images/avatars/avatar1.png"/>
+                    <Avatar size="sm" src="https://tinyurl.com/yde4dceq"/>
                 </Stack>
                 <Icon name="settings" size={5}/>
-                <Switch mt={1}/>
+                <Switch color="primary" mt={1}/>
             </Stack>
         </Stack>
     )
