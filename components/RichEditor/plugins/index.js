@@ -1,5 +1,5 @@
 import { PrimaryButton } from '../buttons'
-import { EditorStateNotFoundError, NullReferenceError } from '../../Errors'
+import { EditorStateNotFoundError, NullReferenceError } from '@Errors'
 import { Box, withStyles } from '@material-ui/core'
 
 /** Draft JS plugins */
@@ -22,7 +22,7 @@ import createUndoPlugin from 'draft-js-undo-plugin'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
 
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin'
-import { UnderConstruction } from '../../../pages/404'
+import { UnderConstruction } from '@../pages/404'
 
 const staticToolbarPlugin = createToolbarPlugin()
 const { Toolbar } = staticToolbarPlugin

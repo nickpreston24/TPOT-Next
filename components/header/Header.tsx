@@ -1,5 +1,5 @@
 import React from 'react'
-import Box from '@material-ui/core/Box'
+import { Box } from '@chakra-ui/core'
 import HeaderTabs from './HeaderTabs'
 import HeaderAppDropdown from './HeaderAppDropdown'
 import HeaderUserLogin from './HeaderUserLogin'
@@ -7,7 +7,12 @@ import HeaderUserLogin from './HeaderUserLogin'
 // #2d374a
 
 const Header = () => (
-    <Box display="flex" bgcolor="#21304a" color="primary.main" height={70}>
+    <Box 
+        display="flex" 
+        bg="#21304a" 
+        // color="primary.main"
+        height={70}
+        >
         <Box width={300}>
             <HeaderAppDropdown />
         </Box>

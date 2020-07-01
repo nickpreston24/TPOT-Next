@@ -1,6 +1,6 @@
 import React from 'react'
 import { RichUtils } from 'draft-js'
-import { Box } from '@material-ui/core'
+import { Box } from '@chakra-ui/core'
 import PropTypes from 'prop-types'
 import {
     BoldButton,

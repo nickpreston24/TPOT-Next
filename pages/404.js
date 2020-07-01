@@ -5,11 +5,11 @@ import Error from 'next/error'
 //         <UnderConstruction message={message} /> 
 //         : <Error message={message} />
 
-// 404
-const NotFoundPage = (message = '') => {
-    console.warn(message) // for devs.  TODO: replace with our custom logger
-    return <Error title={message} />
-}
+// // 404
+// const NotFoundPage = (message = '') => {
+//     console.warn(message) // for devs.  TODO: replace with our custom logger
+//     return <Error title={message} />
+// }
 
 export const UnderConstruction = (message = '') => {
     console.warn(message) // for devs.  TODO: replace with our custom logger
@@ -23,4 +23,4 @@ export const UnderConstruction = (message = '') => {
     </div> // for Users
 }
 
-export default NotFoundPage
+export default UnderConstruction

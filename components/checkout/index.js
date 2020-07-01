@@ -1,5 +1,2 @@
-import { CheckoutTable } from './CheckoutTable'
-
-export {
-    CheckoutTable
-}
+// export { CheckoutTable } from './CheckoutTable' //TSX
+export { CheckoutTable } from './CheckoutTable' //JS

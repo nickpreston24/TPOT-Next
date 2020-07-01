@@ -1,28 +1,24 @@
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { ProvideAuth } from '../hooks/useAuth'
-
-// import App from 'next/app'
-// import { Provider as MobxProvider } from 'mobx-react'
-// import { withAuthentication } from '../services/session'
-// import { fetchInitialStoreState, store } from '../stores/Root.ts'
-// import DialogProvider from '../hoc/DialogProvider'
+import { ProvideAuth, ProvideWordpress } from '@hooks'
+import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import customTheme from 'components/utils/Theme'
 
 const MobxApp = (props) => {
 
-  /* Page Props ver. */
-
   let { Component, pageProps } = props
-  // let AuthorizedApp = withAuthentication(Component)
-  // console.log('pageProps :>> ', pageProps);
 
   return (
-    <ProvideAuth>
-      {/* <AuthorizedApp {...pageProps} /> */}
-      <Component {...pageProps} />
-      <ToastContainer newestOnTop />
-    </ProvideAuth>
+    <ProvideWordpress>
+    <ThemeProvider theme={customTheme}>
+      <CSSReset />
+      <ProvideAuth>
+        <Component {...pageProps} />
+        <ToastContainer newestOnTop />
+      </ProvideAuth>
+    </ThemeProvider>
+    </ProvideWordpress>
   )
 }
 

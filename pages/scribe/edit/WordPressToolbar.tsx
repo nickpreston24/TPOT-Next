@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, FC } from 'react';
 import { Button, Box } from '@material-ui/core';
 import { ButtonLink } from 'components/experimental/ZeitLinkButton';
-import * as ROUTES from '@routes'
-import { Selector } from '@components/dialogs'
+import * as ROUTES from 'constants/routes'
+import { Selector } from 'components/dialogs'
 import UploadButton from 'components/buttons/UploadButton';
 
-export const WordPressToolbar = (props) => {
+const WordPressToolbar = (props) => {
 
     const onClose = (item) => {
         setOpen(false);
@@ -39,6 +39,7 @@ export const WordPressToolbar = (props) => {
         {option === 'Drive' && <UploadButton />}
 
         <Selector
+            title="Choose an Upload Option"
             open={open}
             options={uploadOptions}
             onCloseFn={onClose}
@@ -52,3 +53,6 @@ export const WordPressToolbar = (props) => {
             onClick={getHtml}>Checkout a Document</Button>
     </Box>);
 };
+
+
+export default WordPressToolbar;

@@ -3,6 +3,8 @@ import moment from "moment"
 
 export default class DetailState {
 
+    paper: any;
+    
     /**
      * @type Boolean
      * @description

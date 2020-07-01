@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core'
+import { Box } from '@chakra-ui/core'
 
 export const confirmSignout = {
     message: <Box py={20} fontSize={24} textAlign="center" fontFamily="'Poppins', sans-serif">{'Are you sure you want to leave?'}</Box>,

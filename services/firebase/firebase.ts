@@ -1,9 +1,8 @@
-import app from 'firebase/app'
+import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import { initFirestorter } from 'firestorter'
-// import { convertFile } from '../../components/Editor/functions/converter'
+import { initFirestorter, Document } from 'firestorter'
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -15,16 +14,39 @@ const config = {
 }
 
 
-if (!app.apps.length) {
-    app.initializeApp(config);
+if (!firebase.apps.length) {
+    firebase.initializeApp(config);
 
-    initFirestorter({ firebase: app })
+    initFirestorter({ firebase: firebase })
     console.count('Firebase API -- init()')
 }
 
-export const auth = app.auth();
+export const auth = firebase.auth();
 // export const db = app.database;
-export const db = app.firestore();
+export const db = firebase.firestore();
+export const storage = firebase.storage();
+
+// console.log('firestore database :>> ', Object.keys(db));
+// console.log('storage database:>> ', Object.keys(storage));
+
+// db.collection("users").add({
+//     first: "Ada",
+//     last: "Lovelace",
+//     born: 1815
+// })
+//     .then(function (docRef) {
+//         console.log("Document written with ID: ", docRef.id);
+//     })
+//     .catch(function (error) {
+//         console.error("Error adding document: ", error);
+//     });
+
+export {
+    firebase
+}
+    
+
+// export const firebase = app;
 
 // export default class Firebase {
 
@@ -211,7 +233,7 @@ export const unlock = async id => {
     })
 }
 
-export const upload = async (file) => {
+// export const upload = async (file) => {
 
     //     // Run conversion:        
     //     let html = await convertFile(file)
@@ -259,7 +281,7 @@ export const upload = async (file) => {
     //             console.log(error.message)
     //             alert('There was a problem uploading this file.')
     //         })
-}
+// }
 
 // }
 

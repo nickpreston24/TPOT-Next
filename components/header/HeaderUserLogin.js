@@ -1,5 +1,5 @@
 import React from 'react'
-import Box from '@material-ui/core/Box'
+import { Box } from '@chakra-ui/core'
 import { Avatar, IconButton } from '@material-ui/core'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'

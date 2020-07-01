@@ -6,9 +6,8 @@
 
 import React from 'react'
 // import firebase from 'firebase';
-import { convertFile } from '../components/Editor/functions/converter'
-import { notify } from 'components/experimental/Toasts'
-
+import { convertFile } from '@components/Editor/functions/converter'
+import { notify } from 'components/experimental'
 
 export const CloudStorage = React.createContext()
 const firebaseApiKey = process.env.REACT_APP_FIREBASE_STORAGE_API_KEY || null

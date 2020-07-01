@@ -2,28 +2,28 @@ import React, { useState } from 'react';
 import { AuthUserContext } from '../firebase/AuthUserContext';
 import { firebase } from "../firebase";
 
-interface InterfaceProps {
-    authUser?: any;
-}
+// interface InterfaceProps {
+//     authUser?: any;
+// }
 
-interface InterfaceState {
-    authUser?: any;
-}
+// interface InterfaceState {
+//     authUser?: any;
+// }
 
-export const withAuthentication = (Component: any) => {
+// export const withAuthentication = (Component: any) => {
 
-    const WithAuthentication: React.ComponentClass<InterfaceProps, InterfaceState> = () => {
-        const [authUser, setAuthUser] = useState(null);
+//     const WithAuthentication: React.ComponentClass<InterfaceProps, InterfaceState> = () => {
+//         const [authUser, setAuthUser] = useState(null);
 
 
-        return (
-            <AuthUserContext.Provider value={authUser}>
-                <Component />
-            </AuthUserContext.Provider>
-        );
-    }
-    return WithAuthentication;
-}
+//         return (
+//             <AuthUserContext.Provider value={authUser}>
+//                 <Component />
+//             </AuthUserContext.Provider>
+//         );
+//     }
+//     return WithAuthentication;
+// }
 
 // export const withAuthentication = (Component: any) => {
 //     class WithAuthentication extends React.Component<
@@ -99,4 +99,4 @@ export const withAuthentication = (Component: any) => {
 //     }
 // }
 
-export default withAuthentication
+// export default withAuthentication

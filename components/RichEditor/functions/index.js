@@ -2,7 +2,7 @@ import { ContentState, convertFromHTML, convertToRaw } from 'draft-js'
 import { colorStyleMap } from '../styles'
 import draftToHtml from 'draftjs-to-html'
 import { toJS } from 'mobx'
-import { EditorStateNotFoundError, ArgumentNullReferenceError } from '../../Errors'
+import { EditorStateNotFoundError, ArgumentNullReferenceError } from '@Errors'
 
 // TODO: Move to a constants.js
 const draftToHtmlPrefix = 'color-'

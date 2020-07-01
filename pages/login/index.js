@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react'
-import * as ROUTES from '../../constants/routes';
+import * as ROUTES from '@constants/routes';
 import { useAuth } from "@hooks"
 import { ZeitButton, ButtonLink } from "@components/experimental"
 import { Chip, Box } from '@material-ui/core'
@@ -8,7 +8,6 @@ import { notify } from 'components/experimental/Toasts';
 import { Column, Row } from 'simple-flexbox'  // A placeholder for MUI's Box className issue.
 
 import Router from 'next/router'
-
 
 const Login = () => {
 
@@ -39,7 +38,7 @@ const Login = () => {
                         ) {
                             errors.email = 'Invalid email address';
                         }
-                        console.log('errors', errors)
+                        // console.log('errors', errors)
                         return errors;
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
@@ -51,7 +50,6 @@ const Login = () => {
 
                         if (!!user) {
                             notify('You are now signed in!')
-                            // TODO: Redirect to Checkout
                             Router.push(ROUTES.SCRIBE)
                         }
                     }}
@@ -63,8 +61,6 @@ const Login = () => {
                         handleChange,
                         handleBlur,
                         handleSubmit,
-                        isSubmitting,
-                        /* and other goodies */
                     }) => (
                             <form onSubmit={handleSubmit}>
                                 <input
@@ -87,7 +83,6 @@ const Login = () => {
                                 <br />
                                 <ZeitButton
                                     type="submit"
-                                    disabled={isSubmitting} // FIXME: Roll this into ZeitButton's props.
                                     text='Sign In'
                                 />
                                 <Chip

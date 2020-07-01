@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { compose } from 'recompose'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
-
 import { withStyles } from '@material-ui/styles'
 import MaterialTable, { Column } from 'material-table'
 import { action, autorun, observable, toJS } from 'mobx'
@@ -11,6 +10,8 @@ import { Box, Button, Chip, Link as MLink, Paper } from '@material-ui/core'
 
 import columns from './columns';
 import TableDetails from './TableDetails'
+import UploadButton from 'components/buttons/UploadButton'
+import StyledTableBody from './StyledTableBody'
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
 // documents available through a paginated table. It is reactive so that when somebody
@@ -35,12 +36,10 @@ export const CheckoutTable = compose(observer)(
         constructor(props: any) {
             super(props)
 
-            this.store = store;
             this.columns = columns;
         }
 
         render() {
-            // const { store } = this.props
             // console.log('paper.status :>> ', paper.status)            
 
             let data = []
@@ -75,7 +74,7 @@ export const CheckoutTable = compose(observer)(
                         onChangePage={this.changePage}
                         onChangeRowsPerPage={this.changeRowsPerPage}
                         onOrderChange={this.orderChange}
-                        detailPanel={paper => <TableDetails {...{ paper, store }} />}
+                        // detailPanel={paper => <TableDetails {...{ paper }} />}
                         components={{ Container: props => <StyledTableBody {...props} /> }}
                         options={{
                             // search: search,
@@ -111,7 +110,7 @@ export const CheckoutTable = compose(observer)(
                             },
                             {
                                 tooltip: 'Upload DOCX',
-                                icon: () => <UploadButton {...{ store }} />,
+                                icon: () => <UploadButton />,
                                 isFreeAction: true,
                                 onClick: () => null
                             }
@@ -125,38 +124,11 @@ export const CheckoutTable = compose(observer)(
 
 
 
-// An alternate Paper component to fix overflow clipping in the X direction on rows that have no data
-const StyledTableBody = withStyles({
-    root: {
-        '& div > div > table': {
-            overflow: 'hidden'
-        }
-    },
-})(Paper)
-
-
-
-const UploadButton = observer(({ store }) => {
-    return (
-        <Box width={24} height={20} p={0} m={0} mt="4px" display="flex" alignItems="center" justifyContent="center">
-            <input
-                // multiple // multi-upload not recommended
-                accept=".docx"
-                type="file"
-                id="upload-button-input"
-                style={{ display: 'none' }}
-                onChange={(e) => {
-                    const files = e.target.files
-                    let file = files[0]
-                    if (!file) return
-                    uploadLocalFile(file, store)
-                }}
-            />
-            <label htmlFor="upload-button-input" style={{ margin: 12 }}>
-                <CloudUploadIcon />
-            </label>
-        </Box>
-    )
-})
-
-
+// // An alternate Paper component to fix overflow clipping in the X direction on rows that have no data
+// const StyledTableBody = withStyles({
+//     root: {
+//         '& div > div > table': {
+//             overflow: 'hidden'
+//         }
+//     },
+// })(Paper)

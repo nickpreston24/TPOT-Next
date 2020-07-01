@@ -1,23 +1,29 @@
 import React from 'react'
-import Dashboard from '../../components/Dashboard'
-import { ZeitCard } from '../../components/experimental'
-import * as ROUTES from '../../constants/routes'
+import NextLink from 'next/link'
+import Template from '@templates/Scribe'
+import * as ROUTES from '@constants/routes'
 
-const Edit = () => (
-  // <MobxProvider store={store}>
-  <Dashboard title="TPOT Scribe">  
-    <ZeitCard
-      url={ROUTES.CHECKOUT}
-      title="Checkout"
-      text='Click on "Checkout" at the top to get started!'
-    />
-    <ZeitCard
-      url={ROUTES.LANDING}
-      title="TPOT"
-      text='Go Back to Toolbox Home'
-    />
-  </Dashboard>
-  // </MobxProvider>  
-)
+const Page = () => {
 
-export default Edit
+  const CheckoutLink = <NextLink href={ROUTES.CHECKOUT}><a>{'Checkout a paper'}</a></NextLink>
+  const LandingLink = <NextLink href={ROUTES.LANDING}><a>{'Start from scratch'}</a></NextLink>
+
+  return (
+    <Template
+      title="Welcome to Scribe"
+      subtitle="What would you like to do first?"
+      primaryButtonProps={{
+        children: CheckoutLink,
+        variantColor: 'primary',
+        variant: 'solid'
+      }}
+      secondaryButtonProps={{
+        children: LandingLink,
+        variantColor: 'primary',
+        variant: 'outline'
+      }}
+    />
+  )
+}
+
+export default Page

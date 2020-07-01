@@ -1,69 +1,84 @@
-import { Collection, Mode } from 'firestorter'
-import { observable, action, autorun } from 'mobx'
+import { observable, action, autorun, computed } from 'mobx'
 import '@services/firebase'
+import { Collection } from 'firestorter'
 import { createContext } from 'react'
 
-class SessionStore {
+export class SessionStore {
 
-    @observable sessions = new Collection('sessions')
-    @observable loading = false
-    @observable prevDocument = null
-    @observable page = 0
-    @observable pageSize = 7
-    @observable filter?= ''
-    @observable direction = ''
-    @observable query = null
-    @observable totalCount = 0
+    // @observable 
+    sessions = new Collection('sessions')
 
-    @action countTotalDocs = async () => {
-        // let options = new ICollectionOptions {{Mode.Off}}
-        let collection = await new Collection('sessions', {
-            // Mode = Mode.Off                
-        }).fetch()
-        this.totalCount = collection.docs.length
-    }
+    /*
+        @BP: If you want, you can make these observable, though I don't
+        recommend going outside for firestorter documentation unless you have a good reason to do so.
+    */
 
-    @action orderChange = (colID, direction) => {
-        this.filter = colID
-        this.direction = direction
-    }
+    // @observable loading = false
+    // @observable prevDocument = null
+    // @observable page = 0
+    // @observable pageSize = 7
+    // @observable filter?= ''
+    // @observable direction = ''
+    // @observable query = null
+    // @observable totalCount = 0
 
-    @action setLoading = (isLoading: boolean) => this.loading = isLoading
+    //     @action countTotalDocs = async () => {
+    //         // let options = new ICollectionOptions {{Mode.Off}}
+    //         console.log('This is the Collection you are looking for ... ')
+    // console.log('this.sessions.docs.length :>> ', this.sessions.docs.length);
+    //         return this.sessions.docs.length
 
-    @action changePage = page =>
-        this.page = page
+    //         // let collection = await new Collection('sessions', {
+    //         //     // Mode = Mode.Off                
+    //         // }).fetch()
+    //         // this.totalCount = collection.docs.length
+    //     }
 
-    @action changeRowsPerPage = pageSize =>
-        this.pageSize = pageSize
+    // @computed get count() {
+    //     return this.sessions.docs.length
+    // }
 
-    @action setTotalCount = count =>
-        this.totalCount = count
+    // @action orderChange = (colID, direction) => {
+    //     this.filter = colID
+    //     this.direction = direction
+    // }
 
-    @action updateQuery = query =>
-        this.sessions.query = query
+    // @action setLoading = (isLoading: boolean) => this.loading = isLoading
+
+    // @action changePage = page =>
+    //     this.page = page
+
+    // @action changeRowsPerPage = pageSize =>
+    //     this.pageSize = pageSize
+
+    // @action setTotalCount = count =>
+    //     this.totalCount = count
+
+    // @action updateQuery = query =>
+    //     this.sessions.query = query
 
 
-    queryBuilder = autorun(async () => {
+    // queryBuilder = autorun(async () => {
 
-        let { page, pageSize, filter, direction, prevDocument } = this
-        this.setLoading(true)
+    //     let { page, pageSize, filter, direction, prevDocument } = this
+    //     this.setLoading(true)
 
-        filter = !!filter ? 'title' : 'status'
-        direction = !!filter ? 'asc' : direction
+    //     filter = !!filter ? 'title' : 'status'
+    //     direction = !!filter ? 'asc' : direction
 
-        await this.countTotalDocs()
-        await this.updateQuery(
-            collectionRef => {
-                return collectionRef
-                    .orderBy(filter, direction)
-                    .limit(pageSize)
-                    .startAfter(prevDocument)
+    //     // await this.countTotalDocs()
+    //     await this.updateQuery(
+    //         collectionRef => {
+    //             return collectionRef
+    //                 .orderBy(filter, direction)
+    //                 .limit(pageSize)
+    //                 .startAfter(prevDocument)
 
-            }
-        )
+    //         }
+    //     )
 
-        this.setLoading(false)
-    })
+    //     this.setLoading(false)
+    // })
 }
 
 // export const sessionStore = new SessionStore();
@@ -72,4 +87,5 @@ class SessionStore {
 // export default Sessions;
 
 
-export default createContext(new SessionStore());
+// export const sessionStoreContext =  createContext(new SessionStore());
+export default SessionStore;

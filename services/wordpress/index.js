@@ -1,5 +1,1 @@
-import { FirebaseUserService } from './FirebaseUserService'
-
-export {
-    FirebaseUserService
-}
+export { wpapi } from './api';

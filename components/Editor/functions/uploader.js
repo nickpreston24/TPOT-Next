@@ -3,53 +3,20 @@ import { Collection } from 'firestorter'
 import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from './utilities'
 import { EditorState, convertToRaw } from 'draft-js'
 import { toJS } from 'mobx'
-
-/** TODO: @MP: Trim this firebase stuff down to bare minumum. 
- *  We don't need everything and the kitchen sink, 
- *  but I'm confused as to what parts are firebase, db, auth, etc. 
- *  and how to properly init and use them,
- *  thanks to guides renaming each as each other. */
-
-import app from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/firestore'
-import 'firebase/storage'
-import { initFirestorter } from 'firestorter'
-// import { convertFile } from '../../components/Editor/functions/converter'
-
-const config = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    databaseURL: process.env.REACT_APP_DATABASE_URL,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-}
-
-
-if (!app.apps.length) {
-    app.initializeApp(config);
-
-    initFirestorter({ firebase: app })
-    console.count('Firebase API -- init()')
-}
-
-import firebase from 'firebase'
-
-// console.log('firebase :>> ', firebase);
+import { firebase, db, storage } from '@services/firebase'
 
 export const uploadLocalFile = async (file, userName = null) => {
 
     // Check to make sure document has not already been uploaded before
 
-    const storageRef = await firebase.storage().ref()
-    console.log('storageRef :>> ', storageRef);
-
-    const getDocumentMetadata = (storageRef, filepath) => {
-        return storageRef.child(filepath).getMetadata()
-    }
-
+    // const storageRef = await firebase.storage().ref()
+    const storageRef = storage.ref();
+    console.log('storageRef :>> ', !!storageRef);
     console.log('file name', file.name)
+
+    // const getDocumentMetadata = (storageRef, filepath) => {
+    //     return storageRef.child(filepath).getMetadata()
+    // }
 
     // const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
     //     .catch(console.error)
@@ -112,6 +79,7 @@ export const uploadLocalFile = async (file, userName = null) => {
         excerpt: ''
     })
 
+    console.log('document :>> ', document);
     if (!document) {
         console.warn(`Session failed to create entry: ${document}`)
     } else {
@@ -132,21 +100,22 @@ export const uploadLocalFile = async (file, userName = null) => {
     }
 
     // Update the session with the valid document download URL+token
-    const downloadURL = await snapshot.ref.getDownloadURL()
+    const downloadUrl = await snapshot.ref.getDownloadURL()
 
-    if (!downloadURL) {
-        console.error(`Could not get download URL: ${downloadURL}`)
+    if (!downloadUrl) {
+        console.error(`Could not get download URL: ${downloadUrl}`)
         return
     }
 
     await document.update({
-        docx: downloadURL
+        docx: downloadUrl
     })
 
     console.info(
         'Document Converted and Uploaded Successfully!:\n',
-        '\nDownload URL\n', downloadURL,
-        '\n\nDocument Data', toJS(document.data)
+        '\nDownload URL\n', downloadUrl,
+        '\n\nDocument Data', !!document.data //toJS(document.data)
     )
 
+    return document;
 }

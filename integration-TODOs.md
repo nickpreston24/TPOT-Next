@@ -25,6 +25,8 @@
 - [ ] **Optional** In functions/uploader.js, decide which html converter you're going to use: (draftjs-to-html or draft-js-export-html).  Probably the former.
 - [ ] We don't need to store html states (except cloud function conversions) at all, according to an article I red.  Just draft state will do for interim edits.  We can always run whichever draft-to-html exporter we're using to render html.
 
+- [ ] editorref.current.editor.setData(`<h1></h1>`)
+
 ### Bugs
 
 - [ ] FIX: the case where working on an in-progress document, then switching to CheckoutTable you still see the Status 'In Progress'

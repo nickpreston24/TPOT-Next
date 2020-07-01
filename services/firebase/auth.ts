@@ -8,10 +8,13 @@ export const doCreateUserWithEmailAndPassword = (
 
 // Sign In
 export const doSignInWithEmailAndPassword = (email: string, password: string) =>
-    auth.signInWithEmailAndPassword(email, password);
+    auth.signInWithEmailAndPassword(email, password)
+        .catch(console.error)
 
 // Sign out
-export const doSignOut = () => auth.signOut();
+export const doSignOut = () => auth.signOut()
+    .catch(console.error)
+
 
 // Password Reset
 export const doPasswordReset = (email: string) =>

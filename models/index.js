@@ -1,8 +1,3 @@
-import { Paper } from './paper.ts'
-import { scriptureParser, Scripture } from './scripture'
-
-module.exports = {
-    Paper,
-    Scripture,
-    scriptureParser
-}
+export { scriptureParser } from './scripture'
+export { Session, Paper } from './WordPress'
+export { toDto, createInstance } from './domain'

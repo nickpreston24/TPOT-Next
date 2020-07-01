@@ -15,7 +15,7 @@ class LoginForm extends Component {
 
         const { router, store } = this.props
         console.log('router.query.mode :>> ', router.query.mode);
-        const { signIn, forgot, register } = store
+        // const { signIn, forgot, register } = store
         const mode = router.query.mode || 'login'
 
         const plugins = {
@@ -55,13 +55,13 @@ class LoginForm extends Component {
             onSuccess(form) {
                 let values = form.values()
                 if (mode == 'login') {
-                    signIn(values)
+                    // signIn(values)
                 }
                 if (mode == 'register') {
-                    register(values)
+                    // register(values)
                 }
                 if (mode == 'forgot') {
-                    forgot(values)
+                    // forgot(values)
                 }
             },
             onError() {

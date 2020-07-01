@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from '@material-ui/core'
+import { Box } from '@chakra-ui/core'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import solarizedLight from 'react-syntax-highlighter/dist/cjs/styles/hljs/solarized-light'
 

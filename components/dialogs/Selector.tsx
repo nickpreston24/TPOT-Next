@@ -32,14 +32,14 @@ interface DialogProps {
     onCloseFn?: (value: string) => void
     onSelectFn?: (value: string) => void
     open: boolean,
-    title: string,
+    title?: string,
     // states: any[]   // stateful hooks
     // effects?: any[] // effect hooks
     // onCloseFn?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 // Abstract Base Dialog for any purpose
-const Selector: FC<DialogProps> = ({
+export const Selector: FC<DialogProps> = ({
     options,
     onCloseFn,
     onSelectFn,
@@ -103,5 +103,3 @@ const Selector: FC<DialogProps> = ({
         </Dialog>
     )
 }
-
-export default Selector;

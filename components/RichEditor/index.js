@@ -1,6 +1,6 @@
 import { EditorState, Modifier, RichUtils, convertFromRaw } from 'draft-js'
 import { useRef, useState } from 'react'
-import { UnderConstruction } from '../../pages/404'
+import { UnderConstruction } from '@pages/404'
 
 import { SubmitButton } from './buttons/SubmitButton'
 
@@ -25,7 +25,7 @@ import {
 
 import Editor from 'draft-js-plugins-editor'
 import styles, { colorStyleMap } from './styles'
-import { ArgumentNullReferenceError } from '../Errors'
+import { ArgumentNullReferenceError } from '../../models/Errors'
 // import { Toolbar } from '../Editor/components/Toolbar'
 let publish = null //TODO: use Publisher class
 
@@ -46,7 +46,7 @@ export const RichEditor = ({
 
 ) => {
 
-  if (!document) {
+  if (!document) {    
     return UnderConstruction(new ArgumentNullReferenceError('document').message)
   }
 
