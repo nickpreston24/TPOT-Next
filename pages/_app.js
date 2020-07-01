@@ -2,16 +2,20 @@ import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ProvideAuth } from '@hooks'
+import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
 
 const MobxApp = (props) => {
-  
+
   let { Component, pageProps } = props
 
   return (
-    <ProvideAuth>
-      <Component {...pageProps} />
-      <ToastContainer newestOnTop />
-    </ProvideAuth>
+    <ThemeProvider>
+      <CSSReset />
+      <ProvideAuth>
+        <Component {...pageProps} />
+        <ToastContainer newestOnTop />
+      </ProvideAuth>
+    </ThemeProvider>
   )
 }
 
