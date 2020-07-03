@@ -2,8 +2,7 @@ import { convertFile } from './converter'
 import { Collection } from 'firestorter'
 import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from './utilities'
 import { EditorState, convertToRaw } from 'draft-js'
-import { toJS } from 'mobx'
-import { firebase, db, storage } from '@services/firebase'
+import { storage } from '@services/firebase'
 
 export const uploadLocalFile = async (file, userName = null) => {
 

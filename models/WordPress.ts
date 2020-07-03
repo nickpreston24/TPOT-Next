@@ -15,59 +15,62 @@ interface WordPressPost {
 }
 
 // NOTE: Should never be exported
-class Post implements WordPressPost {
-    status: string;
-    title: string;
-    url: string;
-    tags: string[];
-}
+// class Post implements WordPressPost {
+//     status: string;
+//     title: string | Object;
+//     url: string;
+//     tags: string[];
+// }
 
-export interface WordPressPaper extends WordPressPost {
-    authorId: number;
-    content: string;
-}
+// export interface WordPressPaper extends WordPressPost {
+//     authorId: number;
+//     content: string;
+// }
 
 /* 
 * My best understanding is that Paper is specialized Post.
 * I'm keeping Post alive just in case I need to support it.
 */
-export class Paper extends Post implements WordPressPaper {
+export class Paper {
     id?: number;
     title: string;
     url: string;
     tags: string[];
     status: string;
-    authorId: number;
+    author: number;
     content: string;
+    slug: string;
 
-    // constructor(title: string = null, url: string = null) {
-    //     // super({ title, url })
-    //     super()
-    // }
-
-    // static Create(): Paper {
-    //     return new Paper()
-    // }
-
-    // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:
-    private validName(name: string) {
-        if (name.length > 0 && /^[a-zA-Z]+$/.test(name)) {
-            return true
-        } else {
-            throw new Error('Invalid name format')
-        }
+    constructor(title: string, content: string) {
+        this.content = content || null;
+        this.title = title || null;
+        this.slug = (title || '')
+            .replace(/\s/g, '-')
+            .toLowerCase()
+        console.log('this :>> ', this);
     }
+
+    // // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:
+    // private validName(name: string) {
+    //     if (name.length > 0 && /^[a-zA-Z]+$/.test(name)) {
+    //         return true
+    //     } else {
+    //         throw new Error('Invalid name format')
+    //     }
+    // }
 }
 
 export interface WordpressSession {
     firebaseUserId: string;
-    paper: WordPressPaper;
+    // paper: WordPressPaper;
     session?: Session;
 }
 
 
 /* The typed representation of a session (paper) from Firestore DB */
 export class Session {
+    authorId: number
+    paperId: number
     status: string
     contributors: string[]
     date_uploaded: Date

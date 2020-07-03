@@ -1,23 +1,18 @@
-import { Heading, Button, Link, Box, ListItem, List, Text, Spinner, Input, Stack, InputGroup, InputLeftAddon, InputRightAddon, Select } from '@chakra-ui/core'
-import { Session, toDto, createInstance, Paper } from 'models';
-import * as Routes from '../../constants/routes'
+import {
+    Heading, Box, List, Text, Spinner
+    , Input, Stack, InputGroup, InputLeftAddon
+    , Button, useDisclosure, Modal, ModalOverlay
+    , ModalContent, ModalHeader, ModalCloseButton
+    , ModalBody, FormControl, FormLabel, ModalFooter
+} from '@chakra-ui/core'
+import { Paper, Session } from 'models';
 import { useWordpress } from '../../hooks'
-import { useState, useEffect, FC } from 'react';
-// import { Dropdown } from './Dropdown' // question-outline error again!
+import { useState, useEffect, FC, useRef } from 'react';
+import { mapToDto, Alter, With, Find, createInstance, toDto } from 'models/domain';
+import { Dropdown } from './Dropdown'
+import { sessions } from '../../stores'
+import { notify } from 'components/experimental/Toasts';
 
-const sessionData = {
-    status: "in-progress",
-    slug: 'what-is-faith',
-    excerpt: "What is Faith?",
-    title: 'What is Faith?',
-    code: `
-    <p>
-    <span>
-        <h1>What is Faith?</h1>
-        <p>Now faith is confidence in what we hope for and assurance about what we do not see. </p>
-    </span>
-    </p>`
-}
 export class User {
     id: number;
     name: string;
@@ -25,34 +20,109 @@ export class User {
     description: string;
     link: string;
     slug: string;
+    email: string
 }
 
-let sessionDto = toDto(sessionData, Session)
-console.log('sessionDto :>> ', sessionDto);
+
+// let sessionDto = toDto(sessionData, Session)
+// console.log('sessionDto :>> ', sessionDto);
+// const [user, setUser] = useState(createInstance(User));
+// const [users, setUsers] = useState([]);
+const DEFAULT_AUTHOR = 9;
+
+var testSession = {
+    paperId: null,
+    status: "in-progress",
+    title: "Fake Paper",
+    contributors: ['Ronnie', 'Stephen'],
+    date_uploaded: Date.now,
+    date_modified: Date.now,
+    draft: '',
+    code: '<p></p>',
+    original: '',
+    stylesheet: null,
+    filename: null,
+    slug: 'fake-paper',
+    excerpt: 'lorem ipsum',
+}
+
+// console.log('testSession :>> ', testSession);
+// console.log('as DTO (session) :>> ', toDto(testSession, Session));
+
+
 
 export const DomainTests = () => {
 
-    const { getUser, getAllUsers } = useWordpress();
+    const { getPages, publish, getUser } = useWordpress();
     const [loading, setLoading] = useState(true);
+    const [pages, setPages] = useState<Paper[]>([]);
+    const [categories, setCategories] = useState([""]);
+    const [title, setTitle] = useState("");
+    const [contents, setContents] = useState("<h1>Test Header</h1><p>lorem ipsum</p>");
     const [user, setUser] = useState(createInstance(User));
-    const [users, setUsers] = useState([]);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const initialRef = useRef();
+    const finalRef = useRef();
+
+    // let sessions = []
+    // sessions.push(testSession);
 
     useEffect(() => {
-        // const user = await getUser(10)
-        // getUser(10)
-        //     .then((response) => {
-        //         setUser(toDto(response, User))
-        //         setLoading(false)
-        //         // console.log('user :>> ', user);
-        //     })
-
-        getAllUsers()
+        getPages(DEFAULT_AUTHOR)
             .then((records) => {
-                setUsers(records.map((record) => toDto(record, User)));
+                console.log('records :>> ', records);
+                let collection = mapToDto(records, Paper);
+                setPages(collection);
                 setLoading(false)
-                console.log('users :>> ', users);
+            })
+
+        getUser(DEFAULT_AUTHOR)
+            .then((results) => {
+                results['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
+                console.log('current user :>> ', results);
+                setUser(toDto(results, User))
             })
     }, []);
+
+    const onSubmit = async () => {
+        onClose();
+        await publish(new Paper(title, contents))
+            .then(async (response) => {
+                // console.log('wp paper :>> ', toDto(response, Session)) // @MP: For now, only maps 'content', 'slug' and 'title'
+                // console.log('title :>> ', title);
+                // console.log('contents :>> ', contents);
+                console.log('response.author :>> ', response.author);
+                console.log('response.id :>> ', response.id);
+                console.log('response :>> ', response);
+
+                // CREATE SESSION:
+                const document = await sessions.add({
+                    authorId: response.author || DEFAULT_AUTHOR,
+                    paperId: response.id,
+
+                    date_modified: response.modified,
+                    status: response.status,
+                    contributors: [user.email || user.name],
+                    code: response.content.rendered,
+                    original: '',
+                    excerpt: '',
+                    title,
+                })
+
+                if (!document) {
+                    notify(`Failed to create entry: ${title}`,'warn')
+                    return;
+                }
+                else {
+                    notify(`New Paper created for: ${title}\n`, 'success')
+                }
+
+                return document;
+            })
+        // console.log('p :>> ', p);
+    }
 
     return (
         <Box
@@ -60,25 +130,80 @@ export const DomainTests = () => {
         >
             <Stack>
                 <Heading>
-                    Testing domains here!
+                    Testing WP Papers here!
                 </Heading>
                 <Stack spacing={4}>
                     <InputGroup>
-                        <InputLeftAddon>Username</InputLeftAddon>
-                        <Input type="tel" roundedLeft="0" placeholder="user's wordpress name" />
+                        <InputLeftAddon >&lt;Html/&gt;</InputLeftAddon>
+                        <Input
+                            ref={finalRef}
+                            value={contents}
+                            onChange={(event) => { setContents(event.target.value) }}
+                            type="tel"
+                            roundedLeft="0"
+                            placeholder="<p>sample</p>" />
                     </InputGroup>
                 </Stack>
-                <List>
-                    <Text>
-                        {sessionDto.toString()}
-                    </Text>
 
-                    {/* <Dropdown></Dropdown> */}
+                <Box>
+                    {/* <Button onClick={onsubmit}>Submit</Button> */}
 
-                    {!!loading
+                    <Button onClick={onOpen}>Submit Paper</Button>
+
+                    {/* <Button ml={4} >
+                    I'll receive focus on close
+                </Button> */}
+
+                    <Modal
+                        initialFocusRef={initialRef}
+                        finalFocusRef={finalRef}
+                        isOpen={isOpen}
+                        onClose={onClose}
+                    >
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Save your Paper</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody pb={6}>
+                                <FormControl>
+                                    <FormLabel>Paper Title</FormLabel>
+                                    <Input
+                                        value={title}
+                                        onChange={(event) => { setTitle(event.target.value) }}
+                                        ref={initialRef} placeholder="paper-name-here" />
+                                </FormControl>
+
+                                <FormControl mt={4}>
+                                    <FormLabel>Categories</FormLabel>
+                                    <Input
+                                        value={categories}
+                                        onChange={(event) => { setCategories(event.target.value.split(',')) }}
+                                        placeholder="e.g 'Chinese', 'Translations'" />
+                                </FormControl>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button
+                                    onClick={onSubmit}
+                                    variantColor="blue" mr={3}>
+                                    Save
+                                </Button>
+                                <Button onClick={onClose}>Cancel</Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
+
+                </Box>
+
+                {/* {!!loading
                         ? <Spinner />
-                        : <UserList users={users} />}
-                </List>
+                        : <UserList entries={users} />} */}
+
+                {!!loading
+                    ? <Spinner />
+                    : <PublishedList entries={pages} title="Your Published Papers" />}
+
+                <CurrentSessions entries={[]} title="Your Current Drafts" />
             </Stack>
         </Box >
     )
@@ -86,20 +211,48 @@ export const DomainTests = () => {
 
 export default DomainTests;
 
-type ListProps = {
-    users: User[]
-}
+type ListProps<T> = { entries: T[], title?: string }
 
-const UserList: FC<ListProps> = ({ users }) => {
-    console.log('users :>> ', users);
+/** wpapi can only get 'published' papers from WP, hence the list
+ * Could make a card from this later (like the airbnb card)
+ */
+const PublishedList: FC<ListProps<Paper>> = ({ entries: papers, title }) => {
+
+    let titles = papers.map(p => Find(p, "title").rendered); // Hack to assign rendered to `title`.  TODO: add the With/Alter functionality to the `toDto()` as an optional param.
+    // console.log('titles :>> ', titles)
 
     return (<List>
-        {users.map((user, index) => {
+        {title && <Heading size="md">{title}</Heading>}
+        {/* <Dropdown choices={[titles]} /> */}
+
+        {papers.map((paper, index) => {
+            const { id, title, url, slug } = paper;
+            // console.log('title :>> ', title);
             return (
                 <div key={index}>
-                    <h3>{user.name}</h3>
-                    <b>{user.slug}</b>
-                    <i>{user.description}</i>
+                    <h2><b>{titles[index]}</b>
+                        {/* Id: {id} <i>{url}</i> */}
+                        {/* <b>{slug}</b> */}
+                    </h2>
+                </div>
+            )
+        })}
+    </List >)
+}
+
+
+const CurrentSessions: FC<ListProps<Session>> = ({ entries: sessions, title }) => {
+    return (<List>
+        {title && <Heading size='md'>{title}</Heading>}
+        {sessions.map((session, index) => {
+            const { paperId, status, title, excerpt, slug } = session;
+            // console.log('title :>> ', title);
+            return (
+                <div key={index}>
+                    <h2><b>{title}</b>
+                        Id: {paperId} <i>{excerpt}</i>
+                        <b>{slug}</b>
+                    </h2>
                 </div>
             )
         })}
@@ -107,22 +260,17 @@ const UserList: FC<ListProps> = ({ users }) => {
 }
 
 
-{/* <Box >
-        <Button>Sample</Button>
-    </Box> */}
-{/* <Button
-        leftIcon='add'
-        title="Go Home"
-    >
-        <Link href={Routes.LANDING}>
-            <a>Portfolio</a>
-        </Link>
-    </Button> */}
+/** Working samples */
+// getUser(10)
+//     .then((response) => {
+//         setUser(toDto(response, User))
+//         setLoading(false)
+//         // console.log('user :>> ', user);
+//     })
 
-{/* <Button>
-        <Link
-            href={Routes.LANDING}
-        >
-        </Link>
-
-    </Button> */}
+// getAllUsers()
+//     .then((records) => {
+//         setUsers(records.map((record) => toDto(record, User)));
+//         setLoading(false)
+//         console.log('users :>> ', users);
+// })

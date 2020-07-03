@@ -8,7 +8,7 @@ import { SCRIBE, TPOT, LOGIN } from '@routes'
 import { useAuth } from '@hooks'
 
 const actionTexts = {
-    checkout: 'Checking out a Document',
+    checkout: 'Choosing an app',
     login: 'Logging in',
 }
 
@@ -16,7 +16,6 @@ const Layout = () => {
 
     const auth = useAuth();
     let isAuthenticated = !!auth?.user || false;
-
     console.log('authenticated? :>> ', isAuthenticated);
 
     let action = isAuthenticated ? actionTexts.checkout : actionTexts.login;
@@ -24,9 +23,10 @@ const Layout = () => {
     return (
 
         <div className="grid">
-            <p className="description">
+            {/* TODO: Load on isLoading = true */}
+            {/* <p className="description">
                 {`Get started by ${action}`}
-            </p>
+            </p> */}
             <Row
                 horizontal="center"
             >

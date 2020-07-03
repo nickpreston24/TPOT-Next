@@ -19,7 +19,7 @@ export function ProvideWordpress({ children }) {
 function useWordpressProvider() {
 
     const [currentPaper, setCurrentPaper] = useState(createInstance(Paper));
-    console.log('default Paper :>> ', currentPaper);
+    // console.log('default Paper :>> ', currentPaper);
 
     const getAllUsers = () => wpapi.users();
 
@@ -40,18 +40,21 @@ function useWordpressProvider() {
 
     // const removePaper = (id:number)
 
+    /**
+     * Published a Paper as a draft (only)
+     */
     const publish = async (paper: Paper): Promise<Paper> => {
-        const { authorId, id } = paper;
+        const { author, id } = paper;
 
         const existingPaper = id ? await wpapi.pages()
-            .author(authorId)
+            .author(author)
             .id(id) : null;
 
         console.log('currentPaper', existingPaper)
 
         if (!!existingPaper) {
             const updatedPaper = await wpapi.pages()
-                .author(authorId)
+                .author(author)
                 .id(existingPaper.id)
                 .update(paper)
             console.log('updatedPaper :>> ', updatedPaper
@@ -60,15 +63,24 @@ function useWordpressProvider() {
             return updatedPaper;
         }
         else {
-            let createdPaper = wpapi.pages()
-                .author(authorId)
+            let result = await wpapi.pages()
+                .author(author)
                 .create(paper)
-            console.log('createdPaper :>> ', createdPaper
-                , 'paper as dto :>>', toDto(createdPaper, Paper));
-            paper.id = createdPaper.id; // Update the new id for UI use.
-            setCurrentPaper(createdPaper)
-            return paper;
+                .then((response) => {
+                    // console.log('result :>> ', result);
+                    //     console.log('createdPaper :>> ', createdPaper
+                    // , 'paper as dto :>>', toDto(createdPaper, Paper));
+                    let createdPaper = toDto(response,Paper);
+                    paper.id = response.id; // Update the new id for UI use.
+                    console.log('createdPaper :>> ', createdPaper);
+                    setCurrentPaper(createdPaper)
+                })
+                .catch(console.error)
+            // console.log('return :>> ', paper);
+            // return result;
         }
+
+        return currentPaper;
     }
 
     // useEffect(() => {

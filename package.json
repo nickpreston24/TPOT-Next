@@ -95,7 +95,6 @@
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^7.0.0",
-    "netlify-cli": "^2.51.0",
     "typescript": "^3.9.2"
   },
   "bit": {
