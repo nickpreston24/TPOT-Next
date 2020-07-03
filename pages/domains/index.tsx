@@ -23,33 +23,7 @@ export class User {
     email: string
 }
 
-
-// let sessionDto = toDto(sessionData, Session)
-// console.log('sessionDto :>> ', sessionDto);
-// const [user, setUser] = useState(createInstance(User));
-// const [users, setUsers] = useState([]);
 const DEFAULT_AUTHOR = 9;
-
-var testSession = {
-    paperId: null,
-    status: "in-progress",
-    title: "Fake Paper",
-    contributors: ['Ronnie', 'Stephen'],
-    date_uploaded: Date.now,
-    date_modified: Date.now,
-    draft: '',
-    code: '<p></p>',
-    original: '',
-    stylesheet: null,
-    filename: null,
-    slug: 'fake-paper',
-    excerpt: 'lorem ipsum',
-}
-
-// console.log('testSession :>> ', testSession);
-// console.log('as DTO (session) :>> ', toDto(testSession, Session));
-
-
 
 export const DomainTests = () => {
 
@@ -61,6 +35,8 @@ export const DomainTests = () => {
     const [contents, setContents] = useState("<h1>Test Header</h1><p>lorem ipsum</p>");
     const [user, setUser] = useState(createInstance(User));
 
+    const authorId = user.id;
+
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const initialRef = useRef();
@@ -70,7 +46,7 @@ export const DomainTests = () => {
     // sessions.push(testSession);
 
     useEffect(() => {
-        getPages(DEFAULT_AUTHOR)
+        getPages(authorId)
             .then((records) => {
                 console.log('records :>> ', records);
                 let collection = mapToDto(records, Paper);
@@ -78,7 +54,7 @@ export const DomainTests = () => {
                 setLoading(false)
             })
 
-        getUser(DEFAULT_AUTHOR)
+        getUser(authorId)
             .then((results) => {
                 results['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
                 console.log('current user :>> ', results);
@@ -93,9 +69,9 @@ export const DomainTests = () => {
                 // console.log('wp paper :>> ', toDto(response, Session)) // @MP: For now, only maps 'content', 'slug' and 'title'
                 // console.log('title :>> ', title);
                 // console.log('contents :>> ', contents);
-                console.log('response.author :>> ', response.author);
-                console.log('response.id :>> ', response.id);
-                console.log('response :>> ', response);
+                // console.log('response.author :>> ', response.author);
+                // console.log('response.id :>> ', response.id);
+                // console.log('response :>> ', response);
 
                 // CREATE SESSION:
                 const document = await sessions.add({
@@ -112,7 +88,7 @@ export const DomainTests = () => {
                 })
 
                 if (!document) {
-                    notify(`Failed to create entry: ${title}`,'warn')
+                    notify(`Failed to create entry: ${title}`, 'warn')
                     return;
                 }
                 else {
@@ -121,7 +97,6 @@ export const DomainTests = () => {
 
                 return document;
             })
-        // console.log('p :>> ', p);
     }
 
     return (
@@ -146,13 +121,7 @@ export const DomainTests = () => {
                 </Stack>
 
                 <Box>
-                    {/* <Button onClick={onsubmit}>Submit</Button> */}
-
                     <Button onClick={onOpen}>Submit Paper</Button>
-
-                    {/* <Button ml={4} >
-                    I'll receive focus on close
-                </Button> */}
 
                     <Modal
                         initialFocusRef={initialRef}
@@ -195,13 +164,9 @@ export const DomainTests = () => {
 
                 </Box>
 
-                {/* {!!loading
-                        ? <Spinner />
-                        : <UserList entries={users} />} */}
-
                 {!!loading
                     ? <Spinner />
-                    : <PublishedList entries={pages} title="Your Published Papers" />}
+                    : <PublishedPapers entries={pages} title="Your Published Papers" />}
 
                 <CurrentSessions entries={[]} title="Your Current Drafts" />
             </Stack>
@@ -216,7 +181,7 @@ type ListProps<T> = { entries: T[], title?: string }
 /** wpapi can only get 'published' papers from WP, hence the list
  * Could make a card from this later (like the airbnb card)
  */
-const PublishedList: FC<ListProps<Paper>> = ({ entries: papers, title }) => {
+const PublishedPapers: FC<ListProps<Paper>> = ({ entries: papers, title }) => {
 
     let titles = papers.map(p => Find(p, "title").rendered); // Hack to assign rendered to `title`.  TODO: add the With/Alter functionality to the `toDto()` as an optional param.
     // console.log('titles :>> ', titles)
@@ -258,19 +223,3 @@ const CurrentSessions: FC<ListProps<Session>> = ({ entries: sessions, title }) =
         })}
     </List>)
 }
-
-
-/** Working samples */
-// getUser(10)
-//     .then((response) => {
-//         setUser(toDto(response, User))
-//         setLoading(false)
-//         // console.log('user :>> ', user);
-//     })
-
-// getAllUsers()
-//     .then((records) => {
-//         setUsers(records.map((record) => toDto(record, User)));
-//         setLoading(false)
-//         console.log('users :>> ', users);
-// })

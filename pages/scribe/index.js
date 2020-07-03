@@ -6,7 +6,7 @@ import * as ROUTES from '@constants/routes'
 const Page = () => {
 
   const CheckoutLink = <NextLink href={ROUTES.CHECKOUT}><a>{'Checkout a paper'}</a></NextLink>
-  const LandingLink = <NextLink href={ROUTES.LANDING}><a>{'Start from scratch'}</a></NextLink>
+  const LandingLink = <NextLink href={ROUTES.EDIT}><a>{'Start from scratch'}</a></NextLink>
 
   return (
     <Template

@@ -42,8 +42,8 @@ const CheckoutItem = observer(
             let id = doc.id;
             // let date_modified_timestamp = date_modified
             status = status || 'in-progress'
-            date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-            date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
+            // date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
+            // date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
             // if (!date_modified || !date_uploaded) { return } 
             {/* console.log('id:', `/scribe/edit/${id}`) */ }
 
