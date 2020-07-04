@@ -6,7 +6,7 @@ import * as ROUTES from 'constants/routes'
 import { Selector } from 'components/dialogs'
 import UploadButton from 'components/buttons/UploadButton';
 
-const WordPressToolbar = (props) => {
+export const WordPressToolbar = (props) => {
 
     const onClose = (item) => {
         setOpen(false);

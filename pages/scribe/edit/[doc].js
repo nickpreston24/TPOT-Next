@@ -3,26 +3,26 @@ import Dashboard from '@components/Dashboard'
 import PropTypes from 'prop-types'
 import Editor, { MyEditor } from 'tpot-scribe-editor'
 import { Box, Stack, Spinner } from '@chakra-ui/core'
-import WordPressToolbar from './WordPressToolbar'
+import WordPressToolbar from '../../../components/WordPressToolbar'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
 
 const Page = observer(props => {
-  console.log('props ([doc]) :>> ', props);
+  // console.log('props ([doc]) :>> ', props);
   const { id } = props
   const ref = useRef(null)
   console.log('ref :>> ', ref);
   // const [loading, setLoading] = useState(true);
   const { docs, isLoading } = sessions;
 
-  const getHtml = () => {
-    const html = ref.current.editor.getData()
-    console.log(html)
-  }
+  // const getHtml = () => {
+  //   const html = ref.current.editor.getData()
+  //   console.log(html)
+  // }
 
-  const setHtml = (text) => {
-    ref.current.editor.setData(text)
-  }
+  // const setHtml = (text) => {
+  //   ref.current.editor.setData(text)
+  // }
 
   return (
     <Stack>
@@ -32,11 +32,11 @@ const Page = observer(props => {
       >
         <Box>
           <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>
-          {/* {isLoading ? <Spinner /> : <MyEditor ref={ref} />} */}
+          {isLoading ? <Spinner /> : <MyEditor ref={ref} />}
           {/* <MyEditor ref={ref} /> */}
-          {isLoading ? <Spinner /> : <Editor ref={ref} />}
+          {/* {isLoading ? <Spinner /> : <Editor ref={ref} />} */}
 
-          <WordPressToolbar {...{ getHtml }} />
+          {/* <WordPressToolbar {...{ getHtml }} /> */}
         </Box>
       </Dashboard>
     </Stack>
