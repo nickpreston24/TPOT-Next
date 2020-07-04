@@ -3,11 +3,8 @@ import { Chip } from '@material-ui/core'
 import { Collection } from 'firestorter'
 import { observer } from 'mobx-react'
 import moment from 'moment'
-import { Chip } from '@material-ui/core'
 import { StatusChip } from '@components'
 import { ButtonLink } from '../experimental'
-import { isDev } from './helpers'
-import { ListItem, List, Stack, Box } from '@chakra-ui/core'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -196,12 +193,12 @@ export const labelColors = {
     'published': '#c6ffc6',
 }
 
-export const StatusChip = ({ status }) => {
-    const label = statusMap[status]
-    const color = labelColors[status]
-    return (
-        <Chip {...{ label }} style={{ background: color }} />
-    )
-}
+// export const StatusChip = ({ status }) => {
+//     const label = statusMap[status]
+//     const color = labelColors[status]
+//     return (
+//         <Chip {...{ label }} style={{ background: color }} />
+//     )
+// }
 
 export default CheckoutTable;

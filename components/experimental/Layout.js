@@ -6,6 +6,7 @@ import Router from 'next/router'
 import { Row } from 'simple-flexbox'
 import { SCRIBE, TPOT, LOGIN } from '@routes'
 import { useAuth } from '@hooks'
+import { isDev } from 'helpers'
 
 const actionTexts = {
     checkout: 'Choosing an app',
@@ -54,10 +55,10 @@ const Layout = () => {
                         title="TPOT"
                         text='The Path of Truth'
                     />
-                    <Icon
+                    {isDev && <Icon
                         name='moon'
                         onClick={() => Router.push('/domains')}
-                    />
+                    />}
                 </ZeitContainer>
             </Row>
         </div>

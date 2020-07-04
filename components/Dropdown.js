@@ -1,5 +1,6 @@
 import React from "react";
 import { Select } from '@chakra-ui/core'
+/** A simple Dropdown.  TODO: Needs to send back the selected option */
 export const Dropdown = ({ choices =[], placeholder = "Select option" }) => {
     // console.log('choices :>> ', choices);
     return <Select placeholder={placeholder}>

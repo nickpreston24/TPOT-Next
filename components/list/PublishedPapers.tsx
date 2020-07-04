@@ -3,7 +3,8 @@ import { Paper } from 'models';
 import { FC } from 'react';
 import { Find } from 'models/domain';
 import { ListProps } from "./ListProps";
-/** wpapi can only get 'published' papers from WP, hence the list
+/** 
+ * wpapi can only get 'published' papers from WP, hence the list
  * Could make a card from this later (like the airbnb card)
  */
 export const PublishedPapers: FC<ListProps<Paper>> = ({ entries: papers, title }) => {
