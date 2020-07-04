@@ -1,5 +1,6 @@
 import React, { useState, FC } from 'react';
-import { Button, Box } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import { Box } from '@chakra-ui/core'
 import { ButtonLink } from 'components/experimental/ZeitLinkButton';
 import * as ROUTES from 'constants/routes'
 import { Selector } from 'components/dialogs'

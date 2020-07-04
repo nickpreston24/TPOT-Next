@@ -1,19 +1,29 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import Dashboard from '@components/Dashboard'
 import PropTypes from 'prop-types'
-import { MyEditor } from 'tpot-scribe-editor'
-import { Box, Stack } from '@chakra-ui/core'
+import Editor, { MyEditor } from 'tpot-scribe-editor'
+import { Box, Stack, Spinner } from '@chakra-ui/core'
 import WordPressToolbar from './WordPressToolbar'
+import { sessions } from '@stores'
+import { observer } from 'mobx-react'
 
-
-const Page = (props) => {
+const Page = observer(props => {
   console.log('props ([doc]) :>> ', props);
   const { id } = props
-  const ckeditorRef = useRef(null)
+  const ref = useRef(null)
+  console.log('ref :>> ', ref);
+  // const [loading, setLoading] = useState(true);
+  const { docs, isLoading } = sessions;
+
   const getHtml = () => {
-    const html = ckeditorRef.current.editor.getData()
+    const html = ref.current.editor.getData()
     console.log(html)
   }
+
+  const setHtml = (text) => {
+    ref.current.editor.setData(text)
+  }
+
   return (
     <Stack>
       <Dashboard
@@ -22,13 +32,16 @@ const Page = (props) => {
       >
         <Box>
           <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>
-          <MyEditor ref={ckeditorRef} />
+          {/* {isLoading ? <Spinner /> : <MyEditor ref={ref} />} */}
+          {/* <MyEditor ref={ref} /> */}
+          {isLoading ? <Spinner /> : <Editor ref={ref} />}
+
           <WordPressToolbar {...{ getHtml }} />
         </Box>
       </Dashboard>
     </Stack>
   )
-}
+})
 
 /** Working Code */
 
