@@ -3,22 +3,26 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ProvideAuth, ProvideWordpress } from '@hooks'
 import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import customTheme from 'components/utils/Theme'
+import muiTheme from 'components/utils/MuiTheme'
 
 const MobxApp = (props) => {
 
   let { Component, pageProps } = props
 
   return (
-    <ProvideWordpress>
-    <ThemeProvider theme={customTheme}>
-      <CSSReset />
-      <ProvideAuth>
-        <Component {...pageProps} />
-        <ToastContainer newestOnTop />
-      </ProvideAuth>
-    </ThemeProvider>
-    </ProvideWordpress>
+    <MuiThemeProvider theme={muiTheme}>
+      <ThemeProvider theme={customTheme}>
+        <CSSReset />
+        <ProvideWordpress>
+          <ProvideAuth>
+            <Component {...pageProps} />
+            <ToastContainer newestOnTop />
+          </ProvideAuth>
+        </ProvideWordpress>
+      </ThemeProvider>
+    </MuiThemeProvider>
   )
 }
 

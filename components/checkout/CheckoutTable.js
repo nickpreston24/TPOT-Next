@@ -1,15 +1,17 @@
-import React, { Component } from 'react'
-import { observer } from 'mobx-react'
-import { useSessions } from '@hooks'
+import { Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, Box } from '@chakra-ui/core'
+import { Chip } from '@material-ui/core'
 import { Collection } from 'firestorter'
+import { observer } from 'mobx-react'
 import moment from 'moment'
 import { Chip } from '@material-ui/core'
 import { StatusChip } from '@components'
 import { ButtonLink } from '../experimental'
-// import { disableMe } from '../components/disableMe.tsx'
 import { isDev } from './helpers'
-// import PerfectScrollbar from 'react-perfect-scrollbar'
 import { ListItem, List, Stack, Box } from '@chakra-ui/core'
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { useSessions } from '@hooks'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -18,180 +20,188 @@ import { ListItem, List, Stack, Box } from '@chakra-ui/core'
 // It is the springboard for checking out a document, unlocking, or uploading a new
 // document to firestore for editing. It is also offers a way to download documents.
 
-export const CheckoutTable = observer(class Table extends Component {
 
-    constructor() {
-        super()
-        this.collection = new Collection('sessions');
-        // console.log('this.collection :>> ', this.collection);
-    }
-
-    render() {
-        const { docs, fetching } = this.collection;
-        return (
-            <div>
-                {docs.map((doc) => <CheckoutItem key={doc.id} doc={doc} />)}
-            </div>
-        )
-    }
-})
-
-
-const CheckoutItem = observer(
-    class CheckoutItem extends Component {
-        render() {
-
-            const { doc } = this.props;
-            let { slug, status, date_modified, date_uploaded, title } = doc.data
-            let id = doc.id;
-            // let date_modified_timestamp = date_modified
-            status = status || 'in-progress'
-            // date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-            // date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-            // if (!date_modified || !date_uploaded) { return } 
-            {/* console.log('id:', `/scribe/edit/${id}`) */ }
-
-            return (
-                <Stack>
-                    <Box key={id}>
-
-                        <h5>{title} - {id}</h5>
-
-                        <StatusChip
-                            style={disableMe(isDev)}
-                            status={status} />
-
-                        <Chip
-                            label='Checkout'
-                            title={title}
-                            component={ButtonLink}
-                            href='/scribe/edit/[doc]'
-                            as={`/scribe/edit/${id}`}
-                            clickable
-                        />
-                    </Box>
-                </Stack>
-            )
-        }
-    }
+// Using a dynamic import with `ssr: false` option fixes most Mui issues
+const MaterialTable = dynamic(() => import('material-table'),
+    { ssr: false, loading: () => <Spinner /> }
 )
 
-// export const CheckoutTable = observer(({ }) => {
 
-//     // const tableRef = React.createRef()  
-//     // const { user } = useAuth();
-//     // const { sessions } = useSessions();
-//     // // let results = toJS(store.sessions).docs
-
-//     const collection = new Collection<Document<SessionType>>('sessions');
+// Sessions stays outside of the FC component because it shouldn't be destroyed each
+// render. If this were a class comp, then you would put sessions in a constructor.
+const sessions = new Collection('sessions');
 
 
-//     console.log('sessions :>> ', sessions);
-
-//     // let docs = toJS(store.sessions.docs).map(document => {
-//     //     let entry = toJS(document.data)
-//     //     let id = document.id
-//     //     console.log('entry :>> ', entry);
-//     //     return { id, entry }
-//     // })
-
-//     return (<div>I like trains</div>)
-
-//     // return (
-//     //     <Box
-//     //         alignItems="center"
-//     //         horizontal="center"
-//     //     >
-//     //         <div>
-//     //             {
-//     //                 !!sessions &&
-//     //                 sessions.map((doc, index) => {
-//     //                     let { status, date_modified, date_uploaded, title } = doc.data
-//     //                     let id = doc.id;
-//     //                     let date_modified_timestamp = date_modified
-//     //                     status = status || 'in-progress'
-//     //                     if (!date_modified || !date_uploaded) { return }
-//     //                     date_modified = moment.duration(moment(date_modified.toDate()).diff(moment())).humanize(true)
-//     //                     date_uploaded = moment.duration(moment(date_uploaded.toDate()).diff(moment())).humanize(true)
-//     //                     {/* console.log('id:', `/scribe/edit/${id}`) */ }
-//     //                     return (
-//     //                         <div key={index}>
-//     //                             <h5>{title} - {id}</h5>
-//     //                             <StatusChip status={status} />
-//     //                             <Chip
-//     //                                 label='Check out'
-//     //                                 title={title}
-//     //                                 component={ButtonLink}
-//     //                                 href='/scribe/edit/[doc]'
-//     //                                 as={`/scribe/edit/${id}`}
-//     //                                 clickable
-//     //                             />
-//     //                         </div>
-//     //                     )
-//     //                 })
-//     //             }
-//     //         </div>
+const columns = [
+    { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
+    { title: 'Document', field: 'title', type: 'string', searchable: true },
+    { title: 'Status', field: 'status', type: 'string', searchable: false, render: row => <StatusChip status={row.status} /> },
+    { title: 'Last Edited', field: 'date_modified', type: 'string', searchable: false },
+    { title: 'Author', field: 'author', type: 'string', searchable: false },
+    { title: 'Uploaded', field: 'date_uploaded', type: 'string', searchable: false, hidden: true },
+    { title: 'Cloud Location', field: 'docx', type: 'string', searchable: false, hidden: true },
+    { title: 'Slug', field: 'slug', searchable: false, hidden: true },
+    { title: 'Excerpt', field: 'excerpt', searchable: false, hidden: true },
+    { title: 'ID', field: 'id', searchable: false, hidden: true },
+]
 
 
+export const CheckoutTable = observer(() => {
+    const { isLoading, hasDocs } = sessions;
 
-//     //     </Box>
-//     // )
-// })
+    let tableData = []
 
+    if (hasDocs) {
+
+        // Make an empty table when there are no documents that match a query
+        const docsButNoData = sessions.docs.some(doc => !doc.hasData)
+        if (docsButNoData) {
+            tableData = new Array(5)
+        }
+
+        // Modify data coming from Firebase and make a data array for the table
+        sessions.docs.reduce((array, doc, idx) => {
+            let { id, data } = doc
+            let { status, date_modified, date_uploaded, contributors } = data
+            let now = moment()
+            if (date_modified) {
+                date_modified = moment.unix(date_modified.seconds)
+                date_modified = moment.duration(date_modified.diff(now))
+                date_modified = date_modified.humanize(true)
+            }
+            if (date_uploaded) {
+                date_uploaded = moment.unix(date_uploaded.seconds)
+                date_uploaded = moment.duration(date_uploaded.diff(now))
+                date_uploaded = date_uploaded.humanize(true)
+            }
+            status = status || 'in-progress'
+            array.push({
+                ...data,
+                id,
+                status,
+                date_modified,
+                date_uploaded,
+                author: contributors,
+            })
+            return array //!important, return the final data set for the table
+        }, tableData)
+    }
+
+    return (
+        <MaterialTable
+            title="Checkout"
+            data={tableData}
+            columns={columns}
+            isLoading={isLoading}
+            detailPanel={row => <TableDetails {...row} />}
+            options={{
+                pageSize: 7,
+                pageSizeOptions: [5, 7, 10],
+                selection: false,
+                draggable: true,
+                grouping: false,
+                exportButton: true,
+                exportAllData: true,
+                exportFileName: `TPOT Letters ${new Date().toDateString()}`,
+                columnsButton: false,
+                detailPanelType: 'single',
+                detailPanelColumnAlignment: 'right',
+                emptyRowsWhenPaging: false,
+                showSelectAllCheckbox: false,
+                showTextRowsSelected: false,
+            }}
+            localization={{
+                toolbar: {
+                    exportTitle: 'Export Table',
+                    exportName: 'Save as CSV',
+                    searchTooltip: 'Search by Document Name',
+                    searchPlaceholder: 'Search'
+                }
+            }}
+            actions={[
+                {
+                    isFreeAction: true,
+                    tooltip: 'Refresh Table',
+                    icon: 'refresh',
+                    onClick: () => console.log('refresh')
+                },
+            ]}
+        />
+    )
+})
+
+const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename }) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const router = useRouter()
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsOpen(true), 0)
+        return () => clearTimeout(timer)
+    }, []);
+
+    const checkoutAction = () => router.push(`/scribe/edit/${id}`)
+
+    return (
+        <Collapse isOpen={isOpen} alignContent="center" transition="all 1s ease-in-out">
+            <Flex justifyContent="center">
+                <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
+                    <Stack w="50%">
+                        <Stack direction="row">
+                            <Box minW="80px" fontWeight="bold">Slug</Box>
+                            <Box>{slug}</Box>
+                        </Stack>
+                        <Stack direction="row">
+                            <Box minW="80px" fontWeight="bold">Excerpt</Box>
+                            <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
+                        </Stack>
+                    </Stack>
+                    <Divider orientation="vertical" m={4} />
+                    <Stack w="50%">
+                        <Stack direction="row">
+                            <Box minW="80px" fontWeight="bold">Document</Box>
+                            <Link href={docx} isExternal color="blue.500">
+                                {filename} <Icon name="external-link" mx="2px" />
+                            </Link>
+                        </Stack>
+                        <Stack direction="row">
+                            <Box minW="80px" fontWeight="bold">Uploaded</Box>
+                            <Box overflowX="hidden" overflowY="scroll">{date_uploaded}</Box>
+                        </Stack>
+                        <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
+                            <Tooltip label="Allow editing the paper if available" placement="bottom">
+                                <Button leftIcon="unlock" isDisabled={true} >Unlock</Button>
+                            </Tooltip>
+                            <Tooltip label="Open up an editor and edit this paper" placement="bottom">
+                                <Button onClick={checkoutAction} leftIcon="edit" variantColor="primary">Start Editing</Button>
+                            </Tooltip>
+                        </Stack>
+                    </Stack>
+                </Flex>
+            </Flex>
+        </Collapse>
+    )
+}
+
+export const statusMap = {
+    'in-progress': 'In Progress',
+    'not-started': 'Not Started',
+    'checked-out': 'Checked Out',
+    'published': 'Published',
+}
+
+export const labelColors = {
+    'in-progress': '#c3e3ff',
+    'not-started': '#ffe8c6',
+    'checked-out': '#ffc6c8',
+    'published': '#c6ffc6',
+}
+
+export const StatusChip = ({ status }) => {
+    const label = statusMap[status]
+    const color = labelColors[status]
+    return (
+        <Chip {...{ label }} style={{ background: color }} />
+    )
+}
 
 export default CheckoutTable;
-
-
-
-{/* <MaterialTable
-                title="Checkout"
-                columns={columns}
-                data={data}
-                isLoading={loading}
-                tableRef={tableRef}
-                onChangePage={changePage}
-                onChangeRowsPerPage={changeRowsPerPage}
-                onOrderChange={orderChange}
-                detailPanel={paper => <TableDetails paper={paper} />}
-                components={{ Container: props => <StyledTableBody {...props} /> }}
-                options={{
-                    // search: search,
-                    pageSize: pageSize,
-                    pageSizeOptions: [5, 7, 10],
-                    selection: false,
-                    draggable: true,
-                    grouping: false,
-                    exportButton: true,
-                    exportAllData: true,
-                    exportFileName: `TPOT Letters ${new Date().toDateString()}`,
-                    columnsButton: false,
-                    detailPanelType: 'single',
-                    detailPanelColumnAlignment: 'right',
-                    emptyRowsWhenPaging: false,
-                    showSelectAllCheckbox: false,
-                    showTextRowsSelected: false,
-                }}
-                localization={{
-                    toolbar: {
-                        exportTitle: 'Export Table',
-                        exportName: 'Save as CSV',
-                        searchTooltip: 'Search by Document Name',
-                        searchPlaceholder: 'Search'
-                    }
-                }}
-                actions={[
-                    {
-                        icon: 'refresh',
-                        tooltip: 'Refresh Table',
-                        isFreeAction: true,
-                        onClick: () => console.log('refresh')
-                    },
-                    {
-                        tooltip: 'Upload DOCX',
-                        icon: () => <UploadButton />,
-                        isFreeAction: true,
-                        onClick: () => null
-                    }
-                ]}
-            /> */}
-
