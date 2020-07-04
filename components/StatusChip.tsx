@@ -3,13 +3,12 @@ import { Chip } from '@material-ui/core'
 import { FC } from 'react'
 import { getKeyByValue } from '../helpers'
 
-interface ChipProps {
+type ChipProps = {
     status: string
 }
 
-export const StatusChip: FC<ChipProps> = (props: ChipProps) => {
+export const StatusChip: FC<ChipProps> = ({ status }) => {
 
-    const { status } = props
     let [key] = getKeyByValue(CheckoutStatus, toTitleCase(status, '-')) as string
     let label = CheckoutStatus[key]// || 'unknown'
     const background = CheckoutColors.get(label)// || '#777'

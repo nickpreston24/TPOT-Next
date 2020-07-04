@@ -1,43 +1,39 @@
-import React, { useRef, useEffect } from 'react'
+import React from 'react'
 import Dashboard from '@components/Dashboard'
 import PropTypes from 'prop-types'
-import Editor, { MyEditor } from 'tpot-scribe-editor'
-import { Box, Stack, Spinner } from '@chakra-ui/core'
-import WordPressToolbar from '../../../components/WordPressToolbar'
+import { MyEditor } from 'tpot-scribe-editor'
+import { Stack, Spinner } from '@chakra-ui/core'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
+// import { CurrentSessions } from '../../../components/list'
 
 const Page = observer(props => {
-  // console.log('props ([doc]) :>> ', props);
+
   const { id } = props
-  const ref = useRef(null)
-  console.log('ref :>> ', ref);
-  // const [loading, setLoading] = useState(true);
+
   const { docs, isLoading } = sessions;
-
-  // const getHtml = () => {
-  //   const html = ref.current.editor.getData()
-  //   console.log(html)
-  // }
-
-  // const setHtml = (text) => {
-  //   ref.current.editor.setData(text)
-  // }
 
   return (
     <Stack>
       <Dashboard
         title={`TPOT Scribe - Edit - ${id}`}
-      // details={() => <DocumentDetails {...{ document }} />}
       >
-        <Box>
-          <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>
-          {isLoading ? <Spinner /> : <MyEditor ref={ref} />}
-          {/* <MyEditor ref={ref} /> */}
-          {/* {isLoading ? <Spinner /> : <Editor ref={ref} />} */}
+        {/* <h1 color="green">Hello, Editor! Your doc id is: {id}</h1> */}
 
-          {/* <WordPressToolbar {...{ getHtml }} /> */}
-        </Box>
+        {isLoading
+          ? <Spinner />
+          : <MyEditor />}
+          
+        {/* <MyEditor ref={ref} /> */}
+        {/* {isLoading ? <Spinner /> : <Editor ref={ref} />} */}
+
+        {/* TODO: Query by author id and Observe() like in the firestorter docs */}
+        {/* {isLoading
+          ? <Spinner />
+          : <CurrentSessions
+            entries={docs}
+            title="Your Current Drafts" />} */}
+
       </Dashboard>
     </Stack>
   )

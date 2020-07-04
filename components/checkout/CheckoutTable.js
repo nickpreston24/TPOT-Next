@@ -4,8 +4,12 @@ import { useSessions } from '@hooks'
 import { Collection } from 'firestorter'
 import moment from 'moment'
 import { Chip } from '@material-ui/core'
-// import StatusChip from '../components/StatusChip.tsx'
+import { StatusChip } from '@components'
 import { ButtonLink } from '../experimental'
+// import { disableMe } from '../components/disableMe.tsx'
+import { isDev } from './helpers'
+// import PerfectScrollbar from 'react-perfect-scrollbar'
+import { ListItem, List, Stack, Box } from '@chakra-ui/core'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -48,22 +52,25 @@ const CheckoutItem = observer(
             {/* console.log('id:', `/scribe/edit/${id}`) */ }
 
             return (
-                <div>
-                    <div key={id}>
+                <Stack>
+                    <Box key={id}>
+
                         <h5>{title} - {id}</h5>
-                        {/* <StatusChip status={status} /> */}
+
+                        <StatusChip
+                            style={disableMe(isDev)}
+                            status={status} />
 
                         <Chip
                             label='Checkout'
                             title={title}
                             component={ButtonLink}
                             href='/scribe/edit/[doc]'
-                            // href={`/scribe/edit/${id}`}
                             as={`/scribe/edit/${id}`}
                             clickable
                         />
-                    </div>
-                </div>
+                    </Box>
+                </Stack>
             )
         }
     }

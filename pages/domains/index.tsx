@@ -1,27 +1,20 @@
 import {
-    Heading, Box, List, Text, Spinner
+    Heading, Box, Text, Spinner
     , Input, Stack, InputGroup, InputLeftAddon
     , Button, useDisclosure, Modal, ModalOverlay
     , ModalContent, ModalHeader, ModalCloseButton
     , ModalBody, FormControl, FormLabel, ModalFooter
 } from '@chakra-ui/core'
-import { Paper, Session } from 'models';
+import { Paper } from 'models';
 import { useWordpress } from '../../hooks'
-import { useState, useEffect, FC, useRef } from 'react';
-import { mapToDto, Alter, With, Find, createInstance, toDto } from 'models/domain';
+import { useState, useEffect, useRef } from 'react';
+import { mapToDto, Alter, With, createInstance, toDto } from 'models/domain';
 import { Dropdown } from './Dropdown'
 import { sessions } from '../../stores'
 import { notify } from 'components/experimental/Toasts';
-
-export class User {
-    id: number;
-    name: string;
-    url: string;
-    description: string;
-    link: string;
-    slug: string;
-    email: string
-}
+import { CurrentSessions } from '../../components/list/CurrentSessions';
+import { PublishedPapers } from '../../components/list/PublishedPapers';
+import { WordpressUser } from '../../models/User';
 
 const DEFAULT_AUTHOR = 9;
 
@@ -33,7 +26,7 @@ export const DomainTests = () => {
     const [categories, setCategories] = useState([""]);
     const [title, setTitle] = useState("");
     const [contents, setContents] = useState("<h1>Test Header</h1><p>lorem ipsum</p>");
-    const [user, setUser] = useState(createInstance(User));
+    const [user, setUser] = useState(createInstance(WordpressUser));
 
     const authorId = user.id;
 
@@ -58,7 +51,7 @@ export const DomainTests = () => {
             .then((results) => {
                 results['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
                 console.log('current user :>> ', results);
-                setUser(toDto(results, User))
+                setUser(toDto(results, WordpressUser))
             })
     }, []);
 
@@ -176,50 +169,3 @@ export const DomainTests = () => {
 
 export default DomainTests;
 
-type ListProps<T> = { entries: T[], title?: string }
-
-/** wpapi can only get 'published' papers from WP, hence the list
- * Could make a card from this later (like the airbnb card)
- */
-const PublishedPapers: FC<ListProps<Paper>> = ({ entries: papers, title }) => {
-
-    let titles = papers.map(p => Find(p, "title").rendered); // Hack to assign rendered to `title`.  TODO: add the With/Alter functionality to the `toDto()` as an optional param.
-    // console.log('titles :>> ', titles)
-
-    return (<List>
-        {title && <Heading size="md">{title}</Heading>}
-        {/* <Dropdown choices={[titles]} /> */}
-
-        {papers.map((paper, index) => {
-            const { id, title, url, slug } = paper;
-            // console.log('title :>> ', title);
-            return (
-                <div key={index}>
-                    <h2><b>{titles[index]}</b>
-                        {/* Id: {id} <i>{url}</i> */}
-                        {/* <b>{slug}</b> */}
-                    </h2>
-                </div>
-            )
-        })}
-    </List >)
-}
-
-
-const CurrentSessions: FC<ListProps<Session>> = ({ entries: sessions, title }) => {
-    return (<List>
-        {title && <Heading size='md'>{title}</Heading>}
-        {sessions.map((session, index) => {
-            const { paperId, status, title, excerpt, slug } = session;
-            // console.log('title :>> ', title);
-            return (
-                <div key={index}>
-                    <h2><b>{title}</b>
-                        Id: {paperId} <i>{excerpt}</i>
-                        <b>{slug}</b>
-                    </h2>
-                </div>
-            )
-        })}
-    </List>)
-}

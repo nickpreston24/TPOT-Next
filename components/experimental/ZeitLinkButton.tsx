@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { FC, Component } from 'react'
 import Button, { ButtonProps } from '@material-ui/core/Button'
 import Link, { LinkProps } from 'next/link'
+import { Button as ChakraButton } from '@chakra-ui/core'
 
 
 /**
@@ -23,15 +24,24 @@ export const ButtonLink = React.forwardRef<ButtonLinkProps, any>(
 
 ButtonLink.displayName = 'ButtonLink'
 
+interface ZeitLinkProps {
+    className?: string
+    href: string
+    as?: string
+    onClick: () => void
+}
+
 // // https://material-ui.com/demos/buttons/#third-party-routing-library
-export const ZeitLinkButton = ({ onClick, className, href, hrefAs, children }) => (
-    <Button
-        onClick={onClick}
-        component={ButtonLink}
-        className={className}
-        as={hrefAs}
-        href={href}>
-        {children}
-    </Button>)
+export const ZeitLinkButton: FC<ZeitLinkProps> = ({
+    onClick, className, href, as, children
+}) => (
+        <Button
+            onClick={onClick}
+            component={ButtonLink}
+            className={className}
+            as={as}
+            href={href}>
+            {children}
+        </Button>)
 
 export default ZeitLinkButton

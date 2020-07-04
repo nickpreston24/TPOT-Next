@@ -5,4 +5,3 @@ export interface BasicProps {
     text?: string;
     children?: ReactNode;
 }
-
