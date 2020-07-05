@@ -74,8 +74,9 @@ export const WordPressToolbar = (props) => {
 
         setContents(getHtml())
         console.log('contents :>> ', contents);
+        console.log('title :>> ', title);
 
-        await publish(new Paper(title, contents))
+        publish(new Paper(title, contents))
             .then(async (response) => {
                 // console.log('wp paper :>> ', toDto(response, Session)) // @MP: For now, only maps 'content', 'slug' and 'title'
                 // console.log('title :>> ', title);
@@ -84,6 +85,11 @@ export const WordPressToolbar = (props) => {
                 // console.log('response.id :>> ', response.id);
                 console.log('response :>> ', response);
 
+                if (!response.id) {
+                    console.warn('No paper could be created as there was no response from Wordpress')
+                    return
+                }
+                
                 // CREATE SESSION:
                 const document = await sessions.add({
                     authorId: response.author || DEFAULT_AUTHOR,
@@ -99,11 +105,11 @@ export const WordPressToolbar = (props) => {
                 })
 
                 if (!document) {
-                    notify(`Failed to create entry: ${title}`, 'warn')
+                    notify(`Failed to create Seesion for: ${title}`, 'warn')
                     return;
                 }
                 else {
-                    notify(`New Paper created for: ${title}\n`, 'success')
+                    notify(`New Session created for: ${title}\n`, 'success')
                 }
 
                 return document;

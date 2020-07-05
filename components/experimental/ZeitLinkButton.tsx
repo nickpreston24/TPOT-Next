@@ -28,14 +28,16 @@ interface ZeitLinkProps {
     className?: string
     href: string
     as?: string
+    text: string
     onClick: () => void
 }
 
 // // https://material-ui.com/demos/buttons/#third-party-routing-library
 export const ZeitLinkButton: FC<ZeitLinkProps> = ({
-    onClick, className, href, as, children
+    onClick, text, className, href, as, children
 }) => (
         <Button
+            text={text}
             onClick={onClick}
             component={ButtonLink}
             className={className}

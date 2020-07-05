@@ -53,38 +53,38 @@ function useWordpressProvider() {
         console.log('currentPaper', existingPaper)
 
         if (!!existingPaper) {
-            const updatedPaper = await wpapi.pages()
+            wpapi.pages()
                 .author(author)
                 .id(existingPaper.id)
                 .update(paper)
-            console.log('updatedPaper :>> ', updatedPaper
-                , 'paper as dto :>>', toDto(updatedPaper, Paper));
-            setCurrentPaper(updatedPaper);
-            return updatedPaper;
+                .then((response) => {
+
+                    let updatedPaper = toDto(response, Paper);
+                    paper.id = response.id; // Update the new id for UI use.
+
+                    console.log('updatedPaper :>> ', updatedPaper);
+                    setCurrentPaper(updatedPaper);
+
+                })
         }
         else {
-            let result = await wpapi.pages()
+            wpapi.pages()
                 .author(author)
                 .create(paper)
                 .then((response) => {
-                    // console.log('result :>> ', result);
+                    // console.log('response :>> ', response);
                     //     console.log('createdPaper :>> ', createdPaper
                     // , 'paper as dto :>>', toDto(createdPaper, Paper));
-                    let createdPaper = toDto(response,Paper);
+                    let createdPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
                     console.log('createdPaper :>> ', createdPaper);
                     setCurrentPaper(createdPaper)
                 })
                 .catch(console.error)
-            // console.log('return :>> ', paper);
-            // return result;
         }
 
         return currentPaper;
     }
-
-    // useEffect(() => {
-    // }, []);
 
     return {
         getAllUsers,

@@ -1,13 +1,13 @@
-import { CheckoutStatus, CheckoutColors } from '../constants/session-statuses'
+import { CheckoutStatus, CheckoutColors } from '../constants/CheckoutStatus'
 import { Chip } from '@material-ui/core'
 import { FC } from 'react'
 import { getKeyByValue } from '../helpers'
 
 type ChipProps = {
-    status: string
+    status: string,
 }
 
-export const StatusChip: FC<ChipProps> = ({ status }) => {
+export const StatusChip: FC<ChipProps> = ({ status, }) => {
 
     let [key] = getKeyByValue(CheckoutStatus, toTitleCase(status, '-')) as string
     let label = CheckoutStatus[key]// || 'unknown'
@@ -28,7 +28,5 @@ const toTitleCase = (text: string, delimiter: string = ' ') => {
     }
     return sentence.join(' ')
 }
-
-
 
 export default StatusChip

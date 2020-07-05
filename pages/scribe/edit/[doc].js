@@ -5,13 +5,24 @@ import { MyEditor } from 'tpot-scribe-editor'
 import { Stack, Spinner } from '@chakra-ui/core'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
+import { toJS, autorun } from 'mobx'
+import { CurrentSessions } from 'components/list'
+import { Collection } from 'immutable'
 // import { CurrentSessions } from '../../../components/list'
+
+const authorId = 9;
+const queryLimit = 10;
+
+
+
 
 const Page = observer(props => {
 
   const { id } = props
 
   const { docs, isLoading } = sessions;
+
+  
 
   return (
     <Stack>
@@ -23,7 +34,10 @@ const Page = observer(props => {
         {isLoading
           ? <Spinner />
           : <MyEditor />}
-          
+
+
+        {/* <CurrentSessions sessions={mySessions} /> */}
+
         {/* <MyEditor ref={ref} /> */}
         {/* {isLoading ? <Spinner /> : <Editor ref={ref} />} */}
 
@@ -80,7 +94,7 @@ Page.propTypes = {
 // // Only the ID is needed here, but you could imagine all the goodies that could be done:
 // // https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
 Page.getInitialProps = async context => {
-  console.log('context :>> ', context);
+  console.log('context :>> ', !!context);
   const id = context.query.doc
   console.log('id ([doc]) :>> ', id);
   return { id }

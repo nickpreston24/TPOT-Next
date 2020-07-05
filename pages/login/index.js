@@ -1,11 +1,12 @@
 import React, { Component, useState } from 'react'
 import * as ROUTES from '@constants/routes';
 import { useAuth } from "@hooks"
-import { ZeitButton, ButtonLink } from "@components/experimental"
-import { Box } from '@chakra-ui/core'
+import { ZeitButton, ZeitLinkButton, ButtonLink } from "@components/experimental"
+import { Box, Button, Heading } from '@chakra-ui/core'
 import { Chip } from '@material-ui/core'
 import { Formik } from 'formik'
 import { notify } from 'components/experimental/Toasts';
+import Link from 'next/link'
 
 import Router from 'next/router'
 
@@ -31,7 +32,7 @@ const Login = () => {
             textAlign="center"
             px={2}
         >
-            <h2>Login to Toolbox</h2>
+            <Heading size="md">Login to Toolbox</Heading>
 
             {/* Using the first Basic Formik example here */}
             <Formik
@@ -45,8 +46,11 @@ const Login = () => {
                     setSubmitting(false);
 
                     if (!!user) {
-                        notify('You are now signed in!')
+                        notify('You are now signed in!', 'success')
                         Router.push(ROUTES.SCRIBE)
+                    }
+                    else {
+                        notify('There was a problem signing you in.', 'warn')
                     }
                 }}
             >
@@ -77,12 +81,14 @@ const Login = () => {
                             />
                             {errors.password && touched.password && errors.password}
                             <br />
-                            <Button
+                            <ZeitButton
                                 type="submit"
                                 text='Sign In'
                             >
                                 <Link href={ROUTES.SCRIBE} />
-                            </Button>
+                            </ZeitButton>
+
+                            {/* Keeping this Chip here b/c my ZeitButtons and Button+Link combos just make the form validate again :'{ */}
                             <Chip
                                 label='Go Back'
                                 title={`Go Home`}
@@ -91,6 +97,13 @@ const Login = () => {
                                 as="/"
                                 clickable
                             />
+
+                            {/* <ZeitButton
+                                text={`Go Home`}
+                            // IDEA: Make this ACCOUNT once we have Settings and full Sessions / WP data views ready.
+                            >
+                                <Link href={ROUTES.LANDING} />
+                            </ZeitButton> */}
                         </form>
                     )}
             </Formik>

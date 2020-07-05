@@ -19,8 +19,9 @@
   - [ ] Update the EDITOR's draft state according to the wordpress_page_id AND the current user - both must be correct or throw an Error.
   - [ ] Update the FIREBASES's draft state according to the wordpress_page_id AND the current user - both must be correct or throw an Error.
   - [ ] Associate a firebase user with a wp_author_id
-  - [ ] Then, associate a session with a wp_author_id once it's reached the 'published/staged level' ('staged' being the level right before being Victor & Translation) 
+  - [x] Then, associate a session with a wp_author_id once it's reached the 'published/draft level' ('draft' being the level right before being Victor & Translation) 
 - [ ] FINALLY, update the Checkout State of a finalized paper to 'published' status.  (In wordpress, this will depend on the author for a final publish, e.g. Victor)
+  - [ ] ^^ Here, we'll have to pull down all `wpapi.papers(author)` and filter sessions by author, then if some wp Papers exist that we don't have a Session for, create that session as `published`.
 
 - [ ] **Optional** In functions/uploader.js, decide which html converter you're going to use: (draftjs-to-html or draft-js-export-html).  Probably the former.
 - [ ] We don't need to store html states (except cloud function conversions) at all, according to an article I red.  Just draft state will do for interim edits.  We can always run whichever draft-to-html exporter we're using to render html.

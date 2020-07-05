@@ -2,6 +2,7 @@ import { Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, B
 import { Chip } from '@material-ui/core'
 import { Collection } from 'firestorter'
 import { observer } from 'mobx-react'
+import { observable } from 'mobx'
 import moment from 'moment'
 import { StatusChip } from '@components'
 import { ButtonLink } from '../experimental'
@@ -43,6 +44,27 @@ const columns = [
 ]
 
 
+//Only grabs the query:
+// const currentUserSessions = sessions.query = ref => ref.where("author", "==", authorId);
+// console.log('mysessions :>> ', currentUserSessions);
+
+// const sessionDoc = new SessionDocument('sessions');
+
+// Trying to grab a filtered collection for the current wp user (all his sessions).
+
+// const col = new Collection('sessions', {
+//   query: (ref) => ref.where('author', '==', authorId).limit(queryLimit)
+// })
+
+// console.log('col :>> ', col);
+
+// autorun(() => {
+//   console.log('col.docs :>> ', col.docs);
+// })
+
+const DEFAULT_AUTHOR = 9;
+const queryLimit = 10;
+
 export const CheckoutTable = observer(() => {
     const { isLoading, hasDocs } = sessions;
 
@@ -56,10 +78,26 @@ export const CheckoutTable = observer(() => {
             tableData = new Array(5)
         }
 
+        // // Filter by wp author:
+        // const authorId = observable.box(DEFAULT_AUTHOR);
+        // sessions.query = (ref) => {
+
+        //     const author = authorId.get();
+
+        //     return author ?
+        //         ref.where('author', '==', author).limit(queryLimit)
+        //         : undefined;
+        // }
+
+        sessions.query = ref => ref.where('author', '==', DEFAULT_AUTHOR).limit(queryLimit)
+
+        console.log('sessions.query :>> ', sessions.query);
+        console.log('sessions.docs.length :>> ', sessions.docs.length);
         // Modify data coming from Firebase and make a data array for the table
         sessions.docs.reduce((array, doc, idx) => {
             let { id, data } = doc
             let { status, date_modified, date_uploaded, contributors } = data
+            console.log('contributors :>> ', contributors);
             let now = moment()
             if (date_modified) {
                 date_modified = moment.unix(date_modified.seconds)
