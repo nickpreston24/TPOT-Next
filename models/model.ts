@@ -6,12 +6,15 @@ export interface IDeserializable {
     deserialize(input: any): this;
 }
 
+export interface IModel {
+    toString(): string;
+}
+
 // ALL Inheritors can deserialize JSON.
 // (Note: because this is abstract, it cannot be instanced, which is on purpose)
-export default abstract class Model implements IDeserializable {
-    constructor(props) { 
-        this.deserialize(props) 
-        console.log('this (deserialized) :>> ', this);
+export default abstract class Model implements IDeserializable, IModel {
+    constructor(props) {
+        Object.assign(this, { ...props })
     }
 
     // The default deserialization function:

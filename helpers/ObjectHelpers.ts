@@ -1,3 +1,4 @@
+// Gets an object's key by its value. Same as reversmapping in enums.
 export const getKeyByValue: any = (obj: any, value: string) => Object.entries(obj).find(([, name]) => value === name);
 
 export const toPascalCase = (word: string) =>

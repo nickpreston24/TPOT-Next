@@ -18,10 +18,10 @@ const HeaderUserLogin = props => {
                 width: 32
             }} />
             <Box pl={2} mr={3} fontSize={18} color="white" fontFamily="'Poppins', sans-serif">Braden</Box>
-            <IconButton color="inherit" aria-label="add to shopping cart" onClick={() => Router.push(ROUTES.ACCOUNT)}>
+            <IconButton color="inherit" aria-label="add to shopping cart" onClick={() => signout().then(() => Router.push(ROUTES.LANDING))}>
                 <SettingsOutlinedIcon />
             </IconButton>
-            <IconButton color="inherit" aria-label="add to shopping cart" onClick={async () => {
+            <IconButton color="inherit" aria-label="exit" onClick={async () => {
                 await signout()
                 Router.push(ROUTES.LANDING)
             }}>

@@ -1,7 +1,14 @@
-import { observable, action, autorun, computed } from 'mobx'
 import '@services/firebase'
-import { Collection } from 'firestorter'
-import { createContext } from 'react'
+import { Collection, Document } from 'firestorter'
+import { Session } from 'models'
+
+export type SessionDocument = Document<Session>;
+
+export type Sessions = Collection<SessionDocument>;
+
+const sessions = new Collection<SessionDocument>("sessions");
+
+export { sessions }
 
 export class SessionStore {
 

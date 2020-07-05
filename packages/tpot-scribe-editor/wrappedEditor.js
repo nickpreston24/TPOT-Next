@@ -16,7 +16,7 @@ const WrappedEditor = React.forwardRef((props, ref) => {
 
     if (!Editor && !props) return <>Loading...</>
 
-    console.log('window.innerHeight', window.innerHeight);
+    // console.log('window.innerHeight', window.innerHeight);
     return <Editor ref={ref} />
 })
 

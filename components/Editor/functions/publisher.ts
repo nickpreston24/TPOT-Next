@@ -1,17 +1,8 @@
-import { AsyncObject } from '@cuties/cutie'
 import ExtendableError from '../../../models/Errors'
 import { wpapi } from '../../../services/wordpress';
 
 class WordPressNotInitializedException extends ExtendableError { message = 'Wordpress has not been initialized!' }
 class PaperNotFoundException extends ExtendableError { message = 'Could not find the Paper you\'re looking for...' }
-
-
-// TODO: Temporary - Refactor this to be DB configurable:
-// const wpapi = new WPAPI({
-//     endpoint: 'https://www.thepathoftruth.com/wp-json',
-//     username: 'michael.n.preston@gmail.com',
-//     password: 'Mercury2020!!' //TODO: init w/ process.env or firebase
-// })
 
 const DEFAULT_AUTHOR = 10 //Victor
 

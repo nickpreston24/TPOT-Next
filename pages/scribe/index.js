@@ -6,7 +6,7 @@ import * as ROUTES from '@constants/routes'
 const Page = () => {
 
   const CheckoutLink = <NextLink href={ROUTES.CHECKOUT}><a>{'Checkout a paper'}</a></NextLink>
-  const LandingLink = <NextLink href={ROUTES.LANDING}><a>{'Start from scratch'}</a></NextLink>
+  const EditorLink = <NextLink href={ROUTES.EDIT}><a>{'Start from scratch'}</a></NextLink>
 
   return (
     <Template
@@ -18,7 +18,7 @@ const Page = () => {
         variant: 'solid'
       }}
       secondaryButtonProps={{
-        children: LandingLink,
+        children: EditorLink,
         variantColor: 'primary',
         variant: 'outline'
       }}

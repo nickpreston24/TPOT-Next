@@ -1,5 +1,1 @@
-import {SessionStore} from './SessionStore'
-
-export {
-    SessionStore
-}
+export { sessions } from './SessionStore'
