@@ -21,6 +21,7 @@ const DEFAULT_AUTHOR = 9;
 export const WordPressToolbar = (props) => {
 
     const { getHtml } = props;
+    // console.log('setHtml :>> ', setHtml);
 
     const [uploaderOpen, setUploaderOpen] = useState(false);
     // const { user: authUser } = useAuth();
@@ -64,6 +65,10 @@ export const WordPressToolbar = (props) => {
                     setUser(toDto(records, WordpressUser))
                 })
         }
+        
+        // if (setHtml)
+        //     setHtml(`<p>Bongo bongo bongo, I don't wanna leave the Congo...</p>`)
+
     }, []);
 
 
@@ -78,25 +83,20 @@ export const WordPressToolbar = (props) => {
 
         publish(new Paper(title, contents))
             .then(async (response) => {
-                // console.log('wp paper :>> ', toDto(response, Session)) // @MP: For now, only maps 'content', 'slug' and 'title'
-                // console.log('title :>> ', title);
-                // console.log('contents :>> ', contents);
-                // console.log('response.author :>> ', response.author);
-                // console.log('response.id :>> ', response.id);
-                console.log('response :>> ', response);
+                // console.log('response :>> ', response);
 
                 if (!response.id) {
                     console.warn('No paper could be created as there was no response from Wordpress')
                     return
                 }
-                
+
                 // CREATE SESSION:
                 const document = await sessions.add({
                     authorId: response.author || DEFAULT_AUTHOR,
                     paperId: response.id,
 
                     date_modified: response.modified,
-                    status: response.status,
+                    status: 'Published', //response.status,
                     contributors: [user.email || user.name],
                     code: response.content ? response.content.rendered : '',
                     original: '',
@@ -121,8 +121,10 @@ export const WordPressToolbar = (props) => {
 
             <Button
                 onClick={onOpen}
-            >Publish
-                </Button>
+            >
+                Publish
+            </Button>
+
 
             <Modal
                 initialFocusRef={initialRef}

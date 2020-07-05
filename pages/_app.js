@@ -6,17 +6,22 @@ import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import customTheme from 'components/utils/Theme'
 import muiTheme from 'components/utils/MuiTheme'
+import { useRouter } from 'next/router'
+import * as ROUTES from '@routes'
 
 const MobxApp = (props) => {
 
   let { Component, pageProps } = props
+  const router = useRouter()
 
   return (
     <MuiThemeProvider theme={muiTheme}>
       <ThemeProvider theme={customTheme}>
         <CSSReset />
         <ProvideWordpress>
-          <ProvideAuth>
+          <ProvideAuth handleAuthFailure={() => {
+            router.push(ROUTES.LOGIN)
+          }}>
             <Component {...pageProps} />
             <ToastContainer newestOnTop />
           </ProvideAuth>

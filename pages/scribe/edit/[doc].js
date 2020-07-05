@@ -8,13 +8,11 @@ import { observer } from 'mobx-react'
 import { toJS, autorun } from 'mobx'
 import { CurrentSessions } from 'components/list'
 import { Collection } from 'immutable'
+import { isDev } from 'helpers'
 // import { CurrentSessions } from '../../../components/list'
 
 const authorId = 9;
 const queryLimit = 10;
-
-
-
 
 const Page = observer(props => {
 
@@ -22,19 +20,31 @@ const Page = observer(props => {
 
   const { docs, isLoading } = sessions;
 
-  
+  let currentDoc = docs.filter(s => s.id === id)[0]
+  console.log('currentDoc :>> ', currentDoc);
+
+  // let { slug } = currentDoc.data;
 
   return (
     <Stack>
       <Dashboard
         title={`TPOT Scribe - Edit - ${id}`}
       >
-        {/* <h1 color="green">Hello, Editor! Your doc id is: {id}</h1> */}
+        {isDev() && <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>}
 
         {isLoading
           ? <Spinner />
-          : <MyEditor />}
+          : <MyEditor doc={currentDoc} />}
 
+        {/* <div>slug: {slug || 'not found'}</div> */}
+
+        {/* <div>
+          {session.docs.map((doc) => (
+            <TodoItem
+              key={doc.id}
+              doc={doc} />
+          ))}
+        </div>; */}
 
         {/* <CurrentSessions sessions={mySessions} /> */}
 

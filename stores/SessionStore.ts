@@ -8,9 +8,6 @@ export type Sessions = Collection<SessionDocument>;
 
 const sessions = new Collection<SessionDocument>("sessions");
 
-// const currentUserSessions = sessions.query = ref => ref.where("author", "==", authorId);
-// console.log('mySessions :>> ', currentUserSessions);
-
 export { sessions }
 
 export class SessionStore {

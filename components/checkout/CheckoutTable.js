@@ -4,12 +4,12 @@ import { Collection } from 'firestorter'
 import { observer } from 'mobx-react'
 import { observable } from 'mobx'
 import moment from 'moment'
-import { StatusChip } from '@components'
+// import { StatusChip } from '@components'
 import { ButtonLink } from '../experimental'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import { useSessions } from '@hooks'
+// import { useSessions } from '@hooks'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -89,10 +89,11 @@ export const CheckoutTable = observer(() => {
         //         : undefined;
         // }
 
-        sessions.query = ref => ref.where('author', '==', DEFAULT_AUTHOR).limit(queryLimit)
+        // sessions.query = ref => ref.where('author', '==', DEFAULT_AUTHOR).limit(queryLimit)
 
         console.log('sessions.query :>> ', sessions.query);
         console.log('sessions.docs.length :>> ', sessions.docs.length);
+
         // Modify data coming from Firebase and make a data array for the table
         sessions.docs.reduce((array, doc, idx) => {
             let { id, data } = doc
@@ -118,7 +119,8 @@ export const CheckoutTable = observer(() => {
                 date_uploaded,
                 author: contributors,
             })
-            return array //!important, return the final data set for the table
+            return array //!important, return the final data set for the table            
+                // .filter(s => s.authorId === DEFAULT_AUTHOR) // Works, but would like this as a .query =ref=>... down the road.
         }, tableData)
     }
 
@@ -231,12 +233,12 @@ export const labelColors = {
     'published': '#c6ffc6',
 }
 
-// export const StatusChip = ({ status }) => {
-//     const label = statusMap[status]
-//     const color = labelColors[status]
-//     return (
-//         <Chip {...{ label }} style={{ background: color }} />
-//     )
-// }
+export const StatusChip = ({ status }) => {
+    const label = statusMap[status] || 'Unknown'
+    const color = labelColors[status]
+    return (
+        <Chip {...{ label }} style={{ background: color }} />
+    )
+}
 
 export default CheckoutTable;

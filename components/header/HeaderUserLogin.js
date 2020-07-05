@@ -21,7 +21,7 @@ const HeaderUserLogin = props => {
             <IconButton color="inherit" aria-label="add to shopping cart" onClick={() => signout().then(() => Router.push(ROUTES.LANDING))}>
                 <SettingsOutlinedIcon />
             </IconButton>
-            <IconButton color="inherit" aria-label="add to shopping cart" onClick={async () => {
+            <IconButton color="inherit" aria-label="exit" onClick={async () => {
                 await signout()
                 Router.push(ROUTES.LANDING)
             }}>

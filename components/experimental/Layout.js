@@ -55,8 +55,8 @@ const Layout = () => {
                         title="TPOT"
                         text='The Path of Truth'
                     />
-                    {/* Testing whether we can toggle dev stuff */}
-                    {isDev && <Icon
+                    {/* Testing whether we can toggle dev stuff */}                    
+                    {isDev() && <Icon
                         name='moon'
                         onClick={() => Router.push('/domains')}
                     />}

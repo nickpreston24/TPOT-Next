@@ -7,7 +7,8 @@ type ChipProps = {
     status: string,
 }
 
-export const StatusChip: FC<ChipProps> = ({ status, }) => {
+export const StatusChip: FC<ChipProps> = ({ status }) => {
+    status = status || CheckoutStatus.NotStarted;
 
     let [key] = getKeyByValue(CheckoutStatus, toTitleCase(status, '-')) as string
     let label = CheckoutStatus[key]// || 'unknown'

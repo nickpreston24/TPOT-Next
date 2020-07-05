@@ -2,7 +2,7 @@ import MobxReactForm from 'mobx-react-form'
 import dvr from 'mobx-react-form/lib/validators/DVR'
 import React, { Component } from 'react'
 import validatorjs from 'validatorjs'
-import {  observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { toJS } from 'mobx'
 
 // : DocumentForm is a wrapper that provides a prop, {form} that can be used by
@@ -18,7 +18,7 @@ class DocumentForm extends Component {
         this.props.document.set({
             contributors: this.props.store.authUser.email,
             status: 'checked-out'
-           }, { merge: true })
+        }, { merge: true })
     }
 
     // Actions to take before you leave the document page
@@ -26,7 +26,7 @@ class DocumentForm extends Component {
         if (!this.props.document) return
         this.props.document.set({
             status: 'in-progress'
-           }, { merge: true })
+        }, { merge: true })
     }
 
     render() {
@@ -52,7 +52,7 @@ class DocumentForm extends Component {
             const data = toJS(document.data)
 
             // Make a form from the document's data
-            const form = createForm( document, store, data)
+            const form = createForm(document, store, data)
 
             // Pass the form to the child component && render
             return (
@@ -68,7 +68,7 @@ class DocumentForm extends Component {
 
 /* ------------------- FORM GENERATOR ------------------- */
 
-function createForm( document, store, data ) {
+function createForm(document, store, data) {
     const { title, slug, excerpt, draft } = data
     const { getTime, signIn, forgot, register } = store
 

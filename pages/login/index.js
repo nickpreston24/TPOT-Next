@@ -81,12 +81,13 @@ const Login = () => {
                             />
                             {errors.password && touched.password && errors.password}
                             <br />
-                            <ZeitButton
+                            <ZeitLinkButton
                                 type="submit"
                                 text='Sign In'
+                                href={ROUTES.SCRIBE}
                             >
-                                <Link href={ROUTES.SCRIBE} />
-                            </ZeitButton>
+                                Submit
+                            </ZeitLinkButton>
 
                             {/* Keeping this Chip here b/c my ZeitButtons and Button+Link combos just make the form validate again :'{ */}
                             <Chip

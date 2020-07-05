@@ -2,14 +2,13 @@ import React, { createRef } from "react";
 import { WordPressToolbar } from '../../components'
 
 export class MyEditor extends React.Component<any, any> {
-    state = { loading: true };
+    state = { loading: true, contents: '' };
     CKEditor: any;
     ClassicEditor: any;
     ckeditorRef: React.RefObject<any>;
 
     constructor(props) {
         super(props)
-        // console.log('props :>> ', props);
         this.ckeditorRef = createRef();
         console.log('this.ckeditorRef :>> ', this.ckeditorRef);
     }
@@ -32,21 +31,39 @@ export class MyEditor extends React.Component<any, any> {
         // this.ref = this.props.ref;
         console.log('this.CKEditor :>> ', !!this.CKEditor, !!this.ClassicEditor);
         console.log('this.ckeditorRef :>> ', this.ckeditorRef);
+
+
+        let data = this.props.doc.data;
+        console.log('props :>> ', data);
+
+        console.log('slug :>> ', data.slug);
+        console.log('contents :>> ', data.code);
+
+        // this.setHtml(data.code)
+        console.log('this.ckeditorRef :>> ', this.ckeditorRef);
+        // this.ckeditorRef.current
+
+        // this.CKEditor.setData("Cookies")
+        this.setState({ contents: data.code })
+
     }
 
     render() {
+        console.log('this.ckeditorRef :>> ', this.ckeditorRef);
         return this.CKEditor ? (
             <div className="container" >
                 <WordPressToolbar {...{ getHtml: this.getHtml }} />
-                {/* <button onClick={this.getHtml}>Click me</button> */}
                 <this.CKEditor
-                    // ref={this.props.ref}
                     ref={this.ckeditorRef}
                     editor={this.ClassicEditor}
                     data="<p>Hello from CKEditor 5!</p>"
                     onInit={editor => {
                         // You can store the "editor" and use when it is needed.
-                        console.log("Editor is ready to use!", !!editor);
+                        !!editor && console.log("Editor is ready to use!");
+                        console.log('this. :>> ', this.state.contents);
+                        // const { contents } = this.state.contents;
+                        this.setHtml(this.state.contents)
+
                     }}
                     onChange={(event, editor) => {
                         const data = editor.getData();
