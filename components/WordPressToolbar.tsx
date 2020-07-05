@@ -1,5 +1,19 @@
 import { useState, FC, useRef, useEffect } from 'react';
-import { Box, ModalOverlay, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, ModalFooter, useDisclosure, Button } from '@chakra-ui/core'
+import {
+    Box,
+    ModalOverlay,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    FormControl,
+    FormLabel,
+    Input,
+    ModalFooter,
+    useDisclosure,
+    Button
+} from '@chakra-ui/core'
 import { ZeitLinkButton } from 'components/experimental/ZeitLinkButton';
 import * as ROUTES from 'constants/routes'
 import { Selector } from 'components/dialogs'
@@ -10,7 +24,6 @@ import { mapToDto, createInstance } from 'models/domain';
 import { toDto, Paper } from 'models';
 import { WordpressUser } from 'models/User';
 import { sessions } from 'stores';
-import { refStructEnhancer } from 'mobx/lib/internal';
 import { disableMe } from './disableMe';
 import Link from 'next/link';
 
@@ -30,7 +43,7 @@ export const WordPressToolbar = (props) => {
     const [disabled, setDisabled] = useState(true); // For whatever we wish to disable in prod.
 
     const { getPages, publish, getUser } = useWordpress();
-    const [option, setOption] = useState(uploadOptions[1]);
+    const [option, setOption] = useState(uploadOptions[0]);
 
     const initialRef = useRef();
     const finalRef = useRef();
@@ -39,13 +52,11 @@ export const WordPressToolbar = (props) => {
     const [pages, setPages] = useState<Paper[]>([]);
     const [categories, setCategories] = useState([""]);
     const [title, setTitle] = useState("");
-    const [contents, setContents] = useState("<h1>Test Header</h1><p>lorem ipsum</p>");
     const [user, setUser] = useState(createInstance(WordpressUser));
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     user.id = user.id || DEFAULT_AUTHOR; //TODO: Search firebase for authUser's wp.author id.
     const authorId = user.id;
-    // console.log('user.id :>> ', user.id);
 
     useEffect(() => {
         if (!!authorId) {
@@ -65,9 +76,6 @@ export const WordPressToolbar = (props) => {
                     setUser(toDto(records, WordpressUser))
                 })
         }
-        
-        // if (setHtml)
-        //     setHtml(`<p>Bongo bongo bongo, I don't wanna leave the Congo...</p>`)
 
     }, []);
 
@@ -77,13 +85,11 @@ export const WordPressToolbar = (props) => {
     const onSubmit = async () => {
         onClose();
 
-        setContents(getHtml())
-        console.log('contents :>> ', contents);
-        console.log('title :>> ', title);
+        let html = getHtml();
 
-        publish(new Paper(title, contents))
+        publish(new Paper(title, html))
             .then(async (response) => {
-                // console.log('response :>> ', response);
+                console.log('response :>> ', response);
 
                 if (!response.id) {
                     console.warn('No paper could be created as there was no response from Wordpress')
@@ -165,23 +171,23 @@ export const WordPressToolbar = (props) => {
                 </ModalContent>
             </Modal>
 
-            {/* TODO: @MP - Upgrade this to be a chakra-ui Modal */}
-            <Button
-                onClick={() => { }}
-                style={disableMe(disabled)}
-            >
-                Load a Document
-            </Button>
+            {option === 'Drive' && <UploadButton>Load a Document</UploadButton>}
 
-            {option === 'Drive' && <UploadButton />}
+            {/* TODO: @MP - Upgrade this to be a chakra-ui Modal */}
+            {/* <Button
+            // onClick={() => setUploaderOpen(true)}
+            // style={disableMe(uploaderOpen)}
+            >
+                Choose an upload option
+            </Button>
 
             <Selector
                 title="Choose an Upload Option"
                 open={uploaderOpen}
                 options={uploadOptions}
-                onCloseFn={onClose}
+                onCloseFn={() => setUploaderOpen(false)}
                 onSelectFn={onSelected}
-            ></Selector>
+            ></Selector> */}
         </Box>
     )
 };

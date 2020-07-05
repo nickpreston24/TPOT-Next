@@ -116,5 +116,5 @@ export const uploadLocalFile = async (file, userName = null) => {
         '\n\nDocument Data', !!document.data //toJS(document.data)
     )
 
-    return document;
+    return { document, downloadUrl };
 }

@@ -10,13 +10,12 @@ export class MyEditor extends React.Component<any, any> {
     constructor(props) {
         super(props)
         this.ckeditorRef = createRef();
-        console.log('this.ckeditorRef :>> ', this.ckeditorRef);
     }
 
     getHtml = () => {
-        console.log('ckeditorRef (gethtml) :>> ', this.ckeditorRef);
         const html = this.ckeditorRef.current.editor.getData()
         console.log('html :>> ', html);
+        return html;
     }
 
     setHtml = (text) => {
@@ -27,25 +26,12 @@ export class MyEditor extends React.Component<any, any> {
         this.CKEditor = require("@ckeditor/ckeditor5-react");
         this.ClassicEditor = require("@ckeditor/ckeditor5-build-classic");
         this.setState({ loading: false });
-        // console.log('cdm props :>> ', this.props);
-        // this.ref = this.props.ref;
-        console.log('this.CKEditor :>> ', !!this.CKEditor, !!this.ClassicEditor);
-        console.log('this.ckeditorRef :>> ', this.ckeditorRef);
 
+        if (!!this.props.doc) {
+            let data = this.props.doc.data;
 
-        let data = this.props.doc.data;
-        console.log('props :>> ', data);
-
-        console.log('slug :>> ', data.slug);
-        console.log('contents :>> ', data.code);
-
-        // this.setHtml(data.code)
-        console.log('this.ckeditorRef :>> ', this.ckeditorRef);
-        // this.ckeditorRef.current
-
-        // this.CKEditor.setData("Cookies")
-        this.setState({ contents: data.code })
-
+            this.setState({ contents: data.code })
+        }
     }
 
     render() {
@@ -60,14 +46,11 @@ export class MyEditor extends React.Component<any, any> {
                     onInit={editor => {
                         // You can store the "editor" and use when it is needed.
                         !!editor && console.log("Editor is ready to use!");
-                        console.log('this. :>> ', this.state.contents);
-                        // const { contents } = this.state.contents;
                         this.setHtml(this.state.contents)
-
                     }}
                     onChange={(event, editor) => {
                         const data = editor.getData();
-                        console.log({ event, editor, data });
+                        // console.log({ event, editor, data });
                     }}
                 />
             </div>

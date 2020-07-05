@@ -5,11 +5,7 @@ import { MyEditor } from 'tpot-scribe-editor'
 import { Stack, Spinner } from '@chakra-ui/core'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
-import { toJS, autorun } from 'mobx'
-import { CurrentSessions } from 'components/list'
-import { Collection } from 'immutable'
 import { isDev } from 'helpers'
-// import { CurrentSessions } from '../../../components/list'
 
 const authorId = 9;
 const queryLimit = 10;
@@ -21,9 +17,6 @@ const Page = observer(props => {
   const { docs, isLoading } = sessions;
 
   let currentDoc = docs.filter(s => s.id === id)[0]
-  console.log('currentDoc :>> ', currentDoc);
-
-  // let { slug } = currentDoc.data;
 
   return (
     <Stack>
@@ -36,66 +29,11 @@ const Page = observer(props => {
           ? <Spinner />
           : <MyEditor doc={currentDoc} />}
 
-        {/* <div>slug: {slug || 'not found'}</div> */}
-
-        {/* <div>
-          {session.docs.map((doc) => (
-            <TodoItem
-              key={doc.id}
-              doc={doc} />
-          ))}
-        </div>; */}
-
-        {/* <CurrentSessions sessions={mySessions} /> */}
-
-        {/* <MyEditor ref={ref} /> */}
-        {/* {isLoading ? <Spinner /> : <Editor ref={ref} />} */}
-
-        {/* TODO: Query by author id and Observe() like in the firestorter docs */}
-        {/* {isLoading
-          ? <Spinner />
-          : <CurrentSessions
-            entries={docs}
-            title="Your Current Drafts" />} */}
-
       </Dashboard>
     </Stack>
   )
 })
 
-/** Working Code */
-
-// const Page = props => {
-
-//   console.log('props ([doc]) :>> ', props);
-//   const { id } = props
-
-//   const ckeditorRef = useRef(null)
-
-//   const getHtml = () => {
-//     const html = ckeditorRef.current.editor.getData()
-//     console.log(html)
-//   }
-
-
-//   // console.log('CkEditor :>> ', MyEditor, 'editorRef: ', ckeditorRef);
-
-//   return (
-//     <Dashboard
-//       title={`TPOT Scribe - Edit - ${id}`}
-//     // details={() => <DocumentDetails {...{ document }} />}
-//     >
-//       <Box
-//         height="100%"
-//       >
-//         {/* <Editor ref={ckeditorRef} /> */}
-//         {/* <MyEditor ref={ckeditorRef} /> */}
-//         <div>Hello, CK Editor</div>
-//         <WordPressToolbar {...{ getHtml }} />
-//       </Box>
-//     </Dashboard>
-//   )
-// }
 
 Page.propTypes = {
   id: PropTypes.string.isRequired,

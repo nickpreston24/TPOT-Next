@@ -46,6 +46,7 @@ function useWordpressProvider() {
     const publish = async (paper: Paper): Promise<Paper> => {
         const { author, id } = paper;
 
+
         const existingPaper = id ? await wpapi.pages()
             .author(author)
             .id(id) : null;
@@ -68,6 +69,7 @@ function useWordpressProvider() {
                 })
         }
         else {
+            console.log('creating paper :>> ', paper);
             wpapi.pages()
                 .author(author)
                 .create(paper)
