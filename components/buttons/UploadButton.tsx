@@ -17,7 +17,7 @@ const UploadButton: FC<Props> = ({ afterUpload }) => {
     const router = useRouter();
 
     // console.log('user :>> ', Object.keys(user), user.email);
-    if (!user) {
+    if (!user && router.pathname !== ROUTES.LANDING) {
         notify("You need to login to perform this action!", 'info')
         router.push(ROUTES.LOGIN)
     }

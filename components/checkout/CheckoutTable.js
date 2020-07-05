@@ -9,7 +9,7 @@ import { ButtonLink } from '../experimental'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-// import { useSessions } from '@hooks'
+import { sessions } from '../../stores/SessionStore'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -23,12 +23,6 @@ import React, { useEffect, useState } from 'react'
 const MaterialTable = dynamic(() => import('material-table'),
     { ssr: false, loading: () => <Spinner /> }
 )
-
-
-// Sessions stays outside of the FC component because it shouldn't be destroyed each
-// render. If this were a class comp, then you would put sessions in a constructor.
-const sessions = new Collection('sessions');
-
 
 const columns = [
     { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
@@ -120,7 +114,7 @@ export const CheckoutTable = observer(() => {
                 author: contributors,
             })
             return array //!important, return the final data set for the table            
-                // .filter(s => s.authorId === DEFAULT_AUTHOR) // Works, but would like this as a .query =ref=>... down the road.
+            // .filter(s => s.authorId === DEFAULT_AUTHOR) // Works, but would like this as a .query =ref=>... down the road.
         }, tableData)
     }
 

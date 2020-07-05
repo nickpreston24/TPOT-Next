@@ -11,6 +11,10 @@
   - [x] FINALLY, update the Checkout State of a finalized paper to 'published' status.  (In wordpress, this will depend on the author for a final publish, e.g. Victor)
     - [ ] ^^ Here, we'll have to pull down all `wpapi.papers(author)` and filter sessions by the current `authorId`, then if some Papers exist that we don't have a Session for, create that Session as `published` because they have already been finalized.  We don't have enable these Sessions in the Checkout Table, in fact it probably would be best to have those specific published Papers available for view in the user's `Account`, that way there's minimal effort or confusion.
 
+#### Register form
+  - [ ] **Optional** Clear the email or at least password after transitioning from Login => Register, so the user won't have to clear it.
+  - [ ] 
+
 #### Conversion Options
 - [x] **Optional** In functions/uploader.js, decide which html converter you're going to use: (draftjs-to-html or draft-js-export-html).  Probably the former.
 - [x] editorref.current.editor.setData(`<h1></h1>`)
