@@ -1,142 +1,157 @@
-import React, { Component } from 'react'
-import { Layout } from '@components/experimental'
-import Head from 'next/head'
+import React from 'react'
+import NextLink from 'next/link'
+import Template from '@templates/Welcome'
+import * as ROUTES from '@constants/routes'
+import { useRouter } from 'next/router'
+import { Text, Link, Icon, useToast } from '@chakra-ui/core'
+import { useFormik } from 'formik'
+import { useAuth } from "@hooks"
+import * as yup from 'yup'
 
-import { ThemeProvider, CSSReset } from '@chakra-ui/core'
-import { customTheme } from '../constants/theme'
+const Page = () => {
 
-const App = () => {
+  // Get the url query for 'm'. Example: toolbox.tech/m=login
+  const router = useRouter()
+  const { query: { m } } = router
+  const mode = m || 'default'
+
+  // Get authentication properties
+  const auth = useAuth();
+  const { user, signin, signup, sendPasswordResetEmail } = auth;
+
+  const toast = useToast()
+
+  // Navigation callbacks for links in the UI
+  const redirectRegister = () => router.push(`${ROUTES.LANDING}?m=register`)
+  const redirectForgot = () => router.push(`${ROUTES.LANDING}?m=forgot`)
+  const redirectLogin = () => router.push(`${ROUTES.LANDING}?m=login`)
+  const redirectScribe = () => router.push(ROUTES.SCRIBE)
+  const redirectHome = () => router.push(ROUTES.LANDING)
+
+  // Make a Formik instance for the application that the Template will render
+  const toolboxAuthenticationForm = useFormik({
+    initialValues: { firstName: '', lastName: '', email: '', password: '' },
+    validationSchema: yup.object({
+      formMode: yup.string().default(mode),
+      email: yup.string()
+        .when('formMode', {
+          is: mode => ['register', 'login', 'forgot'].includes(mode),
+          then: yup.string().email().required('Please enter your email'),
+          otherwise: yup.string(),
+        }),
+      password: yup.string()
+        .when('formMode', {
+          is: mode => ['register', 'login'].includes(mode),
+          then: yup.string().required('Please enter your password'),
+          otherwise: yup.string(),
+        }),
+      firstName: yup.string()
+        .when('formMode', {
+          is: mode => ['register'].includes(mode),
+          then: yup.string().required('First name is required'),
+          otherwise: yup.string(),
+        }),
+      lastName: yup.string()
+        .when('formMode', {
+          is: mode => ['register'].includes(mode),
+          then: yup.string().required('Last name is required'),
+          otherwise: yup.string(),
+        }),
+    }),
+    onSubmit: async (values, actions) => {
+
+      const actionConfig = {
+        register: {
+          title: "Account created",
+          description: "Check your inbox and confirm your email",
+          cb: redirectLogin
+        },
+        login: {
+          title: "Signed in Successfully",
+          description: "Welcome to Toolbox! Enjoy your stay",
+          cb: redirectScribe
+        },
+        forgot: {
+          title: "Email Sent",
+          description: "Check your inbox for the password reset",
+          cb: redirectLogin
+        }
+      }
+
+      // Get some information first
+      const { setSubmitting } = actions
+      const { email, password, firstName, lastName } = values
+
+      // Set a timeout to prevent the Button UI from stalling
+      setTimeout(() => actions.setSubmitting(false), 1000);
+
+      // Choose the correct promise for the form's mode
+      const promise = () => {
+        actions.setSubmitting(true)
+        switch (mode) {
+          case 'forgot':
+            return sendPasswordResetEmail(email)
+          case 'register':
+            return signup(email, password, /* firstName, lastName*/)
+          case 'login':
+            return signin(email, password)
+        }
+      }
+
+      // Execute the promise and notify user of messages and errors
+      promise()
+        .then(() => {
+          toast({
+            position: "bottom-left",
+            title: actionConfig[mode].title,
+            description: actionConfig[mode].description,
+            status: "success",
+          })
+          actions.setSubmitting(false)
+          actionConfig[mode].cb()
+        })
+        .catch(error => {
+          toast({
+            position: "bottom-left",
+            title: 'There was a problem',
+            description: error.message,
+            status: "error",
+          })
+        })
+    },
+  });
+
+  const mainButtonHref = user ? ROUTES.SCRIBE : `${ROUTES.LANDING}?m=login`
+  const mainButtonText = user ? 'Go to Dashboard' : 'Sign In'
+
+  const MainButtonLink = (
+    <NextLink href={mainButtonHref}>
+      <a>{mainButtonText}</a>
+    </NextLink>
+  )
 
   return (
-    <div title="TPOT Toolbox" className="container">
-      <ThemeProvider theme={customTheme}>
-        <CSSReset />
-        <Head>
-          <title>TPOT ToolBox</title>
-          <link rel="icon" href="favicon.ico" />
-        </Head>
-        <main>
-          <h3 className="title">Welcome to TPOT Toolbox!</h3>
-          <Layout />
-        </main>
-
-        <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }      
-        
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-
-        `}
-        </style>
-
-        <style jsx global>{`
-          html,
-          body {
-            padding: 0;
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-              Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-          }
-
-          * {
-            box-sizing: border-box;
-          }
-        `}
-        </style>
-
-      </ThemeProvider>
-    </div>
+    <Template
+      mode={mode} // Driven by a URL query
+      title="TPOT Toolbox"
+      subtitle={PathOfTruthSubtitle}
+      primaryButtonProps={{
+        children: MainButtonLink
+      }}
+      formik={toolboxAuthenticationForm}
+    />
   )
 }
 
-export default App
+export default Page
+
+
+const PathOfTruthSubtitle = (
+  <Text>
+    {'A Collection of tools for '}
+    <Link href={"https://www.thepathoftruth.com"} isExternal color="blue.500">
+      {"The Path of Truth"} <Icon name="external-link" mx="2px" />
+    </Link>
+  </Text>
+)
+
