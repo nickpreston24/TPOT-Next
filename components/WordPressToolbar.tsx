@@ -96,8 +96,7 @@ export const WordPressToolbar = (props) => {
                     return
                 }
 
-                // CREATE SESSION:
-                const document = await sessions.add({
+                let sessionUpdate = {
                     authorId: response.author || DEFAULT_AUTHOR,
                     paperId: response.id,
 
@@ -108,7 +107,12 @@ export const WordPressToolbar = (props) => {
                     original: '',
                     excerpt: '',
                     title,
-                })
+                };
+
+                // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
+                // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
+                // We have Sessions as a stopgap (i.e. the checked-out state flag).
+                const document = await sessions.add(sessionUpdate)
 
                 if (!document) {
                     notify(`Failed to create Seesion for: ${title}`, 'warn')
@@ -124,13 +128,11 @@ export const WordPressToolbar = (props) => {
 
     return (
         <Box>
-
             <Button
                 onClick={onOpen}
             >
                 Publish
             </Button>
-
 
             <Modal
                 initialFocusRef={initialRef}

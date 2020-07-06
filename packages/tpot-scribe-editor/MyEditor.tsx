@@ -15,7 +15,7 @@ export class MyEditor extends React.Component<any, any> {
 
     getHtml = () => {
         const html = this.ckeditorRef.current.editor.getData()
-        console.log('html :>> ', html);
+        // console.log('html :>> ', html);
         return html;
     }
 
@@ -60,7 +60,6 @@ export class MyEditor extends React.Component<any, any> {
             );
     }
 }
-
 
 
 /** Working [window] fix.  DO NOT DELETE! */

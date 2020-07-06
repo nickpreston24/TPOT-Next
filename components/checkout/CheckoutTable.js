@@ -1,10 +1,12 @@
-import { Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, Box } from '@chakra-ui/core'
+import {
+    Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, Box, Modal
+    , ModalHeader, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalCloseButton, ModalBody
+} from '@chakra-ui/core'
 import { Chip } from '@material-ui/core'
 import { observer } from 'mobx-react'
 import { Document } from 'firestorter'
 import { observable } from 'mobx'
 import moment from 'moment'
-import { ButtonLink } from '../experimental'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -13,6 +15,8 @@ import { ROUTES } from 'constants/routes'
 import { toDto, Session } from '../../models'
 import { CheckoutStatus } from 'constants'
 import { notify } from 'components/experimental/Toasts'
+import { isDev } from '../../helpers'
+
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -44,8 +48,12 @@ const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;
 
 export const CheckoutTable = observer(() => {
-    const { isLoading, hasDocs } = sessions;
 
+    const router = useRouter();
+    console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
+
+    const { isLoading, hasDocs } = sessions;
+    console.log('isDev()', isDev())
     let tableData = []
 
     if (hasDocs) {
@@ -72,7 +80,6 @@ export const CheckoutTable = observer(() => {
                 date_uploaded = moment.duration(date_uploaded.diff(now))
                 date_uploaded = date_uploaded.humanize(true)
             }
-            // status = status || 'in-progress'
             array.push({
                 ...data,
                 id,
@@ -131,6 +138,9 @@ export const CheckoutTable = observer(() => {
 
 const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status }) => {
     const [isOpen, setIsOpen] = useState(false)
+
+    const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: onUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
+
     const router = useRouter()
 
     console.log('status :>> ', status);
@@ -192,14 +202,19 @@ const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status
                             <Box overflowX="hidden" overflowY="scroll">{date_uploaded}</Box>
                         </Stack>
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
-                            <Tooltip label="Allow editing the paper if available" placement="bottom">
+                            <ConfirmUnlock
+                                action={unlock}
+                                isOpen={unlockIsOpen} onClose={onUnlockModalClose} confirmedAction={unlock}>
+                                Unlock
+                                </ConfirmUnlock>
+                            <Tooltip label="Unlock a paper for editing" placement="bottom">
                                 <Button
-                                    leftIcon="unlock"
+                                    onClick={onUnlockModalOpen}
                                     isDisabled={status !== 'checked-out'}
-                                    onClick={() => unlock()}
+                                    leftIcon="unlock"
                                 >
                                     Unlock
-                                </Button>
+                            </Button>
                             </Tooltip>
                             <Tooltip label="Edit this paper" placement="bottom">
                                 <Button
@@ -216,6 +231,40 @@ const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status
             </Flex>
         </Collapse>
     )
+}
+
+
+const ConfirmUnlock = ({ isOpen, onClose, action }) => {
+
+    return (
+        <>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Confirm: Unlock this paper?</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        Unlocking this paper for editing may cause unwanted issues like duplicated drafts.
+                        Proceed if you understand the risk.
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Stack>
+                            <Button variantColor="green" mr={30} onClick={() => {
+                                action()
+                                onClose()
+                            }}>
+                                I understand and wish to continue.
+                        </Button>
+                        <Button variant="blue" onClick={onClose}>
+                            On second thought...
+                        </Button>
+                        </Stack>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    );
 }
 
 export const statusMap = {
