@@ -1,15 +1,18 @@
 import { Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, Box } from '@chakra-ui/core'
 import { Chip } from '@material-ui/core'
-import { Collection } from 'firestorter'
 import { observer } from 'mobx-react'
+import { Document } from 'firestorter'
 import { observable } from 'mobx'
 import moment from 'moment'
-// import { StatusChip } from '@components'
 import { ButtonLink } from '../experimental'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { sessions } from '../../stores/SessionStore'
+import { ROUTES } from 'constants/routes'
+import { toDto, Session } from '../../models'
+import { CheckoutStatus } from 'constants'
+import { notify } from 'components/experimental/Toasts'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -37,25 +40,6 @@ const columns = [
     { title: 'ID', field: 'id', searchable: false, hidden: true },
 ]
 
-
-//Only grabs the query:
-// const currentUserSessions = sessions.query = ref => ref.where("author", "==", authorId);
-// console.log('mysessions :>> ', currentUserSessions);
-
-// const sessionDoc = new SessionDocument('sessions');
-
-// Trying to grab a filtered collection for the current wp user (all his sessions).
-
-// const col = new Collection('sessions', {
-//   query: (ref) => ref.where('author', '==', authorId).limit(queryLimit)
-// })
-
-// console.log('col :>> ', col);
-
-// autorun(() => {
-//   console.log('col.docs :>> ', col.docs);
-// })
-
 const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;
 
@@ -72,27 +56,11 @@ export const CheckoutTable = observer(() => {
             tableData = new Array(5)
         }
 
-        // // Filter by wp author:
-        // const authorId = observable.box(DEFAULT_AUTHOR);
-        // sessions.query = (ref) => {
-
-        //     const author = authorId.get();
-
-        //     return author ?
-        //         ref.where('author', '==', author).limit(queryLimit)
-        //         : undefined;
-        // }
-
-        // sessions.query = ref => ref.where('author', '==', DEFAULT_AUTHOR).limit(queryLimit)
-
-        console.log('sessions.query :>> ', sessions.query);
-        console.log('sessions.docs.length :>> ', sessions.docs.length);
-
         // Modify data coming from Firebase and make a data array for the table
         sessions.docs.reduce((array, doc, idx) => {
             let { id, data } = doc
             let { status, date_modified, date_uploaded, contributors } = data
-            console.log('contributors :>> ', contributors);
+            // console.log('contributors :>> ', contributors);
             let now = moment()
             if (date_modified) {
                 date_modified = moment.unix(date_modified.seconds)
@@ -104,7 +72,7 @@ export const CheckoutTable = observer(() => {
                 date_uploaded = moment.duration(date_uploaded.diff(now))
                 date_uploaded = date_uploaded.humanize(true)
             }
-            status = status || 'in-progress'
+            // status = status || 'in-progress'
             array.push({
                 ...data,
                 id,
@@ -161,16 +129,41 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename }) => {
+const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status }) => {
     const [isOpen, setIsOpen] = useState(false)
     const router = useRouter()
+
+    console.log('status :>> ', status);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsOpen(true), 0)
         return () => clearTimeout(timer)
     }, []);
 
-    const checkoutAction = () => router.push(`/scribe/edit/${id}`)
+    const checkout = async () => {
+        let document = new Document(`sessions/${id}`, { mode: 'off' });
+        await document.fetch()
+
+        if (document.hasData && document.status !== 'checked-out') {
+            await document.update({
+                status: "checked-out"
+            })
+        }
+        router.push(ROUTES.DOC(id))
+    }
+
+    const unlock = async () => {
+        let document = new Document(`sessions/${id}`, { mode: 'off' });
+        await document.fetch()
+
+        if (document.hasData) {
+            await document.update({
+                status: "in-progress"
+            })
+        }
+
+        notify("Document successfully unlocked.  You may now check it out", 'success');
+    }
 
     return (
         <Collapse isOpen={isOpen} alignContent="center" transition="all 1s ease-in-out">
@@ -200,10 +193,22 @@ const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename }) => {
                         </Stack>
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
                             <Tooltip label="Allow editing the paper if available" placement="bottom">
-                                <Button leftIcon="unlock" isDisabled={true} >Unlock</Button>
+                                <Button
+                                    leftIcon="unlock"
+                                    isDisabled={status !== 'checked-out'}
+                                    onClick={() => unlock()}
+                                >
+                                    Unlock
+                                </Button>
                             </Tooltip>
-                            <Tooltip label="Open up an editor and edit this paper" placement="bottom">
-                                <Button onClick={checkoutAction} leftIcon="edit" variantColor="primary">Start Editing</Button>
+                            <Tooltip label="Edit this paper" placement="bottom">
+                                <Button
+                                    onClick={() => checkout()}
+                                    leftIcon="edit"
+                                    variantColor="primary"
+                                >
+                                    Start Editing
+                                </Button>
                             </Tooltip>
                         </Stack>
                     </Stack>

@@ -13,7 +13,7 @@
 
 #### Register form
   - [ ] **Optional** Clear the email or at least password after transitioning from Login => Register, so the user won't have to clear it.
-  - [ ] 
+  - [ ] **Optional** Refactor the choices and `promise()` to be a `useReducer()` implementation.  Much easier to manage.
 
 #### Conversion Options
 - [x] **Optional** In functions/uploader.js, decide which html converter you're going to use: (draftjs-to-html or draft-js-export-html).  Probably the former.

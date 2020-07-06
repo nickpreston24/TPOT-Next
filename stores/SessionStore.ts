@@ -1,6 +1,8 @@
 import '@services/firebase'
 import { Collection, Document } from 'firestorter'
 import { Session } from 'models'
+import { observable } from 'mobx';
+import { CheckoutStatus } from 'constants/CheckoutStatus';
 
 export type SessionDocument = Document<Session>;
 
@@ -10,83 +12,124 @@ const sessions = new Collection<SessionDocument>("sessions");
 
 export { sessions }
 
-export class SessionStore {
+const DEFAULT_AUTHOR = 9;
+const queryLimit = 10;
 
-    // @observable 
-    sessions = new Collection('sessions')
+// Filter by wp author:
+export let authorId = observable.box(DEFAULT_AUTHOR);
+export const setAuthor = (id: number) => authorId.set(id);
 
-    /*
-        @BP: If you want, you can make these observable, though I don't
-        recommend going outside for firestorter documentation unless you have a good reason to do so.
-    */
+export const getAuthorSessions = () => {
+    sessions.query = (ref) => {
 
-    // @observable loading = false
-    // @observable prevDocument = null
-    // @observable page = 0
-    // @observable pageSize = 7
-    // @observable filter?= ''
-    // @observable direction = ''
-    // @observable query = null
-    // @observable totalCount = 0
+        const author = authorId.get();
+        console.log('current author :>> ', author);
 
-    //     @action countTotalDocs = async () => {
-    //         // let options = new ICollectionOptions {{Mode.Off}}
-    //         console.log('This is the Collection you are looking for ... ')
-    // console.log('this.sessions.docs.length :>> ', this.sessions.docs.length);
-    //         return this.sessions.docs.length
+        return author ?
+            ref.where('author', '==', author).limit(queryLimit)
+            : undefined;
+    }
 
-    //         // let collection = await new Collection('sessions', {
-    //         //     // Mode = Mode.Off                
-    //         // }).fetch()
-    //         // this.totalCount = collection.docs.length
-    //     }
-
-    // @computed get count() {
-    //     return this.sessions.docs.length
-    // }
-
-    // @action orderChange = (colID, direction) => {
-    //     this.filter = colID
-    //     this.direction = direction
-    // }
-
-    // @action setLoading = (isLoading: boolean) => this.loading = isLoading
-
-    // @action changePage = page =>
-    //     this.page = page
-
-    // @action changeRowsPerPage = pageSize =>
-    //     this.pageSize = pageSize
-
-    // @action setTotalCount = count =>
-    //     this.totalCount = count
-
-    // @action updateQuery = query =>
-    //     this.sessions.query = query
-
-
-    // queryBuilder = autorun(async () => {
-
-    //     let { page, pageSize, filter, direction, prevDocument } = this
-    //     this.setLoading(true)
-
-    //     filter = !!filter ? 'title' : 'status'
-    //     direction = !!filter ? 'asc' : direction
-
-    //     // await this.countTotalDocs()
-    //     await this.updateQuery(
-    //         collectionRef => {
-    //             return collectionRef
-    //                 .orderBy(filter, direction)
-    //                 .limit(pageSize)
-    //                 .startAfter(prevDocument)
-
-    //         }
-    //     )
-
-    //     this.setLoading(false)
-    // })
+    console.log('sessions.query :>> ', sessions.query);
+    console.log('sessions.docs.length :>> ', sessions.docs.length);
 }
+
+//Only grabs the query:
+// const currentUserSessions = sessions.query = ref => ref.where("author", "==", authorId);
+// console.log('mysessions :>> ', currentUserSessions);
+
+// const sessionDoc = new SessionDocument('sessions');
+
+// Trying to grab a filtered collection for the current wp user (all his sessions).
+
+// const col = new Collection('sessions', {
+//   query: (ref) => ref.where('author', '==', authorId).limit(queryLimit)
+// })
+
+// console.log('col :>> ', col);
+
+// autorun(() => {
+//   console.log('col.docs :>> ', col.docs);
+// })
+
+
+// export class SessionStore {
+
+//     // @observable 
+//     sessions = new Collection('sessions')
+
+//     /*
+//         @BP: If you want, you can make these observable, though I don't
+//         recommend going outside for firestorter documentation unless you have a good reason to do so.
+//     */
+
+//     // @observable loading = false
+//     // @observable prevDocument = null
+//     // @observable page = 0
+//     // @observable pageSize = 7
+//     // @observable filter?= ''
+//     // @observable direction = ''
+//     // @observable query = null
+//     // @observable totalCount = 0
+
+//     //     @action countTotalDocs = async () => {
+//     //         // let options = new ICollectionOptions {{Mode.Off}}
+//     //         console.log('This is the Collection you are looking for ... ')
+//     // console.log('this.sessions.docs.length :>> ', this.sessions.docs.length);
+//     //         return this.sessions.docs.length
+
+//     //         // let collection = await new Collection('sessions', {
+//     //         //     // Mode = Mode.Off                
+//     //         // }).fetch()
+//     //         // this.totalCount = collection.docs.length
+//     //     }
+
+//     // @computed get count() {
+//     //     return this.sessions.docs.length
+//     // }
+
+//     // @action orderChange = (colID, direction) => {
+//     //     this.filter = colID
+//     //     this.direction = direction
+//     // }
+
+//     // @action setLoading = (isLoading: boolean) => this.loading = isLoading
+
+//     // @action changePage = page =>
+//     //     this.page = page
+
+//     // @action changeRowsPerPage = pageSize =>
+//     //     this.pageSize = pageSize
+
+//     // @action setTotalCount = count =>
+//     //     this.totalCount = count
+
+//     // @action updateQuery = query =>
+//     //     this.sessions.query = query
+
+
+//     // queryBuilder = autorun(async () => {
+
+//     //     let { page, pageSize, filter, direction, prevDocument } = this
+//     //     this.setLoading(true)
+
+//     //     filter = !!filter ? 'title' : 'status'
+//     //     direction = !!filter ? 'asc' : direction
+
+//     //     // await this.countTotalDocs()
+//     //     await this.updateQuery(
+//     //         collectionRef => {
+//     //             return collectionRef
+//     //                 .orderBy(filter, direction)
+//     //                 .limit(pageSize)
+//     //                 .startAfter(prevDocument)
+
+//     //         }
+//     //     )
+
+//     //     this.setLoading(false)
+//     // })
+// }
 
 // export const sessionStore = new SessionStore();
 
@@ -95,4 +138,4 @@ export class SessionStore {
 
 
 // export const sessionStoreContext =  createContext(new SessionStore());
-export default SessionStore;
+// export default SessionStore;

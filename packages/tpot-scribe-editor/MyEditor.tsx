@@ -1,5 +1,6 @@
 import React, { createRef } from "react";
 import { WordPressToolbar } from '../../components'
+import { Spinner } from "@chakra-ui/core";
 
 export class MyEditor extends React.Component<any, any> {
     state = { loading: true, contents: '' };
@@ -55,7 +56,7 @@ export class MyEditor extends React.Component<any, any> {
                 />
             </div>
         ) : (
-                <div>Editor loading</div>
+                <Spinner />
             );
     }
 }

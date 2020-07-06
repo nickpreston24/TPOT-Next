@@ -16,6 +16,7 @@ const Page = observer(props => {
 
   const { docs, isLoading } = sessions;
 
+  // This might load all sessions, however, getting the new Document by id caused issues for me.
   let currentDoc = docs.filter(s => s.id === id)[0]
 
   return (

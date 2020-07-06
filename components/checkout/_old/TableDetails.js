@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { compose } from 'recompose'
-import { uploadLocalFile } from '../Editor/functions/uploader'
+import { uploadLocalFile } from '../../Editor/functions/uploader'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import DescriptionIcon from '@material-ui/icons/Description'
 import EditIcon from '@material-ui/icons/Edit'
@@ -13,7 +13,7 @@ import { observer } from 'mobx-react'
 import moment from 'moment'
 import { Box, Button, Collapse, Link as MLink, Paper } from '@material-ui/core'
 
-import StatusChip from '../StatusChip'
+import StatusChip from '../../StatusChip'
 
 import { details } from '@stores/DocumentDetailStore'
 
@@ -95,6 +95,7 @@ export const TableDetails = compose(observer)(
             const { store, paper } = this.props
             let { allowUnlock } = this
             let { checkout, unlock } = store
+            console.log('store :>> ', store);
             let { id, slug, excerpt, docx, date_uploaded, filename } = paper
             docx = !!docx ? docx : ''
             filename = !!filename ? filename : 'Document'
@@ -158,7 +159,14 @@ export const TableDetails = compose(observer)(
                                     >
                                         {allowUnlock ? 'Unlock' : <LockOpenIcon />}
                                     </Button>
-                                    <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
+                                    <Button
+                                        onClick={() => checkout(id)}
+                                        color="primary"
+                                        variant="contained"
+                                        endIcon={<EditIcon />}
+                                    >
+                                        Start Editing
+                                    </Button>
                                 </Box>
                             </Box>
                         </Box>
@@ -168,4 +176,3 @@ export const TableDetails = compose(observer)(
         }
     }
 )
-
