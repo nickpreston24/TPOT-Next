@@ -121,8 +121,8 @@ const Page = () => {
     },
   });
 
-  const mainButtonHref = user ? ROUTES.SCRIBE : `${ROUTES.LANDING}?m=login`
-  const mainButtonText = user ? 'Go to Dashboard' : 'Sign In'
+  const mainButtonHref = `${ROUTES.LANDING}?m=login`
+  const mainButtonText = 'Sign In'
 
   const MainButtonLink = (
     <NextLink href={mainButtonHref}>

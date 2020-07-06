@@ -1,6 +1,5 @@
 import React from 'react'
 import { Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Divider } from '@chakra-ui/core'
-import { disableMe } from 'components/disableMe'
 import { Router } from 'next/router'
 import * as ROUTES from '@routes'
 
@@ -92,7 +91,7 @@ const Navbar = ({ children }) => {
                     leftIcon="settings"
                     w="100%"
                     fontWeight={300}
-                    style={disableMe(true)} // (sample) Remove once Settings is ready to be worked on.
+                    disabled
                     onClick={() => alert('settings')}>Settings</Button>
             </Flex>
         </Stack>

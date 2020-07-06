@@ -6,14 +6,16 @@ export const EDIT = '/scribe/edit'
 export const DOC = (docId) => `/scribe/edit/${docId}`
 export const CHECKOUT = '/scribe/checkout'
 export const TPOT = 'http://www.thepathoftruth.com'
+export const TRELLO = 'https://trello.com/c/LsaGjczl/99-tpot-letters-desktop-app'
 
 export const ROUTES = {
-    LANDING: '/',
-    LOGIN: '/login',
-    ACCOUNT: '/account',
-    SCRIBE: '/scribe',
-    EDIT: '/scribe/edit',
-    DOC: (docId) => `/scribe/edit/${docId}`,
-    CHECKOUT: '/scribe/checkout',
-    TPOT: 'http://www.thepathoftruth.com',
+    LANDING,
+    LOGIN,
+    ACCOUNT,
+    SCRIBE,
+    EDIT,
+    DOC,
+    CHECKOUT,
+    TPOT,
+    TRELLO
 }
