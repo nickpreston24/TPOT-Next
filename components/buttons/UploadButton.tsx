@@ -16,14 +16,14 @@ const UploadButton: FC<Props> = ({ afterUpload }) => {
     const { user } = useAuth();
     const router = useRouter();
 
-    // console.log('user :>> ', Object.keys(user), user.email);
-    if (!user && router.pathname !== ROUTES.LANDING) {
-        notify("You need to login to perform this action!", 'info')
-        router.push(ROUTES.LOGIN)
-    }
-
     return (
-        <Button>
+        <Button onClick={() => {
+            // console.log('user :>> ', Object.keys(user), user.email);
+            if (!user && router.pathname !== ROUTES.LANDING) {
+                notify("You need to login to perform this action!", 'info')
+                router.push(ROUTES.LANDING)
+            }
+        }} >
             <input
                 // multiple // multi-upload not recommended
                 accept=".docx"

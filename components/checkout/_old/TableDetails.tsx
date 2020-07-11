@@ -107,7 +107,9 @@ const TableDetails: FC<DetailState> = ({
                                 {this.allowUnlock ? 'Unlock' : <LockOpenIcon />}
                             </Button>
                             <Button
-                                onClick={() => checkout(id)}
+                                onClick={() => {
+                                    checkout(id)
+                                }}
                                 endIcon={<EditIcon />}
                                 color="primary"
                                 variant="contained"

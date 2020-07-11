@@ -107,7 +107,7 @@ export class MyEditor extends React.Component<any, any> {
     }
 
     render() {
-        console.log('this.ckeditorRef :>> ', this.ckeditorRef);
+        // console.log('this.ckeditorRef :>> ', this.ckeditorRef);
         return this.CKEditor ? (
             <div className="App" >
                 <WordPressToolbar {...{ getHtml: this.getHtml }} />
@@ -132,7 +132,11 @@ export class MyEditor extends React.Component<any, any> {
                         const data = editor.getData();
                         // console.log({ event, editor, data });
                     }}
-                // config={config}
+                    // config={{
+                    //     fullPage: false,
+                    //     resize_enabled: false,
+                    //     // removePlugins: 'resize,autogrow'
+                    // }}
                 />
             </div>
         ) : (

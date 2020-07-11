@@ -18,7 +18,7 @@ type WelcomeTemplateProps = {
 }
 
 const Template: FC<WelcomeTemplateProps> = ({
-    mode = 'default',
+    mode =  'default',
     title = 'Enter a Title',
     subtitle = 'Enter a Subtitle',
     children,

@@ -3,8 +3,12 @@ import { Flex, Icon, Heading, Button, Text, Stack, Avatar, InputGroup, InputRigh
 import { useAuth } from 'hooks'
 import { useRouter } from 'next/router'
 import * as ROUTES from '@constants/routes'
+import { notify } from 'components/experimental/Toasts'
 
 const Header = ({ children }) => {
+
+    const { signout } = useAuth();
+    const router = useRouter();
 
     return (
         <Stack direction="row" spacing={6} px={4} h="100%" w="100%" align="center" color="gray.600">
@@ -24,6 +28,13 @@ const Header = ({ children }) => {
                 <Tooltip label="Enable dark mode" placement="bottom-start">
                     <Box h={5} ml={4} ><Switch isDisabled color="primary" /></Box>
                 </Tooltip>
+                <Icon
+                    name="logout"
+                    onClick={async () => {
+                        await signout()
+                        notify('Logging you out...', 'info')
+                        router.push(ROUTES.LANDING)
+                    }}></Icon>
             </Stack>
         </Stack>
     )
@@ -39,8 +50,8 @@ const AccountDropdown = () => {
     const { user, signout } = useAuth()
 
     // For later, fetch the user.displayName or the firstName used during signup
-    // perhaps have this be a hook, ex: const { displayName } = useUserInfo(UID)
-    const displayName = user ? user.displayName || 'Username' : 'Username'
+    // perhaps have this be a hook, ex: const { displayName } = useUserInfo(UID)    
+    const displayName = user ? user.displayName || user.email : 'Username'
 
     const menuItems = [
         {
