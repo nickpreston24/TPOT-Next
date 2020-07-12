@@ -10,23 +10,19 @@ export class Dashboard extends Component {
 
     return (
       <Page title={title}>
-        <Box
+        <Box display="flex" height="100%" boxSizing="border-box" flexDirection="column" overflowX="hidden" overflowY="hidden"
         // height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch"
         >
           <Header />
-          <Box
-          // flexGrow={1} bgcolor="#f8f9fa" display="flex" overflow="hidden"
-          >
-            <Box
-            // display="flex" justifyContent="center" alignItems="center" flexGrow={1} fontSize={24} style={{ overflowY: 'hidden', overflowX: 'hidden' }}
-            >
+          <Box height="100%" flexGrow={1} display="block" boxSizing="border-box">
+
+            <Box display="block" boxSizing="border-box" position="relative">
               {children}
             </Box>
-            {details && <Box
-            // bgcolor="white" boxShadow={3} p={2} style={{ overflowY: 'scroll', overflowX: 'hidden' }}
-            >
-              {details}
-            </Box>}
+            {/* <Box display="block" boxSizing="border-box" position="relative" bg="grey" height="100%"  overflowY="scroll" overflowX="hidden" >
+                
+            </Box>
+             */}
           </Box>
         </Box>
       </Page>

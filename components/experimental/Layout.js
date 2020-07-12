@@ -17,7 +17,7 @@ const Layout = () => {
 
     const auth = useAuth();
     let isAuthenticated = !!auth?.user || false;
-    console.log('authenticated? :>> ', isAuthenticated);
+    // console.log('authenticated? :>> ', isAuthenticated);
 
     let action = isAuthenticated ? actionTexts.checkout : actionTexts.login;
 

@@ -58,8 +58,9 @@ function useProvideAuth() {
             .signOut()
             .then(() => {
                 setUser(null);
-                console.log('user :>> ', !!user);
-                onSignout();
+                console.log('authUser :>> ', !!user);
+                if (onSignout)
+                    onSignout();
             })
             .catch(console.error);
     };

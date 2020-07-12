@@ -95,7 +95,7 @@ export const TableDetails = compose(observer)(
             const { store, paper } = this.props
             let { allowUnlock } = this
             let { checkout, unlock } = store
-            console.log('store :>> ', store);
+            // console.log('store :>> ', store);
             let { id, slug, excerpt, docx, date_uploaded, filename } = paper
             docx = !!docx ? docx : ''
             filename = !!filename ? filename : 'Document'

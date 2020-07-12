@@ -3,13 +3,15 @@ import { Session } from 'models';
 import { FC } from 'react';
 import { ListProps } from "./ListProps";
 import { observer } from 'mobx-react';
+
+// A simple list of Sessions.  Can be modified or destroyed - MP
 export const CurrentSessions: FC<ListProps<Session>> = observer(({ entries: sessions, title }) => {
     return (<List>
         {title && <Heading size='md'>{title}</Heading>}
         {sessions.map((session, index) => {
             const { paperId, status, title, excerpt, slug } = session;
             // console.log('title :>> ', title);
-            console.log('session :>> ', session);
+            // console.log('session :>> ', session);
             return (
                 <div key={index}>
                     <h2><b>{title}</b>

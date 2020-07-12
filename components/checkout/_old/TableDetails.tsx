@@ -20,10 +20,8 @@ const TableDetails: FC<DetailState> = ({
     checkUnlock,
     paper = null },
     { checkout, unlock }) => {
-
-
-    console.log('checkout :>> ', checkout);
-    console.log('unlock :>> ', unlock);
+    // console.log('checkout :>> ', checkout);
+    // console.log('unlock :>> ', unlock);
     useEffect(() => {
         // Check every 250ms seconds to see if the document can be unlocked
         // This is low cost as it isn't actually calling the data from firestore

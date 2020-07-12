@@ -12,7 +12,10 @@ import {
     Input,
     ModalFooter,
     useDisclosure,
-    Button
+    Button,
+    IconButton,
+    ButtonGroup,
+    Icon
 } from '@chakra-ui/core'
 import { ZeitLinkButton } from 'components/experimental/ZeitLinkButton';
 import * as ROUTES from 'constants/routes'
@@ -21,93 +24,118 @@ import UploadButton from 'components/buttons/UploadButton';
 import { notify } from './experimental/Toasts';
 import { useWordpress, useAuth } from 'hooks';
 import { mapToDto, createInstance } from 'models/domain';
-import { toDto, Paper } from 'models';
+import { toDto, Paper, Session } from 'models';
 import { WordpressUser } from 'models/User';
 import { sessions } from 'stores';
+import { getAuthorSessions, checkoutSession } from 'stores/SessionStore';
 import { disableMe } from './disableMe';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const uploadOptions = ['Drive', 'Google', 'Copy-paste']
 
 const DEFAULT_AUTHOR = 9;
 
+const messages = {
+    Warn: 'No paper could be created as there was no response from Wordpress',
+    Success: "Paper uploaded successfully!",
+}
+
+
 export const WordPressToolbar = (props) => {
 
+    // Retrieve current session id:
+    const router = useRouter();
+    let doc = router.query.doc;
+
+    // SessionStore functions:
     const { getHtml } = props;
-    // console.log('setHtml :>> ', setHtml);
 
-    const [uploaderOpen, setUploaderOpen] = useState(false);
-    // const { user: authUser } = useAuth();
-    // console.log('authUser :>> ', authUser);  //TODO: Get the wordpress author off of this user.
-
+    const { user: authUser } = useAuth();
     const [disabled, setDisabled] = useState(true); // For whatever we wish to disable in prod.
-
-    const { getPages, publish, getUser } = useWordpress();
     const [option, setOption] = useState(uploadOptions[0]);
 
     const initialRef = useRef();
     const finalRef = useRef();
 
     const [loading, setLoading] = useState(true);
-    const [pages, setPages] = useState<Paper[]>([]);
-    const [categories, setCategories] = useState([""]);
-    const [title, setTitle] = useState("");
+    const [paper, setPaper] = useState(createInstance(Paper))
     const [user, setUser] = useState(createInstance(WordpressUser));
+    const [session, setSession] = useState(createInstance(Session))
+    const [sessionSaved, setSessionSaved] = useState(true)
+
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    user.id = user.id || DEFAULT_AUTHOR; //TODO: Search firebase for authUser's wp.author id.
-    const authorId = user.id;
+    // Wordpress support:
+    const { getPages, publish, getUser, wpUsers } = useWordpress();
 
     useEffect(() => {
-        if (!!authorId) {
-
-            getPages(authorId)
-                .then((records) => {
-                    // console.log('records :>> ', records);
-                    let collection = mapToDto(records, Paper);
-                    setPages(collection);
-                    setLoading(false)
-                })
-
-            getUser(authorId)
-                .then((records) => {
-                    records['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
-                    // console.log('current user :>> ', records);
-                    setUser(toDto(records, WordpressUser))
-                })
-        }
+        // console.log('checking out doc :>> ', doc);
+        checkoutSession(doc as string)
+            .then((result) => setSession(result))
 
     }, []);
 
+    const onSelectedMode = (selectedUploadMode) => setOption(selectedUploadMode);
 
-    const onSelected = (selectedOption) => setOption(selectedOption);
+    const onSave = async () => {
+
+        setSessionSaved(false);
+        let html = getHtml();
+
+        let nextSession = Session.create(
+            {
+                authorId: session.authorId,
+                paperId: session.paperId,
+
+                date_modified: new Date(),
+                status: 'checked-out',
+                contributors: authUser.email,
+                title: session.title,
+                code: html
+            })
+
+        setSession(nextSession);
+        // console.log('user.email', authUser.email)
+        console.log('nextSession', nextSession)
+
+
+
+        notify('Saved!', 'success')
+        setSessionSaved(true);
+    }
 
     const onSubmit = async () => {
         onClose();
 
         let html = getHtml();
 
-        publish(new Paper(title, html))
+        const { title, code } = session;
+
+        publish(new Paper(session.title, html))
             .then(async (response) => {
-                console.log('response :>> ', response);
+                // console.log('response :>> ', response);
 
                 if (!response.id) {
-                    console.warn('No paper could be created as there was no response from Wordpress')
+                    console.warn(messages.Warn);
+                    notify(messages.Warn);
                     return
                 }
 
-                let sessionUpdate = {
-                    authorId: response.author || DEFAULT_AUTHOR,
-                    paperId: response.id,
+                let sessionUpdate = Session.create(response)
 
-                    date_modified: response.modified,
-                    status: 'Published', //response.status,
-                    contributors: [user.email || user.name],
-                    code: response.content ? response.content.rendered : '',
-                    original: '',
-                    excerpt: '',
-                    title,
-                };
+                // let sessionUpdate = {
+                //     authorId: response.author || DEFAULT_AUTHOR,
+                //     paperId: response.id,
+
+                //     date_modified: response.modified,
+                //     status: 'Published', //response.status,
+                //     contributors: [user.email || user.name],
+                //     code: response.content ? response.content.rendered : '',
+                //     original: '',
+                //     excerpt: '',
+                //     title,
+                // };
 
                 // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
                 // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
@@ -115,7 +143,7 @@ export const WordPressToolbar = (props) => {
                 const document = await sessions.add(sessionUpdate)
 
                 if (!document) {
-                    notify(`Failed to create Seesion for: ${title}`, 'warn')
+                    notify(`Failed to create Session for: ${title}`, 'warn')
                     return;
                 }
                 else {
@@ -128,11 +156,25 @@ export const WordPressToolbar = (props) => {
 
     return (
         <Box>
-            <Button
-                onClick={onOpen}
-            >
-                Publish
-            </Button>
+
+            <ButtonGroup spacing={4}>
+                <Button
+                    onClick={onOpen}
+                >
+                    Publish
+                </Button>
+
+                {option === 'Drive' && <UploadButton>Load a Document</UploadButton>}
+
+                <Button
+                    onClick={onSave}
+                    isLoading={!sessionSaved}
+                // leftIcon="save"  // For some reason, I can't get this working.
+                >
+                    Save
+                </Button>
+
+            </ButtonGroup>
 
             <Modal
                 initialFocusRef={initialRef}
@@ -148,16 +190,26 @@ export const WordPressToolbar = (props) => {
                         <FormControl>
                             <FormLabel>Paper Title</FormLabel>
                             <Input
-                                value={title}
-                                onChange={(event) => { setTitle(event.target.value) }}
+                                value={session.title}
+                                onChange={(event) => {
+                                    let title = event.target.value
+                                    let updated = session;
+                                    updated.title = title;
+                                    setSession(updated)
+                                }}
                                 ref={initialRef} placeholder="paper-name-here" />
                         </FormControl>
 
                         <FormControl mt={4}>
                             <FormLabel>Categories</FormLabel>
                             <Input
-                                value={categories}
-                                onChange={(event) => { setCategories(event.target.value.split(',')) }}
+                                value={paper.categories}
+                                onChange={(event) => {
+                                    let cats = event.target.value.split(',');
+                                    console.log('cats', cats)
+
+                                    // let updated = paper
+                                }}
                                 placeholder="e.g 'Chinese', 'Translations'" />
                         </FormControl>
                     </ModalBody>
@@ -166,37 +218,48 @@ export const WordPressToolbar = (props) => {
                         <Button
                             onClick={onSubmit}
                             variantColor="blue" mr={3}>
-                            Save
+                            Submit
                                 </Button>
                         <Button onClick={onClose}>Cancel</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
 
-            {option === 'Drive' && <UploadButton>Load a Document</UploadButton>}
-
-            {/* TODO: @MP - Upgrade this to be a chakra-ui Modal */}
-            {/* <Button
-            // onClick={() => setUploaderOpen(true)}
-            // style={disableMe(uploaderOpen)}
-            >
-                Choose an upload option
-            </Button>
-
-            <Selector
-                title="Choose an Upload Option"
-                open={uploaderOpen}
-                options={uploadOptions}
-                onCloseFn={() => setUploaderOpen(false)}
-                onSelectFn={onSelected}
-            ></Selector> */}
         </Box>
     )
 };
 
 
-
-
 export default WordPressToolbar;
 
 
+ // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
+
+// console.log('wpUsers :>> ', wpUsers, authUser);
+
+// let authorId = session.authorId;
+
+// if (!!authorId) {
+
+//     getUser(authorId)
+//         .then((wpUser) => {
+//             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
+//             // console.log('current user :>> ', records);
+//             setUser(toDto(wpUser, WordpressUser))
+//         })
+
+//      getPages(authorId)
+//          .then((records) => {
+//          // console.log('records :>> ', records);
+//          let collection = mapToDto(records, Paper);
+//          setPapers(collection);
+//          setLoading(false)
+//      })
+
+//      getAuthorSessions(authorId)
+//         .then((sessions) => {
+//             console.log('session records', sessions)
+//         })
+// }
+
+// console.log('authorId', authorId)

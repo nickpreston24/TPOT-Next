@@ -2,7 +2,7 @@ import React from 'react'
 import Dashboard from '@components/Dashboard'
 import PropTypes from 'prop-types'
 import { MyEditor } from 'tpot-scribe-editor'
-import { Stack, Spinner } from '@chakra-ui/core'
+import { Stack, Box, Spinner } from '@chakra-ui/core'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
 import { isDev } from 'helpers'
@@ -20,21 +20,21 @@ const Page = observer(props => {
   let currentDoc = docs.filter(s => s.id === id)[0]
 
   return (
-    <Stack>
+    <Box>
       <Dashboard
         title={`TPOT Scribe - Edit - ${id}`}
       >
-        {isDev() && <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>}
-
         {isLoading
           ? <Spinner />
-          : <MyEditor doc={currentDoc} />}
-
+          : <MyEditor doc={currentDoc} />
+        }
       </Dashboard>
-    </Stack>
+    </Box>
   )
 })
 
+{/* <Box height='100%' bg="tomato" p={2}>
+            </Box> */}
 
 Page.propTypes = {
   id: PropTypes.string.isRequired,
@@ -43,7 +43,7 @@ Page.propTypes = {
 // // Only the ID is needed here, but you could imagine all the goodies that could be done:
 // // https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
 Page.getInitialProps = async context => {
-  console.log('context :>> ', !!context);
+  // console.log('context :>> ', !!context);
   const id = context.query.doc
   console.log('id ([doc]) :>> ', id);
   return { id }

@@ -1,28 +1,70 @@
 import '@services/firebase'
 import { Collection, Document } from 'firestorter'
-import { Session } from 'models'
-import { observable } from 'mobx';
+import { Session, toDto } from 'models'
+import { observable, toJS } from 'mobx';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
+import { IDocumentOptions } from 'firestorter/lib/Types';
+
+const DEFAULT_AUTHOR = 9;
+const queryLimit = 10;
 
 export type SessionDocument = Document<Session>;
 
 export type Sessions = Collection<SessionDocument>;
 
-const sessions = new Collection<SessionDocument>("sessions");
+export const sessions = new Collection<SessionDocument>("sessions");
 
-export { sessions }
+export const unlockSession = async (id: string) => {
+    let options = { mode: 'off' } as IDocumentOptions
+    let document = new Document(`sessions/${id}`, options);
+    await document.fetch()
 
-const DEFAULT_AUTHOR = 9;
-const queryLimit = 10;
+    if (document.hasData) {
+        await document.update({
+            status: "in-progress"
+        })
+    }
+}
+
+export const checkoutSession = async (id: string) => {
+    let options = { mode: 'off' } as IDocumentOptions
+    // console.log('options :>> ', options);
+
+    let document = new Document(`sessions/${id}`, options);
+    const sessionData = await document.fetch()
+
+    if (!document.hasData)
+        return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+
+    let session = toJS(document.data as Session);
+    // console.log('session :>> ', session);
+
+    if (session.status !== 'checked-out')
+        session.status = 'checked-out'
+
+    await document.update(session)
+
+    return session;
+}
+
+export const CreateSession = (props: object | Session): Session | object => {
+    let document = new Document<Session>();
+    return document
+};
+
+const updateSession = (update: object | Session): Session | object => {
+
+    return {};
+}
 
 // Filter by wp author:
-export let authorId = observable.box(DEFAULT_AUTHOR);
-export const setAuthor = (id: number) => authorId.set(id);
+// export let authorId = observable.box(DEFAULT_AUTHOR);
+// export const setAuthor = (id: number) => authorId.set(id);
 
-export const getAuthorSessions = () => {
+export const getAuthorSessions = async (author: number) => {
     sessions.query = (ref) => {
 
-        const author = authorId.get();
+        // const author = authorId.get();
         console.log('current author :>> ', author);
 
         return author ?
@@ -30,8 +72,8 @@ export const getAuthorSessions = () => {
             : undefined;
     }
 
-    console.log('sessions.query :>> ', sessions.query);
-    console.log('sessions.docs.length :>> ', sessions.docs.length);
+    // console.log('sessions.query :>> ', sessions.query);
+    // console.log('sessions.docs.length :>> ', sessions.docs.length);
 }
 
 //Only grabs the query:

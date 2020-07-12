@@ -21,9 +21,13 @@ function useWordpressProvider() {
     const [currentPaper, setCurrentPaper] = useState(createInstance(Paper));
     // console.log('default Paper :>> ', currentPaper);
 
+    const [wpUsers, setWpUsers] = useState([]);
+
     const getAllUsers = () => wpapi.users();
 
-    const getUser = (id: number) =>
+    // const findUser = (email) => getAllUsers.filter(user => user.email === email);
+
+    const getUser = async (id: number) =>
         wpapi
             .users()
             .id(id)
@@ -69,7 +73,7 @@ function useWordpressProvider() {
                 })
         }
         else {
-            console.log('creating paper :>> ', paper);
+            // console.log('creating paper :>> ', paper);
             wpapi.pages()
                 .author(author)
                 .create(paper)
@@ -88,8 +92,14 @@ function useWordpressProvider() {
         return currentPaper;
     }
 
+    useEffect(() => {
+        getAllUsers()
+            .then((users) => setWpUsers(users))
+    }, []);
+
     return {
-        getAllUsers,
+        wpUsers,
+        // getAllUsers,
         getUser,
 
         getPages,

@@ -13,6 +13,7 @@ export class Paper {
     author: number;
     content: string;
     slug: string;
+    categories: string[] = [];
 
     constructor(title: string, content: string) {
         this.content = content || null;
