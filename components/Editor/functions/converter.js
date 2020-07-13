@@ -13,7 +13,7 @@ const walk = require('domwalk')
 
 // This is only used for parentUntil (just write a quick utility, It is expensive to import JQuery this way)
 // const $ = window.jQuery = require('jquery')
-const getParentsUntil = require('./jquery');
+const getParentsUntil = require('./jQueryAdapter')
 
 //  TESTING RESULTS
 
@@ -43,15 +43,16 @@ const getParentsUntil = require('./jquery');
 export async function convertFile(file) {
     return new Promise((resolve, reject) => {
 
-        var reader = new FileReader();
+        var reader = new FileReader()
+        console.log(`Attempting to read blob/file ${file.name}` )
         
-        reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(file)
 
         reader.onload = async function () {
-            var raw = reader.result;
+            var raw = reader.result
 //            console.log('raw', raw);
 
-            let buffer = Buffer.from(raw, 'utf-8');
+            let buffer = Buffer.from(raw, 'utf-8')
 //            console.log('buffer', buffer);
 
             // Convert Data
@@ -67,7 +68,7 @@ export async function convertFile(file) {
             // Send Data back to Store as resolved promise data
             resolve(convertedHTML)
         }
-    });
+    })
 }
 
 ///////////////////////////////////////////////////
@@ -76,7 +77,7 @@ export async function convertFile(file) {
 
 const convertFile2Html = async (fileBuffer) => {
 
-    file2html.config({ readers: [OOXMLReader] });
+    file2html.config({ readers: [OOXMLReader] })
 
     const data = await file2html.read({
         fileBuffer,
@@ -108,17 +109,17 @@ const convertMammoth = async (buffer) => {
 
 const mammothOptions = {
     styleMap: [
-        "p[style-name='Title'] => h1.title",
-        "p[style-name='Subtitle'] => h4.subtitle",
-        "p[style-name='heading 5'] => h5",
-        "p[style-name='Heading 5'] => h5",
-        "p[style-name='heading 6'] => h6",
-        "p[style-name='Heading 6'] => h6",
-        "p[style-name='Quote'] => blockquote.quote",
-        "p[style-name='Intense Quote'] => blockquote.intense-quote > strong",
-        "i => em",
-        "u => ins",
-        "strike => del",
+        'p[style-name=\'Title\'] => h1.title',
+        'p[style-name=\'Subtitle\'] => h4.subtitle',
+        'p[style-name=\'heading 5\'] => h5',
+        'p[style-name=\'Heading 5\'] => h5',
+        'p[style-name=\'heading 6\'] => h6',
+        'p[style-name=\'Heading 6\'] => h6',
+        'p[style-name=\'Quote\'] => blockquote.quote',
+        'p[style-name=\'Intense Quote\'] => blockquote.intense-quote > strong',
+        'i => em',
+        'u => ins',
+        'strike => del',
     ],
     // convertImage: mammoth.images.imgElement(function (image) {
     //     return image.read("base64").then(function (imageBuffer) {
@@ -129,7 +130,7 @@ const mammothOptions = {
     //         };
     //     });
     // })
-};
+}
 
 ///////////////////////////////////////////////////
 //            CSS TO INLINE STYLES            //
@@ -157,7 +158,7 @@ const mapCssStylesheetToObject = async (css) => {
         let classNamePrimary = groups[1]
         let classNameSecondary = groups[2]
         let attributes = groups[3]
-        let classNameFull = classNamePrimary + " " + classNameSecondary
+        let classNameFull = classNamePrimary + ' ' + classNameSecondary
         if (groups) {
             // does css class already exist from previous loop?
             if (!cssClasses[classNamePrimary]) {
@@ -208,7 +209,7 @@ const mapCssClassesToInlineStyles = async (dom, cssClasses) => {
                 }
             })
         }
-    });
+    })
     return dom
 }
 
@@ -224,14 +225,14 @@ const flattenStyles = async (baseDom, augDom) => {
     let cakeArray = []
     walk(cake, (cakeNode) => {
         if (!cakeNode.tagName) {
-            let span = document.createElement("span")
+            let span = document.createElement('span')
             span.textContent = cakeNode.textContent
             cakeNode.replaceWith(span) // Replace floating text with wrapped Span tag
             cakeArray.push(span) // Push cake reference
         } else {
             cakeArray.push(cakeNode)
         }
-    });
+    })
 
     // Gather Ingredients for Icing
     const icing = createNode(wrapInDiv(augDom))
@@ -240,7 +241,7 @@ const flattenStyles = async (baseDom, augDom) => {
         if (icingNode.tagName) {
             icingArray.push(icingNode) // Push icing reference
         }
-    });
+    })
 
     // Print Trees and Arrays
 //    console.log("Cake Tree", cake)
@@ -287,7 +288,7 @@ const flattenStyles = async (baseDom, augDom) => {
     //////////////////////////////////////////////////////////////////
 
     function wrapInDiv(string) {
-        return "<div>" + string + "</div>"
+        return '<div>' + string + '</div>'
     }
 
     function getGoodFlavors(icingNode, highlights) {
@@ -297,18 +298,18 @@ const flattenStyles = async (baseDom, augDom) => {
             flavors.push(icingNode.style[index])
         }
         // Eliminate Bad Flavors
-        let badFlavors = ["line-height", "font-family", "margin-top", "margin-bottom", "list-style-type", "margin-right"]
+        let badFlavors = ['line-height', 'font-family', 'margin-top', 'margin-bottom', 'list-style-type', 'margin-right']
         flavors = flavors.filter(flavor => {
             if (badFlavors.includes(flavor)) {
                 return false
             } else {
-                if (flavor === "font-size") {
-                    if (icingNode.style[flavor] < "18px") {
+                if (flavor === 'font-size') {
+                    if (icingNode.style[flavor] < '18px') {
                         return false
                     } else {
                         return true // Only returns larger than normal font sizes
                     }
-                } else if (icingNode.style["background-color"]) {
+                } else if (icingNode.style['background-color']) {
                     highlights.push(icingNode)
                     return true
                 } else {
@@ -342,20 +343,20 @@ const flattenStyles = async (baseDom, augDom) => {
         }
 
         // Made Blockquotes more readable
-        if (cakeNode.tagName === "BLOCKQUOTE") {
-            cakeNode.style.fontStyle = "italic"
-            cakeNode.style.paddingTop = "15px"
-            cakeNode.style.paddingBottom = "15px"
+        if (cakeNode.tagName === 'BLOCKQUOTE') {
+            cakeNode.style.fontStyle = 'italic'
+            cakeNode.style.paddingTop = '15px'
+            cakeNode.style.paddingBottom = '15px'
             cakeNode.style.color = cakeNode.style.borderTopColor
         }
 
         // Identify Indented Paragraphs
-        if (cakeNode.tagName === "P") {
+        if (cakeNode.tagName === 'P') {
             if (cakeNode.style.textIndent) {
-                cakeNode.className += "indent"
+                cakeNode.className += 'indent'
             }
             if (cakeNode.style.marginLeft) {
-                cakeNode.className += "block"
+                cakeNode.className += 'block'
             }
         }
 
@@ -363,12 +364,12 @@ const flattenStyles = async (baseDom, augDom) => {
         let tableTags = ['TABLE', 'TD']
         if (tableTags.includes(cakeNode.tagName)) {
             if (cakeNode.tagName === 'TABLE') {
-                cakeNode.style = "width: 80%; max-width: 100%; position: relative; left: 50%; transform: translateX(-50%); border: 1px solid black; border-collapse: collapse;"
+                cakeNode.style = 'width: 80%; max-width: 100%; position: relative; left: 50%; transform: translateX(-50%); border: 1px solid black; border-collapse: collapse;'
             }
             if (cakeNode.tagName === 'TD') {
-                cakeNode.style.border = "1px solid black"
-                cakeNode.style.paddingLeft = "12px"
-                cakeNode.style.paddingRight = "12px"
+                cakeNode.style.border = '1px solid black'
+                cakeNode.style.paddingLeft = '12px'
+                cakeNode.style.paddingRight = '12px'
             }
         }
 
@@ -387,7 +388,8 @@ const flattenStyles = async (baseDom, augDom) => {
             // $('#cat')[0].children
             // element.children
 
-            let blockChildren = getParentsUntil(icingNode.parentElement, "div")[0].children;
+            // console.log('getParentsUntil :>> ', !!getParentsUntil);
+            let blockChildren = getParentsUntil(icingNode.parentElement, 'div')[0].children
             //TODO: figure out why, even though blockChildren 1 and 2 are identical, the targetElements is undefined at line 403
 //            console.log('until result', blockChildren);
 //            console.log('old until result', blockChildren2);
@@ -442,7 +444,7 @@ const flattenStyles = async (baseDom, augDom) => {
             })
 
             blocks.forEach(block => {
-                block.innerHTML = block.innerHTML.replace(icingNode.textContent, "<span class='highlight'  style='background-color: " + icingNode.style.backgroundColor + ";'>" + icingNode.textContent + "</span>")
+                block.innerHTML = block.innerHTML.replace(icingNode.textContent, '<span class=\'highlight\'  style=\'background-color: ' + icingNode.style.backgroundColor + ';\'>' + icingNode.textContent + '</span>')
             })
 
         })

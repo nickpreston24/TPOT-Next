@@ -1,0 +1,14 @@
+{
+  "primary": {
+    "blue": "rgba(0,161,225,.9)",
+    "teal": "#32dac4",
+    "grey": "#555",
+    "white": "#FFFFF"
+  },
+  "secondary": {
+    "orange": "#ebb90d",
+    "grey": "#f6f6f6",
+    "eggshell": "#F8F8F8"
+  },
+  "hover": "blue"
+}

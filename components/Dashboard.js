@@ -1,27 +1,34 @@
 import React, { Component } from 'react'
-import Header from './Header'
-import { inject, observer } from 'mobx-react'
-import Box from '@material-ui/core/Box'
+import { Header } from './header'
+import { Box } from '@chakra-ui/core'
 import Page from './Page'
 
-@inject('store')
-@observer
-class Dashboard extends Component {
+export class Dashboard extends Component {
 
   render() {
     const { children, title, details } = this.props
+
     return (
       <Page title={title}>
-        <Box height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch">
+        <Box
+          // border="3px solid lime"
+          height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch"
+        >
           <Header />
-          <Box flexGrow={1} bgcolor="#f8f9fa" display="flex" overflow="hidden">
-            <Box flexGrow={1} fontSize={24} style={{ overflowY: 'scroll', overflowX: 'hidden' }}>
-              {children}
-            </Box>
-            {details && <Box bgcolor="white" boxShadow={3} p={2} style={{ boxSizing: 'border-box' }}>
-              {details}
-            </Box>}
+          <Box
+            // border="3px dotted pink"
+            height="70%" flexGrow={1} display="block" boxSizing="border-box">
+            {children}
           </Box>
+
+          {/* A 'footer', if we need;  doubt it - MP */}
+          {/* <Box
+            height="30%"
+            border="3px dotted red"
+            display="block" boxSizing="border-box" position="relative">
+          
+          </Box> */}
+
         </Box>
       </Page>
     )

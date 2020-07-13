@@ -1,13 +1,13 @@
 // IMPORTS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-import createNode from 'create-node';
-import { convertFromRaw, convertToRaw } from 'draft-js';
-import createStyles from 'draft-js-custom-styles';
-import { stateToHTML } from 'draft-js-export-html';
-import { stateFromElement } from 'draft-js-import-element';
-import Immutable from 'immutable';
-import { snakeCase } from 'snake-case';
-import '../functions/editor.css';
+import createNode from 'create-node'
+import { convertFromRaw, convertToRaw } from 'draft-js'
+import createStyles from 'draft-js-custom-styles'
+import { stateToHTML } from 'draft-js-export-html'
+import { stateFromElement } from 'draft-js-import-element'
+import Immutable from 'immutable'
+import { snakeCase } from 'snake-case'
+import '../functions/editor.css'
 // import HorizontalRule from '../plugins/draft-js-mui-toolbar/utils/HorizontalRule';
 
 /*
@@ -34,19 +34,19 @@ export const baseStyleMap = {
     'HIGHLIGHT': {
         background: 'yellow'
     },
-    'CUSTOM_COLOR_#0080FF': {color: "#0080FF"}
+    'CUSTOM_COLOR_#0080FF': {color: '#0080FF'}
     // 'INDENT': {
     //     marginLeft: "30px"
     // },
     // 'CENTER': {
     //     textAlign: "center"
     // },
-};
+}
 
 const blockRenderMap = Immutable.Map({
     // When the editor sees a block of type x, render the block using the following html tag
     'paragraph': {
-        element: 'p'
+        element: 'div'
     },
     'header-one': {
         element: 'h1'
@@ -82,40 +82,40 @@ const blockRenderMap = Immutable.Map({
         element: 'blockquote'
     },
     'indent': {
-        element: 'p'
+        element: 'div'
     },
     'block': {
-        element: 'p'
+        element: 'div'
     },
-});
+})
 
 const baseBlockStyleFn = (block) => {
     // When there is a block of type, return a css class name to style the block and make it pretty
-    const type = block.getType();
+    const type = block.getType()
     const align = block.getData().get('alignment')
     if (type === 'title') {
-        return 'title';
+        return 'title'
     }
     if (type === 'subtitle') {
-        return 'subtitle';
+        return 'subtitle'
     }
     if (type === 'blockquote') {
-        return 'blockqoute';
+        return 'blockqoute'
     }
     if (type === 'blockquote-intense') {
-        return 'blockquote-intense';
+        return 'blockquote-intense'
     }
     if (type === 'indent') {
-        return 'indent';
+        return 'indent'
     }
     if (type === 'block') {
-        return 'block';
+        return 'block'
     }
     if (align) return align
 }
 // contentBlock, PluginFunctions
 const blockRenderer = (contentBlock, pluginFunctions) => {
-    const type = contentBlock.getType();
+    const type = contentBlock.getType()
     // if (type === 'page-break') {
     //     return {
     //         component: Icon,
@@ -128,15 +128,15 @@ const blockRenderer = (contentBlock, pluginFunctions) => {
     if (type === 'atomic') {
         // console.log(pluginFunctions.getEditorState())
         const editorState = pluginFunctions.getEditorState()
-        const contentState = editorState.getCurrentContent();
-        const entityKey = contentBlock.getEntityAt(0);
+        const contentState = editorState.getCurrentContent()
+        const entityKey = contentBlock.getEntityAt(0)
 
-        const entity = contentState.getEntity(entityKey);
+        const entity = contentState.getEntity(entityKey)
         if (entity && entity.type === 'page-break') {
             return {
                 component: HorizontalRule,
                 editable: false,
-            };
+            }
         }
     }
 
@@ -149,7 +149,7 @@ const {
     styles,
     customStyleFn,
     exporter
-} = createStyles(['font-size', 'color', 'background'], 'CUSTOM', baseStyleMap);
+} = createStyles(['font-size', 'color', 'background'], 'CUSTOM', baseStyleMap)
 
 
 /*
@@ -180,9 +180,9 @@ const draftContentFromHtml = (html, stateFromElementConfig) => {
 // break apart multi-property Styles into single, inline Styles
 const flattenInlineStyleRanges = (contentState, baseStyleMap) => {
     let defaultStyles = {
-        fontWeight: "BOLD",
-        fontStyle: "ITALIC",
-        textDecoration: "UNDERLINE"
+        fontWeight: 'BOLD',
+        fontStyle: 'ITALIC',
+        textDecoration: 'UNDERLINE'
     }
     let newContentState = convertToRaw(contentState)
     let blocks = newContentState.blocks
@@ -210,7 +210,7 @@ const flattenInlineStyleRanges = (contentState, baseStyleMap) => {
                 // Custom Named Styles  -  EX: CUSTOM_COLOR[#C00000]_FONT_WEIGHT[BOLD]_FONTSIZE[48PX]
                 for (const key in compoundStyleRangeClassProperties) {
                     if (compoundStyleRangeClassProperties.hasOwnProperty(key)) {
-                        const styleName = key;
+                        const styleName = key
                         const styleProperty = compoundStyleRangeClassProperties[key]
                         if (Object.keys(defaultStyles).includes(styleName)) {
                             // EX: CUSTOM_FONT_WEIGHT[BOLD]  <<--- This is a vanilla style that needs mapped to be "BOLD"
@@ -273,19 +273,19 @@ const stateFromElementConfig = {
                 data: element.style.backgroundColor
             })
         }
-        if (element.parentElement.tagName === "STRONG" || element.style.fontWeight === 'bold' || element.parentElement.style.fontWeight === 'bold') {
+        if (element.parentElement.tagName === 'STRONG' || element.style.fontWeight === 'bold' || element.parentElement.style.fontWeight === 'bold') {
             elementStyles.push({
                 name: 'fontWeight',
                 data: 'bold'
             })
         }
-        if (element.parentElement.tagName === "EM" || element.style.fontStyle === 'italic' || element.parentElement.style.fontStyle === 'italic') {
+        if (element.parentElement.tagName === 'EM' || element.style.fontStyle === 'italic' || element.parentElement.style.fontStyle === 'italic') {
             elementStyles.push({
                 name: 'fontStyle',
                 data: 'italic'
             })
         }
-        if (element.parentElement.tagName === "INS" || element.style.textDecoration === 'underline' || element.parentElement.style.textDecoration === 'underline') {
+        if (element.parentElement.tagName === 'INS' || element.style.textDecoration === 'underline' || element.parentElement.style.textDecoration === 'underline') {
             if (element.parentElement.tagName !== 'A') {
                 elementStyles.push({
                     name: 'textDecoration',
@@ -306,7 +306,7 @@ const stateFromElementConfig = {
                 data: '#' + element.parentElement.color
             })
         }
-        if (element.style.color && element.parentElement.tagName !== "A") { // Normal Inline
+        if (element.style.color && element.parentElement.tagName !== 'A') { // Normal Inline
             elementStyles.push({
                 name: 'color',
                 data: rgb2hex(element.style.color)
@@ -338,14 +338,14 @@ const stateFromElementConfig = {
         })
 
         // Entity: (type: string, data: DataMap<mixed>, mutability: EntityMutability = 'MUTABLE') => <DraftEntityInstance>
-        if (element.tagName === "A" && element.href) { // Are we a Link?
+        if (element.tagName === 'A' && element.href) { // Are we a Link?
             // console.log(element)
             return Entity(
                 'LINK',
                 { url: element.href },
                 'MUTABLE'
             )
-        } else if (element.tagName === "IMG") {
+        } else if (element.tagName === 'IMG') {
             // console.log(element)
             return Entity(
                 'IMAGE',
@@ -356,7 +356,7 @@ const stateFromElementConfig = {
             styleName = prefix + styleName
             baseStyleMap[styleName] = styleData
             // Style( style: styleClassName ) > ({type: 'STYLE', style})
-            return Style(styleName);
+            return Style(styleName)
         }
 
 
@@ -421,7 +421,7 @@ const stateFromElementConfig = {
                     const blockChildren = block.children
                     for (const key in blockChildren) {
                         if (blockChildren.hasOwnProperty(key)) {
-                            const element = blockChildren[key];
+                            const element = blockChildren[key]
                             if (element.href) {
                                 data = {
                                     ...data,
@@ -502,9 +502,9 @@ const createBlockRenderers = (editorState, contentState, exporter) => {
         entityStyleFn: (entity) => {
             // console.log(entity.getType())
             // console.log(entity)
-            const entityType = entity.get('type').toLowerCase();
+            const entityType = entity.get('type').toLowerCase()
             if (entityType === 'page-break') {
-                return { element: 'hr' };
+                return { element: 'hr' }
             }
             if (entityType === 'LINK') {
                 // console.log("HELLO")
@@ -512,7 +512,7 @@ const createBlockRenderers = (editorState, contentState, exporter) => {
                     style: { borderBottom: '1px solid #C7D6C4 !important' },
                     attributes: { href: 'www.google.com' },
                     element: 'a',
-                };
+                }
             }
         },
 
@@ -568,9 +568,9 @@ const createBlockRenderers = (editorState, contentState, exporter) => {
                 // Make Styles and Attributes as injectable, formated string
                 style = (
                     Object.entries(style).reduce((styleString, [propName, propValue]) => {
-                        return ` ${styleString}${propName}: ${propValue};`;
+                        return ` ${styleString}${propName}: ${propValue};`
                     }, '')
-                );
+                )
 
                 return `<${TAG_NAME}${Object.keys(style)[0] ? ` style="${style}"` : ''}>${htmlContents !== '' ? htmlContents : block.getText()}</${TAG_NAME}>`
 
@@ -955,15 +955,15 @@ export const saveSession = (original, edited, code, baseStyleMap, notify) => {
 //  end of EXPORT FUNCTION
 
 const rest = (ms) => {
-    return new Promise(r => setTimeout(r, ms));
+    return new Promise(r => setTimeout(r, ms))
 }
 
 const rgb2hex = (rgb) => {
-    rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-    return (rgb && rgb.length === 4) ? "#" +
-        ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2) : '';
+    rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i)
+    return (rgb && rgb.length === 4) ? '#' +
+        ('0' + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+        ('0' + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+        ('0' + parseInt(rgb[3], 10).toString(16)).slice(-2) : ''
 }
 
 export { 
@@ -977,4 +977,4 @@ export {
     draftContentFromHtml, 
     draftContentToHtml, 
     flattenInlineStyleRanges, 
-};
+}

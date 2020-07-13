@@ -1,0 +1,21 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "@babel/plugin-proposal-decorators"
+    ],
+    "rules": {
+        "semi": [
+            "error",
+            "never"
+        ],
+        "quotes": [
+            2,
+            "single"
+        ]
+    },    
+}

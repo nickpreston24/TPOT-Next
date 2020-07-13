@@ -2,29 +2,31 @@ import { convertFile } from './converter'
 import { Collection } from 'firestorter'
 import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from './utilities'
 import { EditorState, convertToRaw } from 'draft-js'
-import { toJS } from 'mobx'
+import { storage } from '@services/firebase'
 
-export const uploadLocalFile = async (file, store) => {
+export const uploadLocalFile = async (file, userName = null) => {
 
     // Check to make sure document has not already been uploaded before
 
-    const storageRef = await store.fb.storage.ref()
+    // const storageRef = await firebase.storage().ref()
+    const storageRef = storage.ref();
+    console.log('storageRef :>> ', !!storageRef);
+    console.log('file name', file.name)
 
-    const getDocumentMetadata = (storageRef, filepath) => {
-        return new Promise(resolve => {
-            storageRef.child(filepath).getMetadata()
-                .then(metadata => resolve(metadata))
-                .catch(error => resolve())
-        })
-    }
+    // const getDocumentMetadata = (storageRef, filepath) => {
+    //     return storageRef.child(filepath).getMetadata()
+    // }
 
-    const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
+    // const existingDoc = await getDocumentMetadata(storageRef, `${file.name}`)
+    //     .catch(console.error)
 
-    if (existingDoc) {
-        console.error('Document already uploaded, exiting: ', existingDoc)
-        store.notify('Document already uploaded', 'error')
-        return
-    }
+    // console.log('existingDoc.fullPath', existingDoc.fullPath)
+
+    // if (existingDoc && file.name === existingDoc.fullPath) {
+    //     console.warn('Document already uploaded, exiting: ', existingDoc)
+    //     notify('Document already uploaded', 'error')
+    //     return
+    // }
 
     // Start formulating properties of the new document
 
@@ -33,20 +35,25 @@ export const uploadLocalFile = async (file, store) => {
         .replace(/[,?*#!:;_]/g, ' ') // then specials
         .replace(/[\(\)\[\]\{\}]/g, '') // then then braces
         .replace('.docx', '')
-        .trim();
+        .trim()
+
+    // console.log('title :>> ', title);
 
     let slug = (title)
         .replace(/\s/g, '-')
         .toLowerCase()
 
+    // console.log('slug :>> ', slug);
+
     // Get the full, unadultured local conversion result
     let html = await convertFile(file)
+    // console.log('html :>> ', !!html);
 
     // Create a session in firebase for the document
     if (!html) {
-        console.error(`There is no html input to convert: ${html}`)
+        console.warn(`There is no html input to convert: ${html}`)
     } else {
-        console.warn(`Converting Document: ${title}`)
+        console.info(`Converting Document: ${title}`)
     }
 
     // Get results from Draft and other utilities
@@ -56,9 +63,9 @@ export const uploadLocalFile = async (file, store) => {
     const codeState = draftContentToHtml(editorState, newContentState)
 
     // Build a full Document in the '/sessions' Collection
-    const doc = await new Collection('sessions').add({
+    const document = await new Collection('sessions').add({
         status: 'not-started',
-        contributors: store.authUser.email,
+        contributors: userName,
         date_uploaded: new Date(),
         date_modified: new Date(),
         draft: JSON.stringify(draftState),
@@ -71,19 +78,17 @@ export const uploadLocalFile = async (file, store) => {
         excerpt: ''
     })
 
-    if (!doc) {
-        console.error(`Session failed to create entry: ${doc}`)
+    console.log('document :>> ', document);
+    if (!document) {
+        console.warn(`Session failed to create entry: ${document}`)
     } else {
-        console.warn(`Session created, with id: ${doc.id}\n`)
+        console.info(`Session created, with id: ${document.id}\n`)
     }
 
     // Since the document doesn't already exist
-    console.warn(`Uploading Document to Storage: ${file.name}`)
+    console.info(`Uploading Document to Storage: ${file.name}`)
 
-    const snapshot = await store
-        .fb
-        .storage
-        .ref()
+    const snapshot = await storageRef
         .child(`${file.name}`)
         .put(file)
         .then()
@@ -94,23 +99,22 @@ export const uploadLocalFile = async (file, store) => {
     }
 
     // Update the session with the valid document download URL+token
-    const downloadURL = await snapshot.ref.getDownloadURL()
+    const downloadUrl = await snapshot.ref.getDownloadURL()
 
-    if (!downloadURL) {
-        console.error(`Could not get download URL: ${downloadURL}`)
+    if (!downloadUrl) {
+        console.error(`Could not get download URL: ${downloadUrl}`)
         return
     }
-    
-    await doc.update({
-        docx: downloadURL
+
+    await document.update({
+        docx: downloadUrl
     })
 
-    console.warn(
-        `Document Converted and Uploaded Successfully!:\n`, 
-        '\nDownload URL\n', downloadURL, 
-        '\n\nDocument Data', toJS(doc.data)
+    console.info(
+        'Document Converted and Uploaded Successfully!:\n',
+        '\nDownload URL\n', downloadUrl,
+        '\n\nDocument Data', !!document.data //toJS(document.data)
     )
 
-    store.notify('Document uploaded successfully!', 'info')
-
+    return { document, downloadUrl };
 }
