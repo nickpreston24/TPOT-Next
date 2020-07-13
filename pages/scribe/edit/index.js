@@ -4,6 +4,7 @@ import ZeitCard from '@components/experimental/ZeitCard'
 import * as ROUTES from '@constants/routes'
 import { MyEditor } from 'tpot-scribe-editor'
 import { disableMe } from 'components/disableMe'
+import { Box } from '@chakra-ui/core'
 
 
 const NewEdit = () => (
@@ -11,15 +12,7 @@ const NewEdit = () => (
   <Dashboard
     title={`TPOT Scribe - New`}
   >
-
     <MyEditor />
-
-    {/* <ZeitCard
-      url={ROUTES.CHECKOUT}
-      title="Checkout"
-      text="Load Document from Checkout"
-      //style={disableMe(true)}
-    /> */}
   </Dashboard>
 )
 

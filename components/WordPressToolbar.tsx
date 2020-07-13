@@ -27,10 +27,11 @@ import { mapToDto, createInstance } from 'models/domain';
 import { toDto, Paper, Session } from 'models';
 import { WordpressUser } from 'models/User';
 import { sessions } from 'stores';
-import { getAuthorSessions, checkoutSession } from 'stores/SessionStore';
+import { getAuthorSessions, checkoutSession, updateSession } from 'stores/SessionStore';
 import { disableMe } from './disableMe';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+
 
 const uploadOptions = ['Drive', 'Google', 'Copy-paste']
 
@@ -52,13 +53,13 @@ export const WordPressToolbar = (props) => {
     const { getHtml } = props;
 
     const { user: authUser } = useAuth();
-    const [disabled, setDisabled] = useState(true); // For whatever we wish to disable in prod.
+    // const [disabled, setDisabled] = useState(true); // For whatever Components we wish to disable in prod: (use `disableMe(disabled)`)
     const [option, setOption] = useState(uploadOptions[0]);
 
     const initialRef = useRef();
     const finalRef = useRef();
 
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [paper, setPaper] = useState(createInstance(Paper))
     const [user, setUser] = useState(createInstance(WordpressUser));
     const [session, setSession] = useState(createInstance(Session))
@@ -67,7 +68,7 @@ export const WordPressToolbar = (props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Wordpress support:
-    const { getPages, publish, getUser, wpUsers } = useWordpress();
+    const { publish, getPages, getUser, wpUsers } = useWordpress();
 
     useEffect(() => {
         // console.log('checking out doc :>> ', doc);
@@ -85,24 +86,35 @@ export const WordPressToolbar = (props) => {
 
         let nextSession = Session.create(
             {
-                authorId: session.authorId,
-                paperId: session.paperId,
+                authorId: session?.authorId || null,
+                paperId: session?.paperId || null,
 
                 date_modified: new Date(),
                 status: 'checked-out',
-                contributors: authUser.email,
+                // contributors: authUser.email,
                 title: session.title,
-                code: html
+                date_uploaded: session?.date_uploaded || new Date(),
+                code: html,
+                slug: session?.slug || ''
             })
 
+        if (!!authUser?.email)
+            nextSession.lastContributor = authUser.email
+
+        // if (!nextSession.date_uploaded)
+        //     nextSession.date_uploaded = new Date()
+
         setSession(nextSession);
-        // console.log('user.email', authUser.email)
+        console.log('user.email', authUser.email)
+
+
         console.log('nextSession', nextSession)
 
-
-
-        notify('Saved!', 'success')
-        setSessionSaved(true);
+        updateSession(doc as string, nextSession)
+            .then(() => {
+                notify('Saved!', 'success')
+                setSessionSaved(true);
+            })
     }
 
     const onSubmit = async () => {
@@ -122,7 +134,7 @@ export const WordPressToolbar = (props) => {
                     return
                 }
 
-                let sessionUpdate = Session.create(response)
+                let publishedSession = Session.create(response)
 
                 // let sessionUpdate = {
                 //     authorId: response.author || DEFAULT_AUTHOR,
@@ -140,7 +152,8 @@ export const WordPressToolbar = (props) => {
                 // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
                 // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
                 // We have Sessions as a stopgap (i.e. the checked-out state flag).
-                const document = await sessions.add(sessionUpdate)
+                console.log('published session :>> ', publishedSession);
+                const document = await sessions.add(publishedSession)
 
                 if (!document) {
                     notify(`Failed to create Session for: ${title}`, 'warn')
@@ -190,7 +203,7 @@ export const WordPressToolbar = (props) => {
                         <FormControl>
                             <FormLabel>Paper Title</FormLabel>
                             <Input
-                                value={session.title}
+                                value={session?.title || ''}
                                 onChange={(event) => {
                                     let title = event.target.value
                                     let updated = session;

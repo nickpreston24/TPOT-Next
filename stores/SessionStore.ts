@@ -28,36 +28,47 @@ export const unlockSession = async (id: string) => {
 
 export const checkoutSession = async (id: string) => {
     let options = { mode: 'off' } as IDocumentOptions
-    // console.log('options :>> ', options);
-
     let document = new Document(`sessions/${id}`, options);
-    const sessionData = await document.fetch()
+    await document.fetch()
 
     if (!document.hasData)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let session = toJS(document.data as Session);
-    // console.log('session :>> ', session);
+    console.log('session :>> ', session);
 
     if (session.status !== 'checked-out')
         session.status = 'checked-out'
 
-    await document.update(session)
+    await document.update(session as object)
 
     return session;
 }
 
-export const CreateSession = (props: object | Session): Session | object => {
+export const createSession = (props: object | Session): Session | object => {
     let document = new Document<Session>();
     return document
 };
 
-const updateSession = (update: object | Session): Session | object => {
+export const updateSession = async (id: string, session: any | Session): Promise<Session | object> => {
+    let options = { mode: 'off' } as IDocumentOptions
+    let document = new Document(`sessions/${id}`, options);
+    await document.fetch()
 
-    return {};
+    if (!document.hasData)
+        return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+
+    let oldSession = toJS(document.data);
+    console.log('oldSession :>> ', oldSession);
+
+    Object.assign(oldSession, session)
+    await document.update(oldSession);
+    console.log('updated session :>> ', session);
+
+    return session;
 }
 
-// Filter by wp author:
+// Filter by Wordpress paper author:
 // export let authorId = observable.box(DEFAULT_AUTHOR);
 // export const setAuthor = (id: number) => authorId.set(id);
 
@@ -75,24 +86,6 @@ export const getAuthorSessions = async (author: number) => {
     // console.log('sessions.query :>> ', sessions.query);
     // console.log('sessions.docs.length :>> ', sessions.docs.length);
 }
-
-//Only grabs the query:
-// const currentUserSessions = sessions.query = ref => ref.where("author", "==", authorId);
-// console.log('mysessions :>> ', currentUserSessions);
-
-// const sessionDoc = new SessionDocument('sessions');
-
-// Trying to grab a filtered collection for the current wp user (all his sessions).
-
-// const col = new Collection('sessions', {
-//   query: (ref) => ref.where('author', '==', authorId).limit(queryLimit)
-// })
-
-// console.log('col :>> ', col);
-
-// autorun(() => {
-//   console.log('col.docs :>> ', col.docs);
-// })
 
 
 // export class SessionStore {

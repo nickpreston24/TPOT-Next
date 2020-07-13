@@ -10,20 +10,25 @@ export class Dashboard extends Component {
 
     return (
       <Page title={title}>
-        <Box display="flex" height="100%" boxSizing="border-box" flexDirection="column" overflowX="hidden" overflowY="hidden"
-        // height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch"
+        <Box
+          // border="3px solid lime"
+          height="100%" display="flex" flexDirection="column" justifyContent="flex-start" alignItems="stretch"
         >
           <Header />
-          <Box height="100%" flexGrow={1} display="block" boxSizing="border-box">
-
-            <Box display="block" boxSizing="border-box" position="relative">
-              {children}
-            </Box>
-            {/* <Box display="block" boxSizing="border-box" position="relative" bg="grey" height="100%"  overflowY="scroll" overflowX="hidden" >
-                
-            </Box>
-             */}
+          <Box
+            // border="3px dotted pink"
+            height="70%" flexGrow={1} display="block" boxSizing="border-box">
+            {children}
           </Box>
+
+          {/* A 'footer', if we need;  doubt it - MP */}
+          {/* <Box
+            height="30%"
+            border="3px dotted red"
+            display="block" boxSizing="border-box" position="relative">
+          
+          </Box> */}
+
         </Box>
       </Page>
     )

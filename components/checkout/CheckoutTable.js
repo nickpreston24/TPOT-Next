@@ -9,13 +9,14 @@ import { observable } from 'mobx'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { sessions } from '../../stores/SessionStore'
+import React, { useEffect, useState, FC } from 'react'
+import { sessions, unlockSession } from '../../stores/SessionStore'
 import { ROUTES } from 'constants/routes'
 import { toDto, Session } from '../../models'
-import { CheckoutStatus } from 'constants'
 import { notify } from 'components/experimental/Toasts'
 import { isDev } from '../../helpers'
+import { User } from 'firebase'
+import { useAuth } from 'hooks'
 
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
@@ -33,12 +34,12 @@ const MaterialTable = dynamic(() => import('material-table'),
 
 const columns = [
     { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
-    { title: 'Document', field: 'title', type: 'string', searchable: true },
-    { title: 'Status', field: 'status', type: 'string', searchable: false, render: row => <StatusChip status={row.status} /> },
-    { title: 'Last Edited', field: 'date_modified', type: 'string', searchable: false },
-    { title: 'Author', field: 'author', type: 'string', searchable: false },
-    { title: 'Uploaded', field: 'date_uploaded', type: 'string', searchable: false, hidden: true },
-    { title: 'Cloud Location', field: 'docx', type: 'string', searchable: false, hidden: true },
+    { title: 'Document', field: 'title', type: "string", searchable: true },
+    { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <StatusChip status={row.status} /> },
+    { title: 'Last Edited', field: 'date_modified', type: "string", searchable: false },
+    { title: 'Author', field: 'author', type: "string", searchable: false },
+    { title: 'Uploaded', field: 'date_uploaded', type: "string", searchable: false, hidden: true },
+    { title: 'Cloud Location', field: 'docx', type: "string", searchable: false, hidden: true },
     { title: 'Slug', field: 'slug', searchable: false, hidden: true },
     { title: 'Excerpt', field: 'excerpt', searchable: false, hidden: true },
     { title: 'ID', field: 'id', searchable: false, hidden: true },
@@ -52,22 +53,22 @@ export const CheckoutTable = observer(() => {
     const router = useRouter();
     console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
 
+    const { user } = useAuth();
+    // console.log('user :>> ', user);
+    // const email = user.email || null;    
+
     const { isLoading, hasDocs } = sessions;
     console.log('isDev()', isDev())
     let tableData = []
 
     if (hasDocs) {
 
-        // Make an empty table when there are no documents that match a query
-        const docsButNoData = sessions.docs.some(doc => !doc.hasData)
-        if (docsButNoData) {
-            tableData = new Array(5)
-        }
-
         // Modify data coming from Firebase and make a data array for the table
         sessions.docs.reduce((array, doc, idx) => {
             let { id, data } = doc
             let { status, date_modified, date_uploaded, contributors } = data
+            // let { status, date_modified, date_uploaded, contributors } = toDto(data, Session)
+
             // console.log('contributors :>> ', contributors);
             let now = moment()
             if (date_modified) {
@@ -99,7 +100,7 @@ export const CheckoutTable = observer(() => {
             data={tableData}
             columns={columns}
             isLoading={isLoading}
-            detailPanel={row => <TableDetails {...row} />}
+            detailPanel={row => <TableDetails user={user} row={row} />}
             options={{
                 pageSize: 7,
                 pageSizeOptions: [5, 7, 10],
@@ -136,42 +137,39 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status }) => {
+
+// type DetailProps = {
+//     row: object | Session
+//     user: User,
+// }
+
+const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
+
+    const { id } = row;
+    let session = toDto(row, Session);
+
+    console.log('session :>> ', session);
+    
+    let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
     const [isOpen, setIsOpen] = useState(false)
 
-    const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: onUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
+    const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: afterUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
 
     const router = useRouter()
 
-    console.log('status :>> ', status);
+    // console.log('status :>> ', status);
+    console.log('lastContributor :>> ', lastContributor);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsOpen(true), 0)
         return () => clearTimeout(timer)
     }, []);
 
-    const checkout = async () => {
-        let document = new Document(`sessions/${id}`, { mode: 'off' });
-        await document.fetch()
-
-        if (document.hasData && document.status !== 'checked-out') {
-            await document.update({
-                status: "checked-out"
-            })
-        }
+    const checkout = async () =>
         router.push(ROUTES.DOC(id))
-    }
 
     const unlock = async () => {
-        let document = new Document(`sessions/${id}`, { mode: 'off' });
-        await document.fetch()
-
-        if (document.hasData) {
-            await document.update({
-                status: "in-progress"
-            })
-        }
-
+        unlockSession(id)
         notify("Document successfully unlocked.  You may now check it out", 'success');
     }
 
@@ -193,7 +191,7 @@ const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status
                     <Stack w="50%">
                         <Stack direction="row">
                             <Box minW="80px" fontWeight="bold">Document</Box>
-                            <Link href={docx} isExternal color="blue.500">
+                            <Link href={original} isExternal color="blue.500">
                                 {filename} <Icon name="external-link" mx="2px" />
                             </Link>
                         </Stack>
@@ -204,19 +202,25 @@ const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
                             <ConfirmUnlock
                                 action={unlock}
-                                isOpen={unlockIsOpen} onClose={onUnlockModalClose} confirmedAction={unlock}>
+                                isOpen={unlockIsOpen}
+                                onClose={afterUnlockModalClose}
+                            // confirmedAction={unlock}  // may not be used, I forget.
+                            >
                                 Unlock
                                 </ConfirmUnlock>
-                            <Tooltip label="Unlock a paper for editing" placement="bottom">
+                            <Tooltip label="Unlock a paper for editing" placement="bottom" aria-label="unlock-paper"
+                            >
                                 <Button
                                     onClick={onUnlockModalOpen}
-                                    isDisabled={status !== 'checked-out'}
+                                    isDisabled={status !== 'checked-out'
+                                        && lastContributor !== user.email
+                                    }
                                     leftIcon="unlock"
                                 >
                                     Unlock
                             </Button>
                             </Tooltip>
-                            <Tooltip label="Edit this paper" placement="bottom">
+                            <Tooltip label="Edit this paper" placement="bottom" aria-label="edit-paper">
                                 <Button
                                     onClick={() => checkout()}
                                     leftIcon="edit"
@@ -233,8 +237,7 @@ const TableDetails = ({ id, slug, excerpt, docx, date_uploaded, filename, status
     )
 }
 
-
-const ConfirmUnlock = ({ isOpen, onClose, action }) => {
+const ConfirmUnlock/*: FC<any>*/ = ({ isOpen, onClose, action }) => {
 
     return (
         <>
@@ -256,8 +259,8 @@ const ConfirmUnlock = ({ isOpen, onClose, action }) => {
                             }}>
                                 I understand and wish to continue.
                         </Button>
-                        <Button variant="blue" onClick={onClose}>
-                            On second thought...
+                            <Button variantColor="blue" onClick={onClose}>
+                                On second thought...
                         </Button>
                         </Stack>
                     </ModalFooter>

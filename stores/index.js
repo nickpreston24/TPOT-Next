@@ -1,1 +1,7 @@
-export { sessions } from './SessionStore'
+export {
+    sessions
+    , createSession
+    , checkoutSession
+    , updateSession
+    , getAuthorSessions
+} from './SessionStore'

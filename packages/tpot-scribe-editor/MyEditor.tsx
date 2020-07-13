@@ -1,6 +1,6 @@
 import React, { createRef } from "react";
 import { WordPressToolbar } from '../../components'
-import { Spinner } from "@chakra-ui/core";
+import { Spinner, Box } from "@chakra-ui/core";
 
 
 const config = {
@@ -89,7 +89,7 @@ export class MyEditor extends React.Component<any, any> {
     }
 
     attachInspector = editor => {
-        this.CKEditorInspector.attach(editor, { isCollapsed: true })
+        // this.CKEditorInspector.attach(editor, { isCollapsed: true })
     }
 
     componentDidMount() {
@@ -106,15 +106,31 @@ export class MyEditor extends React.Component<any, any> {
         }
     }
 
+    // render() {
+
+    //     return <Box
+    //         height="100%"
+    //         border="3px solid purple"
+    //         backgroundColor="tomato">Test</Box>
+    // }
+
+
+    /* WORKING, DO NOT DELETE */
     render() {
         // console.log('this.ckeditorRef :>> ', this.ckeditorRef);
         return this.CKEditor ? (
-            <div className="App" >
+            <Box
+                height="100%"
+                overflowY="auto"
+                className="App"
+            // border="3px solid purple"
+            // backgroundColor="tomato"
+            >
                 <WordPressToolbar {...{ getHtml: this.getHtml }} />
                 <this.CKEditor
                     ref={this.ckeditorRef}
                     editor={this.DecoupledEditor}
-                    data="<p>Hello from CKEditor 5!</p>"
+                    data={"<p>Hello from CKEditor 5!</p>"}
                     onInit={editor => {
                         // You can store the "editor" and use when it is needed.
                         // !!editor && console.log("Editor is ready to use!");
@@ -132,13 +148,13 @@ export class MyEditor extends React.Component<any, any> {
                         const data = editor.getData();
                         // console.log({ event, editor, data });
                     }}
-                    // config={{
-                    //     fullPage: false,
-                    //     resize_enabled: false,
-                    //     // removePlugins: 'resize,autogrow'
-                    // }}
+                // config={{
+                //     fullPage: false,
+                //     resize_enabled: false,
+                //     // removePlugins: 'resize,autogrow'
+                // }}
                 />
-            </div>
+            </Box>
         ) : (
                 <Spinner />
             );
