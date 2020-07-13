@@ -1,6 +1,6 @@
 export {
     sessions
-    , createSession
+    // , createSession
     , checkoutSession
     , updateSession
     , getAuthorSessions

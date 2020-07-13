@@ -24,15 +24,15 @@ const Header = ({ children }) => {
             </Flex>
             <Stack direction="row" align="center" spacing={4}>
                 <AccountDropdown />
-                <Tooltip label="Chat comming soon!" placement="bottom-start"><Icon disableM name="chat" size={5} /></Tooltip>
+                <Tooltip label="Chat coming soon!" placement="bottom-start"><Icon disableM name="chat" size={5} /></Tooltip>
                 <Tooltip label="Enable dark mode" placement="bottom-start">
                     <Box h={5} ml={4} ><Switch isDisabled color="primary" /></Box>
                 </Tooltip>
                 <Icon
                     name="logout"
                     onClick={async () => {
-                        await signout()
                         notify('Logging you out...', 'info')
+                        await signout()
                         router.push(ROUTES.LANDING)
                     }}></Icon>
             </Stack>

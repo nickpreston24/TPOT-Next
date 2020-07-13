@@ -9,11 +9,13 @@ import { Box } from '@chakra-ui/core'
 
 const NewEdit = () => (
 
-  <Dashboard
-    title={`TPOT Scribe - New`}
-  >
-    <MyEditor />
-  </Dashboard>
+  <Box>
+    <Dashboard
+      title={`TPOT Scribe - New`}
+    >
+      <MyEditor />
+    </Dashboard>
+  </Box>
 )
 
 export default NewEdit

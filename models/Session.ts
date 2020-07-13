@@ -20,10 +20,6 @@ export class Session {
         let { authorId, paperId, title, excerpt, filename, slug, status, code, lastContributor } = props;
         return Object.assign(new Session(), { authorId, paperId, slug, title, excerpt, filename, status, code, lastContributor } = props);
     }
-
-    // public lock = () => this.status = CheckoutStatus.CheckedOut
-
-    // public unlock = () => this.status = CheckoutStatus.InProgress
-
+    
     // public toString = (): string => `Session: ${this.title}\n${this.code}`;
 }

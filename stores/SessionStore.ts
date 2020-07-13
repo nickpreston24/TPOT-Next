@@ -45,10 +45,10 @@ export const checkoutSession = async (id: string) => {
     return session;
 }
 
-export const createSession = (props: object | Session): Session | object => {
-    let document = new Document<Session>();
-    return document
-};
+// export const createSession = (props: object | Session): Session | object => {
+//     let document = new Document<Session>();
+//     return document
+// };
 
 export const updateSession = async (id: string, session: any | Session): Promise<Session | object> => {
     let options = { mode: 'off' } as IDocumentOptions
@@ -58,12 +58,24 @@ export const updateSession = async (id: string, session: any | Session): Promise
     if (!document.hasData)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
-    let oldSession = toJS(document.data);
-    console.log('oldSession :>> ', oldSession);
+    let currentSession = toJS(document.data);
+    console.log('oldSession :>> ', currentSession);
 
-    Object.assign(oldSession, session)
-    await document.update(oldSession);
-    console.log('updated session :>> ', session);
+    Object.assign(currentSession, session)
+
+    let currentStatus = session.status
+
+    switch (currentStatus) {
+        case 'in-progress':
+            await document.update(currentSession);
+            console.log('updated session :>> ', currentSession);
+            break;
+        case 'not-started':
+        default:
+            await document.update(currentSession);
+            console.log('created session :>> ', currentSession);
+            break;
+    }
 
     return session;
 }
