@@ -18,10 +18,10 @@ export const useAuth = () => {
 
 //  available to any child component that calls useAuth().
 
-export function ProvideAuth({ children }) {
+export function ProvideAuth({ children }, handleAuthFailure?: () => void) {
     const auth = useProvideAuth();
     return !auth
-        ? <div>Auth couldn't be loaded!</div>
+        ? handleAuthFailure()// || <div>Auth couldn't be loaded!</div>  //TODO: 
         : <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
@@ -52,14 +52,15 @@ function useProvideAuth() {
             });
     };
 
-    const signout = () => {
-        console.log('Laterz!')
+    const signout = (onSignout: () => void) => {
         return firebase
             .auth()
             .signOut()
             .then(() => {
                 setUser(null);
-                console.log('user :>> ', !!user);
+                console.log('authUser :>> ', !!user);
+                if (onSignout)
+                    onSignout();
             })
             .catch(console.error);
     };

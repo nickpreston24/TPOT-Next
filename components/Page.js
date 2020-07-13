@@ -23,7 +23,9 @@ const Page = (
         }
       `}</style>
       
-      <Box width="100vw" height="100vh" position="absolute" overflow="hidden">
+      <Box 
+      overflowY="scroll"
+      width="100vw" height="100vh" position="absolute" overflowY="hidden" overflowX="hidden">
         { children }
       </Box>
       

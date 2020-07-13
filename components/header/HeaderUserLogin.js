@@ -1,7 +1,8 @@
 import React from 'react'
-import { Box } from '@chakra-ui/core'
+import { Box, Icon } from '@chakra-ui/core'
 import { Avatar, IconButton } from '@material-ui/core'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import { notify } from '../experimental';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import Router from 'next/router'
 import { useAuth } from '@hooks'
@@ -18,15 +19,17 @@ const HeaderUserLogin = props => {
                 width: 32
             }} />
             <Box pl={2} mr={3} fontSize={18} color="white" fontFamily="'Poppins', sans-serif">Braden</Box>
-            <IconButton color="inherit" aria-label="add to shopping cart" onClick={() => Router.push(ROUTES.ACCOUNT)}>
+            <IconButton color="inherit" aria-label="add to shopping cart" onClick={() => signout().then(() => Router.push(ROUTES.LANDING))}>
                 <SettingsOutlinedIcon />
             </IconButton>
-            <IconButton color="inherit" aria-label="add to shopping cart" onClick={async () => {
-                await signout()
-                Router.push(ROUTES.LANDING)
-            }}>
-                <ExitToAppIcon />
-            </IconButton>
+
+            <Icon
+                name="logout"
+                onClick={async () => {
+                    await signout()
+                    notify('Logging you out...', 'info')
+                    Router.push(ROUTES.LANDING)
+                }}></Icon>
         </Box>
     );
 };

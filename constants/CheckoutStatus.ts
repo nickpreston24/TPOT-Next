@@ -1,7 +1,7 @@
 export enum CheckoutStatus {
     InProgress = 'In Progress', // In Progress, but not Checked Out.
     NotStarted = 'Not Started', // Not started as in Progress and not Checked out.
-    CheckedOut = 'Checked Out', //Checked out by another User.
+    CheckedOut = 'Checked Out', // Checked out by another User.
     FirstDraft = 'First Draft', // Is in the 'Draft' mode in Wordpress; Additionally, the paper is In-Progress.
     Published = 'Published', // Is completely finalized in WP (as Victor) and cannot be updated in WP, except as a Super User (Victor, Ronnie, MP, BP)
 }

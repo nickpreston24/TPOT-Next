@@ -19,11 +19,15 @@ export function ProvideWordpress({ children }) {
 function useWordpressProvider() {
 
     const [currentPaper, setCurrentPaper] = useState(createInstance(Paper));
-    console.log('default Paper :>> ', currentPaper);
+    // console.log('default Paper :>> ', currentPaper);
+
+    const [wpUsers, setWpUsers] = useState([]);
 
     const getAllUsers = () => wpapi.users();
 
-    const getUser = (id: number) =>
+    // const findUser = (email) => getAllUsers.filter(user => user.email === email);
+
+    const getUser = async (id: number) =>
         wpapi
             .users()
             .id(id)
@@ -40,42 +44,62 @@ function useWordpressProvider() {
 
     // const removePaper = (id:number)
 
+    /**
+     * Published a Paper as a draft (only)
+     */
     const publish = async (paper: Paper): Promise<Paper> => {
-        const { authorId, id } = paper;
+        const { author, id } = paper;
+
 
         const existingPaper = id ? await wpapi.pages()
-            .author(authorId)
+            .author(author)
             .id(id) : null;
 
         console.log('currentPaper', existingPaper)
 
         if (!!existingPaper) {
-            const updatedPaper = await wpapi.pages()
-                .author(authorId)
+            wpapi.pages()
+                .author(author)
                 .id(existingPaper.id)
                 .update(paper)
-            console.log('updatedPaper :>> ', updatedPaper
-                , 'paper as dto :>>', toDto(updatedPaper, Paper));
-            setCurrentPaper(updatedPaper);
-            return updatedPaper;
+                .then((response) => {
+
+                    let updatedPaper = toDto(response, Paper);
+                    paper.id = response.id; // Update the new id for UI use.
+
+                    console.log('updatedPaper :>> ', updatedPaper);
+                    setCurrentPaper(updatedPaper);
+
+                })
         }
         else {
-            let createdPaper = wpapi.pages()
-                .author(authorId)
+            // console.log('creating paper :>> ', paper);
+            wpapi.pages()
+                .author(author)
                 .create(paper)
-            console.log('createdPaper :>> ', createdPaper
-                , 'paper as dto :>>', toDto(createdPaper, Paper));
-            paper.id = createdPaper.id; // Update the new id for UI use.
-            setCurrentPaper(createdPaper)
-            return paper;
+                .then((response) => {
+                    // console.log('response :>> ', response);
+                    //     console.log('createdPaper :>> ', createdPaper
+                    // , 'paper as dto :>>', toDto(createdPaper, Paper));
+                    let createdPaper = toDto(response, Paper);
+                    paper.id = response.id; // Update the new id for UI use.
+                    console.log('createdPaper :>> ', createdPaper);
+                    setCurrentPaper(createdPaper)
+                })
+                .catch(console.error)
         }
+
+        return currentPaper;
     }
 
-    // useEffect(() => {
-    // }, []);
+    useEffect(() => {
+        getAllUsers()
+            .then((users) => setWpUsers(users))
+    }, []);
 
     return {
-        getAllUsers,
+        wpUsers,
+        // getAllUsers,
         getUser,
 
         getPages,

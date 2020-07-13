@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { theme } from "@chakra-ui/core";
 import icons from './icons'
 import colors from './colors'

@@ -6,9 +6,10 @@ import Router from 'next/router'
 import { Row } from 'simple-flexbox'
 import { SCRIBE, TPOT, LOGIN } from '@routes'
 import { useAuth } from '@hooks'
+import { isDev } from 'helpers'
 
 const actionTexts = {
-    checkout: 'Checking out a Document',
+    checkout: 'Choosing an app',
     login: 'Logging in',
 }
 
@@ -16,17 +17,17 @@ const Layout = () => {
 
     const auth = useAuth();
     let isAuthenticated = !!auth?.user || false;
-
-    console.log('authenticated? :>> ', isAuthenticated);
+    // console.log('authenticated? :>> ', isAuthenticated);
 
     let action = isAuthenticated ? actionTexts.checkout : actionTexts.login;
 
     return (
 
         <div className="grid">
-            <p className="description">
+            {/* TODO: Load on isLoading = true */}
+            {/* <p className="description">
                 {`Get started by ${action}`}
-            </p>
+            </p> */}
             <Row
                 horizontal="center"
             >
@@ -54,10 +55,11 @@ const Layout = () => {
                         title="TPOT"
                         text='The Path of Truth'
                     />
-                    <Icon
+                    {/* Testing whether we can toggle dev stuff */}                    
+                    {isDev() && <Icon
                         name='moon'
                         onClick={() => Router.push('/domains')}
-                    />
+                    />}
                 </ZeitContainer>
             </Row>
         </div>

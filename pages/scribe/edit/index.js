@@ -2,17 +2,20 @@ import React, { Component } from 'react'
 import Dashboard from '@components/Dashboard'
 import ZeitCard from '@components/experimental/ZeitCard'
 import * as ROUTES from '@constants/routes'
+import { MyEditor } from 'tpot-scribe-editor'
+import { disableMe } from 'components/disableMe'
+import { Box } from '@chakra-ui/core'
 
-const Checkout = () => (
-  <Dashboard title="TPOT Scribe - Edit">
-    <ZeitCard
-      url={ROUTES.CHECKOUT}
-      title="Checkout"
-      text="Load Document from Checkout"
-    />
-  </Dashboard>
+
+const NewEdit = () => (
+
+  <Box>
+    <Dashboard
+      title={`TPOT Scribe - New`}
+    >
+      <MyEditor />
+    </Dashboard>
+  </Box>
 )
-// Legacy:
-{/* <h1>Edit!</h1>      
-Load Document from <Link href="/scribe/checkout"><a>Checkout</a></Link> */}
-export default Checkout
+
+export default NewEdit

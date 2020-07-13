@@ -1,23 +1,29 @@
 import React, { FC } from 'react';
 import { uploadLocalFile } from '../Editor/functions/uploader';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-// import { observer } from 'mobx-react';
-import { Box } from '@chakra-ui/core';
-import { convertFile } from 'components/Editor/functions/converter';
+import { Button } from '@chakra-ui/core';
 import { notify } from 'components/experimental/Toasts';
 import { useAuth } from 'hooks/useAuth';
+import { useRouter } from 'next/router';
+import * as ROUTES from '../../constants/routes'
 
 interface Props {
-    // uploadFn: (event)
+    afterUpload?: () => void
 }
 
-const UploadButton: FC<Props> = () => {
+const UploadButton: FC<Props> = ({ afterUpload }) => {
 
-    const auth = useAuth();
-    const userName = auth.user.email;
+    const { user } = useAuth();
+    const router = useRouter();
 
     return (
-        <Box width={24} height={20} p={0} m={0} mt="4px" display="flex" alignItems="center" justifyContent="center">
+        <Button onClick={() => {
+            // console.log('user :>> ', Object.keys(user), user.email);
+            if (!user && router.pathname !== ROUTES.LANDING) {
+                notify("You need to login to perform this action!", 'info')
+                router.push(ROUTES.LANDING)
+            }
+        }} >
             <input
                 // multiple // multi-upload not recommended
                 accept=".docx"
@@ -25,20 +31,23 @@ const UploadButton: FC<Props> = () => {
                 id="upload-button-input"
                 style={{ display: 'none' }}
                 onChange={async (event) => {
+                    const { email, displayName } = user;
+
                     const files = event.target.files;
                     let file = files[0];
                     if (!file)
                         return;
-                        
-                    let document = (await uploadLocalFile(file, userName))
-                    console.info(`Uploaded by user ${userName}`);
+
+                    let { document } = (await uploadLocalFile(file, email))
+                    console.info(`Uploaded by user ${email}`);
                     notify('Document uploaded successfully!', 'info');
+                    router.push(ROUTES.DOC(document.id))
                 }} />
             <label htmlFor="upload-button-input" style={{ margin: 12 }}>
                 <CloudUploadIcon />
             </label>
-        </Box>
-    );
+        </Button>
+    )
 };
 
 export default UploadButton

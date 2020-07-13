@@ -1,7 +1,7 @@
-import React, { FC, ReactChild, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { Button, Flex, Heading, Stack, Text, ButtonProps } from '@chakra-ui/core'
 import Layout from '../layout/Dashboard'
-import SittingAtComputer from '../svg/SittingAtComputer'
+import SplashScreen from '../svg/SittingAtComputer'
 
 
 type ScribeTemplateProps = {
@@ -33,7 +33,7 @@ const Template: FC<ScribeTemplateProps> = ({
             <Stack align="center" spacing={8}>
                 <Heading fontWeight={300}>{title}</Heading>
                 <Flex w={400} h={400} justifyContent="center" alignItems="center">
-                    <SittingAtComputer />
+                    <SplashScreen />
                 </Flex>
                 <Text fontSize="lg">{subtitle}</Text>
                 <Stack align="center" direction="row" spacing={6}>

@@ -20,7 +20,8 @@ const TableDetails: FC<DetailState> = ({
     checkUnlock,
     paper = null },
     { checkout, unlock }) => {
-
+    // console.log('checkout :>> ', checkout);
+    // console.log('unlock :>> ', unlock);
     useEffect(() => {
         // Check every 250ms seconds to see if the document can be unlocked
         // This is low cost as it isn't actually calling the data from firestore
@@ -35,8 +36,8 @@ const TableDetails: FC<DetailState> = ({
             collapse()
         };
 
-    }, []);    
-    
+    }, []);
+
 
     // let { allowUnlock } = this
     // let { checkout, unlock } = store
@@ -103,7 +104,16 @@ const TableDetails: FC<DetailState> = ({
                             >
                                 {this.allowUnlock ? 'Unlock' : <LockOpenIcon />}
                             </Button>
-                            <Button onClick={() => checkout(id)} color="primary" variant="contained" endIcon={<EditIcon />}>Start Editing</Button>
+                            <Button
+                                onClick={() => {
+                                    checkout(id)
+                                }}
+                                endIcon={<EditIcon />}
+                                color="primary"
+                                variant="contained"
+                            >
+                                Start Editing
+                            </Button>
                         </Box>
                     </Box>
                 </Box>

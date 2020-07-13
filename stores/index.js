@@ -1,5 +1,7 @@
-import {SessionStore} from './SessionStore'
-
 export {
-    SessionStore
-}
+    sessions
+    // , createSession
+    , checkoutSession
+    , updateSession
+    , getAuthorSessions
+} from './SessionStore'

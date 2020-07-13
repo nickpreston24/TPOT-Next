@@ -1,68 +1,40 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import Dashboard from '@components/Dashboard'
 import PropTypes from 'prop-types'
 import { MyEditor } from 'tpot-scribe-editor'
-import { Box, Stack } from '@chakra-ui/core'
-import WordPressToolbar from './WordPressToolbar'
+import { Stack, Box, Spinner } from '@chakra-ui/core'
+import { sessions } from '@stores'
+import { observer } from 'mobx-react'
+import { isDev } from 'helpers'
 
+const authorId = 9;
+const queryLimit = 10;
 
-const Page = (props) => {
-  console.log('props ([doc]) :>> ', props);
+const Page = observer(props => {
+
   const { id } = props
-  const ckeditorRef = useRef(null)
-  const getHtml = () => {
-    const html = ckeditorRef.current.editor.getData()
-    console.log(html)
-  }
+
+  const { docs, isLoading } = sessions;
+
+  // This might load all sessions, however, getting the new Document by id caused issues for me.
+  let currentDoc = docs.filter(s => s.id === id)[0]
+
   return (
-    <Stack>
+    <Box>
       <Dashboard
         title={`TPOT Scribe - Edit - ${id}`}
-      // details={() => <DocumentDetails {...{ document }} />}
       >
-        <Box>
-          <h1 color="green">Hello, Editor! Your doc id is: {id}</h1>
-          <MyEditor ref={ckeditorRef} />
-          <WordPressToolbar {...{ getHtml }} />
-        </Box>
+        {isLoading
+          ? <Spinner />
+          : <MyEditor doc={currentDoc} />
+        }
       </Dashboard>
-    </Stack>
+    </Box>
   )
-}
+})
 
-/** Working Code */
-
-// const Page = props => {
-
-//   console.log('props ([doc]) :>> ', props);
-//   const { id } = props
-
-//   const ckeditorRef = useRef(null)
-
-//   const getHtml = () => {
-//     const html = ckeditorRef.current.editor.getData()
-//     console.log(html)
-//   }
-
-
-//   // console.log('CkEditor :>> ', MyEditor, 'editorRef: ', ckeditorRef);
-
-//   return (
-//     <Dashboard
-//       title={`TPOT Scribe - Edit - ${id}`}
-//     // details={() => <DocumentDetails {...{ document }} />}
-//     >
-//       <Box
-//         height="100%"
-//       >
-//         {/* <Editor ref={ckeditorRef} /> */}
-//         {/* <MyEditor ref={ckeditorRef} /> */}
-//         <div>Hello, CK Editor</div>
-//         <WordPressToolbar {...{ getHtml }} />
-//       </Box>
-//     </Dashboard>
-//   )
-// }
+{/* <Box height='100%' bg="tomato" p={2}>
+            </Box> */}
 
 Page.propTypes = {
   id: PropTypes.string.isRequired,
@@ -71,7 +43,7 @@ Page.propTypes = {
 // // Only the ID is needed here, but you could imagine all the goodies that could be done:
 // // https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
 Page.getInitialProps = async context => {
-  console.log('context :>> ', context);
+  // console.log('context :>> ', !!context);
   const id = context.query.doc
   console.log('id ([doc]) :>> ', id);
   return { id }

@@ -1,5 +1,7 @@
 import React from 'react'
 import { Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Divider } from '@chakra-ui/core'
+import { Router } from 'next/router'
+import * as ROUTES from '@routes'
 
 const appItems = [
     {
@@ -76,7 +78,7 @@ const Navbar = ({ children }) => {
         <Stack px={4} h="100%" w="100%" spacing={8}>
             <Box minH={70} maxh={70} >
                 <Stack direction="row" align="center" pl={2} spacing={6} h="100%">
-                    <Icon name="toolbox" size={10}/>
+                    <Icon name="toolbox" size={10} />
                     <Heading fontSize="xl" color="gray.300">TPOT Toolbox</Heading>
                 </Stack>
                 <Divider borderColor="gray.500" mt="-1px" />
@@ -84,7 +86,13 @@ const Navbar = ({ children }) => {
             <MenuItems title="Apps" items={appItems} />
             <MenuItems title="Actions" items={actionItems} />
             <Flex alignItems="flex-end" flexGrow={1} pb={4}>
-                <Button variantColor="primary" leftIcon="settings" w="100%" fontWeight={300} onClick={() => alert('settings')}>Settings</Button>
+                <Button
+                    variantColor="primary"
+                    leftIcon="settings"
+                    w="100%"
+                    fontWeight={300}
+                    disabled
+                    onClick={() => alert('settings')}>Settings</Button>
             </Flex>
         </Stack>
     )

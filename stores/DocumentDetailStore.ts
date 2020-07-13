@@ -1,6 +1,8 @@
 import { observable, action } from "mobx"
 import moment from "moment"
 
+// MP: My attempt at pulling a Store out of TableDetails.js.
+// Remove if not relevant.
 export default class DetailState {
 
     paper: any;
