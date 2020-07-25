@@ -16,7 +16,7 @@ import {
     ButtonGroup,
 } from '@chakra-ui/core'
 import UploadButton from 'components/buttons/UploadButton';
-import { notify } from './experimental/Toasts';
+import { notify } from './Toasts';
 import { useWordpress, useAuth } from 'hooks';
 import { createInstance } from 'models/domain';
 import { Paper, Session } from 'models';

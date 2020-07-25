@@ -3,7 +3,9 @@ import { Flex, Icon, Heading, Button, Text, Stack, Avatar, InputGroup, InputRigh
 import { useAuth } from 'hooks'
 import { useRouter } from 'next/router'
 import * as ROUTES from '@constants/routes'
-import { notify } from 'components/experimental/Toasts'
+import { notify } from 'components/Toasts'
+import { disableMe, hideMe } from '../utils/disableMe'
+import { isDev } from 'helpers'
 
 const Header = ({ children }) => {
 
@@ -16,18 +18,35 @@ const Header = ({ children }) => {
                 <Icon name="scribe" size={8} />
                 <Heading size="lg" fontWeight={500}>Scribe</Heading>
             </Stack>
-            <Flex w="100%" justify="center">
-                <InputGroup w="100%" maxW={800}>
+            <Flex w="100%" justify="center"
+                style={hideMe(!isDev())}
+            >
+                <InputGroup w="100%" maxW={800}
+                >
                     <InputRightElement children={<Icon name="search" />} />
                     <Input variant="filled" placeholder="Search for letters" />
                 </InputGroup>
             </Flex>
-            <Stack direction="row" align="center" spacing={4}>
+            <Stack
+                direction="row"
+                align="center"
+                spacing={4}
+            >
                 <AccountDropdown />
-                <Tooltip label="Chat coming soon!" placement="bottom-start"><Icon disableM name="chat" size={5} /></Tooltip>
-                <Tooltip label="Enable dark mode" placement="bottom-start">
+                <Tooltip
+                    label="Chat coming soon!" placement="bottom-start">
+                    <Icon
+                        disableM
+                        name="chat"
+                        size={5}
+                        mr={4}
+                        style={hideMe(!isDev())}
+                    /></Tooltip>
+                {/* <Tooltip label="Enable dark mode" placement="bottom-start"
+                    style={hideMe(isDev())}
+                >
                     <Box h={5} ml={4} ><Switch isDisabled color="primary" /></Box>
-                </Tooltip>
+                </Tooltip> */}
                 <Icon
                     name="logout"
                     onClick={async () => {
@@ -36,7 +55,7 @@ const Header = ({ children }) => {
                         router.push(ROUTES.LANDING)
                     }}></Icon>
             </Stack>
-        </Stack>
+        </Stack >
     )
 }
 

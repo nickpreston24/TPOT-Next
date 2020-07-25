@@ -13,11 +13,10 @@ import React, { useEffect, useState, FC } from 'react'
 import { sessions, unlockSession } from '../../stores/SessionStore'
 import { ROUTES } from 'constants/routes'
 import { toDto, Session } from '../../models'
-import { notify } from 'components/experimental/Toasts'
+import { notify } from 'components/Toasts'
 import { isDev } from '../../helpers'
 import { User } from 'firebase'
 import { useAuth } from 'hooks'
-
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -210,13 +209,14 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                             >
                                 Unlock
                                 </ConfirmUnlock>
-                            <Tooltip label="Unlock a paper for editing" placement="bottom" aria-label="unlock-paper"
+                            <Tooltip
+                                label="Unlock a paper for editing"
+                                placement="bottom"
+                                aria-label="unlock-paper"
                             >
                                 <Button
                                     onClick={onUnlockModalOpen}
-                                    isDisabled={status !== 'checked-out'
-                                        && lastContributor !== user.email
-                                    }
+                                    isDisabled={status !== 'checked-out'}
                                     leftIcon="unlock"
                                 >
                                     Unlock
@@ -235,7 +235,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                     </Stack>
                 </Flex>
             </Flex>
-        </Collapse>
+        </Collapse >
     )
 }
 
