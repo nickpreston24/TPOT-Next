@@ -1,22 +1,26 @@
-import {
-    Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, Box, Modal
-    , ModalHeader, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalCloseButton, ModalBody
-} from '@chakra-ui/core'
-import { Chip } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Modal, ModalHeader, ModalOverlay, ModalFooter, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/core/dist/Modal'
+import Button from '@chakra-ui/core/dist/Button'
+import Divider from '@chakra-ui/core/dist/Divider'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Icon from '@chakra-ui/core/dist/Icon'
+import Link from '@chakra-ui/core/dist/Link'
+import Box from '@chakra-ui/core/dist/Box'
+import Stack from '@chakra-ui/core/dist/Stack'
+import Collapse from '@chakra-ui/core/dist/Collapse'
+import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
+import Chip from '@material-ui/core/Chip'
 import { observer } from 'mobx-react'
-import { Document } from 'firestorter'
-import { observable } from 'mobx'
-import moment from 'moment'
-import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState, FC } from 'react'
 import { sessions, unlockSession } from '../../stores/SessionStore'
-import { ROUTES } from 'constants/routes'
 import { toDto, Session } from '../../models'
 import { notify } from 'components/experimental/Toasts'
 import { isDev } from '../../helpers'
-import { User } from 'firebase'
 import { useAuth } from 'hooks'
+import { ROUTES } from 'constants/routes'
+import dynamic from 'next/dynamic'
+import moment from 'moment'
 
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
@@ -29,7 +33,7 @@ import { useAuth } from 'hooks'
 
 // Using a dynamic import with `ssr: false` option fixes most Mui issues
 const MaterialTable = dynamic(() => import('material-table'),
-    { ssr: false, loading: () => <Spinner /> }
+    { ssr: false }
 )
 
 const columns = [
@@ -125,11 +129,24 @@ export const CheckoutTable = observer(() => {
                     searchPlaceholder: 'Search'
                 }
             }}
+            icons={{
+                Clear: () => <Icon name='close'/>,
+                Delete: () => <Icon name='delete'/>,
+                FirstPage: () => <Icon name='arrow-back' />,
+                LastPage: () => <Icon name='arrow-forward' />,
+                ResetSearch: () => <Icon name='small-close'/>,
+                NextPage: () => <Icon name='chevron-right' />,
+                PreviousPage: () => <Icon name='chevron-left' />,
+                DetailPanel: () => <Icon name='chevron-right' />,
+                SortArrow: () => <Icon name='up-down' ml={2} />,
+                Export: () => <Icon name='download' fontSize="xl"/>,
+                Search: React.forwardRef((ref, props) => <Icon {...props} name='search-2'/>)
+            }}
             actions={[
                 {
                     isFreeAction: true,
                     tooltip: 'Refresh Table',
-                    icon: 'refresh',
+                    icon: () => <Icon name='repeat' fontSize="xl"/>,
                     onClick: () => console.log('refresh')
                 },
             ]}
