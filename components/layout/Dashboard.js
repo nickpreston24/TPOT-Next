@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, Flex, Button, Grid, Stack } from '@chakra-ui/core'
+import Box from '@chakra-ui/core/dist/Box'
+import Flex from '@chakra-ui/core/dist/Flex'
 import Header from '@organisms/Header'
 import Navbar from '@organisms/Navbar'
 
