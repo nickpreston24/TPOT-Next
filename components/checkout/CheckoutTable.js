@@ -165,8 +165,10 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
         return () => clearTimeout(timer)
     }, []);
 
-    const checkout = async () =>
-        router.push(ROUTES.DOC(id))
+    const checkout = async () => {
+        const PATH = ROUTES.EDIT
+        router.push(`${PATH}/[doc]`, `${PATH}/${id}`)
+    }
 
     const unlock = async () => {
         unlockSession(id)
