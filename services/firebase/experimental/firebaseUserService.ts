@@ -1,4 +1,5 @@
 import { db } from '..'
+import { isDev } from 'helpers'
 
 export class FirebaseUserService {
     db: any
@@ -12,7 +13,7 @@ export class FirebaseUserService {
             .doc(id)
             .get()
             .then((documentSnapshot) => {
-                console.log(documentSnapshot.data())
+                isDev() && console.log(documentSnapshot.data())
             })
     }
 }

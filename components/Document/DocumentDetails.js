@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Divider, TextField } from '@material-ui/core'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { toJS } from 'mobx'
-import {  observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import moment from 'moment'
 import React, { useContext } from 'react'
 import { compose } from 'recompose'
@@ -62,7 +62,7 @@ const DocumentDetails = ({ store, form, document }) => {
   }
 
   const handleFileSelected = async (file) => {
-    console.log('uploading...', file)
+    // console.log('uploading...', file)
     // await upload(file);
     await uploadLocalFile(file, store)
   }

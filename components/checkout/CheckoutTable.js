@@ -51,14 +51,14 @@ const queryLimit = 10;
 export const CheckoutTable = observer(() => {
 
     const router = useRouter();
-    console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
+    // console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
 
     const { user } = useAuth();
     // console.log('user :>> ', user);
     // const email = user.email || null;    
 
     const { isLoading, hasDocs } = sessions;
-    console.log('isDev()', isDev())
+    // console.log('isDev()', isDev())
     let tableData = []
 
     if (hasDocs) {
@@ -148,8 +148,8 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     const { id } = row;
     let session = toDto(row, Session);
 
-    console.log('session :>> ', session);
-    
+    // console.log('session :>> ', session);
+
     let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
     const [isOpen, setIsOpen] = useState(false)
 
@@ -158,15 +158,17 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     const router = useRouter()
 
     // console.log('status :>> ', status);
-    console.log('lastContributor :>> ', lastContributor);
+    // console.log('lastContributor :>> ', lastContributor);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsOpen(true), 0)
         return () => clearTimeout(timer)
     }, []);
 
-    const checkout = async () =>
-        router.push(ROUTES.DOC(id))
+    const checkout = async () => {
+        const PATH = ROUTES.EDIT
+        router.push(`${PATH}/[doc]`, `${PATH}/${id}`)
+    }
 
     const unlock = async () => {
         unlockSession(id)

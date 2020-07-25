@@ -22,11 +22,11 @@ const withAuthentication = Component => {
         constructor(props) {
             super(props);
             this.state = { authUser: null, };
-            console.log('props :>> ', props);
+            // console.log('props :>> ', props);
         }
 
         componentDidMount() {
-            console.log('this.props :>> ', this.props);
+            // console.log('this.props :>> ', this.props);
             // const { auth } = this.props.firebase;
             this.listener = auth.onAuthStateChanged(
                 authUser => {

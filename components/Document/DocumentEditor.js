@@ -1,5 +1,5 @@
 import EditorView from '../Editor/views/EditorView'
-import {  observer, PropTypes as MobXPropTypes } from 'mobx-react'
+import { observer, PropTypes as MobXPropTypes } from 'mobx-react'
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { convertFromRaw, EditorState } from 'draft-js'
@@ -73,11 +73,11 @@ function DocumentEditor(props) {
   }
 
   const handlePublish = () => {
-    console.log('handled publishing')
+    // console.log('handled publishing')
   }
 
   const handleDuplicate = () => {
-    console.log('handled duplication')
+    // console.log('handled duplication')
   }
 
   // Setup an Autosave Timer

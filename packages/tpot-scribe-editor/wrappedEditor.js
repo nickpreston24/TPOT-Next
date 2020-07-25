@@ -8,7 +8,7 @@ const WrappedEditor = React.forwardRef((props, ref) => {
         let ScribeEditor = require('./editor').default
         // let ScribeEditor = dynamic(() => import('./editor'))
         setEditor(ScribeEditor)
-        console.log('CK Editor loaded.')
+        // console.log('CK Editor loaded.')
     },
         [window]
         // [] // what if this worked?

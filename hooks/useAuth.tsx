@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import '@services/firebase'
 import * as firebase from "firebase/app";
+import { isDev } from "helpers";
 
 const authContext = createContext(null);
 
@@ -58,7 +59,7 @@ function useProvideAuth() {
             .signOut()
             .then(() => {
                 setUser(null);
-                console.log('authUser :>> ', !!user);
+                isDev() && console.log('authUser :>> ', !!user);
                 if (onSignout)
                     onSignout();
             })
@@ -92,7 +93,7 @@ function useProvideAuth() {
     useEffect(() => {
         // console.log('Activating auth...')
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            console.log('authUser? :>> ', !!user);
+            // console.log('authUser? :>> ', !!user);
             if (user) {
                 setUser(user);
             } else {

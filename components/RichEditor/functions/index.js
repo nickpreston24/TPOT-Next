@@ -11,7 +11,7 @@ const focus = () => editorRef.current.focus()
 
 const logState = editorState => {
     if (!editorState) throw new EditorStateNotFoundError()
-    console.log('Current state:', editorState.toJS())
+    // console.log('Current state:', editorState.toJS())
 }
 
 const transformInlineStyles = (rawContentState) => {
