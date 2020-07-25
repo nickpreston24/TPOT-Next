@@ -42,7 +42,7 @@ const Login = () => {
                     const { email, password } = values;
                     setSubmitting(true)
                     await signin(email, password);
-                    console.log('authed user :>>', !!user)
+                    // console.log('authed user :>>', !!user)
                     setSubmitting(false);
 
                     if (!!user) {

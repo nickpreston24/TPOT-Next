@@ -81,7 +81,7 @@ const CustomDialog = compose(
     const { prompt, type, resolve, reject, display, dismiss, open, mounted, store } = props
     // const { currentPrompt } = store
     // console.log(mounted)
-    console.log(props)
+    // console.log(props)
 
     // const prompt = this.props.store.currentPrompt
     // const prompt = this.props.store.currentPrompt
@@ -89,13 +89,13 @@ const CustomDialog = compose(
     // const type = prompt ? prompt.type : null
     // console.log('type', type)
     if (mounted) {
-        console.log('m')
+        // console.log('m')
     } else {
-        console.log('nope')
+        // console.log('nope')
         const { currentPrompt } = store
-        console.log(currentPrompt)
+        // console.log(currentPrompt)
     }
-    console.log(prompt)
+    // console.log(prompt)
     return (
         <Box>
             <h1>THIS IS TEXT</h1>

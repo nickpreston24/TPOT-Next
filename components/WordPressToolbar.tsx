@@ -26,6 +26,7 @@ import { checkoutSession, updateSession } from 'stores/SessionStore';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { render } from 'react-dom';
+import { isDev } from 'helpers';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -56,7 +57,7 @@ export const WordPressToolbar = (props) => {
     // Retrieve current session id:
     const router = useRouter();
     let doc = router.query.doc;
-    console.log('doc :>> ', doc);
+    isDev() && console.log('doc :>> ', doc);
 
     const [editMode, setEditMode] = useState(EditMode.New);
 
@@ -253,7 +254,7 @@ export const WordPressToolbar = (props) => {
                                 value={paper.categories}
                                 onChange={(event) => {
                                     let cats = event.target.value.split(',');
-                                    console.log('cats', cats)
+                                    // console.log('cats', cats)
 
                                     // let updated = paper
                                 }}

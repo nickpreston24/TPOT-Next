@@ -34,7 +34,7 @@ const linkifyPlugin = createLinkifyPlugin({
     // TODO: @MP, provide an onClick function.
     component: (props) => (
         <a {...props} onClick={() => {
-            console.log(props)
+            // console.log(props)
             // alert('Clicked on link!')
         }} />
     )

@@ -45,7 +45,7 @@ Page.propTypes = {
 Page.getInitialProps = async context => {
   // console.log('context :>> ', !!context);
   const id = context.query.doc
-  console.log('id ([doc]) :>> ', id);
+  // console.log('id ([doc]) :>> ', id);
   return { id }
 }
 

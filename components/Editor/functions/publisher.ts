@@ -1,5 +1,6 @@
 import ExtendableError from '../../../models/Errors'
 import { wpapi } from '../../../services/wordpress';
+import { isDev } from 'helpers';
 
 class WordPressNotInitializedException extends ExtendableError { message = 'Wordpress has not been initialized!' }
 class PaperNotFoundException extends ExtendableError { message = 'Could not find the Paper you\'re looking for...' }
@@ -14,7 +15,7 @@ export function publish(html = '<p></p>', authorId = 10) {
         // .id(99999) //fake id
         .then(latestPage => {
 
-            console.log('latestPage', latestPage)
+            isDev() && console.log('latestPage', latestPage)
 
             let pageContents = getSamplePageContent(html)
 
@@ -24,8 +25,8 @@ export function publish(html = '<p></p>', authorId = 10) {
                     .id(latestPage.id)
                     .update(pageContents)
                     .then(function (response) {
-                        console.log('response (on update): ', response)
-                        console.log('WordPress paper id: ', response.id)
+                        isDev() && console.log('response (on update): ', response)
+                        isDev() && console.log('WordPress paper id: ', response.id)
                     })
                     .catch(error => {
                         if (!!error)
@@ -37,8 +38,8 @@ export function publish(html = '<p></p>', authorId = 10) {
                     .author(authorId)
                     .create(pageContents)
                     .then(function (response) {
-                        console.log('response (on create): ', response)
-                        console.log('WordPress paper id: ', response.id)
+                        isDev() && console.log('response (on create): ', response)
+                        isDev() && console.log('WordPress paper id: ', response.id)
                         // this.id = id;
                     })
                     .catch(error => {

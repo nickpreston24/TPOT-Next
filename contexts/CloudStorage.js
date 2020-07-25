@@ -32,7 +32,7 @@ export const CloudStorageProvider = ({ db, firebase }) => {
 
         // Run conversion:        
         let html = await convertFile(file)
-        console.log(!!html && html)
+        // console.log(!!html && html)
 
         if (!html)
             return
@@ -58,7 +58,7 @@ export const CloudStorageProvider = ({ db, firebase }) => {
                     excerpt: null
                 })
 
-                console.log(emptyPaper)
+                // console.log(emptyPaper)
 
                 db.collection('sessions')
                     .doc(emptyPaper.slug)
@@ -69,25 +69,25 @@ export const CloudStorageProvider = ({ db, firebase }) => {
                     ? `Yay! File ${fileName} uploaded successfully!`
                     : `Fail! ${fileName} could not be uploaded!`)
 
-                console.log(`Downloading ${fileName}`)
+                // console.log(`Downloading ${fileName}`)
                 download(fileName)
             })
             .catch((error) => {
-                console.log(error.message)
+                // console.log(error.message)
                 alert('There was a problem uploading this file.')
             })
     }
 
     /** Download a file locally */
     const download = (fileName) => {
-        console.log('In download()')
+        // console.log('In download()')
         // Create a reference under which you want to list
         var fileRef = storageRef
             .child('tmp')
             .child('html')
             .child(fileName)
 
-        console.log('ref: ', fileRef)
+        // console.log('ref: ', fileRef)
 
         // // Find all the prefixes and items.
         // listRef.listAll().then(function (res) {
@@ -109,7 +109,7 @@ export const CloudStorageProvider = ({ db, firebase }) => {
 
     /** Mark a file for checkout */
     const checkout = (fileName) => {
-        console.log(`Checking out ${fileName}`)
+        // console.log(`Checking out ${fileName}`)
     }
 
     return (
