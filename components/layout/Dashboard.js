@@ -15,7 +15,7 @@ const Layout = ({children}) => {
                 <Flex id="header" minH={70} h={70} bg="white" boxShadow="sm">
                     <Header />
                 </Flex>
-                <Box id="content" flexGrow={1} w="100%" p={4} overflowY="scroll" pt={16}>
+                <Box id="content" flexGrow={1} w="100%" overflow="hidden">
                     {children}
                 </Box>
             </Flex>
