@@ -42,11 +42,15 @@ const Header = ({ children }) => {
                         mr={4}
                         style={hideMe(!isDev())}
                     /></Tooltip>
-                {/* <Tooltip label="Enable dark mode" placement="bottom-start"
-                    style={hideMe(isDev())}
+                <Tooltip
+                    label="Enable dark mode"
+                    placement="bottom-start"
                 >
-                    <Box h={5} ml={4} ><Switch isDisabled color="primary" /></Box>
-                </Tooltip> */}
+                    <Switch
+                        style={hideMe(!isDev())}
+                        isDisabled={!isDev()}
+                        color="primary" />
+                </Tooltip>
                 <Icon
                     name="logout"
                     onClick={async () => {
