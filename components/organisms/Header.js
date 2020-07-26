@@ -51,13 +51,13 @@ const Header = ({ children }) => {
                         isDisabled={!isDev()}
                         color="primary" />
                 </Tooltip>
-                <Icon
+                {/* <Icon
                     name="logout"
                     onClick={async () => {
                         notify('Logging you out...', 'info')
                         await signout()
                         router.push(ROUTES.LANDING)
-                    }}></Icon>
+                    }}></Icon> */}
             </Stack>
         </Stack >
     )
