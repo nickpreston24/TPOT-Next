@@ -9,16 +9,18 @@ const MyEditor = dynamic(() => import('../../packages/tpot-scribe-editor/MyEdito
   })
 
 type PaperEditorTemplateProps = {
-
+    editorProps?: Partial<any>
 }
 
 const Template: FC<PaperEditorTemplateProps> = ({
- 
+    editorProps = {}
 }) => {
+
+    const { currentDoc = null } = editorProps
 
     return (
         <Layout>
-            <MyEditor />
+            <MyEditor doc={currentDoc} />
         </Layout>
     )
 }
