@@ -1,14 +1,14 @@
 import React from 'react'
 import { ProvideSessions } from '@hooks'
-import { CheckoutTable, Dashboard } from '@components'
+import { CheckoutTable, Layout } from '@components'
 
 const Checkout = () => {
   return (
-    <Dashboard title="TPOT Scribe - Checkout">
+    <Layout title="TPOT Scribe - Checkout">
       <ProvideSessions>
         <CheckoutTable />
       </ProvideSessions>
-    </Dashboard>
+    </Layout>
   )
 }
 

@@ -3,7 +3,7 @@ import { Box, Flex, Button, Grid, Stack } from '@chakra-ui/core'
 import Header from '@organisms/Header'
 import Navbar from '@organisms/Navbar'
 
-const Layout = ({children}) => {
+export const Layout = ({ children }) => {
 
     return (
         <Flex id="frame" position="absolute" height="100%" width="100%" bg="gray.100">

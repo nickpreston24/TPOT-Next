@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
-import Dashboard from '@components/Dashboard'
+import Layout from '@components/Dashboard'
 import { MyEditor } from 'tpot-scribe-editor'
 import { Box } from '@chakra-ui/core'
 
 const NewEdit = () => (
 
   <Box>
-    <Dashboard
+    <Layout
       title={`TPOT Scribe - New`}
     >
       <MyEditor />
-    </Dashboard>
+    </Layout>
   </Box>
 )
 

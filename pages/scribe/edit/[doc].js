@@ -1,11 +1,9 @@
 import React from 'react'
-import Dashboard from '@components/Dashboard'
-import PropTypes from 'prop-types'
+import { Layout } from '@components'
 import { MyEditor } from 'tpot-scribe-editor'
 import { Stack, Box, Spinner } from '@chakra-ui/core'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
-import { isDev } from 'helpers'
 
 const authorId = 9;
 const queryLimit = 10;
@@ -21,33 +19,32 @@ const Page = observer(props => {
 
   return (
     <Box>
-      <Dashboard
+      <Layout
         title={`TPOT Scribe - Edit - ${id}`}
       >
         {isLoading
           ? <Spinner />
           : <MyEditor doc={currentDoc} />
         }
-      </Dashboard>
+      </Layout>
     </Box>
   )
 })
 
-{/* <Box height='100%' bg="tomato" p={2}>
-            </Box> */}
 
-Page.propTypes = {
-  id: PropTypes.string.isRequired,
-}
+// Page.propTypes = {
+//   id: PropTypes.string.isRequired,
+// }
 
 // // Only the ID is needed here, but you could imagine all the goodies that could be done:
 // // https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
-Page.getInitialProps = async context => {
-  // console.log('context :>> ', !!context);
-  const id = context.query.doc
-  // console.log('id ([doc]) :>> ', id);
-  return { id }
-}
+
+// Page.getInitialProps = async context => {
+//   // console.log('context :>> ', !!context);
+//   const id = context.query.doc
+//   // console.log('id ([doc]) :>> ', id);
+//   return { id }
+// }
 
 export default Page
 

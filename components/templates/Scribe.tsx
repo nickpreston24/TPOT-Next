@@ -3,7 +3,6 @@ import { Button, Flex, Heading, Stack, Text, ButtonProps } from '@chakra-ui/core
 import Layout from '../layout/Dashboard'
 import SplashScreen from '../svg/SittingAtComputer'
 
-
 type ScribeTemplateProps = {
     title?: string,
     subtitle?: string,

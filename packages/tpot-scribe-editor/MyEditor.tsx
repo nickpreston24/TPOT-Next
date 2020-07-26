@@ -1,6 +1,7 @@
 import React, { createRef } from "react";
 import { WordPressToolbar } from '../../components'
 import { Spinner, Box } from "@chakra-ui/core";
+import { isDev } from "../../helpers";
 
 
 const config = {
@@ -89,7 +90,7 @@ export class MyEditor extends React.Component<any, any> {
     }
 
     attachInspector = editor => {
-        // this.CKEditorInspector.attach(editor, { isCollapsed: true })
+        this.CKEditorInspector.attach(editor, { isCollapsed: true })
     }
 
     componentDidMount() {
@@ -106,25 +107,14 @@ export class MyEditor extends React.Component<any, any> {
         }
     }
 
-    // render() {
-
-    //     return <Box
-    //         height="100%"
-    //         border="3px solid purple"
-    //         backgroundColor="tomato">Test</Box>
-    // }
-
-
     /* WORKING, DO NOT DELETE */
     render() {
-        // console.log('this.ckeditorRef :>> ', this.ckeditorRef);
+
         return this.CKEditor ? (
             <Box
                 height="100%"
                 overflowY="auto"
                 className="App"
-            // border="3px solid purple"
-            // backgroundColor="tomato"
             >
                 <WordPressToolbar {...{ getHtml: this.getHtml }} />
                 <this.CKEditor
@@ -135,7 +125,7 @@ export class MyEditor extends React.Component<any, any> {
                         // You can store the "editor" and use when it is needed.
                         // !!editor && console.log("Editor is ready to use!");
                         if (editor) {
-                            this.attachInspector(editor)
+                            // isDev() && this.attachInspector(editor)
                             editor.ui.getEditableElement().parentElement.insertBefore(
                                 editor.ui.view.toolbar.element,
                                 editor.ui.getEditableElement()

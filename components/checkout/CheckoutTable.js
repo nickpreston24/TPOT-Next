@@ -226,6 +226,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                                 <Button
                                     onClick={() => checkout()}
                                     leftIcon="edit"
+                                    isDisabled={status === 'checked-out'}
                                     variantColor="primary"
                                 >
                                     Start Editing

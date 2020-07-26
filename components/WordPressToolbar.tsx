@@ -211,13 +211,14 @@ export const WordPressToolbar = (props) => {
                     Publish
                 </Button>
 
-                {uploadOption === 'Drive' &&
+                {(uploadOption === 'Drive' && isDev()) &&
                     <UploadButton>Load a Document</UploadButton>}
 
                 <Button
+                    ml={8}
                     onClick={onSave}
                     isLoading={!sessionSaved}
-                // leftIcon="save"  // For some reason, I can't get this working.
+                // leftIcon="save"  // FIXME: For some reason, I can't get this working.
                 >
                     Save
                 </Button>
@@ -254,7 +255,7 @@ export const WordPressToolbar = (props) => {
                                 value={paper.categories}
                                 onChange={(event) => {
                                     let cats = event.target.value.split(',');
-                                    // console.log('cats', cats)
+                                    isDev() && console.log('cats', cats)
 
                                     // let updated = paper
                                 }}

@@ -37,8 +37,8 @@ const actionItems = [
     {
         icon: 'download',
         title: 'Checkout',
-        style: disableMe(!isDev()),
-        onClick: () => { }
+        // style: disableMe(!isDev()),
+        onClick: () => { Router.push(ROUTES.CHECKOUT) }
     },
     {
         icon: 'search',
