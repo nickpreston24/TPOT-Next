@@ -100,9 +100,10 @@ export class MyEditor extends React.Component<any, any> {
         this.setState({ loading: false });
 
         if (!!this.props.doc) {
-            let data = this.props.doc.data;
+            let { props: { doc: { data = {} } } } = this
+            let { code = '' } = data
 
-            this.setState({ contents: data.code })
+            this.setState({ contents: code })
         }
     }
 

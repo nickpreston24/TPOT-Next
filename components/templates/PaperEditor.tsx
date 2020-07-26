@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 
 
 const MyEditor = dynamic(() => import('../../packages/tpot-scribe-editor/MyEditor'), {
-    loading: PageSpinner
+    ssr: false, loading: PageSpinner
   })
 
 type PaperEditorTemplateProps = {
