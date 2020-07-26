@@ -142,10 +142,10 @@ function createForm(document, store, data) {
         },
         onSuccess(form) {
             let values = form.values()
-            console.log(values)
+            // console.log(values)
         },
         onError(form) {
-            console.log('All form errors', form.errors())
+            // console.log('All form errors', form.errors())
         }
     }
 

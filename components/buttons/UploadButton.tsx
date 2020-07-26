@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { uploadLocalFile } from '../Editor/functions/uploader';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { Button } from '@chakra-ui/core';
-import { notify } from 'components/experimental/Toasts';
+import { notify } from 'components/Toasts';
 import { useAuth } from 'hooks/useAuth';
 import { useRouter } from 'next/router';
 import * as ROUTES from '../../constants/routes'
@@ -41,7 +41,12 @@ const UploadButton: FC<Props> = ({ afterUpload }) => {
                     let { document } = (await uploadLocalFile(file, email))
                     console.info(`Uploaded by user ${email}`);
                     notify('Document uploaded successfully!', 'info');
-                    router.push(ROUTES.DOC(document.id))
+
+                    if (!document?.id)
+                        return
+
+                    const PATH = ROUTES.EDIT
+                    router.push(`${PATH}/[doc]`, `${PATH}/${document.id}`)
                 }} />
             <label htmlFor="upload-button-input" style={{ margin: 12 }}>
                 <CloudUploadIcon />

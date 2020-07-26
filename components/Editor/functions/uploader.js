@@ -10,8 +10,8 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     // const storageRef = await firebase.storage().ref()
     const storageRef = storage.ref();
-    console.log('storageRef :>> ', !!storageRef);
-    console.log('file name', file.name)
+    // console.log('storageRef :>> ', !!storageRef);
+    // console.log('file name', file.name)
 
     // const getDocumentMetadata = (storageRef, filepath) => {
     //     return storageRef.child(filepath).getMetadata()
@@ -78,7 +78,7 @@ export const uploadLocalFile = async (file, userName = null) => {
         excerpt: ''
     })
 
-    console.log('document :>> ', document);
+    // console.log('document :>> ', document);
     if (!document) {
         console.warn(`Session failed to create entry: ${document}`)
     } else {

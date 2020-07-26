@@ -15,13 +15,12 @@ import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
 import { sessions, unlockSession } from '../../stores/SessionStore'
 import { toDto, Session } from '../../models'
-import { notify } from 'components/experimental/Toasts'
+import { notify } from 'components/Toasts'
 import { isDev } from '../../helpers'
 import { useAuth } from 'hooks'
 import { ROUTES } from 'constants/routes'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
-
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -55,14 +54,14 @@ const queryLimit = 10;
 export const CheckoutTable = observer(() => {
 
     const router = useRouter();
-    console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
+    // console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
 
     const { user } = useAuth();
     // console.log('user :>> ', user);
     // const email = user.email || null;    
 
     const { isLoading, hasDocs } = sessions;
-    console.log('isDev()', isDev())
+    // console.log('isDev()', isDev())
     let tableData = []
 
     if (hasDocs) {
@@ -165,8 +164,8 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     const { id } = row;
     let session = toDto(row, Session);
 
-    console.log('session :>> ', session);
-    
+    // console.log('session :>> ', session);
+
     let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
     const [isOpen, setIsOpen] = useState(false)
 
@@ -175,7 +174,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     const router = useRouter()
 
     // console.log('status :>> ', status);
-    console.log('lastContributor :>> ', lastContributor);
+    // console.log('lastContributor :>> ', lastContributor);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsOpen(true), 0)
@@ -227,13 +226,14 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                             >
                                 Unlock
                                 </ConfirmUnlock>
-                            <Tooltip label="Unlock a paper for editing" placement="bottom" aria-label="unlock-paper"
+                            <Tooltip
+                                label="Unlock a paper for editing"
+                                placement="bottom"
+                                aria-label="unlock-paper"
                             >
                                 <Button
                                     onClick={onUnlockModalOpen}
-                                    isDisabled={status !== 'checked-out'
-                                        && lastContributor !== user.email
-                                    }
+                                    isDisabled={status !== 'checked-out'}
                                     leftIcon="unlock"
                                 >
                                     Unlock
@@ -252,7 +252,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                     </Stack>
                 </Flex>
             </Flex>
-        </Collapse>
+        </Collapse >
     )
 }
 

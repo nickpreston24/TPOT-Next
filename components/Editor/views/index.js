@@ -44,7 +44,7 @@ export const EditorViewFC = ({
         //     )
 
         // const { mode, code, draftRef, original, blocks } = this;
-        console.log('render (EditorView)')
+        // console.log('render (EditorView)')
         return <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{
             boxSizing: 'border-box',
             overflowY: 'hidden'
@@ -133,7 +133,7 @@ export class EditorView extends React.Component {
 
         const { mode, code, draftRef, original, blocks } = this
         const { saveFn, children } = this.props
-        console.log('render (EditorView)')
+        // console.log('render (EditorView)')
         return (
             <Box display="flex" flexGrow={1} height="100%" flexDirection="column" alignItems="center" flexWrap="nowrap" bgcolor="background.paper" style={{ boxSizing: 'border-box', overflowY: 'hidden' }} >
                 <Box display={mode === 'draft' ? 'flex' : 'block'} width="100%" justifyContent="center" style={{ overflowX: 'hidden', overflowY: mode !== 'draft' ? 'scroll' : 'hidden' }}>

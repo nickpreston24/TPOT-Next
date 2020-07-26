@@ -1,6 +1,7 @@
 import React, { useEffect, createContext, useContext, useState } from 'react'
 import { wpapi } from '../services/wordpress';
 import { Paper, toDto, createInstance } from '../models'
+import { isDev } from 'helpers';
 
 // class WordPressNotInitializedException extends ExtendableError { message = 'Wordpress has not been initialized!' }
 // class PaperNotFoundException extends ExtendableError { message = 'Could not find the Paper you\'re looking for...' }
@@ -55,7 +56,7 @@ function useWordpressProvider() {
             .author(author)
             .id(id) : null;
 
-        console.log('currentPaper', existingPaper)
+        isDev() && console.log('currentPaper', existingPaper)
 
         if (!!existingPaper) {
             wpapi.pages()
@@ -67,7 +68,7 @@ function useWordpressProvider() {
                     let updatedPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
 
-                    console.log('updatedPaper :>> ', updatedPaper);
+                    // console.log('updatedPaper :>> ', updatedPaper);
                     setCurrentPaper(updatedPaper);
 
                 })
@@ -83,7 +84,7 @@ function useWordpressProvider() {
                     // , 'paper as dto :>>', toDto(createdPaper, Paper));
                     let createdPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
-                    console.log('createdPaper :>> ', createdPaper);
+                    // console.log('createdPaper :>> ', createdPaper);
                     setCurrentPaper(createdPaper)
                 })
                 .catch(console.error)

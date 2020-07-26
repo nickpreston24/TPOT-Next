@@ -4,6 +4,7 @@ import { Session, toDto } from 'models'
 import { observable, toJS } from 'mobx';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { IDocumentOptions } from 'firestorter/lib/Types';
+import { isDev } from 'helpers';
 
 const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;
@@ -35,7 +36,7 @@ export const checkoutSession = async (id: string) => {
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let session = toJS(document.data as Session);
-    console.log('session :>> ', session);
+    isDev() && console.log('session :>> ', session);
 
     if (session.status !== 'checked-out')
         session.status = 'checked-out'
@@ -59,7 +60,7 @@ export const updateSession = async (id: string, session: any | Session): Promise
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let currentSession = toJS(document.data);
-    console.log('oldSession :>> ', currentSession);
+    // console.log('oldSession :>> ', currentSession);
 
     Object.assign(currentSession, session)
 
@@ -68,12 +69,12 @@ export const updateSession = async (id: string, session: any | Session): Promise
     switch (currentStatus) {
         case 'in-progress':
             await document.update(currentSession);
-            console.log('updated session :>> ', currentSession);
+            // console.log('updated session :>> ', currentSession);
             break;
         case 'not-started':
         default:
             await document.update(currentSession);
-            console.log('created session :>> ', currentSession);
+            // console.log('created session :>> ', currentSession);
             break;
     }
 
@@ -88,7 +89,7 @@ export const getAuthorSessions = async (author: number) => {
     sessions.query = (ref) => {
 
         // const author = authorId.get();
-        console.log('current author :>> ', author);
+        // console.log('current author :>> ', author);
 
         return author ?
             ref.where('author', '==', author).limit(queryLimit)

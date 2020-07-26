@@ -44,7 +44,7 @@ export const storage = firebase.storage();
 export {
     firebase
 }
-    
+
 
 // export const firebase = app;
 
@@ -225,7 +225,7 @@ export {
 
 export const unlock = async id => {
     // return new Promise(async (resolve, reject) => {
-    console.log(`Unlock Document by ID: ${id}`)
+    // console.log(`Unlock Document by ID: ${id}`)
     let requestedDocument = new Document(`sessions/${id}`)
     await requestedDocument.fetch()
     return requestedDocument.update({

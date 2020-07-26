@@ -1,3 +1,5 @@
+import { isDev } from "helpers"
+
 const patterns = {
     'prefix': /(?<Scripture>[a-zA-Z]+\s+\d{1,3}:?\d{1,2}-?\d{1,2}\s+[A-Z]+\r*\n)(?<Text>.*?)(?:\r*\n){2}/gsm,
     'postfix': /^(?<Text>.*?)(?<Scripture>\(\w+\s+\d{1,3}:?\d{1,2}-?\d{1,2}\s+[A-Z]{2,4}\)\.?)/gm
@@ -44,10 +46,10 @@ class ScriptureParser {
         }
 
         // console.log('scripture :>> ', scripture)
-        console.log('text :>> ', text)
+        isDev() && console.log('text :>> ', text)
 
-        console.log(`prefixed :>> ${prefixed.length}`, prefixed)
-        console.log(`postfixed :>> ${postfixed.length}`, postfixed)
+        isDev() && console.log(`prefixed :>> ${prefixed.length}`, prefixed)
+        isDev() && console.log(`postfixed :>> ${postfixed.length}`, postfixed)
 
         // let result = flatten([prefixed, postfixed])
         //     // .flat()

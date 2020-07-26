@@ -4,7 +4,7 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import React, { useState, useContext } from 'react'
-import {  observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 
 // import GoogleDrive from "@../media/hdd.png";
 // import HardDrive from "@../media/hdd.png";
@@ -56,7 +56,7 @@ const styles = theme => ({
 
 const UploadDialog = observer(({ classes, store, loaders = [] }) => {
 
-    console.log('store', store, 'loaders', loaders)
+    // console.log('store', store, 'loaders', loaders)
 
     return (
         <Dialog
@@ -105,7 +105,7 @@ class Store {
 
     constructor({ lettersStore }) {
 
-        console.log('CloudStorage', CloudStorage)
+        // console.log('CloudStorage', CloudStorage)
 
         // this.cloud = useContext(CloudStorage);
         // this.lettersStore = lettersStore

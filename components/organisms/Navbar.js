@@ -2,11 +2,15 @@ import React from 'react'
 import { Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Divider } from '@chakra-ui/core'
 import { Router } from 'next/router'
 import * as ROUTES from '@routes'
+import { disableMe } from '../utils/disableMe'
+import { isDev } from 'helpers'
+
 
 const appItems = [
     {
         icon: 'calendar',
         title: 'Dashboard',
+        style: disableMe(!isDev()),
         onClick: () => { }
     },
     {
@@ -21,21 +25,25 @@ const actionItems = [
     {
         icon: 'add',
         title: 'New',
+        style: disableMe(!isDev()),
         onClick: () => { }
     },
     {
         icon: 'edit',
         title: 'Editor',
+        style: disableMe(!isDev()),
         onClick: () => { }
     },
     {
         icon: 'download',
         title: 'Checkout',
+        style: disableMe(!isDev()),
         onClick: () => { }
     },
     {
         icon: 'search',
         title: 'Preview',
+        style: disableMe(!isDev()),
         onClick: () => { }
     }
 ]
@@ -91,7 +99,7 @@ const Navbar = ({ children }) => {
                     leftIcon="settings"
                     w="100%"
                     fontWeight={300}
-                    disabled
+                    style={disableMe(!isDev())}
                     onClick={() => alert('settings')}>Settings</Button>
             </Flex>
         </Stack>

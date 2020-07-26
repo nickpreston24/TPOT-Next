@@ -46,7 +46,7 @@ export const RichEditor = ({
 
 ) => {
 
-  if (!document) {    
+  if (!document) {
     return UnderConstruction(new ArgumentNullReferenceError('document').message)
   }
 
@@ -59,7 +59,7 @@ export const RichEditor = ({
   // console.log('Current document: ', document)
 
   if (!draftState) {
-    console.log('draftState: ', draftState, 'editorRef:', editorRef)
+    // console.log('draftState: ', draftState, 'editorRef:', editorRef)
     return UnderConstruction('Draft state wasn\'t ready')
   }
 
