@@ -1,17 +1,12 @@
-import React, { Component } from 'react'
-import Dashboard from '@components/Dashboard'
-import { MyEditor } from 'tpot-scribe-editor'
-import { Box } from '@chakra-ui/core'
+import React, { useEffect, useState } from 'react'
+import Template from '@templates/PaperEditor'
 
-const NewEdit = () => (
 
-  <Box>
-    <Dashboard
-      title={`TPOT Scribe - New`}
-    >
-      <MyEditor />
-    </Dashboard>
-  </Box>
-)
+const Page = props => {
 
-export default NewEdit
+  return (
+    <Template />
+  )
+}
+
+export default Page
