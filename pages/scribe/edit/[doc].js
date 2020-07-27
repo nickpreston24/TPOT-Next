@@ -1,34 +1,44 @@
 import React, { useEffect, useState } from 'react'
 import { Document } from 'firestorter'
 import { useRouter } from 'next/router'
+import { sessions } from '@stores'
 import Template from '@templates/PaperEditor'
 
 
+// !! BUG - This hook is not working when you checkout a paper, then
+// !! navigate to checkout, and then check out the same paper again.
+
 // Returns a static Document instance that has guarenteed data
-export const useDocument = (collection, id) => {
+// export const useDocument = (collection, id) => {
 
-  const [doc, set] = useState({})
-  const { hasData = false, isLoading = true } = doc
+//   const [doc, set] = useState({})
+//   const { hasData = false, isLoading = true } = doc
 
-  useEffect(() => {
-    const fbDoc = new Document(`${collection}/${id}`, { mode: 'off' })
-    const fetchDoc = async () => {
-      const fetchedDoc = await fbDoc.fetch()
-      set(fetchedDoc)
-    }
-    !!id && fetchDoc()
-  }, [id])
+//   useEffect(() => {
+//     const fbDoc = new Document(`${collection}/${id}`, { mode: 'off' })
+//     const fetchDoc = async () => {
+//       const fetchedDoc = await fbDoc.fetch()
+//       set(fetchedDoc)
+//     }
+//     !!id && fetchDoc()
+//   }, [id])
 
-  return [doc, isLoading, hasData]
-}
+//   return [doc, isLoading, hasData]
+// }
 
 
 const Page = props => {
-
+  
   const router = useRouter()
   const { query: { doc } } = router
+  
+  // const [currentDoc, isLoading, hasData] = useDocument('sessions', doc)
+  // TODO Added back in session.filter, because the above hook isn't working quite right
 
-  const [currentDoc, isLoading, hasData] = useDocument('sessions', doc)
+  const { docs, isLoading } = sessions;
+
+  // This might load all sessions, however, getting the new Document by id caused issues for me.
+  let currentDoc = docs.filter(s => s.id === doc)[0]
 
   return (
     <Template 
