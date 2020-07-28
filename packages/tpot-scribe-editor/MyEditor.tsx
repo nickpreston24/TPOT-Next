@@ -1,69 +1,7 @@
 import React, { createRef } from "react";
 import { WordPressToolbar } from '../../components'
-import { Spinner, Box } from "@chakra-ui/core";
+import { Spinner, Box, Flex, Button } from "@chakra-ui/core";
 
-
-const config = {
-    toolbar: {
-        items: [
-            'restrictedEditingException',
-            'exportPdf',
-            'code',
-            'heading',
-            '|',
-            'fontSize',
-            'fontFamily',
-            'fontColor',
-            'fontBackgroundColor',
-            'removeFormat',
-            '|',
-            'bold',
-            'italic',
-            'underline',
-            'strikethrough',
-            'subscript',
-            'superscript',
-            'highlight',
-            '|',
-            'alignment',
-            '|',
-            'numberedList',
-            'bulletedList',
-            '|',
-            'indent',
-            'outdent',
-            '|',
-            'todoList',
-            'link',
-            'specialCharacters',
-            'blockQuote',
-            'imageUpload',
-            '|',
-            'codeBlock',
-            'horizontalLine',
-            'pageBreak',
-            '|',
-            'insertTable',
-            'mediaEmbed',
-            '|',
-            'undo',
-            'redo'
-        ],
-    },
-    language: 'en',
-    // plugins: [Font],
-    image: {
-        toolbar: ['imageTextAlternative', 'imageStyle:full', 'imageStyle:side'],
-    },
-    table: {
-        contentToolbar: [
-            'tableColumn',
-            'tableRow',
-            'mergeTableCells'
-        ],
-    },
-    licenseKey: '',
-}
 
 export class MyEditor extends React.Component<any, any> {
     state = { loading: true, contents: '' };
@@ -80,7 +18,6 @@ export class MyEditor extends React.Component<any, any> {
 
     getHtml = () => {
         const html = this.ckeditorRef.current.editor.getData()
-        // console.log('html :>> ', html);
         return html;
     }
 
@@ -89,110 +26,73 @@ export class MyEditor extends React.Component<any, any> {
     }
 
     attachInspector = editor => {
+        // TODO : Check if we are in DEV mode
         // this.CKEditorInspector.attach(editor, { isCollapsed: true })
     }
 
     componentDidMount() {
         this.CKEditor = require("@ckeditor/ckeditor5-react");
-        // this.ClassicEditor = require("@ckeditor/ckeditor5-build-classic");
         this.CKEditorInspector = require('@ckeditor/ckeditor5-inspector');
         this.DecoupledEditor = require('@ckeditor/ckeditor5-build-decoupled-document')
         this.setState({ loading: false });
 
         if (!!this.props.doc) {
-            let data = this.props.doc.data;
+            let { props: { doc: { data = {} } } } = this
+            let { code = '' } = data
 
-            this.setState({ contents: data.code })
+            this.setState({ contents: code })
         }
     }
 
-    // render() {
-
-    //     return <Box
-    //         height="100%"
-    //         border="3px solid purple"
-    //         backgroundColor="tomato">Test</Box>
-    // }
-
-
-    /* WORKING, DO NOT DELETE */
     render() {
-        // console.log('this.ckeditorRef :>> ', this.ckeditorRef);
         return this.CKEditor ? (
-            <Box
+            <Flex
                 height="100%"
-                overflowY="auto"
-                className="App"
-            // border="3px solid purple"
-            // backgroundColor="tomato"
+                overflow="hidden"
+                flexDirection="column"
+                alignItems="center"
             >
-                <WordPressToolbar {...{ getHtml: this.getHtml }} />
-                <this.CKEditor
-                    ref={this.ckeditorRef}
-                    editor={this.DecoupledEditor}
-                    data={"<p>Hello from CKEditor 5!</p>"}
-                    onInit={editor => {
-                        // You can store the "editor" and use when it is needed.
-                        // !!editor && console.log("Editor is ready to use!");
-                        if (editor) {
-                            this.attachInspector(editor)
-                            editor.ui.getEditableElement().parentElement.insertBefore(
-                                editor.ui.view.toolbar.element,
-                                editor.ui.getEditableElement()
-                            )
-                        }
+                <Box id="sticky-toolbar" h={80} w="100%" maxW={960} mt={1} mr={4} >
+                    <WordPressToolbar {...{ getHtml: this.getHtml }} />
+                    {/* CK's Toolbar is appended here by this.CkEditor.onInit() */}
+                </Box>
+                <Flex id="scroll-area" h={70} w="100%" flexGrow={1} overflowY="scroll" overflowX="hidden" justifyContent="center">
+                    <Box id="editor frame" w="100%" maxW={960} >
 
-                        this.setHtml(this.state.contents)
-                    }}
-                    onChange={(event, editor) => {
-                        const data = editor.getData();
-                        // console.log({ event, editor, data });
-                    }}
-                // config={{
-                //     fullPage: false,
-                //     resize_enabled: false,
-                //     // removePlugins: 'resize,autogrow'
-                // }}
-                />
-            </Box>
+                        <this.CKEditor
+                            ref={this.ckeditorRef}
+                            editor={this.DecoupledEditor}
+                            data={"<p>Hello from CKEditor 5!</p>"}
+                            onInit={editor => {
+
+                                if (editor) {
+                                    // Get the toolbar DOM element from CK
+                                    const toolbarElement = editor.ui.view.toolbar.element
+
+                                    // Get MyEditor's top Toolbar sticky toolbar DOM element
+                                    const toolbarContainer = document.querySelector("#sticky-toolbar")
+
+                                    // Add CK's toolbar as the last child of the sticky toolbar
+                                    toolbarContainer.appendChild(toolbarElement)
+
+                                    // Resolve whether the Inspector should be attached
+                                    this.attachInspector(editor)
+                                }
+
+                                // Always set the HTML content on init
+                                this.setHtml(this.state.contents)
+
+                            }}
+                        />
+
+                    </Box>
+                </Flex>
+            </Flex>
         ) : (
                 <Spinner />
             );
     }
 }
-
-
-/** Working [window] fix.  DO NOT DELETE! */
-
-// export class MyEditor extends React.Component {
-//     state = { loading: true };
-
-//     componentDidMount() {
-//         this.CKEditor = require("@ckeditor/ckeditor5-react");
-//         this.ClassicEditor = require("@ckeditor/ckeditor5-build-classic");
-//         this.setState({ loading: false });
-//         console.log('this.CKEditor :>> ', !!this.CKEditor, !!this.ClassicEditor);
-//     }
-
-//     render() {
-//         return this.CKEditor ? (
-//             <this.CKEditor
-//                 editor={this.ClassicEditor}
-//                 data="<p>Hello from CKEditor 5!</p>"
-//                 onInit={editor => {
-//                     // You can store the "editor" and use when it is needed.
-//                     console.log("Editor is ready to use!", editor);
-//                 }}
-//                 onChange={(event, editor) => {
-//                     const data = editor.getData();
-//                     console.log({ event, editor, data });
-//                 }}
-//             />
-//         ) : (
-//                 <div>Editor loading</div>
-//             );
-//     }
-// }
 
 
 export default MyEditor;

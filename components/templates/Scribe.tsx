@@ -30,7 +30,7 @@ const Template: FC<ScribeTemplateProps> = ({
 
     return (
         <Layout>
-            <Stack align="center" spacing={8}>
+            <Stack align="center" spacing={8} paddingTop={16}>
                 <Heading fontWeight={300}>{title}</Heading>
                 <Flex w={400} h={400} justifyContent="center" alignItems="center">
                     <SplashScreen />
