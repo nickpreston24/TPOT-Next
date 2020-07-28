@@ -1,17 +1,26 @@
+<<<<<<< HEAD
 import React from 'react'
 import { Layout } from '@components'
 import { MyEditor } from 'tpot-scribe-editor'
 import { Stack, Box, Spinner } from '@chakra-ui/core'
 import { sessions } from '@stores'
 import { observer } from 'mobx-react'
+=======
+import React, { useEffect, useState } from 'react'
+import { Document } from 'firestorter'
+import { useRouter } from 'next/router'
+import { sessions } from '@stores'
+import Template from '@templates/PaperEditor'
+>>>>>>> ec08a0962c726c070e9f59b39dd167f7b13f8d4b
 
-const authorId = 9;
-const queryLimit = 10;
 
-const Page = observer(props => {
+// !! BUG - This hook is not working when you checkout a paper, then
+// !! navigate to checkout, and then check out the same paper again.
 
-  const { id } = props
+// Returns a static Document instance that has guarenteed data
+// export const useDocument = (collection, id) => {
 
+<<<<<<< HEAD
   const { docs, isLoading } = sessions;
 
   // This might load all sessions, however, getting the new Document by id caused issues for me.
@@ -47,77 +56,44 @@ const Page = observer(props => {
 // }
 
 export default Page
+=======
+//   const [doc, set] = useState({})
+//   const { hasData = false, isLoading = true } = doc
+>>>>>>> ec08a0962c726c070e9f59b39dd167f7b13f8d4b
 
-// // : Document is the dynamic route page for Scribe's editable documents
-// // : It fetches data for the given paper based on the route and provides
-// // : the document data to its children, Details Panel & Editor through
-// // : the wrapper component Document Form (which has submittal methods)
+//   useEffect(() => {
+//     const fbDoc = new Document(`${collection}/${id}`, { mode: 'off' })
+//     const fetchDoc = async () => {
+//       const fetchedDoc = await fbDoc.fetch()
+//       set(fetchedDoc)
+//     }
+//     !!id && fetchDoc()
+//   }, [id])
 
-// const Page = props => {
-
-//   // ID comes from getInitialProps via NextJS's context provider
-//   const { id } = props
-
-//   // Document needs to be done this way so we don't loose the live-update subscribers ( for the checkout table, etc.)
-//   const [document, setDocument] = useState(new FireStorterDocument(`sessions/${id}`))
-
-//   // This is a MobX observable interally, so its reactive.
-//   const { isLoading } = document
-
-//   if (isLoading) {
-//     return (
-//       <>
-//         {isLoading ? (
-//           // Render the Dashboard with a Loader when Document is still fetching
-//           <Dashboard title={`TPOT Scribe - TIP - ${id}`}>
-//             <CircularProgress />
-//           </Dashboard>
-//         ) : (
-//             // Render the Dashboard with the Editor and Details when document is ready
-//             <DocumentForm {...{ document }}>
-//               <Dashboard
-//                 title={`TPOT Scribe - Edit - ${doc}`}
-//                 details={() => <DocumentDetails {...{ document }} />}
-//               >
-//                 <DocumentEditor {...{ document, id: doc }} />
-//                 {/* <RichEditor/> */}
-//               </Dashboard>
-//             </DocumentForm>
-//           )}
-//       </>
-//     )
-//   }
-
-//   return (
-//     <DocumentForm {...{ document }}>
-//       <Dashboard
-//         title={`TPOT Scribe - Edit - ${id}`}
-//         details={() => <DocumentDetails {...{ document }} />}
-//       >
-//         <DocumentEditor {...{ document, id }} />
-//         {/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//         All of the classes below can be pulled out on their own and they
-//         self-manage. If you pass down refs to them, you can control them. 😜 */}
-//         {/* <EditorView /> */}
-//         {/* <DraftView /> */}
-//         {/* <RichEditor document={document} /> */}
-//       </Dashboard>
-//     </DocumentForm>
-//   )
+//   return [doc, isLoading, hasData]
 // }
 
-// Page.propTypes = {
-//   id: PropTypes.string.isRequired,
-//   document: MobXPropTypes.objectOrObservableObject,
-// }
 
-// // Only the ID is needed here, but you could imagine all the goodies that could be done:
-// // https://nextjs.org/docs/api-reference/data-fetching/getInitialProps#context-object
-// Page.getInitialProps = async context => {
-//   const id = context.query.doc
-//   return { id }
-// }
+const Page = props => {
+  
+  const router = useRouter()
+  const { query: { doc } } = router
+  
+  // const [currentDoc, isLoading, hasData] = useDocument('sessions', doc)
+  // TODO Added back in session.filter, because the above hook isn't working quite right
 
-// export default compose(
-//   observer
-// )(Page)
+  const { docs, isLoading } = sessions;
+
+  // This might load all sessions, however, getting the new Document by id caused issues for me.
+  let currentDoc = docs.filter(s => s.id === doc)[0]
+
+  return (
+    <Template 
+      editorProps={{
+        currentDoc
+      }}
+    />
+  )
+}
+
+export default Page

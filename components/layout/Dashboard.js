@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, Flex, Button, Grid, Stack } from '@chakra-ui/core'
+import Box from '@chakra-ui/core/dist/Box'
+import Flex from '@chakra-ui/core/dist/Flex'
 import Header from '@organisms/Header'
 import Navbar from '@organisms/Navbar'
 
@@ -14,7 +15,7 @@ export const Layout = ({ children }) => {
                 <Flex id="header" minH={70} h={70} bg="white" boxShadow="sm">
                     <Header />
                 </Flex>
-                <Box id="content" flexGrow={1} w="100%" p={4} overflowY="scroll" pt={16}>
+                <Box id="content" flexGrow={1} w="100%" overflow="hidden">
                     {children}
                 </Box>
             </Flex>
