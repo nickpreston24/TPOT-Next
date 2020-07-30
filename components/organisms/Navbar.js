@@ -1,6 +1,6 @@
 import React from 'react'
 import { Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Divider } from '@chakra-ui/core'
-import { disableMe } from '../utils/disableMe'
+import { disableMe, hideMe } from '../utils/disableMe'
 import { isDev } from 'helpers'
 import Router, { useRouter } from 'next/router'
 import * as ROUTES from '@constants/routes'
@@ -39,8 +39,9 @@ const appItems = [
     {
         icon: 'calendar',
         title: 'Dashboard',
-        activeOn: ROUTES.LANDING,
-        disable: !isDev(), // Feature will come later, disable for now
+        activeOn: ROUTES.DASHBOARD,
+        // style: disableMe(!isDev()), // Feature will come later, disable for now
+        disable: isDev(),
         onClick: () => Router.push('/dashboard')
     },
     {
@@ -54,7 +55,7 @@ const appItems = [
         icon: 'settings',
         title: 'Open Settings',
         activeOn: ROUTES.SETTINGS,
-        disable: !isDev(), // Feature will come later, disable for now
+        style: disableMe(!isDev()),
         onClick: () => Router.push(ROUTES.SETTINGS)
     },
 ]
@@ -72,7 +73,7 @@ const actionItems = [
         icon: 'edit',
         title: 'Editor',
         activeOn: ROUTES.DOC2,
-        disable: !isDev(), // Feature will come later, disable for now
+        style: disableMe(!isDev()), // Feature will come later, disable for now
         onClick: () => alert('Back to current paper')
         // TODO function that returns to current document
     },
@@ -85,7 +86,7 @@ const actionItems = [
     {
         icon: 'search',
         title: 'Preview',
-        disable: !isDev(), // Feature may come later, disable for now
+        style: disableMe(!isDev()), // Feature will come later, disable for now
         onClick: () => Router.push('/scribe/preview/[id]')
         // TODO function that routes to a letter previewed in a TPOT mockup
     }
