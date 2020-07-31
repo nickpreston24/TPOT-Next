@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { uploadLocalFile } from '../Editor/functions/uploader';
+import { uploadLocalFile } from '../../functions/upload';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { Button } from '@chakra-ui/core';
 import { notify } from 'components/Toasts';
