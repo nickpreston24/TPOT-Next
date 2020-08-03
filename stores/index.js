@@ -5,3 +5,5 @@ export {
     , updateSession
     , getAuthorSessions
 } from './SessionStore'
+
+export { scribeStore } from './ScribeStore'

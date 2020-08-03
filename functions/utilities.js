@@ -34,7 +34,7 @@ export const baseStyleMap = {
     'HIGHLIGHT': {
         background: 'yellow'
     },
-    'CUSTOM_COLOR_#0080FF': {color: '#0080FF'}
+    'CUSTOM_COLOR_#0080FF': { color: '#0080FF' }
     // 'INDENT': {
     //     marginLeft: "30px"
     // },
@@ -173,7 +173,7 @@ const {
 // make ContentState from HTML String
 const draftContentFromHtml = (html, stateFromElementConfig) => {
     let contentState = stateFromElement(createNode(`<div>${html}</div>`), stateFromElementConfig)
-    let { newContentState, newBaseStyleMap} = flattenInlineStyleRanges(contentState, baseStyleMap)
+    let { newContentState, newBaseStyleMap } = flattenInlineStyleRanges(contentState, baseStyleMap)
     return { newContentState, newBaseStyleMap }
 }
 
@@ -351,7 +351,7 @@ const stateFromElementConfig = {
                 'IMAGE',
                 { src: element.src },
                 'MUTABLE')
-        }else { // Are we a compound inline style?
+        } else { // Are we a compound inline style?
             // Final Inline Style
             styleName = prefix + styleName
             baseStyleMap[styleName] = styleData
@@ -939,7 +939,7 @@ export const saveSession = (original, edited, code, baseStyleMap, notify) => {
         baseStyleMap: !!baseStyleMap ? baseStyleMap : {}
     }
     let fileContents = JSON.stringify(contents)
-    notify('Letter Saved to Disk', { variant: 'success', })
+    // notify('Letter Saved to Disk', { variant: 'success', })
     // : TODO
     // const fileName = path.join(app.getPath('userData'),'Local Storage', 'session.json')
     // console.log(fileName)
@@ -966,15 +966,15 @@ const rgb2hex = (rgb) => {
         ('0' + parseInt(rgb[3], 10).toString(16)).slice(-2) : ''
 }
 
-export { 
-    styles, 
-    exporter, 
-    customStyleFn, 
-    baseBlockStyleFn, 
-    blockRenderMap, 
-    blockRenderer, 
-    stateFromElementConfig, 
-    draftContentFromHtml, 
-    draftContentToHtml, 
-    flattenInlineStyleRanges, 
+export {
+    styles,
+    exporter,
+    customStyleFn,
+    baseBlockStyleFn,
+    blockRenderMap,
+    blockRenderer,
+    stateFromElementConfig,
+    draftContentFromHtml,
+    draftContentToHtml,
+    flattenInlineStyleRanges,
 }

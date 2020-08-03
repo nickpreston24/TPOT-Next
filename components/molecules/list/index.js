@@ -1,1 +1,1 @@
-export { PublishedPapers } from './Docket'
+export { Docket } from './Docket'

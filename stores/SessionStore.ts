@@ -27,6 +27,30 @@ export const unlockSession = async (id: string) => {
     }
 }
 
+export const saveSession = async (session: any | Session): Promise<Session | object> => {
+
+    // let options = { mode: 'off' } as IDocumentOptions
+    isDev() && console.log('session.slug :>> ', session.slug);
+    if (!session.slug)
+        return null;
+
+    let document = new Document(`sessions/${session.slug}`);
+    await document.fetch()
+
+    // Collision detection
+    if (!document.hasData)
+        return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+
+    let currentSession = toJS(document.data);
+    console.log('currentSession :>> ', currentSession);
+
+    Object.assign(currentSession, session)
+
+    await document.set(session)
+
+    return session;
+}
+
 export const checkoutSession = async (id: string) => {
     let options = { mode: 'off' } as IDocumentOptions
     let document = new Document(`sessions/${id}`, options);

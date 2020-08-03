@@ -1,4 +1,4 @@
 export { Layout } from './layout/Dashboard'
 export { CheckoutTable } from './checkout'
 export { StatusChip } from './StatusChip'
-export { WordPressToolbar } from './WordPressToolbar'
+export { ScribeToolbar as WordPressToolbar } from './ScribeToolbar'

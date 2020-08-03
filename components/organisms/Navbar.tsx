@@ -1,10 +1,13 @@
 import React from 'react'
-import { Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Divider } from '@chakra-ui/core'
+import { Tooltip, Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Divider } from '@chakra-ui/core'
 import { disableMe, hideMe } from '../utils/disableMe'
 import { isDev } from 'helpers'
 import Router, { useRouter } from 'next/router'
 import * as ROUTES from '@constants/routes'
 
+import { CheckoutStatus } from '@constants'
+
+import { scribeStore } from '@stores'
 
 // This is the main component that will be rendered into Dashboard's "sidebar"
 const Navbar = () => {
@@ -36,25 +39,25 @@ export default Navbar
 
 // These options will always stay the same. Just a list of apps we can navigate to
 const appItems = [
-    {
-        icon: 'calendar',
-        title: 'Dashboard',
-        activeOn: ROUTES.DASHBOARD,
-        // style: disableMe(!isDev()), // Feature will come later, disable for now
-        disable: isDev(),
-        onClick: () => Router.push('/dashboard')
-    },
+    // {
+    //     icon: 'calendar',
+    //     title: 'Dashboard',
+    //     activationRoute: ROUTES.DASHBOARD,
+    //     // style: disableMe(!isDev()), // Feature will come later, disable for now
+    //     disable: isDev(),
+    //     onClick: () => Router.push(ROUTES.DASHBOARD)
+    // },
     {
         icon: 'scribe',
         title: 'Scribe',
-        activeOn: ROUTES.SCRIBE,
+        activationRoute: ROUTES.SCRIBE,
         onClick: () => Router.push(ROUTES.SCRIBE)
     },
     {
         // Settings should always be defined last
         icon: 'settings',
         title: 'Open Settings',
-        activeOn: ROUTES.SETTINGS,
+        activationRoute: ROUTES.SETTINGS,
         style: disableMe(!isDev()),
         onClick: () => Router.push(ROUTES.SETTINGS)
     },
@@ -66,30 +69,38 @@ const actionItems = [
     {
         icon: 'add',
         title: 'New',
-        activeOn: ROUTES.EDIT,
-        onClick: () => Router.push(ROUTES.EDIT)
+        activationRoute: ROUTES.EDIT,
+        toolTip: "Create a new Paper",
+        onClick: () => {
+            scribeStore.lastStatus = CheckoutStatus.NotStarted;
+            Router.push(ROUTES.EDIT)
+        }
     },
-    {
-        icon: 'edit',
-        title: 'Editor',
-        activeOn: ROUTES.DOC2,
-        style: disableMe(!isDev()), // Feature will come later, disable for now
-        onClick: () => alert('Back to current paper')
-        // TODO function that returns to current document
-    },
+    // {
+    //     icon: 'edit',
+    //     title: 'Editor',
+    //     activationRoute: ROUTES.DOC2,
+    //     style: disableMe(!isDev()), // Feature will come later, disable for now
+    //     onClick: () => alert('Back to current paper')
+    //     // TODO function that returns to current document
+    // },
     {
         icon: 'download',
         title: 'Checkout',
-        activeOn: ROUTES.CHECKOUT,
-        onClick: () => Router.push(ROUTES.CHECKOUT)
+        toolTip: "Create an existing Paper",
+        activationRoute: ROUTES.CHECKOUT,
+        onClick: () => {
+            scribeStore.lastStatus = CheckoutStatus.CheckedOut;
+            Router.push(ROUTES.CHECKOUT)
+        }
     },
-    {
-        icon: 'search',
-        title: 'Preview',
-        style: disableMe(!isDev()), // Feature will come later, disable for now
-        onClick: () => Router.push('/scribe/preview/[id]')
-        // TODO function that routes to a letter previewed in a TPOT mockup
-    }
+    // {
+    //     icon: 'search',
+    //     title: 'Preview',
+    //     style: disableMe(!isDev()), // Feature will come later, disable for now
+    //     onClick: () => Router.push('/scribe/preview/[id]')
+    //     // TODO function that routes to a letter previewed in a TPOT mockup
+    // }
 ]
 
 
@@ -127,34 +138,37 @@ const NavbarGroup = props =>
 
 // A custom (very purple) button for the Navbar / Sidebar
 const NavbarButton = props => {
-    const { icon, title, activeOn, disable, ...rest } = props
+    const { icon, title, activationRoute, disable, toolTip, ...rest } = props
 
     const { route } = useRouter()
-    const isActive = route === activeOn
+    const isActive = route === activationRoute
 
     return (
-        <PseudoBox
-            onClick={props.onClick}
-            pl={3} pr={6}
-            as="button"
-            height="52px"
-            rounded="md"
-            display="flex"
-            alignItems="center"
-            justifyContent="flex-start"
-            outline="0 !important" // kill the hovering outline
-            _hover={{ bg: "primary.700", cursor: disable ? 'not-allowed' : 'auto' }}
-            bg={isActive ? "primary.700" : "none"}
-        >
-            <Icon color="primary.300" name={icon} />
-            <Text fontSize="sm"
-                ml={4} flexGrow={1} textAlign="left"
-                color={isActive ? "#FFF" : "gray.400"}
-                fontWeight={isActive ? 500 : 400}
+        <Tooltip aria-label="navbar-tooltip" label="Test">
+
+            <PseudoBox
+                onClick={props.onClick}
+                pl={3} pr={6}
+                as="button"
+                height="52px"
+                rounded="md"
+                display="flex"
+                alignItems="center"
+                justifyContent="flex-start"
+                outline="0 !important" // kill the hovering outline
+                _hover={{ bg: "primary.700", cursor: disable ? 'not-allowed' : 'auto' }}
+                bg={isActive ? "primary.700" : "none"}
             >
-                {title}
-            </Text>
-        </PseudoBox>
+                <Icon color="primary.300" name={icon} />
+                <Text fontSize="sm"
+                    ml={4} flexGrow={1} textAlign="left"
+                    color={isActive ? "#FFF" : "gray.400"}
+                    fontWeight={isActive ? 500 : 400}
+                >
+                    {title}
+                </Text>
+            </PseudoBox>
+        </Tooltip>
     )
 }
 

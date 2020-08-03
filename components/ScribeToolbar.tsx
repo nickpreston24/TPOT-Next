@@ -14,6 +14,7 @@ import {
     useDisclosure,
     Button,
     ButtonGroup,
+    Flex,
 } from '@chakra-ui/core'
 import UploadButton from 'components/buttons/UploadButton';
 import { notify } from './Toasts';
@@ -22,11 +23,16 @@ import { createInstance } from 'models/domain';
 import { Paper, Session } from 'models';
 import { WordpressUser } from 'models/User';
 import { sessions } from 'stores';
-import { checkoutSession, updateSession } from 'stores/SessionStore';
+import { checkoutSession, updateSession, saveSession } from 'stores/SessionStore';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { render } from 'react-dom';
 import { isDev } from 'helpers';
+
+import { scribeStore } from '@stores'
+import { useObserver } from 'mobx-react';
+import { ScribeStore } from 'stores/ScribeStore';
+import { CheckoutStatus } from 'constants/CheckoutStatus';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -34,43 +40,31 @@ const UploadMethod = {
     Paste: 'Paste'
 }
 
-// const SaveMode = {
-//     New: 'New',
-//     Update: 'Update',
-//     Publish: 'Publish'
-// }
-
 const messages = {
     Warn: 'No paper could be created as there was no response from Wordpress',
     Success: "Paper uploaded successfully!",
 }
 
-const EditMode = {
-    New: 1,
-    CheckedOut: 2,
-    Draft: 3, //Assumes I can find wpapi's method for making papers with status = 'draft' - MP
-    Published: 4
-}
-
-export const WordPressToolbar = (props) => {
+export const ScribeToolbar = (props) => {
 
     // Retrieve current session id:
     const router = useRouter();
     let doc = router.query.doc;
+    
     isDev() && console.log('doc :>> ', doc);
 
-    const [editMode, setEditMode] = useState(EditMode.New);
+    const [mode, setMode] = useState(null);
 
     // SessionStore functions:
     const { getHtml } = props;
 
     const { user: authUser } = useAuth();
-    // const [disabled, setDisabled] = useState(true); // For whatever Components we wish to disable in prod: (use `disableMe(disabled)`)
     const [uploadOption] = useState(UploadMethod.Drive);
-
+    
     const initialRef = useRef();
     const finalRef = useRef();
-
+    
+    // const [disabled, setDisabled] = useState(true); // For whatever Components we wish to disable in prod: (use `disableMe(disabled)`)
     // const [loading, setLoading] = useState(true);
     // const [user, setUser] = useState(createInstance(WordpressUser));
 
@@ -78,22 +72,22 @@ export const WordPressToolbar = (props) => {
     const [paper] = useState(createInstance(Paper))
     const [session, setSession] = useState(createInstance(Session))
     const [sessionSaved, setSessionSaved] = useState(true)
-    // const [saveMode, setSaveMode] = useState(SaveMode.New);
-
+    
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Wordpress support:
     const { publish } = useWordpress();
 
     useEffect(() => {
-        // console.log('checking out doc :>> ', doc);
+        isDev() && console.log('checking out doc :>> ', doc);
+
         if (!!doc) {
             checkoutSession(doc as string)
                 .then((result) => setSession(result))
-            setEditMode(EditMode.CheckedOut)
+                setMode(CheckoutStatus.CheckedOut)
         }
         if (!doc) {
-            setEditMode(EditMode.New)
+            setMode(CheckoutStatus.NotStarted)
         }
     }, []);
 
@@ -102,10 +96,17 @@ export const WordPressToolbar = (props) => {
         setSessionSaved(false);
 
         let html = getHtml();
-
+        isDev() && console.log('html', !!html)
         let nextSession = createInstance(Session);
 
-        if (editMode === EditMode.CheckedOut) {
+        if (!html)
+            return;
+
+        console.log('CheckoutStatus', CheckoutStatus)
+
+        if (mode === CheckoutStatus.CheckedOut) {
+
+            // Map older session to new copy:
             nextSession = Session.create(
                 {
                     authorId: session?.authorId || null,
@@ -113,14 +114,30 @@ export const WordPressToolbar = (props) => {
 
                     date_modified: new Date(),
                     status: 'checked-out',
-                    // contributors: authUser.email,
                     title: session?.title || '',
                     date_uploaded: session?.date_uploaded || new Date(),
                     code: html,
-                    slug: session?.slug || ''
+                    slug: session?.slug
+                        || (title)
+                            .replace(/\s/g, '-')
+                            .toLowerCase()
+                        || null
+                }
+            )
+
+            // Set the last contributors (for now) to the current author's email (later, their name):
+            if (!!authUser?.email)
+                nextSession.lastContributor = authUser.email
+
+            // Use the sessions API to update the session:
+            updateSession(doc as string, nextSession)
+                .then(() => {
+                    notify('Paper Saved!', 'success')
+                    setSessionSaved(true);
                 })
         }
-        else if (editMode === EditMode.New) {
+
+        else if (mode === CheckoutStatus.NotStarted) {
             nextSession = Session.create(
                 {
                     authorId: session?.authorId || null,
@@ -134,79 +151,92 @@ export const WordPressToolbar = (props) => {
                     code: html,
                     slug: session?.slug || ''
                 })
+
+            saveSession(nextSession);
+
+            setSessionSaved(true);
         }
 
-        if (!!authUser?.email)
-            nextSession.lastContributor = authUser.email
-
         setSession(nextSession);
-        // console.log('user.email', authUser.email)
-        // console.log('nextSession', nextSession)
+        console.log('user.email', authUser.email)
+        console.log('nextSession', nextSession)
 
-        updateSession(doc as string, nextSession)
-            .then(() => {
-                notify('Paper Saved!', 'success')
-                setSessionSaved(true);
-            })
+        // updateSession(doc as string, nextSession)
+        //     .then(() => {
+        //         notify('Paper Updated!', 'success')
+        //         setSessionSaved(true);
+        //     })
     }
 
     const onSubmit = async () => {
+
         onClose();
 
         let html = getHtml();
 
         const { title } = session;
 
-        publish(new Paper(session.title, html))
-            .then(async (response) => {
-                // console.log('response :>> ', response);
+        if (mode === CheckoutStatus.NotStarted) {
+            //TODO: Call  CreateSession
+            return;
+        }
 
-                if (!response.id) {
-                    console.warn(messages.Warn);
-                    notify(messages.Warn);
-                    return
-                }
+        if (mode === CheckoutStatus.CheckedOut) {
+            publish(new Paper(session.title, html))
+                .then(async (response) => {
+                    // console.log('response :>> ', response);
 
-                // let publishedSession = Session.create(response)
-                // let publishedSession = Object.assign()
+                    if (!response.id) {
+                        console.warn(messages.Warn);
+                        notify(messages.Warn);
+                        return
+                    }
 
-                let sessionUpdate = {
-                    authorId: response.author || null,
-                    paperId: response.id,
+                    // let publishedSession = Session.create(response)
+                    // let publishedSession = Object.assign()
 
-                    date_modified: response.modified,
-                    status: 'Published', //response.status,
-                    contributors: [authUser.email], //TODO: push and filter dups
-                    code: response.content ? response.content.rendered : '',
-                    original: '',
-                    excerpt: '',
-                    title,
-                };
+                    let sessionUpdate = {
+                        authorId: response.author || null,
+                        paperId: response.id,
 
-                // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
-                // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
-                // We have Sessions as a stopgap (i.e. the checked-out state flag).
+                        date_modified: response.modified,
+                        status: 'Published', //response.status,
+                        contributors: [authUser.email], //TODO: push and filter dups
+                        code: response.content ? response.content.rendered : '',
+                        original: '',
+                        excerpt: '',
+                        title,
+                    };
 
-                // console.log('published session :>> ', publishedSession);
-                await updateSession(doc as string, sessionUpdate)
+                    // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
+                    // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
+                    // We have Sessions as a stopgap (i.e. the checked-out state flag).
 
-                if (!document) {
-                    notify(`Failed to create Session for: ${title}`, 'warn')
-                    return;
-                }
-                else {
-                    notify(`New Session created for: ${title}\n`, 'success')
-                }
+                    // console.log('published session :>> ', publishedSession);
+                    await updateSession(doc as string, sessionUpdate)
 
-                return document;
-            })
+                    if (!document) {
+                        notify(`Failed to create Session for: ${title}`, 'warn')
+                        return;
+                    }
+                    else {
+                        notify(`New Session created for: ${title}\n`, 'success')
+                    }
+
+                    return document;
+                })
+            return
+        }
     }
 
     return (
-        <Box>
+        <Flex >
             <ButtonGroup spacing={8}>
                 <Button
-                    onClick={onOpen}
+                    onClick={() => {
+                        setMode(CheckoutStatus.CheckedOut)
+                        onOpen()
+                    }}
                 >
                     Publish
                 </Button>
@@ -216,14 +246,22 @@ export const WordPressToolbar = (props) => {
 
                 <Button
                     ml={8}
-                    onClick={onSave}
+                    // onClick={onSave}
+                    onClick={() => {
+                        onSubmit()
+                        onOpen()
+                    }}
                     isLoading={!sessionSaved}
                 // leftIcon="save"  // FIXME: For some reason, I can't get this working.
                 >
                     Save
                 </Button>
-
             </ButtonGroup>
+            <span>Test</span>
+
+            {/* {isDev() && <ScribeStatusBar scribe={scribeStore}></ScribeStatusBar>} */}
+
+            {/* Publish  */}
 
             <Modal
                 initialFocusRef={initialRef}
@@ -233,7 +271,7 @@ export const WordPressToolbar = (props) => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Save your Paper</ModalHeader>
+                    <ModalHeader>Publish your Paper to Wordpress</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
                         <FormControl>
@@ -246,7 +284,9 @@ export const WordPressToolbar = (props) => {
                                     updated.title = title;
                                     setSession(updated)
                                 }}
-                                ref={initialRef} placeholder="paper-name-here" />
+                                ref={initialRef}
+                                placeholder="paper-name-here"
+                            />
                         </FormControl>
 
                         <FormControl mt={4}>
@@ -254,10 +294,11 @@ export const WordPressToolbar = (props) => {
                             <Input
                                 value={paper.categories}
                                 onChange={(event) => {
-                                    let cats = event.target.value.split(',');
-                                    isDev() && console.log('cats', cats)
-
-                                    // let updated = paper
+                                    let chunks = event.target.value.split(',');
+                                    isDev() && console.log('categories :>>', chunks)
+                                    let updated = session;
+                                    // updated.categories = chunks; //FIXME:
+                                    setSession(updated);
                                 }}
                                 placeholder="e.g 'Chinese', 'Translations'" />
                         </FormControl>
@@ -274,11 +315,29 @@ export const WordPressToolbar = (props) => {
                 </ModalContent>
             </Modal>
 
-        </Box>
+        </Flex>
     )
 };
 
-export default WordPressToolbar;
+
+type Props = {
+    scribe: ScribeStore
+}
+
+/** Shows the current status of Scribe in this toolbar
+ * Meant only for DEBUG.
+*/
+const ScribeStatusBar: FC<Props> = ({ scribe }) => {
+    return useObserver(() =>
+        <div>
+            <h1>Status: {scribe.lastStatus}</h1>
+            <p>Dirty? {scribe.dirty ? "Yes" : "No"}</p>
+            {!!scribe.lastSession && <p>Id: {scribe.lastSession}</p>}
+        </div>
+    )
+}
+
+export default ScribeToolbar;
 
 
  // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
