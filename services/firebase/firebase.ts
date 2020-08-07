@@ -29,22 +29,17 @@ export const storage = firebase.storage();
 // console.log('firestore database :>> ', Object.keys(db));
 // console.log('storage database:>> ', Object.keys(storage));
 
-// db.collection("users").add({
-//     first: "Ada",
-//     last: "Lovelace",
-//     born: 1815
-// })
-//     .then(function (docRef) {
-//         console.log("Document written with ID: ", docRef.id);
-//     })
-//     .catch(function (error) {
-//         console.error("Error adding document: ", error);
-//     });
-
 export {
     firebase
 }
 
+// export const unlock = async id => {
+//     let requestedDocument = new Document(`sessions/${id}`)
+//     await requestedDocument.fetch()
+//     return requestedDocument.update({
+//         status: 'in-progress'
+//     })
+// }
 
 // export const firebase = app;
 
@@ -223,15 +218,6 @@ export {
 //         // })
 //     }
 
-export const unlock = async id => {
-    // return new Promise(async (resolve, reject) => {
-    // console.log(`Unlock Document by ID: ${id}`)
-    let requestedDocument = new Document(`sessions/${id}`)
-    await requestedDocument.fetch()
-    return requestedDocument.update({
-        status: 'in-progress'
-    })
-}
 
 // export const upload = async (file) => {
 

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, FC } from 'react';
 import {
-    Box,
     ModalOverlay,
     Modal,
     ModalContent,
@@ -21,15 +20,12 @@ import { notify } from './Toasts';
 import { useWordpress, useAuth } from 'hooks';
 import { createInstance } from 'models/domain';
 import { Paper, Session } from 'models';
-import { WordpressUser } from 'models/User';
-import { sessions } from 'stores';
 import { checkoutSession, updateSession, saveSession } from 'stores/SessionStore';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { render } from 'react-dom';
 import { isDev } from 'helpers';
 
-import { scribeStore } from '@stores'
+import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
 import { ScribeStore } from 'stores/ScribeStore';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
@@ -50,7 +46,7 @@ export const ScribeToolbar = (props) => {
     // Retrieve current session id:
     const router = useRouter();
     let doc = router.query.doc;
-    
+
     isDev() && console.log('doc :>> ', doc);
 
     const [mode, setMode] = useState(null);
@@ -60,19 +56,19 @@ export const ScribeToolbar = (props) => {
 
     const { user: authUser } = useAuth();
     const [uploadOption] = useState(UploadMethod.Drive);
-    
+
     const initialRef = useRef();
     const finalRef = useRef();
-    
+
     // const [disabled, setDisabled] = useState(true); // For whatever Components we wish to disable in prod: (use `disableMe(disabled)`)
     // const [loading, setLoading] = useState(true);
     // const [user, setUser] = useState(createInstance(WordpressUser));
 
-    const [title, setTitle] = useState(null)
+    const [title] = useState(null)
     const [paper] = useState(createInstance(Paper))
     const [session, setSession] = useState(createInstance(Session))
     const [sessionSaved, setSessionSaved] = useState(true)
-    
+
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Wordpress support:
@@ -84,89 +80,13 @@ export const ScribeToolbar = (props) => {
         if (!!doc) {
             checkoutSession(doc as string)
                 .then((result) => setSession(result))
-                setMode(CheckoutStatus.CheckedOut)
+            setMode(CheckoutStatus.CheckedOut)
         }
         if (!doc) {
             setMode(CheckoutStatus.NotStarted)
         }
     }, []);
 
-    const onSave = async () => {
-
-        setSessionSaved(false);
-
-        let html = getHtml();
-        isDev() && console.log('html', !!html)
-        let nextSession = createInstance(Session);
-
-        if (!html)
-            return;
-
-        console.log('CheckoutStatus', CheckoutStatus)
-
-        if (mode === CheckoutStatus.CheckedOut) {
-
-            // Map older session to new copy:
-            nextSession = Session.create(
-                {
-                    authorId: session?.authorId || null,
-                    paperId: session?.paperId || null,
-
-                    date_modified: new Date(),
-                    status: 'checked-out',
-                    title: session?.title || '',
-                    date_uploaded: session?.date_uploaded || new Date(),
-                    code: html,
-                    slug: session?.slug
-                        || (title)
-                            .replace(/\s/g, '-')
-                            .toLowerCase()
-                        || null
-                }
-            )
-
-            // Set the last contributors (for now) to the current author's email (later, their name):
-            if (!!authUser?.email)
-                nextSession.lastContributor = authUser.email
-
-            // Use the sessions API to update the session:
-            updateSession(doc as string, nextSession)
-                .then(() => {
-                    notify('Paper Saved!', 'success')
-                    setSessionSaved(true);
-                })
-        }
-
-        else if (mode === CheckoutStatus.NotStarted) {
-            nextSession = Session.create(
-                {
-                    authorId: session?.authorId || null,
-                    paperId: session?.paperId || null,
-
-                    date_modified: new Date(),
-                    status: 'not-started',
-                    // contributors: authUser.email,
-                    title: title,
-                    date_uploaded: session?.date_uploaded || new Date(),
-                    code: html,
-                    slug: session?.slug || ''
-                })
-
-            saveSession(nextSession);
-
-            setSessionSaved(true);
-        }
-
-        setSession(nextSession);
-        console.log('user.email', authUser.email)
-        console.log('nextSession', nextSession)
-
-        // updateSession(doc as string, nextSession)
-        //     .then(() => {
-        //         notify('Paper Updated!', 'success')
-        //         setSessionSaved(true);
-        //     })
-    }
 
     const onSubmit = async () => {
 
@@ -230,7 +150,7 @@ export const ScribeToolbar = (props) => {
     }
 
     return (
-        <Flex >
+        <Flex>
             <ButtonGroup spacing={8}>
                 <Button
                     onClick={() => {
@@ -257,9 +177,8 @@ export const ScribeToolbar = (props) => {
                     Save
                 </Button>
             </ButtonGroup>
-            <span>Test</span>
 
-            {/* {isDev() && <ScribeStatusBar scribe={scribeStore}></ScribeStatusBar>} */}
+            {isDev() && <ScribeStatusBar scribe={scribeStore}></ScribeStatusBar>}
 
             {/* Publish  */}
 
@@ -329,7 +248,7 @@ type Props = {
 */
 const ScribeStatusBar: FC<Props> = ({ scribe }) => {
     return useObserver(() =>
-        <div>
+        <div style={{ border: "1px #aaa solid" }}>
             <h1>Status: {scribe.lastStatus}</h1>
             <p>Dirty? {scribe.dirty ? "Yes" : "No"}</p>
             {!!scribe.lastSession && <p>Id: {scribe.lastSession}</p>}

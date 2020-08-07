@@ -3,11 +3,16 @@ import { Tooltip, Flex, Icon, Button, PseudoBox, Box, Heading, Text, Stack, Avat
 import { disableMe, hideMe } from '../utils/disableMe'
 import { isDev } from 'helpers'
 import Router, { useRouter } from 'next/router'
-import * as ROUTES from '@constants/routes'
+import * as ROUTES from '../../constants/routes'
+import { CheckoutStatus } from '../../constants'
+import { scribeStore } from '../../stores'
+import { NavbarButton, SettingsButton, ActionButton } from 'components/atoms'
+import { SampleButtonCommand, NavbarCommand } from 'components/commands'
 
-import { CheckoutStatus } from '@constants'
-
-import { scribeStore } from '@stores'
+let routingCommand1 = new NavbarCommand(null, () => {
+    alert("Pong")
+    Router.push(ROUTES.CHECKOUT)
+})
 
 // This is the main component that will be rendered into Dashboard's "sidebar"
 const Navbar = () => {
@@ -15,9 +20,12 @@ const Navbar = () => {
     let appButtons = appItems.slice(0, -1)
     let settingsProps = appItems.slice(-1)
 
+    let command = new SampleButtonCommand(null);
+
     return (
         <Stack px={4} h="100%" w="100%" spacing={8}>
             <AppLogo />
+            <ActionButton command={routingCommand1}>Command Test</ActionButton>
             <NavbarGroup title="Apps">
                 {appButtons.map((btn, idx) =>
                     <NavbarButton {...btn} key={idx} />
@@ -103,30 +111,14 @@ const actionItems = [
     // }
 ]
 
-
 const AppLogo = () =>
-    <Box minH={70} maxh={70} mb={8}>
+    <Box minH={70} maxHeight={70} mb={8}>
         <Stack direction="row" align="center" pl={2} spacing={6} h="100%">
-            <Icon name="toolbox" size={10} />
+            <Icon name="toolbox" fontSize={10} />
             <Heading fontSize="xl" color="gray.300">TPOT Toolbox</Heading>
         </Stack>
         <Divider borderColor="gray.500" mt="-1px" />
     </Box>
-
-
-// Button that goes at the bottom. Very purple
-const SettingsButton = props =>
-    <Button
-        w="100%"
-        leftIcon="settings"
-        variantColor="primary"
-        isDisabled={props.disabled}
-        onClick={props.onClick}
-        fontWeight={300}
-    >
-        Settings
-    </Button>
-
 
 // A container with a title that groups a few buttons together
 const NavbarGroup = props =>
@@ -134,42 +126,3 @@ const NavbarGroup = props =>
         <Text fontSize="xs" color="gray.400" textDecoration="capitalize" pb={2}>{props.title}</Text>
         {props.children}
     </Stack>
-
-
-// A custom (very purple) button for the Navbar / Sidebar
-const NavbarButton = props => {
-    const { icon, title, activationRoute, disable, toolTip, ...rest } = props
-
-    const { route } = useRouter()
-    const isActive = route === activationRoute
-
-    return (
-        <Tooltip aria-label="navbar-tooltip" label="Test">
-
-            <PseudoBox
-                onClick={props.onClick}
-                pl={3} pr={6}
-                as="button"
-                height="52px"
-                rounded="md"
-                display="flex"
-                alignItems="center"
-                justifyContent="flex-start"
-                outline="0 !important" // kill the hovering outline
-                _hover={{ bg: "primary.700", cursor: disable ? 'not-allowed' : 'auto' }}
-                bg={isActive ? "primary.700" : "none"}
-            >
-                <Icon color="primary.300" name={icon} />
-                <Text fontSize="sm"
-                    ml={4} flexGrow={1} textAlign="left"
-                    color={isActive ? "#FFF" : "gray.400"}
-                    fontWeight={isActive ? 500 : 400}
-                >
-                    {title}
-                </Text>
-            </PseudoBox>
-        </Tooltip>
-    )
-}
-
-
