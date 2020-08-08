@@ -1,20 +1,21 @@
 import { useRouter } from "next/router"
 import { Tooltip, PseudoBox, Icon, Text, Button } from "@chakra-ui/core"
-import { SampleButtonCommand } from "components/commands"
 import { FC } from "react"
 
 // A custom (very purple) button for the Navbar / Sidebar
-export const NavbarButton = props => {
-    const { icon, title, activationRoute, disable, toolTip, ...rest } = props
+// Base button that has an action it executes on click.
+// Could be derived into a Slotted component later
+export const NavbarButton: FC<NavbarButtonProps> = (props) => {
+    const { icon, title, activationRoute, disable, toolTip, onClickFn, ...rest } = props
 
     const { route } = useRouter()
     const isActive = route === activationRoute
 
     return (
-        <Tooltip aria-label="navbar-tooltip" label="Test">
+        <Tooltip aria-label="navbar-tooltip" label={toolTip}>
 
             <PseudoBox
-                onClick={props.onClick}
+                onClick={() => onClickFn()}
                 pl={3} pr={6}
                 as="button"
                 height="52px"
@@ -26,14 +27,14 @@ export const NavbarButton = props => {
                 _hover={{ bg: "primary.700", cursor: disable ? 'not-allowed' : 'auto' }}
                 bg={isActive ? "primary.700" : "none"}
             >
-                <Icon color="primary.300" name={icon} />
-                <Text fontSize="sm"
+                {icon && <Icon color="primary.300" name={icon} />}
+                {title && <Text fontSize="sm"
                     ml={4} flexGrow={1} textAlign="left"
                     color={isActive ? "#FFF" : "gray.400"}
                     fontWeight={isActive ? 500 : 400}
                 >
                     {title}
-                </Text>
+                </Text>}
             </PseudoBox>
 
         </Tooltip>
@@ -54,14 +55,12 @@ export const SettingsButton = props =>
         Settings
     </Button>
 
+type NavbarButtonProps = {
+    icon?: string,
+    title?: string,
+    disable?: boolean,
+    toolTip?: string,
 
-
-type ActionButtonProps = {
-    command: SampleButtonCommand
-}
-
-// Base button that has an action it executes on click.
-// Could be derived into a Slotted component later
-export const ActionButton: FC<ActionButtonProps> = ({ command, children }) => {
-    return <button onClick={() => command.execute()}>{children}</button>
+    activationRoute: string,
+    onClickFn: Function
 }

@@ -1,13 +1,19 @@
 import { observable } from 'mobx'
-import { AppAction } from '../models/AppAction'
-// import { AppButton } from '../components/atoms'
 
 /**
  * Holds current Toolbox App information
  */
 
 export class AppStore {
+    static instance = null;
+
+    static getInstance() {
+        if (!AppStore.instance)
+            AppStore.instance = new AppStore();
+
+        return this.instance
+    }
     @observable currentApp: string = "Scribe"
-    // @observable appActions: AppAction[]
-    // @observable currentApp: AppButton
 }
+
+export const appStore = AppStore.getInstance();

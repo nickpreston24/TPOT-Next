@@ -6,4 +6,5 @@ export {
     , getAuthorSessions
 } from './SessionStore'
 
-export { scribeStore } from './ScribeStore'
+export { scribeStore, ScribeStore } from './ScribeStore'
+export { appStore, AppStore } from './AppStore'

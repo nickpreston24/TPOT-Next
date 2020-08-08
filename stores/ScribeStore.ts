@@ -10,10 +10,9 @@ export class ScribeStore {
     // Optional singleton support
     static instance = null;
     static getInstance() {
-        if (!ScribeStore.instance) {
-            isDev() && console.count('ScribeStore -- init()')
+        if (!ScribeStore.instance)
             ScribeStore.instance = new ScribeStore();
-        }
+
         return this.instance;
     }
 
@@ -25,4 +24,3 @@ export class ScribeStore {
 }
 
 export const scribeStore = ScribeStore.getInstance();
-export default scribeStore;

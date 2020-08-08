@@ -1,1 +1,1 @@
-export { NavbarButton, SettingsButton, ActionButton } from './AppButtons'
+export { NavbarButton, SettingsButton } from './ScribeButtons'
