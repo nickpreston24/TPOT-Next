@@ -1,4 +1,4 @@
-import { observable } from 'mobx'
+import { observable, action } from 'mobx'
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { Session, createInstance } from 'models';
 
@@ -17,10 +17,16 @@ export class ScribeStore {
     }
 
 
-    @observable dirty: boolean = false;
+    // @observable dirty: boolean = false;
+    // @observable lastSession: Session = createInstance(Session);
     @observable lastStatus: CheckoutStatus = CheckoutStatus.NotStarted;
     @observable currentStatus: CheckoutStatus = CheckoutStatus.NotStarted;
-    @observable lastSession: Session = createInstance(Session);
+
+    @action setStatus = (status: CheckoutStatus) => {
+        this.lastStatus = this.currentStatus
+        this.currentStatus = status;
+        console.log('this.currentStatus', this.currentStatus)
+    }
 
 }
 

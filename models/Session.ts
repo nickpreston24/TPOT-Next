@@ -50,7 +50,7 @@ export class Session {
         this.lastContributor = lastContributor || ''
         this.categories = categories || []
         this.date_modified = date_modified || null;
-        this.date_uploaded = date_uploaded || new Date();
+        this.date_uploaded = date_uploaded || null;
     }
 
     static create(props): Session {

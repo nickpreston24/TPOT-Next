@@ -15,9 +15,10 @@ export class FreshEditCommand extends Command {
     }
 
     public execute(): void {
-        // this.scribeStore.lastStatus = null;
-        this.scribeStore.currentStatus = CheckoutStatus.NotStarted;
-        this.scribeStore.dirty = true;
+        const { setStatus } = this.scribeStore
+        setStatus(CheckoutStatus.NotStarted)
+        // this.scribeStore.dirty = true;
+        // console.log('this.activationRoute', this.activationRoute)
         Router.push(this.activationRoute)
     }
 
@@ -38,12 +39,10 @@ export class CheckoutCommand extends Command {
     }
 
     public execute(): void {
-        // this.scribeStore.lastSession.status = CheckoutStatus.InProgress; // Reset to In Progress when moving from /checkout/ route;
-        // console.log('this.scribeStore.lastSession', this.scribeStore.lastSession)
-        
-        this.scribeStore.lastStatus = CheckoutStatus.NotStarted;
+
+        this.scribeStore.lastStatus = this.scribeStore.currentStatus;
         this.scribeStore.currentStatus = CheckoutStatus.CheckedOut;
-        this.scribeStore.dirty = false;
+        // this.scribeStore.dirty = false;
         Router.push(this.activationRoute)
     }
 

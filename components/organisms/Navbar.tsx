@@ -10,8 +10,6 @@ import { scribeRemote, appRemote } from 'components/commands'
 // This is the main component that will be rendered into Dashboard's "sidebar"
 const Navbar = () => {
 
-    isDev() && console.log('scribeRemote', scribeRemote.gotoCheckout)
-
     // These options will always stay the same. Just a list of apps we can navigate to
     const appItems = [
         // {

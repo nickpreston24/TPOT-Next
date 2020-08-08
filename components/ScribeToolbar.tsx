@@ -18,7 +18,6 @@ import {
 import UploadButton from 'components/buttons/UploadButton';
 import { notify } from './Toasts';
 import { useWordpress, useAuth } from 'hooks';
-import { createInstance } from 'models/domain';
 import { Paper, Session } from 'models';
 import { checkoutSession, updateSession, saveSession } from 'stores/sessionsAPI';
 import Router, { useRouter } from 'next/router';
@@ -55,7 +54,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     isDev() && console.log('doc :>> ', doc);
 
-    let { dirty, currentStatus, lastStatus, lastSession } = scribeStore;
+    let { dirty, currentStatus, lastStatus, lastSession, setStatus } = scribeStore;
 
     // Session API functions:
     const { getHtml } = props;
@@ -66,14 +65,14 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
 
     /** Scribe States: **/
-    const [mode, setMode] = useState(null);
+    // const [mode, setMode] = useState(null);
     // const [paper, setPaper] = useState(createInstance(Paper))
     // const [session, setSession] = useState(createInstance(Session))
 
     /** Modal States: **/
     const [uploadOption] = useState(UploadMethod.Drive);
     const [title, setTitle] = useState(lastSession?.title || '')
-    const [categories, setCategories] = useState('');
+    const [categoriesText, setCategoriesText] = useState('');
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     /** Modal Refs */
@@ -82,12 +81,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
 
     useEffect(() => {
-        
+
         isDev() && console.log('checking out doc :>> ', doc);
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
         Router.events.on('routeChangeComplete', (url) => {
-            if (url === ROUTES.CHECKOUT)
+            if (url === ROUTES.CHECKOUT || url === ROUTES.EDIT)
                 updateSession(doc as string, { status: CheckoutStatus.InProgress })
         })
 
@@ -96,15 +95,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                 .then((result) => {
                     setTitle(result.title)
                     isDev() && console.log('checked out session :>> ', result);
-                    setCategories(result.categories?.join(", ") || '')
-                    scribeStore.lastSession = Session.create(result);
-                    console.log('scribeStore.lastSession :>> ', scribeStore.lastSession);
-                }
-                )
-            setMode(CheckoutStatus.CheckedOut)
+                    !!result.categories && setCategoriesText(result.categories?.join(", ") || '')
+
+                    setStatus(CheckoutStatus.CheckedOut)
+                })
         }
         if (!doc) {
-            setMode(CheckoutStatus.NotStarted)
+            setStatus(CheckoutStatus.NotStarted)
         }
     }, []);
 
@@ -114,18 +111,17 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     }
 
     const handleCategoryChange = async (event) => {
-        setCategories(event.target.value);
+        setCategoriesText(event.target.value);
     }
 
     const onSave = async () => {
-        scribeStore.currentStatus = CheckoutStatus.InProgress
-        scribeStore.lastStatus = CheckoutStatus.NotStarted
         onOpen();
     }
 
     const onPublish = async () => {
-        scribeStore.currentStatus = CheckoutStatus.FirstDraft
-        scribeStore.lastStatus = CheckoutStatus.CheckedOut
+        // scribeStore.currentStatus = CheckoutStatus.FirstDraft
+        // scribeStore.lastStatus = CheckoutStatus.CheckedOut
+        setStatus(CheckoutStatus.FirstDraft)
         onOpen()
     }
 
@@ -135,26 +131,47 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         let html = getHtml();
 
-        isDev() && console.log('currentStatus :>> ', currentStatus);
+        isDev() && console.log('currentStatus :>> ', scribeStore.currentStatus);
+
         // Update an existing paper:
-        if (currentStatus === CheckoutStatus.InProgress || currentStatus === CheckoutStatus.CheckedOut) {
+        if (currentStatus === CheckoutStatus.CheckedOut) {
             // WARNING: Firebase hates custom objects, so just use plain old JSON here:
-            let nextSession = Session
-                .create({ title, categories, code: html })
+            let sessionUpdate = Session
+                .create({ title, categories: categoriesText.trim().split(','), code: html })
                 .toJSON()
 
-            isDev() && console.log('nextSession :>> ', nextSession);
-            let needsUpdate = currentStatus === CheckoutStatus.CheckedOut;
-            await saveSession(nextSession, needsUpdate)
-            notify("Saved session")
+            isDev() && console.log('nextSession :>> ', sessionUpdate);
+            sessionUpdate.date_modified = new Date();
 
-            setMode(CheckoutStatus.CheckedOut)
+            await updateSession(doc as string, sessionUpdate)
 
-            scribeStore.lastSession = nextSession;
+            notify("Updated session")
+
+            scribeStore.lastSession = sessionUpdate;
             scribeStore.dirty = false;
             return;
         }
 
+        // Save a new paper:
+        if (currentStatus == CheckoutStatus.NotStarted) {
+
+            let nextSession = Session
+                .create({ title, categories: categoriesText.trim().split(','), code: html })
+                .toJSON()
+
+            isDev() && console.log('nextSession :>> ', nextSession);
+            nextSession.date_modified = new Date();
+            await saveSession(nextSession)
+            setStatus(CheckoutStatus.CheckedOut)
+            dirty = false;
+
+            notify("Saved session")
+
+            // scribeStore.lastSession = nextSession;
+
+
+            return;
+        }
 
         // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
         if (lastStatus === CheckoutStatus.CheckedOut && currentStatus === CheckoutStatus.FirstDraft) {
@@ -226,7 +243,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                 </Button>
             </ButtonGroup>
 
-            {isDev() && <ScribeDevStatusBar scribe={scribeStore}></ScribeDevStatusBar>}
+            {isDev() && <ScribeDevStatusBar />}
 
             {/* Publish  */}
 
@@ -254,7 +271,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         <FormControl mt={4}>
                             <FormLabel>Categories</FormLabel>
                             <Input
-                                value={categories}
+                                value={categoriesText}
                                 onChange={handleCategoryChange}
                                 placeholder="e.g 'Chinese', 'Translations'" />
                         </FormControl>
@@ -275,18 +292,18 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     )
 };
 
-type ScribeDevStatusBarProps = {
-    scribe: ScribeStore
-}
+// type ScribeDevStatusBarProps = {
+//     scribe: ScribeStore
+// }
 
 /** Shows the current status of Scribe in this toolbar
  * Meant only for DEBUG/Development mode.
 */
-const ScribeDevStatusBar: FC<ScribeDevStatusBarProps> = ({ scribe }) => {
-    const { dirty, currentStatus, lastStatus, lastSession } = scribe;
+const ScribeDevStatusBar: FC = () => {
+    // const { dirty, currentStatus, lastStatus, lastSession } = scribe;
     return useObserver(() =>
         <Flex style={{ border: "1px #aaa solid" }} mb={2}>
-            <h1 style={{ marginRight: '10px' }}>{lastStatus || ''} &gt; {currentStatus}</h1>
+            <h1 style={{ marginRight: '10px' }}>{scribeStore.lastStatus || ''} &gt; {scribeStore.currentStatus}</h1>
             {/* <p>Dirty? {dirty ? "Yes" : "No"}</p> */}
             {/* {!!lastSession && <p>Id: {lastSession}</p>} */}
         </Flex>
