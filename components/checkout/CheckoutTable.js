@@ -10,7 +10,6 @@ import Stack from '@chakra-ui/core/dist/Stack'
 import Collapse from '@chakra-ui/core/dist/Collapse'
 import Tooltip from '@chakra-ui/core/dist/Tooltip'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
-import Chip from '@material-ui/core/Chip'
 import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
 import { sessions, unlockSession } from '../../stores/sessionsAPI'
@@ -19,9 +18,10 @@ import { notify } from 'components/Toasts'
 import { isDev } from '../../helpers'
 import { useAuth } from 'hooks'
 import { ROUTES } from 'constants/routes'
+import { CheckoutStatus } from '../../constants'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
-import { StatusChip } from '@atoms'
+import { StatusChip } from '../atoms'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -168,7 +168,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     // console.log('session :>> ', session);
 
     let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
-    
+
     const [isOpen, setIsOpen] = useState(false)
 
     const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: afterUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
@@ -235,7 +235,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                             >
                                 <Button
                                     onClick={onUnlockModalOpen}
-                                    isDisabled={status !== 'checked-out'}
+                                    isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
                                     Unlock
@@ -245,7 +245,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                                 <Button
                                     onClick={() => checkout()}
                                     leftIcon="edit"
-                                    isDisabled={status === 'checked-out'}
+                                    isDisabled={status === CheckoutStatus.CheckedOut}
                                     variantColor="primary"
                                 >
                                     Start Editing
