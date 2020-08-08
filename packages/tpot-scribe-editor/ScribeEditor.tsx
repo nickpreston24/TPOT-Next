@@ -1,9 +1,9 @@
 import React, { createRef } from "react";
-import { WordPressToolbar } from '../../components'
+import { ScribeToolbar } from '../../components'
 import { Spinner, Box, Flex, Button } from "@chakra-ui/core";
+import { scribeStore } from '../../stores'
 
-
-export class MyEditor extends React.Component<any, any> {
+export class ScribeEditor extends React.Component<any, any> {
     state = { loading: true, contents: '' };
     CKEditor: any;
     ClassicEditor: any;
@@ -44,6 +44,10 @@ export class MyEditor extends React.Component<any, any> {
         }
     }
 
+    // handleChange(event) {
+    //     console.log('event :>> ', event);
+    // }
+
     render() {
         return this.CKEditor ? (
             <Flex
@@ -53,7 +57,7 @@ export class MyEditor extends React.Component<any, any> {
                 alignItems="center"
             >
                 <Box id="sticky-toolbar" h={80} w="100%" maxW={960} mt={1} mr={4} >
-                    <WordPressToolbar {...{ getHtml: this.getHtml }} />
+                    <ScribeToolbar {...{ getHtml: this.getHtml }} />
                     {/* CK's Toolbar is appended here by this.CkEditor.onInit() */}
                 </Box>
                 <Flex id="scroll-area" h={70} w="100%" flexGrow={1} overflowY="scroll" overflowX="hidden" justifyContent="center">
@@ -62,6 +66,7 @@ export class MyEditor extends React.Component<any, any> {
                         <this.CKEditor
                             ref={this.ckeditorRef}
                             editor={this.DecoupledEditor}
+                            // onChange={this.handleChange}
                             data={"<p>Hello from CKEditor 5!</p>"}
                             onInit={editor => {
 
@@ -82,6 +87,12 @@ export class MyEditor extends React.Component<any, any> {
                                 // Always set the HTML content on init
                                 this.setHtml(this.state.contents)
 
+                                // Add change event FIXME: Not updating in the ScribeToolbar:
+                                // editor.model.document.on('change:data', () => {
+                                //     scribeStore.dirty = true;
+                                //     console.log('scribeStore.dirty :>> ', scribeStore.dirty);
+                                // })
+
                             }}
                         />
 
@@ -95,4 +106,4 @@ export class MyEditor extends React.Component<any, any> {
 }
 
 
-export default MyEditor;
+export default ScribeEditor;

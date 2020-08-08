@@ -27,7 +27,7 @@ export const unlockSession = async (id: string) => {
     }
 }
 
-export const saveSession = async (session: any | Session): Promise<Session | object> => {
+export const saveSession = async (session: any | Session, isUpdate: boolean = false): Promise<Session | object> => {
 
     // let options = { mode: 'off' } as IDocumentOptions
     isDev() && console.log('session.slug :>> ', session.slug);
@@ -36,17 +36,21 @@ export const saveSession = async (session: any | Session): Promise<Session | obj
 
     let document = new Document(`sessions/${session.slug}`);
     await document.fetch()
+    console.log('document', document)
 
     // Collision detection
-    if (!document.hasData)
-        return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+    // if (!document.hasData)
+    //     return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let currentSession = toJS(document.data);
     console.log('currentSession :>> ', currentSession);
 
     Object.assign(currentSession, session)
 
-    await document.set(session)
+    if (!isUpdate)
+        await document.set(session)
+    else
+        await document.update(session)
 
     return session;
 }
@@ -70,11 +74,6 @@ export const checkoutSession = async (id: string) => {
     return session;
 }
 
-// export const createSession = (props: object | Session): Session | object => {
-//     let document = new Document<Session>();
-//     return document
-// };
-
 export const updateSession = async (id: string, session: any | Session): Promise<Session | object> => {
     let options = { mode: 'off' } as IDocumentOptions
     let document = new Document(`sessions/${id}`, options);
@@ -97,7 +96,7 @@ export const updateSession = async (id: string, session: any | Session): Promise
             break;
         case 'not-started':
         default:
-            await document.update(currentSession);
+            await document.set(currentSession);
             // console.log('created session :>> ', currentSession);
             break;
     }

@@ -1,18 +1,22 @@
-import { CheckoutStatus, CheckoutColors } from '../constants/CheckoutStatus'
+import { CheckoutStatus, CheckoutColors } from '../../constants/CheckoutStatus'
 import { Chip } from '@material-ui/core'
 import { FC } from 'react'
-import { getKeyByValue } from '../helpers'
+import { getKeyByValue } from '../../helpers'
 
 type ChipProps = {
-    status: string,
+    status: CheckoutStatus
 }
 
 export const StatusChip: FC<ChipProps> = ({ status }) => {
     status = status || CheckoutStatus.NotStarted;
 
-    let [key] = getKeyByValue(CheckoutStatus, toTitleCase(status, '-')) as string
-    let label = CheckoutStatus[key]// || 'unknown'
-    const background = CheckoutColors.get(label)// || '#777'
+    //OLD:
+    // let [key] = getKeyByValue(CheckoutStatus, toTitleCase(status, '-')) as string
+    // let label = CheckoutStatus[key]// || 'unknown'
+    // const background = CheckoutColors.get(label)// || '#777'
+
+    let label = status || 'Unknown'
+    const background = CheckoutColors[status];
 
     return (
         <Chip {...{ label }} style={{ background }} />

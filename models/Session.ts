@@ -3,23 +3,76 @@
 import { CheckoutStatus } from "constants/CheckoutStatus";
 
 export class Session {
-    authorId?: number = null;
-    paperId?: number = null;
-    title: string = '';
+
+    authorId?: number;
+    paperId?: number;
+    title: string;
+    filename?: string;
+    slug?: string;
+    excerpt?: string;
     status: string;
     code: string;
+
     contributors: string[] = [];
-    date_uploaded: Date;
-    date_modified: Date;
-    filename?: string = '';
-    slug?: string = '';
-    excerpt?: string = '';
     lastContributor?: string = "" // For now, this will be the email - MP
 
-    static create(props): Session {
-        let { authorId, paperId, title, excerpt, filename, slug, status, code, lastContributor } = props;
-        return Object.assign(new Session(), { authorId, paperId, slug, title, excerpt, filename, status, code, lastContributor } = props);
+    categories: string[] = [];
+
+    date_uploaded: Date;
+    date_modified: Date;
+
+    constructor(props) {
+
+        // Allows for DTOs
+        if (!props)
+            return
+
+        let { authorId, paperId, categories, title, excerpt, filename, status, code, lastContributor
+            , date_uploaded, date_modified
+        } = props;
+
+        //Set defaults/fallbacks:
+
+        this.title = title;
+        let slug = (title || '')
+            .replace(/\s/g, '-')
+            .toLowerCase()
+
+        this.slug = slug || '';
+        this.authorId = authorId || -1
+        this.paperId = paperId || -1
+        this.status = status || CheckoutStatus.InProgress
+        this.excerpt = excerpt || ''
+        this.filename = filename || '';
+        this.excerpt = excerpt || '';
+        this.code = code || '<p></p>';
+        this.contributors = [] // TODO: add functionality in other components for deciding this.
+        this.lastContributor = lastContributor || ''
+        this.categories = categories.split(",") || []
+        this.date_modified = date_modified || null;
+        this.date_uploaded = date_uploaded || new Date();
     }
-    
-    // public toString = (): string => `Session: ${this.title}\n${this.code}`;
+
+    static create(props): Session {
+        console.log('props', props)
+        return new Session(props);
+    }
+
+    public toJSON() {
+        return {
+            authorId: this.authorId,
+            paperId: this.paperId,
+            title: this.title,
+            status: this.status,
+            code: this.code,
+            slug: this.slug,
+            excerpt: this.excerpt,
+            categories: this.categories,
+            contributors: this.contributors,
+            lastContributor: this.lastContributor,
+            date_modified: this.date_modified,
+            date_uploaded: this.date_uploaded,
+            filename: this.filename,
+        }
+    }
 }

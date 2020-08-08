@@ -1,7 +1,7 @@
 import * as ROUTES from '../../constants/routes'
 import { ICommand } from "./Command";
-import { FreshEditCommand, CheckoutCommand } from "./ScribeCommands";
-import { scribeStore, appStore } from '../../stores';
+import { appStore } from '../../stores';
+import { SwitchAppCommand } from './AppCommands'
 
 /* An invoker is like a remote control
 * Feel free to come up with a better name
@@ -9,31 +9,27 @@ import { scribeStore, appStore } from '../../stores';
 * Scribe Remote for the Scribe App whenever it is active.
 */
 export class AppRemote {
+    private openSettings: any;
+    private gotoScribe: ICommand
 
-    gotoCheckout: ICommand
-    gotoBlankEditor: ICommand;
-
-    constructor(checkoutCommand, newEditCommand) {
-        // console.log('checkoutCommand', checkoutCommand)
-        this.gotoCheckout = checkoutCommand;
-        // console.log('this.gotoCheckout', this.gotoCheckout)
-        this.gotoBlankEditor = newEditCommand;
-
-        console.log('this', this)
+    constructor(gotoScribe: ICommand, openSettings: ICommand) {
+        this.gotoScribe = gotoScribe;
+        this.openSettings = openSettings;
     }
 
-    public Checkout() {
-        this.gotoCheckout.execute();
+    OpenSettings() {
+        this.openSettings.execute()
     }
 
-    public CreateNew() {
-        this.gotoBlankEditor.execute();
+    public GotoScribe() {
+        this.gotoScribe.execute();
     }
 }
 
+// Add new apps as necessary
 const appRemote = new AppRemote(
-    new CheckoutCommand(appStore, ROUTES.CHECKOUT)
-    , new FreshEditCommand(appStore, ROUTES.EDIT)
+    new SwitchAppCommand(appStore, ROUTES.SCRIBE),
+    new SwitchAppCommand(appStore, ROUTES.SETTINGS),
 )
 
 export default AppRemote;

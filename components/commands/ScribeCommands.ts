@@ -2,6 +2,7 @@ import { Command } from './Command'
 import Router from 'next/router'
 import { ScribeStore } from '../../stores'
 import { CheckoutStatus } from '../../constants';
+import { RootRef } from '@material-ui/core';
 
 export class FreshEditCommand extends Command {
 
@@ -9,15 +10,16 @@ export class FreshEditCommand extends Command {
     private scribeStore: ScribeStore;
 
     constructor(store: ScribeStore, route: string) {
-        super(null)
+        super()
         this.activationRoute = route;
         this.scribeStore = store
     }
 
     public execute(): void {
-        Router.push(this.activationRoute)
-        this.scribeStore.lastStatus = CheckoutStatus.NotStarted;
+        // this.scribeStore.lastStatus = null;
+        this.scribeStore.currentStatus = CheckoutStatus.NotStarted;
         this.scribeStore.dirty = true;
+        Router.push(this.activationRoute)
     }
 
     public unexecute(): void {
@@ -31,15 +33,16 @@ export class CheckoutCommand extends Command {
     private scribeStore: ScribeStore;
 
     constructor(store: ScribeStore, route: string) {
-        super(null)
+        super()
         this.activationRoute = route;
         this.scribeStore = store
     }
 
     public execute(): void {
-        Router.push(this.activationRoute)
-        this.scribeStore.lastStatus = CheckoutStatus.CheckedOut;
+        // this.scribeStore.lastStatus = CheckoutStatus.NotStarted;
+        this.scribeStore.currentStatus = CheckoutStatus.CheckedOut;
         this.scribeStore.dirty = false;
+        Router.push(this.activationRoute)
     }
 
     public unexecute(): void {

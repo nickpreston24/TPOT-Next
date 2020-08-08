@@ -4,7 +4,7 @@ export {
     , checkoutSession
     , updateSession
     , getAuthorSessions
-} from './SessionStore'
+} from './sessionsAPI'
 
 export { scribeStore, ScribeStore } from './ScribeStore'
 export { appStore, AppStore } from './AppStore'

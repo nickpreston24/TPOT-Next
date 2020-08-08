@@ -5,7 +5,7 @@ import { isDev } from 'helpers'
 import Router from 'next/router'
 import * as ROUTES from '../../constants/routes'
 import { NavbarButton, SettingsButton } from 'components/atoms'
-import { scribeRemote } from 'components/commands'
+import { scribeRemote, appRemote } from 'components/commands'
 
 // This is the main component that will be rendered into Dashboard's "sidebar"
 const Navbar = () => {
@@ -17,24 +17,22 @@ const Navbar = () => {
         // {
         //     icon: 'calendar',
         //     title: 'Dashboard',
-        //     activationRoute: ROUTES.DASHBOARD,
-        //     // style: disableMe(!isDev()), // Feature will come later, disable for now
         //     disable: isDev(),
-        //     onClick: () => Router.push(ROUTES.DASHBOARD)
+        //     onClickFn: () => appRemote.GotoDashboard()
         // },
         {
             icon: 'scribe',
             title: 'Scribe',
-            activationRoute: ROUTES.SCRIBE,
-            onClickFn: () => Router.push(ROUTES.SCRIBE)
+            toolTip: 'Scribe',
+            onClickFn: () => appRemote.GotoScribe()
         },
         {
             // Settings should always be defined last
             icon: 'settings',
             title: 'Open Settings',
-            activationRoute: ROUTES.SETTINGS,
+            toolTip:"Edit your Settings",
             style: disableMe(!isDev()),
-            onClickFn: () => { }
+            onClickFn: () => appRemote.OpenSettings()
         },
     ]
 
@@ -44,7 +42,6 @@ const Navbar = () => {
         {
             icon: 'add',
             title: 'New',
-            activationRoute: ROUTES.EDIT,
             toolTip: "Create a new Paper",
             onClickFn: () => scribeRemote.CreateNew()
         },
@@ -52,7 +49,6 @@ const Navbar = () => {
             icon: 'download',
             title: 'Checkout',
             toolTip: "Edit an existing Paper",
-            activationRoute: ROUTES.CHECKOUT,
             onClickFn: () => scribeRemote.Checkout()
         },
     ]

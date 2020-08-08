@@ -20,7 +20,7 @@ import { notify } from './Toasts';
 import { useWordpress, useAuth } from 'hooks';
 import { createInstance } from 'models/domain';
 import { Paper, Session } from 'models';
-import { checkoutSession, updateSession, saveSession } from 'stores/SessionStore';
+import { checkoutSession, updateSession, saveSession } from 'stores/sessionsAPI';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { isDev } from 'helpers';
@@ -37,11 +37,16 @@ const UploadMethod = {
 }
 
 const messages = {
-    Warn: 'No paper could be created as there was no response from Wordpress',
+    WarnNoWPResponse: 'No paper could be created as there was no response from Wordpress',
     Success: "Paper uploaded successfully!",
 }
 
-export const ScribeToolbar = (props) => {
+type ScribeToolbarProps = {
+    // scribe: ScribeStore
+    getHtml: Function
+}
+
+export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     // Retrieve current session id:
     const router = useRouter();
@@ -49,37 +54,43 @@ export const ScribeToolbar = (props) => {
 
     isDev() && console.log('doc :>> ', doc);
 
-    const [mode, setMode] = useState(null);
+    let { dirty, currentStatus, lastStatus, lastSession } = scribeStore;
 
-    // SessionStore functions:
+    // Session API functions:
     const { getHtml } = props;
 
+    /* Wordpress support: */
     const { user: authUser } = useAuth();
-    const [uploadOption] = useState(UploadMethod.Drive);
+    const { publish } = useWordpress();
 
+
+    /** Scribe States: **/
+    const [mode, setMode] = useState(null);
+    // const [paper, setPaper] = useState(createInstance(Paper))
+    // const [session, setSession] = useState(createInstance(Session))
+
+    /** Modal States: **/
+    const [uploadOption] = useState(UploadMethod.Drive);
+    const [title, setTitle] = useState(lastSession?.title || '')
+    const [categories, setCategories] = useState('');
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    /** Modal Refs */
     const initialRef = useRef();
     const finalRef = useRef();
 
-    // const [disabled, setDisabled] = useState(true); // For whatever Components we wish to disable in prod: (use `disableMe(disabled)`)
-    // const [loading, setLoading] = useState(true);
-    // const [user, setUser] = useState(createInstance(WordpressUser));
-
-    const [title] = useState(null)
-    const [paper] = useState(createInstance(Paper))
-    const [session, setSession] = useState(createInstance(Session))
-    const [sessionSaved, setSessionSaved] = useState(true)
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
-
-    // Wordpress support:
-    const { publish } = useWordpress();
 
     useEffect(() => {
         isDev() && console.log('checking out doc :>> ', doc);
 
         if (!!doc) {
             checkoutSession(doc as string)
-                .then((result) => setSession(result))
+                .then((result) => {
+                    setTitle(result.title)
+                    console.log('checked out session :>> ', result);
+                    setCategories(result.categories?.join(", ") || '')
+                }
+                )
             setMode(CheckoutStatus.CheckedOut)
         }
         if (!doc) {
@@ -88,32 +99,63 @@ export const ScribeToolbar = (props) => {
     }, []);
 
 
+    const handleTitleChange = async (event) => {
+        setTitle(event.target.value);
+    }
+
+    const handleCategoryChange = async (event) => {
+        setCategories(event.target.value);
+    }
+
+    const onSave = async () => {
+        scribeStore.currentStatus = CheckoutStatus.InProgress
+        scribeStore.lastStatus = CheckoutStatus.NotStarted
+        onOpen();
+    }
+
+    const onPublish = async () => {
+        scribeStore.currentStatus = CheckoutStatus.FirstDraft
+        scribeStore.lastStatus = CheckoutStatus.CheckedOut
+        onOpen()
+    }
+
     const onSubmit = async () => {
 
         onClose();
 
         let html = getHtml();
 
-        const { title } = session;
+        console.log('currentStatus :>> ', currentStatus);
+        // Update an existing paper:
+        if (currentStatus === CheckoutStatus.InProgress || currentStatus === CheckoutStatus.CheckedOut) {
+            // WARNING: Firebase hates custom objects, so just use plain old JSON here:
+            let nextSession = Session
+                .create({ title, categories, code: html })
+                .toJSON()
 
-        if (mode === CheckoutStatus.NotStarted) {
-            //TODO: Call  CreateSession
+            isDev() && console.log('nextSession :>> ', nextSession);
+            await saveSession(nextSession)
+            notify("Saved session")
+
+            setMode(CheckoutStatus.CheckedOut)
+
+            scribeStore.lastSession = nextSession;
+            scribeStore.dirty = false;
             return;
         }
 
-        if (mode === CheckoutStatus.CheckedOut) {
-            publish(new Paper(session.title, html))
+
+        // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
+        if (lastStatus === CheckoutStatus.CheckedOut && currentStatus === CheckoutStatus.FirstDraft) {
+            publish(new Paper(title, html))
                 .then(async (response) => {
                     // console.log('response :>> ', response);
 
                     if (!response.id) {
-                        console.warn(messages.Warn);
-                        notify(messages.Warn);
+                        console.warn(messages.WarnNoWPResponse);
+                        notify(messages.WarnNoWPResponse);
                         return
                     }
-
-                    // let publishedSession = Session.create(response)
-                    // let publishedSession = Object.assign()
 
                     let sessionUpdate = {
                         authorId: response.author || null,
@@ -135,6 +177,8 @@ export const ScribeToolbar = (props) => {
                     // console.log('published session :>> ', publishedSession);
                     await updateSession(doc as string, sessionUpdate)
 
+                    scribeStore.lastSession = Session.create(sessionUpdate);
+
                     if (!document) {
                         notify(`Failed to create Session for: ${title}`, 'warn')
                         return;
@@ -152,33 +196,26 @@ export const ScribeToolbar = (props) => {
     return (
         <Flex>
             <ButtonGroup spacing={8}>
-                <Button
-                    onClick={() => {
-                        setMode(CheckoutStatus.CheckedOut)
-                        onOpen()
-                    }}
+                {isDev() && <Button
+                    onClick={onPublish}
                 >
                     Publish
-                </Button>
+                </Button>}
 
                 {(uploadOption === 'Drive' && isDev()) &&
                     <UploadButton>Load a Document</UploadButton>}
 
                 <Button
                     ml={8}
-                    // onClick={onSave}
-                    onClick={() => {
-                        onSubmit()
-                        onOpen()
-                    }}
-                    isLoading={!sessionSaved}
+                    onClick={onSave}
+                // isDisabled={!dirty} // FIXME: Can't update dirty @observable properly in ckeditor (it's late)
                 // leftIcon="save"  // FIXME: For some reason, I can't get this working.
                 >
                     Save
                 </Button>
             </ButtonGroup>
 
-            {isDev() && <ScribeStatusBar scribe={scribeStore}></ScribeStatusBar>}
+            {isDev() && <ScribeDevStatusBar scribe={scribeStore}></ScribeDevStatusBar>}
 
             {/* Publish  */}
 
@@ -190,19 +227,14 @@ export const ScribeToolbar = (props) => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Publish your Paper to Wordpress</ModalHeader>
+                    <ModalHeader>{currentStatus === CheckoutStatus.CheckedOut ? "Publish to Wordpress" : "Save Paper"}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
                         <FormControl>
-                            <FormLabel>Paper Title</FormLabel>
+                            <FormLabel>Title</FormLabel>
                             <Input
-                                value={session?.title || ''}
-                                onChange={(event) => {
-                                    let title = event.target.value
-                                    let updated = session;
-                                    updated.title = title;
-                                    setSession(updated)
-                                }}
+                                value={title}
+                                onChange={handleTitleChange}
                                 ref={initialRef}
                                 placeholder="paper-name-here"
                             />
@@ -211,14 +243,8 @@ export const ScribeToolbar = (props) => {
                         <FormControl mt={4}>
                             <FormLabel>Categories</FormLabel>
                             <Input
-                                value={paper.categories}
-                                onChange={(event) => {
-                                    let chunks = event.target.value.split(',');
-                                    isDev() && console.log('categories :>>', chunks)
-                                    let updated = session;
-                                    // updated.categories = chunks; //FIXME:
-                                    setSession(updated);
-                                }}
+                                value={categories}
+                                onChange={handleCategoryChange}
                                 placeholder="e.g 'Chinese', 'Translations'" />
                         </FormControl>
                     </ModalBody>
@@ -238,21 +264,21 @@ export const ScribeToolbar = (props) => {
     )
 };
 
-
-type Props = {
+type ScribeDevStatusBarProps = {
     scribe: ScribeStore
 }
 
 /** Shows the current status of Scribe in this toolbar
- * Meant only for DEBUG.
+ * Meant only for DEBUG/Development mode.
 */
-const ScribeStatusBar: FC<Props> = ({ scribe }) => {
+const ScribeDevStatusBar: FC<ScribeDevStatusBarProps> = ({ scribe }) => {
+    const { dirty, currentStatus, lastStatus, lastSession } = scribe;
     return useObserver(() =>
-        <div style={{ border: "1px #aaa solid" }}>
-            <h1>Status: {scribe.lastStatus}</h1>
-            <p>Dirty? {scribe.dirty ? "Yes" : "No"}</p>
-            {!!scribe.lastSession && <p>Id: {scribe.lastSession}</p>}
-        </div>
+        <Flex style={{ border: "1px #aaa solid" }} mb={2}>
+            <h1 style={{ marginRight: '10px' }}>{lastStatus || ''} &gt; {currentStatus}</h1>
+            {/* <p>Dirty? {dirty ? "Yes" : "No"}</p> */}
+            {/* {!!lastSession && <p>Id: {lastSession}</p>} */}
+        </Flex>
     )
 }
 

@@ -4,7 +4,7 @@ import PageSpinner from '../../components/layout/PageSpinner'
 import dynamic from 'next/dynamic'
 
 
-const MyEditor = dynamic(() => import('../../packages/tpot-scribe-editor/MyEditor'), {
+const MyEditor = dynamic(() => import('../../packages/tpot-scribe-editor/ScribeEditor'), {
     ssr: false, loading: PageSpinner
   })
 

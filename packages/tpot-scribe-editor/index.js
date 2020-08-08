@@ -1,4 +1,4 @@
 import Editor from './wrappedEditor'
-export { MyEditor } from './MyEditor'
+export { ScribeEditor as MyEditor } from './ScribeEditor'
 
 export default Editor

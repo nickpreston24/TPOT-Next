@@ -13,7 +13,7 @@ import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Chip from '@material-ui/core/Chip'
 import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
-import { sessions, unlockSession } from '../../stores/SessionStore'
+import { sessions, unlockSession } from '../../stores/sessionsAPI'
 import { toDto, Session } from '../../models'
 import { notify } from 'components/Toasts'
 import { isDev } from '../../helpers'
@@ -21,6 +21,7 @@ import { useAuth } from 'hooks'
 import { ROUTES } from 'constants/routes'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
+import { StatusChip } from '@atoms'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -129,23 +130,23 @@ export const CheckoutTable = observer(() => {
                 }
             }}
             icons={{
-                Clear: () => <Icon name='close'/>,
-                Delete: () => <Icon name='delete'/>,
+                Clear: () => <Icon name='close' />,
+                Delete: () => <Icon name='delete' />,
                 FirstPage: () => <Icon name='arrow-back' />,
                 LastPage: () => <Icon name='arrow-forward' />,
-                ResetSearch: () => <Icon name='small-close'/>,
+                ResetSearch: () => <Icon name='small-close' />,
                 NextPage: () => <Icon name='chevron-right' />,
                 PreviousPage: () => <Icon name='chevron-left' />,
                 DetailPanel: () => <Icon name='chevron-right' />,
                 SortArrow: () => <Icon name='up-down' ml={2} />,
-                Export: () => <Icon name='download' fontSize="xl"/>,
-                Search: React.forwardRef((ref, props) => <Icon {...props} name='search-2'/>)
+                Export: () => <Icon name='download' fontSize="xl" />,
+                Search: React.forwardRef((ref, props) => <Icon {...props} name='search-2' />)
             }}
             actions={[
                 {
                     isFreeAction: true,
                     tooltip: 'Refresh Table',
-                    icon: () => <Icon name='repeat' fontSize="xl"/>,
+                    icon: () => <Icon name='repeat' fontSize="xl" />,
                     onClick: () => console.log('refresh')
                 },
             ]}
@@ -167,6 +168,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     // console.log('session :>> ', session);
 
     let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
+    
     const [isOpen, setIsOpen] = useState(false)
 
     const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: afterUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
@@ -290,26 +292,27 @@ const ConfirmUnlock/*: FC<any>*/ = ({ isOpen, onClose, action }) => {
     );
 }
 
-export const statusMap = {
-    'in-progress': 'In Progress',
-    'not-started': 'Not Started',
-    'checked-out': 'Checked Out',
-    'published': 'Published',
-}
+// export const statusMap = {
+//     'in-progress': 'In Progress',
+//     'not-started': 'Not Started',
+//     'checked-out': 'Checked Out',
+//     'published': 'Published',
+// }
 
-export const labelColors = {
-    'in-progress': '#c3e3ff',
-    'not-started': '#ffe8c6',
-    'checked-out': '#ffc6c8',
-    'published': '#c6ffc6',
-}
+// export const labelColors = {
+//     'in-progress': '#c3e3ff',
+//     'not-started': '#ffe8c6',
+//     'checked-out': '#ffc6c8',
+//     'published': '#c6ffc6',
+// }
 
-export const StatusChip = ({ status }) => {
-    const label = statusMap[status] || 'Unknown'
-    const color = labelColors[status]
-    return (
-        <Chip {...{ label }} style={{ background: color }} />
-    )
-}
+// export const StatusChip = ({ status }) => {
+//     console.log('status', status)
+//     const label = statusMap[status] || 'Unknown2'
+//     const color = labelColors[status]
+//     return (
+//         <Chip {...{ label }} style={{ background: color }} />
+//     )
+// }
 
 export default CheckoutTable;

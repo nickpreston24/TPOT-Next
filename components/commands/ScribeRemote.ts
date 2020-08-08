@@ -18,8 +18,6 @@ export class ScribeRemote {
         this.gotoCheckout = checkoutCommand;
         // console.log('this.gotoCheckout', this.gotoCheckout)
         this.gotoBlankEditor = newEditCommand;
-
-        console.log('this', this)
     }
 
     public Checkout() {

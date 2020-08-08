@@ -1,15 +1,26 @@
-import { useRouter } from "next/router"
+// import { useRouter } from "next/router"
 import { Tooltip, PseudoBox, Icon, Text, Button } from "@chakra-ui/core"
 import { FC } from "react"
+
+type NavbarButtonProps = {
+    icon?: string,
+    title?: string,
+    disable?: boolean,
+    toolTip?: string,
+    isActive?: boolean,
+    // activationRoute: string,
+    onClickFn: Function
+}
 
 // A custom (very purple) button for the Navbar / Sidebar
 // Base button that has an action it executes on click.
 // Could be derived into a Slotted component later
 export const NavbarButton: FC<NavbarButtonProps> = (props) => {
-    const { icon, title, activationRoute, disable, toolTip, onClickFn, ...rest } = props
 
-    const { route } = useRouter()
-    const isActive = route === activationRoute
+    const { isActive, icon, title, disable, toolTip, onClickFn, ...rest } = props
+
+    // const { route } = useRouter()
+    // const isActive = route === activationRoute
 
     return (
         <Tooltip aria-label="navbar-tooltip" label={toolTip}>
@@ -25,13 +36,13 @@ export const NavbarButton: FC<NavbarButtonProps> = (props) => {
                 justifyContent="flex-start"
                 outline="0 !important" // kill the hovering outline
                 _hover={{ bg: "primary.700", cursor: disable ? 'not-allowed' : 'auto' }}
-                bg={isActive ? "primary.700" : "none"}
+                bg={!!isActive ? "primary.700" : "none"}
             >
                 {icon && <Icon color="primary.300" name={icon} />}
                 {title && <Text fontSize="sm"
                     ml={4} flexGrow={1} textAlign="left"
-                    color={isActive ? "#FFF" : "gray.400"}
-                    fontWeight={isActive ? 500 : 400}
+                    color={!!isActive ? "#FFF" : "gray.400"}
+                    fontWeight={!!isActive ? 500 : 400}
                 >
                     {title}
                 </Text>}
@@ -43,24 +54,16 @@ export const NavbarButton: FC<NavbarButtonProps> = (props) => {
 
 
 // Button that goes at the bottom. Very purple
-export const SettingsButton = props =>
-    <Button
+export const SettingsButton = props => {
+    const { disabled, onClickFn } = props
+    return <Button
         w="100%"
         leftIcon="settings"
         variantColor="primary"
-        isDisabled={props.disabled}
-        onClick={props.onClick}
+        isDisabled={disabled}
+        onClick={onClickFn}
         fontWeight={300}
     >
         Settings
-    </Button>
-
-type NavbarButtonProps = {
-    icon?: string,
-    title?: string,
-    disable?: boolean,
-    toolTip?: string,
-
-    activationRoute: string,
-    onClickFn: Function
+        </Button>
 }

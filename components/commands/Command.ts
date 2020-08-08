@@ -13,7 +13,7 @@ export abstract class Command implements ICommand {
     public abstract execute(): void // Abstract here means it's required, but each base class implements it differently.
     public abstract unexecute(): void
 
-    constructor(reciever: ReactNode) {
+    constructor(reciever?: ReactNode) {
         Object.assign(this, reciever)
         console.log('this.reciever', this.reciever)
     }
