@@ -1,4 +1,5 @@
 import { ReactNode } from "react"
+import { isDev } from "helpers"
 
 export interface ICommand {
     execute(): void;
@@ -15,6 +16,6 @@ export abstract class Command implements ICommand {
 
     constructor(reciever?: ReactNode) {
         Object.assign(this, reciever)
-        console.log('this.reciever', this.reciever)
+        isDev() && console.log('this.reciever', this.reciever)
     }
 }

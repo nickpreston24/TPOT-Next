@@ -48,13 +48,12 @@ export class Session {
         this.code = code || '<p></p>';
         this.contributors = [] // TODO: add functionality in other components for deciding this.
         this.lastContributor = lastContributor || ''
-        this.categories = categories.split(",") || []
+        this.categories = categories || []
         this.date_modified = date_modified || null;
         this.date_uploaded = date_uploaded || new Date();
     }
 
     static create(props): Session {
-        console.log('props', props)
         return new Session(props);
     }
 

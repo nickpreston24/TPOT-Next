@@ -22,7 +22,7 @@ export const unlockSession = async (id: string) => {
 
     if (document.hasData) {
         await document.update({
-            status: "in-progress"
+            status: CheckoutStatus.InProgress
         })
     }
 }
@@ -36,21 +36,23 @@ export const saveSession = async (session: any | Session, isUpdate: boolean = fa
 
     let document = new Document(`sessions/${session.slug}`);
     await document.fetch()
-    console.log('document', document)
+    isDev() && console.log('document', document)
 
     // Collision detection
     // if (!document.hasData)
     //     return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let currentSession = toJS(document.data);
-    console.log('currentSession :>> ', currentSession);
+    isDev() && console.log('currentSession :>> ', currentSession);
 
     Object.assign(currentSession, session)
 
     if (!isUpdate)
         await document.set(session)
-    else
+    else {
+        session.date_modified = new Date();
         await document.update(session)
+    }
 
     return session;
 }
@@ -66,8 +68,8 @@ export const checkoutSession = async (id: string) => {
     let session = toJS(document.data as Session);
     isDev() && console.log('session :>> ', session);
 
-    if (session.status !== 'checked-out')
-        session.status = 'checked-out'
+    if (session.status !== CheckoutStatus.CheckedOut)
+        session.status = CheckoutStatus.CheckedOut
 
     await document.update(session as object)
 

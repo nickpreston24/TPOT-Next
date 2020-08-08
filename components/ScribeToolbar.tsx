@@ -21,7 +21,7 @@ import { useWordpress, useAuth } from 'hooks';
 import { createInstance } from 'models/domain';
 import { Paper, Session } from 'models';
 import { checkoutSession, updateSession, saveSession } from 'stores/sessionsAPI';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import React from 'react';
 import { isDev } from 'helpers';
 
@@ -29,6 +29,7 @@ import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
 import { ScribeStore } from 'stores/ScribeStore';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
+import { ROUTES } from 'constants/routes';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -81,14 +82,23 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
 
     useEffect(() => {
+        
         isDev() && console.log('checking out doc :>> ', doc);
+
+        // Setup the Reset of status on route change /edit/ => /checkout/:
+        Router.events.on('routeChangeComplete', (url) => {
+            if (url === ROUTES.CHECKOUT)
+                updateSession(doc as string, { status: CheckoutStatus.InProgress })
+        })
 
         if (!!doc) {
             checkoutSession(doc as string)
                 .then((result) => {
                     setTitle(result.title)
-                    console.log('checked out session :>> ', result);
+                    isDev() && console.log('checked out session :>> ', result);
                     setCategories(result.categories?.join(", ") || '')
+                    scribeStore.lastSession = Session.create(result);
+                    console.log('scribeStore.lastSession :>> ', scribeStore.lastSession);
                 }
                 )
             setMode(CheckoutStatus.CheckedOut)
@@ -125,7 +135,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         let html = getHtml();
 
-        console.log('currentStatus :>> ', currentStatus);
+        isDev() && console.log('currentStatus :>> ', currentStatus);
         // Update an existing paper:
         if (currentStatus === CheckoutStatus.InProgress || currentStatus === CheckoutStatus.CheckedOut) {
             // WARNING: Firebase hates custom objects, so just use plain old JSON here:
@@ -134,7 +144,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                 .toJSON()
 
             isDev() && console.log('nextSession :>> ', nextSession);
-            await saveSession(nextSession)
+            let needsUpdate = currentStatus === CheckoutStatus.CheckedOut;
+            await saveSession(nextSession, needsUpdate)
             notify("Saved session")
 
             setMode(CheckoutStatus.CheckedOut)

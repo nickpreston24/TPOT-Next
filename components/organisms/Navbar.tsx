@@ -10,7 +10,7 @@ import { scribeRemote, appRemote } from 'components/commands'
 // This is the main component that will be rendered into Dashboard's "sidebar"
 const Navbar = () => {
 
-    console.log('scribeRemote', scribeRemote.gotoCheckout)
+    isDev() && console.log('scribeRemote', scribeRemote.gotoCheckout)
 
     // These options will always stay the same. Just a list of apps we can navigate to
     const appItems = [
@@ -30,7 +30,7 @@ const Navbar = () => {
             // Settings should always be defined last
             icon: 'settings',
             title: 'Open Settings',
-            toolTip:"Edit your Settings",
+            toolTip: "Edit your Settings",
             style: disableMe(!isDev()),
             onClickFn: () => appRemote.OpenSettings()
         },
@@ -56,7 +56,7 @@ const Navbar = () => {
     let appButtons = appItems.slice(0, -1)
     let settingsProps = appItems.slice(-1)
 
-    console.log('settingsProps', settingsProps)
+    isDev() && console.log('settingsProps', settingsProps)
 
     return (
         <Stack px={4} h="100%" w="100%" spacing={8}>

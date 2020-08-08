@@ -1,6 +1,6 @@
 import { observable } from 'mobx'
 import { CheckoutStatus } from 'constants/CheckoutStatus';
-import { Session } from 'models';
+import { Session, createInstance } from 'models';
 
 /**
  * Holds contextual information for the Scribe app
@@ -20,7 +20,7 @@ export class ScribeStore {
     @observable dirty: boolean = false;
     @observable lastStatus: CheckoutStatus = CheckoutStatus.NotStarted;
     @observable currentStatus: CheckoutStatus = CheckoutStatus.NotStarted;
-    @observable lastSession: Session = null;
+    @observable lastSession: Session = createInstance(Session);
 
 }
 

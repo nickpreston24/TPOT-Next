@@ -2,7 +2,6 @@ import { Command } from './Command'
 import Router from 'next/router'
 import { ScribeStore } from '../../stores'
 import { CheckoutStatus } from '../../constants';
-import { RootRef } from '@material-ui/core';
 
 export class FreshEditCommand extends Command {
 
@@ -39,7 +38,10 @@ export class CheckoutCommand extends Command {
     }
 
     public execute(): void {
-        // this.scribeStore.lastStatus = CheckoutStatus.NotStarted;
+        // this.scribeStore.lastSession.status = CheckoutStatus.InProgress; // Reset to In Progress when moving from /checkout/ route;
+        // console.log('this.scribeStore.lastSession', this.scribeStore.lastSession)
+        
+        this.scribeStore.lastStatus = CheckoutStatus.NotStarted;
         this.scribeStore.currentStatus = CheckoutStatus.CheckedOut;
         this.scribeStore.dirty = false;
         Router.push(this.activationRoute)
