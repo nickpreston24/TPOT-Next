@@ -18,7 +18,7 @@ type WelcomeTemplateProps = {
 }
 
 const Template: FC<WelcomeTemplateProps> = ({
-    mode =  'default',
+    mode = 'default',
     title = 'Enter a Title',
     subtitle = 'Enter a Subtitle',
     children,
@@ -40,9 +40,8 @@ const Template: FC<WelcomeTemplateProps> = ({
     const formWidth = ['default'].includes(mode) ? '0%' : (1 / 3)
 
     return (
-        <Flex id="frame"
-            style={{ background: gradient }} justifyContent="center" alignItems="center" position="absolute" height="100%" width="100%">
-            <Stack h="100%" w="100%" maxW={1200} maxH={700} overflow="hidden" direction="row" spacing={0} bg="primary.600" borderRadius="lg" shadow="2xl" transition="all 1s ease-in-out 0s">
+        <Flex id="frame" style={{ background: gradient }} justifyContent="center" alignItems="center" position="absolute" height="100%" width="100%">
+            <Stack h="100%" w="100%" maxW={1200} maxH={700} overflow="auto" direction="row" spacing={0} bg="primary.600" borderRadius="lg" shadow="2xl" transition="all 1s ease-in-out 0s">
                 <Flex h="100%" w={mainWidth} alignItems="flex-start" bg="gray.100" transition="all 0.3s ease-out">
                     <Stack width="100%" align="center" spacing={3} px={16} >
                         <Flex w={600} h={500} justifyContent="center" alignItems="center">

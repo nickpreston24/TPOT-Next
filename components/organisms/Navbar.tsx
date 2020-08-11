@@ -57,7 +57,12 @@ const Navbar = () => {
     isDev() && console.log('settingsProps', settingsProps)
 
     return (
-        <Stack px={4} h="100%" w="100%" spacing={8}>
+        <Stack
+            px={4}
+            spacing={8}
+            // width={["100%", .75, .25, 0.15]}
+            border="5px lime dotted"
+        >
             <AppLogo />
             <NavbarGroup title="Apps">
                 {appButtons.map((btn, idx) =>

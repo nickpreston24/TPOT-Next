@@ -1,7 +1,7 @@
 import React, { createRef } from "react";
 import { ScribeToolbar } from '../../components'
 import { Spinner, Box, Flex, Button } from "@chakra-ui/core";
-import { scribeStore } from '../../stores'
+import { isDev } from "helpers";
 
 export class ScribeEditor extends React.Component<any, any> {
     state = { loading: true, contents: '' };
@@ -16,18 +16,13 @@ export class ScribeEditor extends React.Component<any, any> {
         this.ckeditorRef = createRef();
     }
 
-    getHtml = () => {
-        const html = this.ckeditorRef.current.editor.getData()
-        return html;
-    }
+    getHtml = () => this.ckeditorRef.current.editor.getData()
 
-    setHtml = (text) => {
-        this.ckeditorRef.current.editor.setData(text)
-    }
+    setHtml = (text) => this.ckeditorRef.current.editor.setData(text)
 
     attachInspector = editor => {
-        // TODO : Check if we are in DEV mode
-        // this.CKEditorInspector.attach(editor, { isCollapsed: true })
+        if (isDev())
+            this.CKEditorInspector.attach(editor, { isCollapsed: true })
     }
 
     componentDidMount() {
@@ -43,10 +38,6 @@ export class ScribeEditor extends React.Component<any, any> {
             this.setState({ contents: code })
         }
     }
-
-    // handleChange(event) {
-    //     console.log('event :>> ', event);
-    // }
 
     render() {
         return this.CKEditor ? (
@@ -66,7 +57,6 @@ export class ScribeEditor extends React.Component<any, any> {
                         <this.CKEditor
                             ref={this.ckeditorRef}
                             editor={this.DecoupledEditor}
-                            // onChange={this.handleChange}
                             data={"<p>Hello from CKEditor 5!</p>"}
                             onInit={editor => {
 

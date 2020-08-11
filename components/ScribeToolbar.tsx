@@ -26,7 +26,6 @@ import { isDev } from 'helpers';
 
 import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
-import { ScribeStore } from 'stores/ScribeStore';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
 
