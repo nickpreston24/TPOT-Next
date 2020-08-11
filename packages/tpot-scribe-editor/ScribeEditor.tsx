@@ -21,8 +21,8 @@ export class ScribeEditor extends React.Component<any, any> {
     setHtml = (text) => this.ckeditorRef.current.editor.setData(text)
 
     attachInspector = editor => {
-        if (isDev())
-            this.CKEditorInspector.attach(editor, { isCollapsed: true })
+        // if (isDev())
+        // this.CKEditorInspector.attach(editor, { isCollapsed: true })
     }
 
     componentDidMount() {

@@ -39,7 +39,7 @@ export const NavbarButton: FC<NavbarButtonProps> = (props) => {
                 bg={!!isActive ? "primary.700" : "none"}
             >
                 {icon && <Icon color="primary.300" name={icon} />}
-                {title && <Text fontSize="sm"
+                {title && <Text fontSize={{ base: "sm", sm: "xs", lg: 'md' }}
                     ml={4} flexGrow={1} textAlign="left"
                     color={!!isActive ? "#FFF" : "gray.400"}
                     fontWeight={!!isActive ? 500 : 400}
@@ -59,10 +59,11 @@ export const SettingsButton = props => {
     return <Button
         w="100%"
         leftIcon="settings"
+        fontSize={{ base: "md", sm: "xs", md: "sm", lg: 'md' }}
         variantColor="primary"
         isDisabled={disabled}
         onClick={onClickFn}
-        fontWeight={300}
+        fontWeight={{ base: 200, sm: .75, md: .25 }}
     >
         Settings
         </Button>

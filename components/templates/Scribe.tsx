@@ -29,9 +29,12 @@ const Template: FC<ScribeTemplateProps> = ({
 
     return (
         <Layout>
-            <Stack align="center" spacing={8} paddingTop={16}>
+            <Stack align="center" spacing={{ base: 1, sm: 1, md: 4, lg: 8 }} paddingTop={16}>
                 <Heading fontWeight={300}>{title}</Heading>
-                <Flex w={400} h={400} justifyContent="center" alignItems="center">
+                <Flex
+                    width={{ base: "400px", lg: "60%", md: "85%", sm: "100%" }}
+                    justifyContent="center" alignItems="center"
+                >
                     <SplashScreen />
                 </Flex>
                 <Text fontSize="lg">{subtitle}</Text>

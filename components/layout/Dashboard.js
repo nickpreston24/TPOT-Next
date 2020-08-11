@@ -3,8 +3,6 @@ import Box from '@chakra-ui/core/dist/Box'
 import Flex from '@chakra-ui/core/dist/Flex'
 import Header from '@organisms/Header'
 import Navbar from '@organisms/Navbar'
-import Stack from '@chakra-ui/core/dist/Stack'
-import List from '@chakra-ui/core/dist/List'
 
 export const Layout = ({ children }) => {
 
@@ -23,20 +21,27 @@ export const Layout = ({ children }) => {
                 transition="width 0.3s ease-in-out 0s"
                 overflow="hidden"
                 whiteSpace="nowrap"
-                // width={["100%", .75, .25, 0.15]}
-                border="5px green solid"
+                width={["100%", .85, .25, .25, .15]}
+                // border="5px green solid"
             >
                 <Navbar />
             </Flex>
-            <Flex id="content" flexGrow={1} bg="gray.100" flexDirection="column" overflow="hidden">
-                <Flex id="header" minH={70} h={70} bg="white" boxShadow="sm"
-                    border="5px dodgerblue solid"
+            <Flex 
+            id="content" flexGrow={1} bg="gray.100" flexDirection="column" 
+            overflow="hidden">
+                <Flex 
+                id="header" 
+                h={{ base:"70px" }}
+                bg="white" 
+                boxShadow="sm"
+                // border="5px dodgerblue solid"
                 >
                     <Header />
                 </Flex>
                 <Box
                     overflowY="auto"
-                    border="5px red solid"
+                    // border="3px red solid"
+                    pb={4}
                     height="50%"
                     id="content"
                     flexGrow={1}
