@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import { Box } from '@chakra-ui/core'
+import Box from '@chakra-ui/core/dist/Box'
 
 // : This component ensures that we always have a full height and width container for each page
 

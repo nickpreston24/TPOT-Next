@@ -1,7 +1,9 @@
 import React, { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
-import { Box } from '@chakra-ui/core'
-import { Tabs, Tab } from '@material-ui/core'
+import Box from '@chakra-ui/core/dist/Box'
+import Tab from '@material-ui/core/Tab'
+import Tabs from '@material-ui/core/Tabs'
+
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined'
 import ViewQuiltOutlinedIcon from '@material-ui/icons/ViewQuiltOutlined'

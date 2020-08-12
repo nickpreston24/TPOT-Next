@@ -1,6 +1,5 @@
 import { observable, action } from 'mobx'
 import { CheckoutStatus } from 'constants/CheckoutStatus';
-import { Session, createInstance } from 'models';
 
 /**
  * Holds contextual information for the Scribe app

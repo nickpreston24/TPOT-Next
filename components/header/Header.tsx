@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from '@chakra-ui/core'
+import Box from '@chakra-ui/core/dist/Box'
 import HeaderTabs from './HeaderTabs'
 import HeaderAppDropdown from './HeaderAppDropdown'
 import HeaderUserLogin from './HeaderUserLogin'

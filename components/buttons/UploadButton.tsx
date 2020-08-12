@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { uploadLocalFile } from '../../functions/upload';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { Button } from '@chakra-ui/core';
+import Button from '@chakra-ui/core/dist/Button';
 import { notify } from 'components/Toasts';
 import { useAuth } from 'hooks/useAuth';
 import { useRouter } from 'next/router';
