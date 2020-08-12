@@ -83,8 +83,6 @@ const Navbar = () => {
 
 export default Navbar
 
-
-
 const AppLogo = () =>
     <Box minH={70} maxHeight={70} mb={8}>
         <Stack direction="row" align="center" pl={2} spacing={6} h="100%">
