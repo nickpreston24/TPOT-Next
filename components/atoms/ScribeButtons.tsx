@@ -1,5 +1,9 @@
-// import { useRouter } from "next/router"
-import { Tooltip, PseudoBox, Icon, Text, Button } from "@chakra-ui/core"
+import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import PseudoBox from '@chakra-ui/core/dist/PseudoBox'
+import Icon from '@chakra-ui/core/dist/Icon'
+import Text from '@chakra-ui/core/dist/Text'
+import Button from '@chakra-ui/core/dist/Button'
+
 import { FC } from "react"
 
 type NavbarButtonProps = {
@@ -8,7 +12,6 @@ type NavbarButtonProps = {
     disable?: boolean,
     toolTip?: string,
     isActive?: boolean,
-    // activationRoute: string,
     onClickFn: Function
 }
 
@@ -18,9 +21,6 @@ type NavbarButtonProps = {
 export const NavbarButton: FC<NavbarButtonProps> = (props) => {
 
     const { isActive, icon, title, disable, toolTip, onClickFn, ...rest } = props
-
-    // const { route } = useRouter()
-    // const isActive = route === activationRoute
 
     return (
         <Tooltip aria-label="navbar-tooltip" label={toolTip}>

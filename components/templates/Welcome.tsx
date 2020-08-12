@@ -1,6 +1,20 @@
 import React, { FC, ReactNode, useState } from 'react'
 import NextLink from 'next/link'
-import { Button, Flex, Heading, Box, Stack, Input, Text, Icon, ButtonProps, useTheme, FormControl, FormLabel, FormErrorMessage, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/core'
+import Button, { ButtonProps } from '@chakra-ui/core/dist/Button'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Heading from '@chakra-ui/core/dist/Heading'
+import Box from '@chakra-ui/core/dist/Box'
+import Stack from '@chakra-ui/core/dist/Stack'
+import Input from '@chakra-ui/core/dist/Input'
+import Text from '@chakra-ui/core/dist/Text'
+import Icon from '@chakra-ui/core/dist/Icon'
+import { InputRightElement, InputLeftElement } from '@chakra-ui/core/dist/InputElement'
+import FormControl from '@chakra-ui/core/dist/FormControl'
+import FormLabel from '@chakra-ui/core/dist/FormLabel'
+import FormErrorMessage from '@chakra-ui/core/dist/FormErrorMessage'
+import InputGroup from '@chakra-ui/core/dist/InputGroup'
+import { useTheme } from '@chakra-ui/core'
+
 import { useFormik, FormikProps, FormikValues } from 'formik';
 import SplashScreen from '../svg/MonitorDashboard'
 

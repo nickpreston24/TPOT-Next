@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Template from '@templates/PaperEditor'
 
-
-const Page = props => {
+const Page = () => {
 
   return (
     <Template />

@@ -1,7 +1,7 @@
 import '@services/firebase'
 import { Collection, Document } from 'firestorter'
-import { Session, toDto } from 'models'
-import { observable, toJS } from 'mobx';
+import { Session } from 'models'
+import { toJS } from 'mobx';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { IDocumentOptions } from 'firestorter/lib/Types';
 import { isDev } from 'helpers';

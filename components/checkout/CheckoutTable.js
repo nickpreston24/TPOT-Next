@@ -15,7 +15,6 @@ import { useRouter } from 'next/router'
 import { sessions, unlockSession } from '../../stores/sessionsAPI'
 import { toDto, Session } from '../../models'
 import { notify } from 'components/Toasts'
-import { isDev } from '../../helpers'
 import { useAuth } from 'hooks'
 import { ROUTES } from 'constants/routes'
 import { CheckoutStatus } from '../../constants'
@@ -154,13 +153,7 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-
-// type DetailProps = {
-//     row: object | Session
-//     user: User,
-// }
-
-const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
+const TableDetails = ({ row, user }) => {
 
     const { id } = row;
     let session = toDto(row, Session);
@@ -291,28 +284,5 @@ const ConfirmUnlock/*: FC<any>*/ = ({ isOpen, onClose, action }) => {
         </>
     );
 }
-
-// export const statusMap = {
-//     'in-progress': 'In Progress',
-//     'not-started': 'Not Started',
-//     'checked-out': 'Checked Out',
-//     'published': 'Published',
-// }
-
-// export const labelColors = {
-//     'in-progress': '#c3e3ff',
-//     'not-started': '#ffe8c6',
-//     'checked-out': '#ffc6c8',
-//     'published': '#c6ffc6',
-// }
-
-// export const StatusChip = ({ status }) => {
-//     console.log('status', status)
-//     const label = statusMap[status] || 'Unknown2'
-//     const color = labelColors[status]
-//     return (
-//         <Chip {...{ label }} style={{ background: color }} />
-//     )
-// }
 
 export default CheckoutTable;

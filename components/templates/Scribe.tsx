@@ -1,5 +1,10 @@
 import React, { FC, ReactNode } from 'react'
-import { Button, Flex, Heading, Stack, Text, ButtonProps } from '@chakra-ui/core'
+import Button, { ButtonProps } from '@chakra-ui/core/dist/Button'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Heading from '@chakra-ui/core/dist/Heading'
+import Stack from '@chakra-ui/core/dist/Stack'
+import Text from '@chakra-ui/core/dist/Text'
+
 import Layout from '../layout/Dashboard'
 import SplashScreen from '../svg/SittingAtComputer'
 

@@ -1,20 +1,22 @@
 import { useState, useRef, useEffect, FC } from 'react';
 import {
-    ModalOverlay,
     Modal,
+    ModalOverlay,
     ModalContent,
     ModalHeader,
     ModalCloseButton,
     ModalBody,
-    FormControl,
-    FormLabel,
-    Input,
     ModalFooter,
-    useDisclosure,
-    Button,
-    ButtonGroup,
-    Flex,
-} from '@chakra-ui/core'
+} from '@chakra-ui/core/dist/Modal'
+
+import Flex from '@chakra-ui/core/dist/Flex'
+import FormLabel from '@chakra-ui/core/dist/FormLabel'
+import FormControl from '@chakra-ui/core/dist/FormControl'
+import Input from '@chakra-ui/core/dist/Input'
+import ButtonGroup from '@chakra-ui/core/dist/ButtonGroup'
+import Button from '@chakra-ui/core/dist/Button'
+import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
+
 import UploadButton from 'components/buttons/UploadButton';
 import { notify } from './Toasts';
 import { useWordpress, useAuth } from 'hooks';
