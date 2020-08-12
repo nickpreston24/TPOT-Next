@@ -1,7 +1,10 @@
 import React from 'react'
-import { Box, Icon } from '@chakra-ui/core'
-import { Avatar, IconButton } from '@material-ui/core'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import Box from '@chakra-ui/core/dist/Box'
+import Icon from '@chakra-ui/core/dist/Icon'
+
+import IconButton from '@material-ui/core/IconButton'
+import Avatar from '@material-ui/core/Avatar'
+
 import { notify } from '../experimental';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined'
 import Router from 'next/router'

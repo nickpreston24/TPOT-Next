@@ -2,7 +2,9 @@ import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ProvideAuth, ProvideWordpress } from '@hooks'
-import { ThemeProvider, CSSReset, theme } from '@chakra-ui/core'
+import ThemeProvider from '@chakra-ui/core/dist/ThemeProvider'
+import CSSReset from '@chakra-ui/core/dist/CSSReset'
+
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import customTheme from 'components/utils/Theme'
 import muiTheme from 'components/utils/MuiTheme'

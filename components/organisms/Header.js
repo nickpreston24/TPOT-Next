@@ -1,5 +1,19 @@
 import React from 'react'
-import { Flex, Icon, Heading, Button, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Menu, MenuButton, MenuList, MenuItem, MenuGroup, MenuDivider, Tooltip, Box } from '@chakra-ui/core'
+
+import Menu, { MenuButton, MenuList, MenuGroup, MenuDivider, MenuItem } from '@chakra-ui/core/dist/Menu'
+import { InputRightElement } from '@chakra-ui/core/dist/InputElement'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Icon from '@chakra-ui/core/dist/Icon'
+import Avatar from '@chakra-ui/core/dist/Avatar'
+import Input from '@chakra-ui/core/dist/Input'
+import Button from '@chakra-ui/core/dist/Button'
+import Switch from '@chakra-ui/core/dist/Switch'
+import Heading from '@chakra-ui/core/dist/Heading'
+import InputGroup from '@chakra-ui/core/dist/InputGroup'
+import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import Text from '@chakra-ui/core/dist/Text'
+import Stack from '@chakra-ui/core/dist/Stack'
+
 import { useAuth } from 'hooks'
 import { useRouter } from 'next/router'
 import * as ROUTES from '@constants/routes'
@@ -115,14 +129,14 @@ const AccountDropdown = () => {
             </MenuButton>
             <MenuList>
                 <MenuGroup title="Profile">
-                    {menuItems.slice(0, 2).map((i, k) => <MenuItem disabled={i.disabled} onClick={i.cb} key={k}>
-                        <Icon mr={3} name={i.icon} />{i.title}
+                    {menuItems.slice(0, 2).map((item, key) => <MenuItem disabled={item.disabled} onClick={item.cb} key={key}>
+                        <Icon mr={3} name={item.icon} />{item.title}
                     </MenuItem>)}
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Help">
-                    {menuItems.slice(2, 4).map((i, k) => <MenuItem disabled={i.disabled} onClick={i.cb} key={k}>
-                        <Icon mr={3} name={i.icon} />{i.title}
+                    {menuItems.slice(2, 4).map((item, key) => <MenuItem disabled={item.disabled} onClick={item.cb} key={key}>
+                        <Icon mr={3} name={item.icon} />{item.title}
                     </MenuItem>)}
                 </MenuGroup>
             </MenuList>
