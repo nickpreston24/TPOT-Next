@@ -87,8 +87,6 @@ const Navbar = () => {
 
 export default Navbar
 
-
-
 const AppLogo = () =>
     <Box
         h={{ base: 70, sm: 10, md: 35, lg: 100 }}

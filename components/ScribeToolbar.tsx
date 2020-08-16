@@ -178,7 +178,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         if (lastStatus === CheckoutStatus.CheckedOut && currentStatus === CheckoutStatus.FirstDraft) {
             publish(new Paper(title, html))
                 .then(async (response) => {
-                    // console.log('response :>> ', response);
+                    isDev() && console.log('response :>> ', response);
 
                     if (!response.id) {
                         console.warn(messages.WarnNoWPResponse);
