@@ -191,27 +191,35 @@ const TableDetails = ({ row, user }) => {
             <Flex justifyContent="center">
                 <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
                     <Stack w="50%">
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Slug</Box>
-                            <Box>{slug}</Box>
-                        </Stack>
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Excerpt</Box>
-                            <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
-                        </Stack>
+                        {slug &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Slug</Box>
+                                <Box>{slug}</Box>
+                            </Stack>
+                        }
+                        {excerpt &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Excerpt</Box>
+                                <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
+                            </Stack>
+                        }
                     </Stack>
                     <Divider orientation="vertical" m={4} />
                     <Stack w="50%">
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Document</Box>
-                            <Link href={original} isExternal color="blue.500">
-                                {filename} <Icon name="external-link" mx="2px" />
-                            </Link>
-                        </Stack>
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Uploaded</Box>
-                            <Box overflowX="hidden" overflowY="scroll">{date_uploaded}</Box>
-                        </Stack>
+                        {filename &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Document</Box>
+                                <Link href={original} isExternal color="blue.500">
+                                    {filename} <Icon name="external-link" mx="2px" />
+                                </Link>
+                            </Stack>
+                        }
+                        {date_uploaded &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Date Uploaded</Box>
+                                <Box overflowX="hidden" overflowY="scroll">{date_uploaded}</Box>
+                            </Stack>
+                        }
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
                             <ConfirmUnlock
                                 action={unlock}

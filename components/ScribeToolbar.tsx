@@ -225,7 +225,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     return (
         <Flex>
             <ButtonGroup spacing={8}>
-                {isDev() && <Button
+                {!isDev() && <Button
                     onClick={onPublish}
                 >
                     Publish
