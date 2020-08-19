@@ -57,11 +57,10 @@ export const CheckoutTable = observer(() => {
     // console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
 
     const { user } = useAuth();
-    // console.log('user :>> ', user);
-    // const email = user.email || null;    
+    // console.log('user :>> ', user);   
 
     const { isLoading, hasDocs } = sessions;
-    // console.log('isDev()', isDev())
+    
     let tableData = []
 
     if (hasDocs) {
@@ -70,9 +69,9 @@ export const CheckoutTable = observer(() => {
         sessions.docs.reduce((array, doc, idx) => {
             let { id, data } = doc
             let { status, date_modified, date_uploaded, contributors } = data
-            // let { status, date_modified, date_uploaded, contributors } = toDto(data, Session)
 
             // console.log('contributors :>> ', contributors);
+
             let now = moment()
             if (date_modified) {
                 date_modified = moment.unix(date_modified.seconds)
@@ -183,7 +182,7 @@ const TableDetails = ({ row, user }) => {
 
     const unlock = async () => {
         unlockSession(id)
-        notify("Document successfully unlocked.  You may now check it out", 'success');
+        notify("Document successfully unlocked.  You may now check it out", 'info');
     }
 
     return (
