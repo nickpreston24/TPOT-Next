@@ -79,7 +79,7 @@ const Navbar = () => {
                 )}
             </NavbarGroup>
             <Flex alignItems="flex-end" flexGrow={1} pb={4}>
-                <SettingsButton {...settingsProps} />
+                <SettingsButton disabled={isDev()} {...settingsProps} />
             </Flex>
         </Stack>
     )

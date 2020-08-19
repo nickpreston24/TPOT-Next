@@ -20,7 +20,7 @@ const UploadButton: FC<Props> = ({ afterUpload }) => {
         <Button onClick={() => {
             // console.log('user :>> ', Object.keys(user), user.email);
             if (!user && router.pathname !== ROUTES.LANDING) {
-                notify("You need to login to perform this action!", 'info')
+                notify("You need to login to perform this action!", 'success')
                 router.push(ROUTES.LANDING)
             }
         }} >
@@ -40,7 +40,7 @@ const UploadButton: FC<Props> = ({ afterUpload }) => {
 
                     let { document } = (await uploadLocalFile(file, email))
                     console.info(`Uploaded by user ${email}`);
-                    notify('Document uploaded successfully!', 'info');
+                    notify('Document uploaded successfully!', 'success');
 
                     if (!document?.id)
                         return

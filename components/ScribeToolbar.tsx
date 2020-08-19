@@ -146,7 +146,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
             await updateSession(doc as string, sessionUpdate)
 
-            notify("Updated session")
+            notify("Updated session", "success")
 
             scribeStore.lastSession = sessionUpdate;
             scribeStore.dirty = false;
@@ -166,7 +166,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             setStatus(CheckoutStatus.CheckedOut)
             dirty = false;
 
-            notify("Saved session")
+            notify("Saved session", "success")
 
             // scribeStore.lastSession = nextSession;
 
@@ -182,7 +182,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
                     if (!response.id) {
                         console.warn(messages.WarnNoWPResponse);
-                        notify(messages.WarnNoWPResponse);
+                        notify(messages.WarnNoWPResponse, 'warn');
                         return
                     }
 
