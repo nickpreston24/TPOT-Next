@@ -1,1 +1,0 @@
-export type ListProps<T> = { entries: T[]; title?: string; };

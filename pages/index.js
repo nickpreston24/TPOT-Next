@@ -3,7 +3,12 @@ import NextLink from 'next/link'
 import Template from '@templates/Welcome'
 import * as ROUTES from '@constants/routes'
 import { useRouter } from 'next/router'
-import { Text, Link, Icon, useToast } from '@chakra-ui/core'
+
+import Icon from '@chakra-ui/core/dist/Icon'
+import Text from '@chakra-ui/core/dist/Text'
+import Link from '@chakra-ui/core/dist/Link'
+import { useToast } from '@chakra-ui/core'
+
 import { useFormik } from 'formik'
 import { useAuth } from "@hooks"
 import * as yup from 'yup'

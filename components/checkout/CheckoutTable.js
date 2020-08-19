@@ -1,23 +1,26 @@
-import {
-    Button, Divider, Flex, Icon, Link, Stack, Spinner, Collapse, Tooltip, Box, Modal
-    , ModalHeader, ModalOverlay, ModalContent, ModalFooter, useDisclosure, ModalCloseButton, ModalBody
-} from '@chakra-ui/core'
-import { Chip } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Modal, ModalHeader, ModalOverlay, ModalFooter, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/core/dist/Modal'
+import Button from '@chakra-ui/core/dist/Button'
+import Divider from '@chakra-ui/core/dist/Divider'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Icon from '@chakra-ui/core/dist/Icon'
+import Link from '@chakra-ui/core/dist/Link'
+import Box from '@chakra-ui/core/dist/Box'
+import Stack from '@chakra-ui/core/dist/Stack'
+import Collapse from '@chakra-ui/core/dist/Collapse'
+import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import { observer } from 'mobx-react'
-import { Document } from 'firestorter'
-import { observable } from 'mobx'
-import moment from 'moment'
-import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState, FC } from 'react'
-import { sessions, unlockSession } from '../../stores/SessionStore'
-import { ROUTES } from 'constants/routes'
+import { sessions, unlockSession } from '../../stores/sessionsAPI'
 import { toDto, Session } from '../../models'
-import { notify } from 'components/experimental/Toasts'
-import { isDev } from '../../helpers'
-import { User } from 'firebase'
+import { notify } from 'components/Toasts'
 import { useAuth } from 'hooks'
-
+import { ROUTES } from 'constants/routes'
+import { CheckoutStatus } from '../../constants'
+import dynamic from 'next/dynamic'
+import moment from 'moment'
+import { StatusChip } from '../atoms'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -29,7 +32,7 @@ import { useAuth } from 'hooks'
 
 // Using a dynamic import with `ssr: false` option fixes most Mui issues
 const MaterialTable = dynamic(() => import('material-table'),
-    { ssr: false, loading: () => <Spinner /> }
+    { ssr: false }
 )
 
 const columns = [
@@ -125,11 +128,24 @@ export const CheckoutTable = observer(() => {
                     searchPlaceholder: 'Search'
                 }
             }}
+            icons={{
+                Clear: () => <Icon name='close' />,
+                Delete: () => <Icon name='delete' />,
+                FirstPage: () => <Icon name='arrow-back' />,
+                LastPage: () => <Icon name='arrow-forward' />,
+                ResetSearch: () => <Icon name='small-close' />,
+                NextPage: () => <Icon name='chevron-right' />,
+                PreviousPage: () => <Icon name='chevron-left' />,
+                DetailPanel: () => <Icon name='chevron-right' />,
+                SortArrow: () => <Icon name='up-down' ml={2} />,
+                Export: () => <Icon name='download' fontSize="xl" />,
+                Search: React.forwardRef((ref, props) => <Icon {...props} name='search-2' />)
+            }}
             actions={[
                 {
                     isFreeAction: true,
                     tooltip: 'Refresh Table',
-                    icon: 'refresh',
+                    icon: () => <Icon name='repeat' fontSize="xl" />,
                     onClick: () => console.log('refresh')
                 },
             ]}
@@ -137,13 +153,7 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-
-// type DetailProps = {
-//     row: object | Session
-//     user: User,
-// }
-
-const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
+const TableDetails = ({ row, user }) => {
 
     const { id } = row;
     let session = toDto(row, Session);
@@ -151,6 +161,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
     // console.log('session :>> ', session);
 
     let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
+
     const [isOpen, setIsOpen] = useState(false)
 
     const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: afterUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
@@ -180,27 +191,35 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
             <Flex justifyContent="center">
                 <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
                     <Stack w="50%">
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Slug</Box>
-                            <Box>{slug}</Box>
-                        </Stack>
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Excerpt</Box>
-                            <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
-                        </Stack>
+                        {slug &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Slug</Box>
+                                <Box>{slug}</Box>
+                            </Stack>
+                        }
+                        {excerpt &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Excerpt</Box>
+                                <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
+                            </Stack>
+                        }
                     </Stack>
                     <Divider orientation="vertical" m={4} />
                     <Stack w="50%">
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Document</Box>
-                            <Link href={original} isExternal color="blue.500">
-                                {filename} <Icon name="external-link" mx="2px" />
-                            </Link>
-                        </Stack>
-                        <Stack direction="row">
-                            <Box minW="80px" fontWeight="bold">Uploaded</Box>
-                            <Box overflowX="hidden" overflowY="scroll">{date_uploaded}</Box>
-                        </Stack>
+                        {filename &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Document</Box>
+                                <Link href={original} isExternal color="blue.500">
+                                    {filename} <Icon name="external-link" mx="2px" />
+                                </Link>
+                            </Stack>
+                        }
+                        {date_uploaded &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Date Uploaded</Box>
+                                <Box overflowX="hidden" overflowY="scroll">{date_uploaded}</Box>
+                            </Stack>
+                        }
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
                             <ConfirmUnlock
                                 action={unlock}
@@ -210,13 +229,14 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                             >
                                 Unlock
                                 </ConfirmUnlock>
-                            <Tooltip label="Unlock a paper for editing" placement="bottom" aria-label="unlock-paper"
+                            <Tooltip
+                                label="Unlock a paper for editing"
+                                placement="bottom"
+                                aria-label="unlock-paper"
                             >
                                 <Button
                                     onClick={onUnlockModalOpen}
-                                    isDisabled={status !== 'checked-out'
-                                        && lastContributor !== user.email
-                                    }
+                                    isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
                                     Unlock
@@ -226,6 +246,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                                 <Button
                                     onClick={() => checkout()}
                                     leftIcon="edit"
+                                    isDisabled={status === CheckoutStatus.CheckedOut}
                                     variantColor="primary"
                                 >
                                     Start Editing
@@ -235,7 +256,7 @@ const TableDetails/*: FC<DetailProps>*/ = ({ row, user }) => {
                     </Stack>
                 </Flex>
             </Flex>
-        </Collapse>
+        </Collapse >
     )
 }
 
@@ -270,28 +291,6 @@ const ConfirmUnlock/*: FC<any>*/ = ({ isOpen, onClose, action }) => {
             </Modal>
         </>
     );
-}
-
-export const statusMap = {
-    'in-progress': 'In Progress',
-    'not-started': 'Not Started',
-    'checked-out': 'Checked Out',
-    'published': 'Published',
-}
-
-export const labelColors = {
-    'in-progress': '#c3e3ff',
-    'not-started': '#ffe8c6',
-    'checked-out': '#ffc6c8',
-    'published': '#c6ffc6',
-}
-
-export const StatusChip = ({ status }) => {
-    const label = statusMap[status] || 'Unknown'
-    const color = labelColors[status]
-    return (
-        <Chip {...{ label }} style={{ background: color }} />
-    )
 }
 
 export default CheckoutTable;

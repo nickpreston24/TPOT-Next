@@ -1,8 +1,12 @@
 import React, { FC, ReactNode } from 'react'
-import { Button, Flex, Heading, Stack, Text, ButtonProps } from '@chakra-ui/core'
+import Button, { ButtonProps } from '@chakra-ui/core/dist/Button'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Heading from '@chakra-ui/core/dist/Heading'
+import Stack from '@chakra-ui/core/dist/Stack'
+import Text from '@chakra-ui/core/dist/Text'
+
 import Layout from '../layout/Dashboard'
 import SplashScreen from '../svg/SittingAtComputer'
-
 
 type ScribeTemplateProps = {
     title?: string,
@@ -30,9 +34,12 @@ const Template: FC<ScribeTemplateProps> = ({
 
     return (
         <Layout>
-            <Stack align="center" spacing={8}>
+            <Stack align="center" spacing={{ base: 1, sm: 1, md: 4, lg: 8 }} paddingTop={16}>
                 <Heading fontWeight={300}>{title}</Heading>
-                <Flex w={400} h={400} justifyContent="center" alignItems="center">
+                <Flex
+                    width={{ base: "400px", lg: "60%", md: "85%", sm: "100%" }}
+                    justifyContent="center" alignItems="center"
+                >
                     <SplashScreen />
                 </Flex>
                 <Text fontSize="lg">{subtitle}</Text>

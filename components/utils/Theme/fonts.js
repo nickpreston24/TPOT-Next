@@ -1,7 +1,4 @@
-
-import * as React from 'react';
-import { theme } from "@chakra-ui/core";
-
+import theme from "@chakra-ui/core/dist/theme";
 
 export default {
     fonts: {

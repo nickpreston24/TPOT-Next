@@ -49,16 +49,22 @@ function useWordpressProvider() {
      * Published a Paper as a draft (only)
      */
     const publish = async (paper: Paper): Promise<Paper> => {
+
         const { author, id } = paper;
 
+        //Testing permalink alteration here:
+        // paper.permalink = 'https://www.thepathoftruth.com/chinese/'
 
+        // Check for collisions:
         const existingPaper = id ? await wpapi.pages()
             .author(author)
             .id(id) : null;
 
         isDev() && console.log('currentPaper', existingPaper)
 
+        // If existing paper, update it:
         if (!!existingPaper) {
+
             wpapi.pages()
                 .author(author)
                 .id(existingPaper.id)
@@ -68,26 +74,47 @@ function useWordpressProvider() {
                     let updatedPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
 
-                    // console.log('updatedPaper :>> ', updatedPaper);
+                    console.log('updatedPaper :>> ', updatedPaper);
                     setCurrentPaper(updatedPaper);
 
                 })
         }
+        // Publish paper as a new Draft:
         else {
             // console.log('creating paper :>> ', paper);
-            wpapi.pages()
+            let permalink_template = 'https://www.thepathoftruth.com//%postname%.htm';
+            // console.log('fixedPermalink :>> ', fixedPermalink);
+            // paper.slug = '&middot;htm'            
+            // console.log('paper.slug :>> ', paper.slug);
+            let response = await wpapi.pages()
                 .author(author)
-                .create(paper)
-                .then((response) => {
-                    // console.log('response :>> ', response);
-                    //     console.log('createdPaper :>> ', createdPaper
-                    // , 'paper as dto :>>', toDto(createdPaper, Paper));
-                    let createdPaper = toDto(response, Paper);
-                    paper.id = response.id; // Update the new id for UI use.
-                    // console.log('createdPaper :>> ', createdPaper);
-                    setCurrentPaper(createdPaper)
-                })
-                .catch(console.error)
+                .create({ permalink_template, ...paper })
+
+            isDev() && console.log('response :>> ', response);
+
+            // let fixedPermalinkTemplate = "https://www.thepathoftruth.com/%pagename%.htm"
+
+            // let updatedPaper = await wpapi.pages()
+            //     .author(author)
+            //     .id(response.id)
+            //     .update({ slug: 'hot-potato&middot;htm' })
+            //     // .update({ permalink_template: fixedPermalinkTemplate })
+            //     // .update({ generated_slug: fixedPermalink, slug: fixedPermalink })
+            // console.log('updatedPaper :>> ', updatedPaper);
+
+            // wpapi.pages()
+            //     .author(author)
+            //     .create(paper)
+            //     .then((response) => {
+            //         // console.log('response :>> ', response);
+            //         //     console.log('createdPaper :>> ', createdPaper
+            //         // , 'paper as dto :>>', toDto(createdPaper, Paper));
+            //         let createdPaper = toDto(response, Paper);
+            //         paper.id = response.id; // Update the new id for UI use.
+            //         console.log('createdPaper :>> ', createdPaper);
+            //         setCurrentPaper(createdPaper)
+            //     })
+            //     .catch(console.error)
         }
 
         return currentPaper;

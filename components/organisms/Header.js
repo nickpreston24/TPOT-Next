@@ -1,9 +1,25 @@
 import React from 'react'
-import { Flex, Icon, Heading, Button, Text, Stack, Avatar, InputGroup, InputRightElement, Input, Switch, Menu, MenuButton, MenuList, MenuItem, MenuGroup, MenuDivider, Tooltip, Box } from '@chakra-ui/core'
+
+import Menu, { MenuButton, MenuList, MenuGroup, MenuDivider, MenuItem } from '@chakra-ui/core/dist/Menu'
+import { InputRightElement } from '@chakra-ui/core/dist/InputElement'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Icon from '@chakra-ui/core/dist/Icon'
+import Avatar from '@chakra-ui/core/dist/Avatar'
+import Input from '@chakra-ui/core/dist/Input'
+import Button from '@chakra-ui/core/dist/Button'
+import Switch from '@chakra-ui/core/dist/Switch'
+import Heading from '@chakra-ui/core/dist/Heading'
+import InputGroup from '@chakra-ui/core/dist/InputGroup'
+import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import Text from '@chakra-ui/core/dist/Text'
+import Stack from '@chakra-ui/core/dist/Stack'
+
 import { useAuth } from 'hooks'
 import { useRouter } from 'next/router'
 import * as ROUTES from '@constants/routes'
-import { notify } from 'components/experimental/Toasts'
+import { notify } from 'components/Toasts'
+import { disableMe, hideMe } from '../utils/disableMe'
+import { isDev } from 'helpers'
 
 const Header = ({ children }) => {
 
@@ -16,27 +32,48 @@ const Header = ({ children }) => {
                 <Icon name="scribe" size={8} />
                 <Heading size="lg" fontWeight={500}>Scribe</Heading>
             </Stack>
-            <Flex w="100%" justify="center">
-                <InputGroup w="100%" maxW={800}>
+            <Flex w="100%" justify="center"
+                style={hideMe(!isDev())}
+            >
+                <InputGroup w="100%" maxW={800}
+                >
                     <InputRightElement children={<Icon name="search" />} />
                     <Input variant="filled" placeholder="Search for letters" />
                 </InputGroup>
             </Flex>
-            <Stack direction="row" align="center" spacing={4}>
+            <Stack
+                direction="row"
+                align="center"
+                spacing={4}
+            >
                 <AccountDropdown />
-                <Tooltip label="Chat coming soon!" placement="bottom-start"><Icon disableM name="chat" size={5} /></Tooltip>
-                <Tooltip label="Enable dark mode" placement="bottom-start">
-                    <Box h={5} ml={4} ><Switch isDisabled color="primary" /></Box>
+                <Tooltip
+                    label="Chat coming soon!" placement="bottom-start">
+                    <Icon
+                        disableM
+                        name="chat"
+                        size={5}
+                        mr={4}
+                        style={hideMe(!isDev())}
+                    /></Tooltip>
+                <Tooltip
+                    label="Enable dark mode"
+                    placement="bottom-start"
+                >
+                    <Switch
+                        style={hideMe(!isDev())}
+                        isDisabled={!isDev()}
+                        color="primary" />
                 </Tooltip>
-                <Icon
+                {/* <Icon
                     name="logout"
                     onClick={async () => {
                         notify('Logging you out...', 'info')
                         await signout()
                         router.push(ROUTES.LANDING)
-                    }}></Icon>
+                    }}></Icon> */}
             </Stack>
-        </Stack>
+        </Stack >
     )
 }
 
@@ -92,14 +129,14 @@ const AccountDropdown = () => {
             </MenuButton>
             <MenuList>
                 <MenuGroup title="Profile">
-                    {menuItems.slice(0, 2).map((i, k) => <MenuItem disabled={i.disabled} onClick={i.cb} key={k}>
-                        <Icon mr={3} name={i.icon} />{i.title}
+                    {menuItems.slice(0, 2).map((item, key) => <MenuItem disabled={item.disabled} onClick={item.cb} key={key}>
+                        <Icon mr={3} name={item.icon} />{item.title}
                     </MenuItem>)}
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Help">
-                    {menuItems.slice(2, 4).map((i, k) => <MenuItem disabled={i.disabled} onClick={i.cb} key={k}>
-                        <Icon mr={3} name={i.icon} />{i.title}
+                    {menuItems.slice(2, 4).map((item, key) => <MenuItem disabled={item.disabled} onClick={item.cb} key={key}>
+                        <Icon mr={3} name={item.icon} />{item.title}
                     </MenuItem>)}
                 </MenuGroup>
             </MenuList>

@@ -15,15 +15,13 @@
           "@hooks": "./hooks",
           "@constants": "./constants",
           "@helpers": "./helpers",
-          "@plugins": "./components/Editor/plugins",
           "@contexts": "./contexts",
           "@routes": "./constants/routes",
           "@models": "./models",
           "@templates": "./components/templates",
           "@organisms": "./components/organisms",
           "@functions": [
-            "./components/Editor/functions",
-            "./components/RichEditor/functions"
+            "./functions"
           ],
           "@errors": "./models/Errors"
         }

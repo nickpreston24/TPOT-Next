@@ -1,21 +1,11 @@
-import React, { Component } from 'react'
-import Dashboard from '@components/Dashboard'
-import ZeitCard from '@components/experimental/ZeitCard'
-import * as ROUTES from '@constants/routes'
-import { MyEditor } from 'tpot-scribe-editor'
-import { disableMe } from 'components/disableMe'
-import { Box } from '@chakra-ui/core'
+import React from 'react'
+import Template from '@templates/PaperEditor'
 
+const Page = () => {
 
-const NewEdit = () => (
+  return (
+    <Template />
+  )
+}
 
-  <Box>
-    <Dashboard
-      title={`TPOT Scribe - New`}
-    >
-      <MyEditor />
-    </Dashboard>
-  </Box>
-)
-
-export default NewEdit
+export default Page

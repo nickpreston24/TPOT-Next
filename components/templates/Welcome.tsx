@@ -1,6 +1,20 @@
 import React, { FC, ReactNode, useState } from 'react'
 import NextLink from 'next/link'
-import { Button, Flex, Heading, Box, Stack, Input, Text, Icon, ButtonProps, useTheme, FormControl, FormLabel, FormErrorMessage, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/core'
+import Button, { ButtonProps } from '@chakra-ui/core/dist/Button'
+import Flex from '@chakra-ui/core/dist/Flex'
+import Heading from '@chakra-ui/core/dist/Heading'
+import Box from '@chakra-ui/core/dist/Box'
+import Stack from '@chakra-ui/core/dist/Stack'
+import Input from '@chakra-ui/core/dist/Input'
+import Text from '@chakra-ui/core/dist/Text'
+import Icon from '@chakra-ui/core/dist/Icon'
+import { InputRightElement, InputLeftElement } from '@chakra-ui/core/dist/InputElement'
+import FormControl from '@chakra-ui/core/dist/FormControl'
+import FormLabel from '@chakra-ui/core/dist/FormLabel'
+import FormErrorMessage from '@chakra-ui/core/dist/FormErrorMessage'
+import InputGroup from '@chakra-ui/core/dist/InputGroup'
+import { useTheme } from '@chakra-ui/core'
+
 import { useFormik, FormikProps, FormikValues } from 'formik';
 import SplashScreen from '../svg/MonitorDashboard'
 
@@ -18,7 +32,7 @@ type WelcomeTemplateProps = {
 }
 
 const Template: FC<WelcomeTemplateProps> = ({
-    mode =  'default',
+    mode = 'default',
     title = 'Enter a Title',
     subtitle = 'Enter a Subtitle',
     children,
@@ -40,9 +54,8 @@ const Template: FC<WelcomeTemplateProps> = ({
     const formWidth = ['default'].includes(mode) ? '0%' : (1 / 3)
 
     return (
-        <Flex id="frame"
-            style={{ background: gradient }} justifyContent="center" alignItems="center" position="absolute" height="100%" width="100%">
-            <Stack h="100%" w="100%" maxW={1200} maxH={700} overflow="hidden" direction="row" spacing={0} bg="primary.600" borderRadius="lg" shadow="2xl" transition="all 1s ease-in-out 0s">
+        <Flex id="frame" style={{ background: gradient }} justifyContent="center" alignItems="center" position="absolute" height="100%" width="100%">
+            <Stack h="100%" w="100%" maxW={1200} maxH={700} overflow="auto" direction="row" spacing={0} bg="primary.600" borderRadius="lg" shadow="2xl" transition="all 1s ease-in-out 0s">
                 <Flex h="100%" w={mainWidth} alignItems="flex-start" bg="gray.100" transition="all 0.3s ease-out">
                     <Stack width="100%" align="center" spacing={3} px={16} >
                         <Flex w={600} h={500} justifyContent="center" alignItems="center">

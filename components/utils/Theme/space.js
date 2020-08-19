@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { theme } from "@chakra-ui/core";
-
+import theme from "@chakra-ui/core/dist/theme";
 
 export default {
     space: {
@@ -26,3 +24,11 @@ export default {
     },
 };
 
+// define your custom breakpoints
+export const breakpoints = ['576px', '768px', '992px', '1200px']
+
+// add an alias for object responsive prop
+breakpoints.sm = breakpoints[0]
+breakpoints.md = breakpoints[1]
+breakpoints.md = breakpoints[2]
+breakpoints.md = breakpoints[3]
