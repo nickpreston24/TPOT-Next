@@ -31,6 +31,8 @@ import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
 import { SelectChip } from './atoms';
+import { LanguageOptions, Language } from 'constants';
+import { Select } from '@chakra-ui/core';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -76,6 +78,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const [uploadOption] = useState(UploadMethod.Drive);
     const [title, setTitle] = useState(lastSession?.title || '')
     const [categoriesText, setCategoriesText] = useState('');
+    const [language, setLanguage] = useState(Language.English);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     /** Modal Refs */
@@ -85,6 +88,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     useEffect(() => {
 
         isDev() && console.log('checking out doc :>> ', doc);
+        console.log(LanguageOptions)
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
         Router.events.on('routeChangeComplete', (url) => {
@@ -255,6 +259,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     <ModalHeader>{currentStatus === CheckoutStatus.CheckedOut ? "Publish to Wordpress" : "Save Paper"}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
+
+                        {/* Title */}
                         <FormControl>
                             <FormLabel>Title</FormLabel>
                             <Input
@@ -265,13 +271,21 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                             />
                         </FormControl>
 
-                        <FormControl mt={4}>
+                        {/* Category */}
+                        <FormControl>
                             <FormLabel>Categories</FormLabel>
                             <Input
                                 value={categoriesText}
                                 onChange={handleCategoryChange}
                                 placeholder="e.g 'Chinese', 'Translations'" />
                         </FormControl>
+
+                        {/* Language */}
+                        <FormControl mt={4}>
+                            <FormLabel>Language</FormLabel>
+                            <LanguagePicker />
+                        </FormControl>
+
                     </ModalBody>
 
                     <ModalFooter>
@@ -304,6 +318,17 @@ const ScribeDevStatusBar: FC = () => {
             {/* <p>Dirty? {dirty ? "Yes" : "No"}</p> */}
             {/* {!!lastSession && <p>Id: {lastSession}</p>} */}
         </Flex>
+    )
+}
+
+const LanguagePicker = () => {
+    return (
+        <Select defaultValue={Language.English}
+        // onChange={(value) => console.log(value)}
+        // placeholder="Select option"
+        >
+            {LanguageOptions.map((name, key) => <option key={key}>{name}</option>)}
+        </Select>
     )
 }
 
