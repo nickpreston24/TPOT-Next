@@ -21,7 +21,10 @@ type Slots = {
 
 // Validation for any Slotted Component
 const isObject = <T extends object>(value: any): value is T => typeof value === 'object' && typeof value !== 'function' && value != undefined
-const areNamedSlots = (children: any): children is Slots => isObject(children) && 'content' in children
+const areNamedSlots = (children: any): children is Slots => isObject(children) 
+    && 'entries' in children
+    && 'list' in children
+    && 'paint' in children
 
 // I like the name
 export const Docket: FC<Props> = (props) => {

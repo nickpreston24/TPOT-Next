@@ -5,6 +5,7 @@ import { toJS } from 'mobx';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { IDocumentOptions } from 'firestorter/lib/Types';
 import { isDev } from 'helpers';
+import { async } from 'rxjs/internal/scheduler/async';
 
 const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;
@@ -89,6 +90,11 @@ export const updateSession = async (id: string, session: any | Session): Promise
     await document.update(currentSession);
 
     return session;
+}
+
+export const removeSession = async (id: string) => {
+    let document = new Document(`sessions/${id}`)
+    await document.delete()
 }
 
 // Filter by Wordpress paper author:

@@ -1,9 +1,10 @@
 export {
     sessions
-    // , createSession
+    , saveSession
     , checkoutSession
     , updateSession
     , getAuthorSessions
+    , removeSession
 } from './sessionsAPI'
 
 export { scribeStore, ScribeStore } from './ScribeStore'

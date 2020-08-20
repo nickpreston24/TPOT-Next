@@ -3,6 +3,7 @@ import { Collection } from 'firestorter'
 import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from './utilities'
 import { EditorState, convertToRaw } from 'draft-js'
 import { storage } from '@services/firebase'
+import { CheckoutStatus } from '@constants'
 
 export const uploadLocalFile = async (file, userName = null) => {
 
@@ -10,7 +11,7 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     // const storageRef = await firebase.storage().ref()
     const storageRef = storage.ref();
-    
+
     // console.log('storageRef :>> ', !!storageRef);
     // console.log('file name', file.name)
 
@@ -65,7 +66,7 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     // Build a full Document in the '/sessions' Collection
     const document = await new Collection('sessions').add({
-        status: 'not-started',
+        status: CheckoutStatus.NotStarted,
         contributors: userName,
         date_uploaded: new Date(),
         date_modified: new Date(),

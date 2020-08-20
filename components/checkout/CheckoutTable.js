@@ -9,10 +9,11 @@ import Box from '@chakra-ui/core/dist/Box'
 import Stack from '@chakra-ui/core/dist/Stack'
 import Collapse from '@chakra-ui/core/dist/Collapse'
 import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import IconButton from '@chakra-ui/core/dist/IconButton'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
-import { sessions, unlockSession } from '../../stores/sessionsAPI'
+import { sessions, unlockSession, removeSession } from '../../stores/sessionsAPI'
 import { toDto, Session } from '../../models'
 import { notify } from 'components/Toasts'
 import { useAuth } from 'hooks'
@@ -21,6 +22,7 @@ import { CheckoutStatus } from '../../constants'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
 import { StatusChip } from '../atoms'
+import { isDev } from "helpers"
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -36,7 +38,7 @@ const MaterialTable = dynamic(() => import('material-table'),
 )
 
 const columns = [
-    { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
+    // { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
     { title: 'Document', field: 'title', type: "string", searchable: true },
     { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <StatusChip status={row.status} /> },
     { title: 'Last Edited', field: 'date_modified', type: "string", searchable: false },
@@ -60,7 +62,7 @@ export const CheckoutTable = observer(() => {
     // console.log('user :>> ', user);   
 
     const { isLoading, hasDocs } = sessions;
-    
+
     let tableData = []
 
     if (hasDocs) {
@@ -220,6 +222,13 @@ const TableDetails = ({ row, user }) => {
                             </Stack>
                         }
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
+                            {isDev() && <IconButton
+                                variant="outline"
+                                variantColor="teal"
+                                aria-label="Delete"
+                                icon="delete"
+                                onClick={() => removeSession(id)}
+                            />}
                             <ConfirmUnlock
                                 action={unlock}
                                 isOpen={unlockIsOpen}

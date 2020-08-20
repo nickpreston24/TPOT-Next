@@ -30,6 +30,7 @@ import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
+import { SelectChip } from './atoms';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -53,9 +54,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const router = useRouter();
     let doc = router.query.doc;
 
-    isDev() && console.log('doc :>> ', doc);
+    isDev() && console.log('doc id :>> ', doc);
 
-    let { dirty, currentStatus, lastStatus, lastSession, setStatus } = scribeStore;
+    let { currentStatus, lastStatus
+        , lastSession, setStatus } = scribeStore;
 
     // Session API functions:
     const { getHtml } = props;
@@ -79,7 +81,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     /** Modal Refs */
     const initialRef = useRef();
     const finalRef = useRef();
-
 
     useEffect(() => {
 
@@ -120,8 +121,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     }
 
     const onPublish = async () => {
-        // scribeStore.currentStatus = CheckoutStatus.FirstDraft
-        // scribeStore.lastStatus = CheckoutStatus.CheckedOut
         setStatus(CheckoutStatus.FirstDraft)
         onOpen()
     }
@@ -164,12 +163,9 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             nextSession.date_modified = new Date();
             await saveSession(nextSession)
             setStatus(CheckoutStatus.CheckedOut)
-            dirty = false;
+            // dirty = false;
 
             notify("Saved session", "success")
-
-            // scribeStore.lastSession = nextSession;
-
 
             return;
         }
@@ -191,7 +187,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         paperId: response.id,
 
                         date_modified: response.modified,
-                        status: 'Published', //response.status,
+                        status: CheckoutStatus.FirstDraft,
                         contributors: [authUser.email], //TODO: push and filter dups
                         code: response.content ? response.content.rendered : '',
                         original: '',
@@ -225,12 +221,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     return (
         <Flex>
             <ButtonGroup spacing={8}>
-                {!isDev() && <Button
+                <Button
                     onClick={onPublish}
                 >
-                    Publish
-                </Button>}
-
+                    Publish Draft
+                </Button>
                 {(uploadOption === 'Drive' && isDev()) &&
                     <UploadButton>Load a Document</UploadButton>}
 
@@ -244,7 +239,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                 </Button>
             </ButtonGroup>
 
-            {isDev() && <ScribeDevStatusBar />}
+            {/* {isDev() && <ScribeDevStatusBar />} */}
+            {/* {isDev() && <SelectChip />} */}
 
             {/* Publish  */}
 

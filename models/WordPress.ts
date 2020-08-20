@@ -13,15 +13,18 @@ export class Paper {
     author: number;
     content: string;
     slug: string;
+    language: string;
+
     categories: string[] = [];
 
-    constructor(title: string, content: string) {
+    constructor(title: string, content: string, language?: string) {
         this.content = content || null;
         this.title = title || null;
+        this.language = language;
         this.slug = (title || '')
             .replace(/\s/g, '-')
             .toLowerCase()
-        // console.log('this :>> ', this);
+        // isDev() && console.log('Paper :>> ', this);
     }
 
     // // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:

@@ -1,5 +1,3 @@
-// import * as parentsUntil from './jQueryHelpers';
-
 // File2Html
 const file2html = require('file2html')
 const OOXMLReader = require('file2html-ooxml').default
@@ -11,8 +9,7 @@ const mammoth = require('mammoth-colors')
 const createNode = require('create-node')
 const walk = require('domwalk')
 
-// This is only used for parentUntil (just write a quick utility, It is expensive to import JQuery this way)
-// const $ = window.jQuery = require('jquery')
+// This is only used as a replacement to jQuery's parentUntil
 const getParentsUntil = require('./jQueryAdapter')
 
 //  TESTING RESULTS
@@ -44,17 +41,13 @@ export async function convertFile(file) {
     return new Promise((resolve, reject) => {
 
         var reader = new FileReader()
-        // console.log(`Attempting to read blob/file ${file.name}` )
-
+        
         reader.readAsArrayBuffer(file)
 
         reader.onload = async function () {
             var raw = reader.result
-            //            console.log('raw', raw);
-
             let buffer = Buffer.from(raw, 'utf-8')
-            //            console.log('buffer', buffer);
-
+            
             // Convert Data
             let dataFile2Html = await convertFile2Html(buffer)
             let dataMammoth = await convertMammoth(buffer)
@@ -101,7 +94,8 @@ const convertMammoth = async (buffer) => {
     }, mammothOptions)
 
     // : Fix Carraige Returns
-    let sanitizedHTML = data.value.replace(/[\<]+[br]+[\s]?[\/]+[\>]+[\s]?[\<]+[br]+[\s]?[\/]+[\>]/g, '<p/><p>')
+    let sanitizedHTML = data.value.replace(/[\<]+[br]+[\s]?[\/]+[\>]+[\s]?[\<]+[br]+[\s]?[\/]+[\>]/g, '<p/><p>').replace(/(?:\\[rn]|[\r\n]+)+/g, "")
+    console.log('sanitizedHTML', sanitizedHTML)
     // Return Result
     return sanitizedHTML
 

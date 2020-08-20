@@ -8,13 +8,6 @@ const Page = () => {
   const CheckoutLink = <NextLink href={ROUTES.CHECKOUT}><a>{'Checkout a paper'}</a></NextLink>
   const EditorLink = <NextLink href={ROUTES.EDIT}><a>{'Start from scratch'}</a></NextLink>
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", (event) => {
-      event.preventDefault();
-      return (event || window.event).returnValue = 'Are you sure you want to close?';
-    });
-  }, [])
-
   return (
     <Template
       title="Welcome to Scribe"

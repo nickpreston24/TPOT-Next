@@ -61,7 +61,7 @@ export const SettingsButton = props => {
         leftIcon="settings"
         fontSize={{ base: "md", sm: "xs", md: "sm", lg: 'md' }}
         variantColor="primary"
-        isDisabled={disabled}
+        isDisabled={!!disabled}
         onClick={onClickFn}
         fontWeight={{ base: 200, sm: .75, md: .25 }}
     >
