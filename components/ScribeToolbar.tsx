@@ -31,8 +31,9 @@ import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
 import { SelectChip } from './atoms';
-import { LanguageOptions, Language } from 'constants';
+// import { LanguageOptions, Language } from 'constants';
 import { Select } from '@chakra-ui/core';
+import { LanguageOptions, Language } from '../constants';
 
 const UploadMethod = {
     Drive: 'Drive',
