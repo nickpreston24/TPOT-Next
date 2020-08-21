@@ -16,6 +16,6 @@ export abstract class Command implements ICommand {
 
     constructor(reciever?: ReactNode) {
         Object.assign(this, reciever)
-        isDev() && console.log('this.reciever', this.reciever)
+        // isDev() && console.log('this.reciever', this.reciever)
     }
 }

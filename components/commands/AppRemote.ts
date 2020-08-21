@@ -2,6 +2,8 @@ import * as ROUTES from '../../constants/routes'
 import { ICommand } from "./Command";
 import { appStore } from '../../stores';
 import { SwitchAppCommand } from './AppCommands'
+import { notify } from 'components/Toasts';
+import { isDev } from 'helpers';
 
 /* An invoker is like a remote control
 * Feel free to come up with a better name
@@ -9,15 +11,17 @@ import { SwitchAppCommand } from './AppCommands'
 * Scribe Remote for the Scribe App whenever it is active.
 */
 export class AppRemote {
-    private openSettings: any;
+    private openSettings: ICommand;
     private gotoScribe: ICommand
 
-    constructor(gotoScribe: ICommand, openSettings: ICommand) {
-        this.gotoScribe = gotoScribe;
-        this.openSettings = openSettings;
+    constructor() {
+        this.gotoScribe = new SwitchAppCommand(appStore, ROUTES.SCRIBE);
+        this.openSettings = new SwitchAppCommand(appStore, ROUTES.SETTINGS);
+        console.log('openSettings', this.openSettings)
     }
 
-    OpenSettings() {
+    public OpenSettings() {
+        console.log('openSettings', this.openSettings)
         this.openSettings.execute()
     }
 
@@ -27,10 +31,9 @@ export class AppRemote {
 }
 
 // Add new apps as necessary
-const appRemote = new AppRemote(
-    new SwitchAppCommand(appStore, ROUTES.SCRIBE),
-    new SwitchAppCommand(appStore, ROUTES.SETTINGS),
-)
+const appRemote = new AppRemote()
+
+isDev() && console.log('appRemote', appRemote)
 
 export default AppRemote;
 

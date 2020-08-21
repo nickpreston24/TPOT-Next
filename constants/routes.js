@@ -7,7 +7,7 @@ export const EDIT = '/scribe/edit'
 export const DOC = (docId) => { mask: '/scribe/edit/[doc]'; path: `/scribe/edit/${docId}` }
 export const DOC2 = '/scribe/edit/[doc]'
 export const CHECKOUT = '/scribe/checkout'
-export const SETTINGS = '/settings'
+export const SETTINGS = '/account/settings'
 export const TPOT = 'http://www.thepathoftruth.com'
 export const TRELLO = 'https://trello.com/c/LsaGjczl/99-tpot-letters-desktop-app'
 

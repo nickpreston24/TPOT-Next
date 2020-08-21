@@ -86,8 +86,9 @@ export const updateSession = async (id: string, session: any | Session): Promise
 
     session.date_modified = new Date()
     Object.assign(currentSession, session)
-
-    await document.update(currentSession);
+    isDev() && console.log('currentSession', currentSession)
+    await document.update(currentSession)
+        .catch(console.error);
 
     return session;
 }

@@ -43,3 +43,6 @@ yarn-error.log*
 # test folder (allow once we use mocha, chai, etc.)
 test
 .netlify/
+
+# Anything that's a code sample
+_samples

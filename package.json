@@ -10,8 +10,7 @@
     "export": "next export",
     "serve": "serve out",
     "rebuild": "yarn clean && yarn",
-    "clean": "rm -rf node_modules && rm -f yarn.lock package-lock.json yarn-error.log",
-    "reset-npm-proxy": "npm config delete http-proxy && npm config delete https-proxy && npm config rm proxy && npm config rm https-proxy && set HTTP_PROXY=null && set HTTPS_PROXY=null"
+    "clean": "rm -rf node_modules && rm -f yarn.lock package-lock.json yarn-error.log"
   },
   "dependencies": {
     "@bit/bit.envs.compilers.react-typescript": "^3.1.53",

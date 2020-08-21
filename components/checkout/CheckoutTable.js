@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, ModalHeader, ModalOverlay, ModalFooter, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/core/dist/Modal'
 import Button from '@chakra-ui/core/dist/Button'
 import Divider from '@chakra-ui/core/dist/Divider'
 import Flex from '@chakra-ui/core/dist/Flex'
@@ -21,7 +20,7 @@ import { ROUTES } from 'constants/routes'
 import { CheckoutStatus } from '../../constants'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
-import { StatusChip } from '../atoms'
+import { StatusChip, Confirm } from '../atoms'
 import { isDev } from "helpers"
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
@@ -55,11 +54,10 @@ const queryLimit = 10;
 
 export const CheckoutTable = observer(() => {
 
-    const router = useRouter();
-    // console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
-
+    const router = useRouter();    
     const { user } = useAuth();
-    // console.log('user :>> ', user);   
+    
+    // const [_, dispatch] = useReducer(reducer, null);
 
     const { isLoading, hasDocs } = sessions;
 
@@ -98,13 +96,15 @@ export const CheckoutTable = observer(() => {
         }, tableData)
     }
 
+
+
     return (
         <MaterialTable
             title="Checkout"
             data={tableData}
             columns={columns}
             isLoading={isLoading}
-            detailPanel={row => <TableDetails user={user} row={row} />}
+            detailPanel={row => <TableDetails user={user} row={row} dispatch={dispatch} />}
             options={{
                 pageSize: 7,
                 pageSizeOptions: [5, 7, 10],
@@ -154,26 +154,41 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-const TableDetails = ({ row, user }) => {
+const options = {
+    Unlock: 'unlock',
+    Delete: 'delete'
+}
 
-    const { id } = row;
-    let session = toDto(row, Session);
-
-    // console.log('session :>> ', session);
-
-    let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
-
-    const [isOpen, setIsOpen] = useState(false)
-
-    const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: afterUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
+const TableDetails = ({ row, user, dispatch }) => {
 
     const router = useRouter()
 
-    // console.log('status :>> ', status);
-    // console.log('lastContributor :>> ', lastContributor);
+    const reducer = (action) => {
+        switch (action) {
+            case options.Unlock:
+                notify("unlocking...")
+            case options.Delete:
+                notify("Deleting...")
+            default:
+                notify('Checking out session...')
+        }
+    }
+
+    const { id } = row;
+
+    let session = toDto(row, Session);
+    // console.log('session :>> ', session);
+    let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
+
+    // Collapse:
+    const [isCollapseOpen, setCollapseIsOpen] = useState(false)
+
+    // Modals:
+    const { isOpen: modalIsOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
+    const [modalAction, setAction] = useState(options.Unlock)
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsOpen(true), 0)
+        const timer = setTimeout(() => setCollapseIsOpen(true), 0)
         return () => clearTimeout(timer)
     }, []);
 
@@ -188,7 +203,7 @@ const TableDetails = ({ row, user }) => {
     }
 
     return (
-        <Collapse isOpen={isOpen} alignContent="center" transition="all 1s ease-in-out">
+        <Collapse isOpen={isCollapseOpen} alignContent="center" transition="all 1s ease-in-out">
             <Flex justifyContent="center">
                 <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
                     <Stack w="50%">
@@ -222,35 +237,71 @@ const TableDetails = ({ row, user }) => {
                             </Stack>
                         }
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
-                            {isDev() && <IconButton
-                                variant="outline"
-                                variantColor="teal"
-                                aria-label="Delete"
-                                icon="delete"
-                                onClick={() => removeSession(id)}
-                            />}
-                            <ConfirmUnlock
+
+                            {/* Delete */}
+
+                            {
+                                (isDev() && status !== CheckoutStatus.CheckedOut) &&
+
+
+
+                                <Tooltip
+                                    label="Delete this session"
+                                    aria-label="delete-session"
+                                    placement="bottom"
+                                >
+                                    <IconButton
+                                        variant="outline"
+                                        variantColor="primary"
+                                        aria-label="Delete"
+                                        icon="delete"
+                                    // onClick={() => removeSession(id)}
+                                    />
+                                </Tooltip>
+
+                            }
+
+                            {/* Unlock */}
+
+                            {/* <Confirm                                
+                                action={() => removeSession(id)}
+                                isOpen={modalIsOpen}
+                                onClose={onModalClose}
+                            >
+                                Delete
+                                    </Confirm> */}
+
+                            {/* TODO: Create a useReducer to resolve all options */}
+                            <Confirm
+                                header={modalAction === options.Unlock
+                                    ? "Confirm: Unlock this session?"
+                                    : "Confirm: Delete this session?"}
+                                body="Unlocking this edit session may cause unwanted issues like duplicated drafts.
+                        Proceed if you understand the risk."
                                 action={unlock}
-                                isOpen={unlockIsOpen}
-                                onClose={afterUnlockModalClose}
-                            // confirmedAction={unlock}  // may not be used, I forget.
+                                isOpen={modalIsOpen}
+                                onClose={onModalClose}
+                                yesMessage="I understand and wish to continue."
+                                nopeMessage="On second thought..."
                             >
                                 Unlock
-                                </ConfirmUnlock>
+                                </Confirm>
+
                             <Tooltip
-                                label="Unlock a paper for editing"
+                                label="Unlock this session"
                                 placement="bottom"
-                                aria-label="unlock-paper"
+                                aria-label="unlock-session"
                             >
                                 <Button
-                                    onClick={onUnlockModalOpen}
+                                    onClick={onModalOpen}
                                     isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
                                     Unlock
-                            </Button>
+                                </Button>
                             </Tooltip>
-                            <Tooltip label="Edit this paper" placement="bottom" aria-label="edit-paper">
+
+                            <Tooltip label="Edit" placement="bottom" aria-label="edit-session">
                                 <Button
                                     onClick={() => checkout()}
                                     leftIcon="edit"
@@ -268,37 +319,39 @@ const TableDetails = ({ row, user }) => {
     )
 }
 
-const ConfirmUnlock/*: FC<any>*/ = ({ isOpen, onClose, action }) => {
 
-    return (
-        <>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Confirm: Unlock this paper?</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        Unlocking this paper for editing may cause unwanted issues like duplicated drafts.
-                        Proceed if you understand the risk.
-                    </ModalBody>
+// // Confirm Deletion of a Session
+// // IDEA: Make a factory for this type of yes/no modal, passing in header, body, etc.
+// const ConfirmDeleteSession = ({ isOpen, onClose, action }) => {
 
-                    <ModalFooter>
-                        <Stack>
-                            <Button variantColor="green" mr={30} onClick={() => {
-                                action()
-                                onClose()
-                            }}>
-                                I understand and wish to continue.
-                        </Button>
-                            <Button variantColor="blue" onClick={onClose}>
-                                On second thought...
-                        </Button>
-                        </Stack>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </>
-    );
-}
+//     return (
+
+//             <Modal isOpen={isOpen} onClose={onClose}>
+//                 <ModalOverlay />
+//                 <ModalContent>
+//                     <ModalHeader>Confirm: Delete this session?</ModalHeader>
+//                     <ModalCloseButton />
+//                     <ModalBody>
+//                         Deleting this session will remove all work and cannot be recovered. Proceed if you understand the risk.
+//                     </ModalBody>
+
+//                     <ModalFooter>
+//                         <Stack>
+//                             <Button variantColor="green" mr={30} onClick={() => {
+//                                 action()
+//                                 onClose()
+//                             }}>
+//                                 I understand and wish to continue.
+//                         </Button>
+//                             <Button variantColor="blue" onClick={onClose}>
+//                                 On second thought...
+//                         </Button>
+//                         </Stack>
+//                     </ModalFooter>
+//                 </ModalContent>
+//             </Modal>
+
+//     );
+// }
 
 export default CheckoutTable;

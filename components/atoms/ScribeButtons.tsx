@@ -5,6 +5,7 @@ import Text from '@chakra-ui/core/dist/Text'
 import Button from '@chakra-ui/core/dist/Button'
 
 import { FC } from "react"
+import { notify } from 'components/Toasts'
 
 type NavbarButtonProps = {
     icon?: string,
@@ -52,19 +53,30 @@ export const NavbarButton: FC<NavbarButtonProps> = (props) => {
     )
 }
 
-
+type Props = {
+    onClickFn: () => void
+}
 // Button that goes at the bottom. Very purple
-export const SettingsButton = props => {
-    const { disabled, onClickFn } = props
-    return <Button
-        w="100%"
-        leftIcon="settings"
-        fontSize={{ base: "md", sm: "xs", md: "sm", lg: 'md' }}
-        variantColor="primary"
-        isDisabled={!!disabled}
-        onClick={onClickFn}
-        fontWeight={{ base: 200, sm: .75, md: .25 }}
-    >
-        Settings
-        </Button>
+export const SettingsButton: FC<Props> = props => {
+
+    let { onClickFn } = props
+
+    return (
+        <Tooltip
+            label="Edit your Settings"
+            aria-label="settingsBtn-tooltip"
+        >
+            <Button
+                w="100%"
+                title="Open Settings"
+                leftIcon="settings"
+                fontSize={{ base: "md", sm: "xs", md: "sm", lg: 'md' }}
+                variantColor="primary"
+                onClick={() => onClickFn()}
+                fontWeight={{ base: 200, sm: .75, md: .25 }}
+            >
+                Settings
+            </Button>
+        </Tooltip>
+    )
 }

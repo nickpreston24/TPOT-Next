@@ -322,10 +322,15 @@ const ScribeDevStatusBar: FC = () => {
     )
 }
 
-const LanguagePicker = () => {
+type PickerProps = {
+
+}
+
+const LanguagePicker: FC<PickerProps> = (props) => {
+
     return (
         <Select defaultValue={Language.English}
-        // onChange={(value) => console.log(value)}
+            onChange={(value) => console.log(value)}
         // placeholder="Select option"
         >
             {LanguageOptions.map((name, key) => <option key={key}>{name}</option>)}

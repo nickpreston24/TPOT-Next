@@ -1,6 +1,7 @@
 /* The typed representation of a session (paper) from Firestore DB */
 
 import { CheckoutStatus } from "constants/CheckoutStatus";
+import { Language } from "constants";
 
 export class Session {
 
@@ -51,7 +52,7 @@ export class Session {
         this.status = status || CheckoutStatus.InProgress
         this.excerpt = excerpt || ''
         this.filename = filename || '';
-        this.language = language;
+        this.language = language || Language.English;
         this.excerpt = excerpt || '';
         this.code = code || '<p></p>';
         this.contributors = [] // TODO: add functionality in other components for deciding this.
