@@ -10,7 +10,7 @@ type ConfirmProps = {
     nopeMessage: string
     isOpen: any //TODO: replace 'any' with the specific type that comes from useDisclosure().
     onClose: any //TODO: replace 'any' with the specific type that comes from useDisclosure().
-    action?: () => void
+    action?: Function
 }
 
 export const Confirm: FC<ConfirmProps> = ({ header, body, isOpen, onClose, action, yesMessage, nopeMessage }) => {

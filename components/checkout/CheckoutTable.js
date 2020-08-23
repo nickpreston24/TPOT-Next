@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import Button from '@chakra-ui/core/dist/Button'
 import Divider from '@chakra-ui/core/dist/Divider'
 import Flex from '@chakra-ui/core/dist/Flex'
@@ -22,6 +22,7 @@ import dynamic from 'next/dynamic'
 import moment from 'moment'
 import { StatusChip, Confirm } from '../atoms'
 import { isDev } from "helpers"
+import { action } from 'mobx'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -54,10 +55,8 @@ const queryLimit = 10;
 
 export const CheckoutTable = observer(() => {
 
-    const router = useRouter();    
+    const router = useRouter();
     const { user } = useAuth();
-    
-    // const [_, dispatch] = useReducer(reducer, null);
 
     const { isLoading, hasDocs } = sessions;
 
@@ -96,15 +95,13 @@ export const CheckoutTable = observer(() => {
         }, tableData)
     }
 
-
-
     return (
         <MaterialTable
             title="Checkout"
             data={tableData}
             columns={columns}
             isLoading={isLoading}
-            detailPanel={row => <TableDetails user={user} row={row} dispatch={dispatch} />}
+            detailPanel={row => <SessionDetails user={user} row={row} />}
             options={{
                 pageSize: 7,
                 pageSizeOptions: [5, 7, 10],
@@ -154,25 +151,15 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-const options = {
-    Unlock: 'unlock',
-    Delete: 'delete'
+
+const actions = {
+    DELETE: 'delete-session',
+    UNLOCK: 'unlock-session',
 }
 
-const TableDetails = ({ row, user, dispatch }) => {
+const SessionDetails = ({ row, user }) => {
 
     const router = useRouter()
-
-    const reducer = (action) => {
-        switch (action) {
-            case options.Unlock:
-                notify("unlocking...")
-            case options.Delete:
-                notify("Deleting...")
-            default:
-                notify('Checking out session...')
-        }
-    }
 
     const { id } = row;
 
@@ -185,7 +172,7 @@ const TableDetails = ({ row, user, dispatch }) => {
 
     // Modals:
     const { isOpen: modalIsOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
-    const [modalAction, setAction] = useState(options.Unlock)
+    const [modalOption, setOption] = useState(actions.UNLOCK)
 
     useEffect(() => {
         const timer = setTimeout(() => setCollapseIsOpen(true), 0)
@@ -201,6 +188,28 @@ const TableDetails = ({ row, user, dispatch }) => {
         unlockSession(id)
         notify("Document successfully unlocked.  You may now check it out", 'info');
     }
+
+    // function reducer(_, action) {
+    //     switch (action.type) {
+    //         case actions.DELETE:
+    //             setOption(action.DELETE)
+    //             break;
+    //         case actions.UNLOCK:
+    //             setOption(action.UNLOCK)
+    //             break;
+    //         default:
+    //             if (isDev()) {
+    //                 notify(`Could not find an action of type ${action.type}`)
+    //                 break;
+    //             }
+    //             else
+    //                 throw new Error(`Could not find an action of type ${action.type}`);
+    //     }
+
+    //     onModalOpen()
+    // }
+
+    // const [_, dispatch] = useReducer(reducer, null);
 
     return (
         <Collapse isOpen={isCollapseOpen} alignContent="center" transition="all 1s ease-in-out">
@@ -238,12 +247,8 @@ const TableDetails = ({ row, user, dispatch }) => {
                         }
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
 
-                            {/* Delete */}
-
                             {
                                 (isDev() && status !== CheckoutStatus.CheckedOut) &&
-
-
 
                                 <Tooltip
                                     label="Delete this session"
@@ -255,37 +260,16 @@ const TableDetails = ({ row, user, dispatch }) => {
                                         variantColor="primary"
                                         aria-label="Delete"
                                         icon="delete"
-                                    // onClick={() => removeSession(id)}
+                                        onClick={() => {
+                                            setOption(action.DELETE)
+                                            onModalOpen()
+                                            alert('welp, time to delete...')
+                                        }}
                                     />
                                 </Tooltip>
-
                             }
 
-                            {/* Unlock */}
-
-                            {/* <Confirm                                
-                                action={() => removeSession(id)}
-                                isOpen={modalIsOpen}
-                                onClose={onModalClose}
-                            >
-                                Delete
-                                    </Confirm> */}
-
                             {/* TODO: Create a useReducer to resolve all options */}
-                            <Confirm
-                                header={modalAction === options.Unlock
-                                    ? "Confirm: Unlock this session?"
-                                    : "Confirm: Delete this session?"}
-                                body="Unlocking this edit session may cause unwanted issues like duplicated drafts.
-                        Proceed if you understand the risk."
-                                action={unlock}
-                                isOpen={modalIsOpen}
-                                onClose={onModalClose}
-                                yesMessage="I understand and wish to continue."
-                                nopeMessage="On second thought..."
-                            >
-                                Unlock
-                                </Confirm>
 
                             <Tooltip
                                 label="Unlock this session"
@@ -293,7 +277,7 @@ const TableDetails = ({ row, user, dispatch }) => {
                                 aria-label="unlock-session"
                             >
                                 <Button
-                                    onClick={onModalOpen}
+                                    onClick={() => dispatch({ type: actions.UNLOCK })}
                                     isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
@@ -311,6 +295,29 @@ const TableDetails = ({ row, user, dispatch }) => {
                                     Start Editing
                                 </Button>
                             </Tooltip>
+
+                            <Confirm
+                                {...modalOption === actions.Unlock
+                                    ? {
+                                        header: "Confirm: Unlock this session?",
+                                        body: "Unlocking this edit session may cause unwanted issues like duplicated drafts. Proceed if you understand the risk.",
+                                    }
+                                    : {
+                                        header: "Confirm: Delete this session?",
+                                        body: "A session cannot be recovered after deletion!",
+                                    }
+                                }
+                                // action={modalOption === action.DELETE ? removeSession(id) : unlockSession(id)}
+                                // action={modalOption === action.DELETE ? notify('deleting...') : notify('unlocking...')}
+                                action={null}
+                                isOpen={modalIsOpen}
+                                onClose={onModalClose}
+                                yesMessage="I understand and wish to continue."
+                                nopeMessage="On second thought..."
+                            >
+                                Unlock
+                                </Confirm>
+
                         </Stack>
                     </Stack>
                 </Flex>
