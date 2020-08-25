@@ -10,6 +10,9 @@ import Collapse from '@chakra-ui/core/dist/Collapse'
 import Tooltip from '@chakra-ui/core/dist/Tooltip'
 import IconButton from '@chakra-ui/core/dist/IconButton'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
+
+import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogBody } from '@chakra-ui/core/dist/AlertDialog'
+
 import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
 import { sessions, unlockSession, removeSession } from '../../stores/sessionsAPI'
@@ -171,8 +174,11 @@ const SessionDetails = ({ row, user }) => {
     const [isCollapseOpen, setCollapseIsOpen] = useState(false)
 
     // Modals:
-    const { isOpen: modalIsOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
-    const [modalOption, setOption] = useState(actions.UNLOCK)
+    const [isOpen, setIsOpen] = useState();
+    const onClose = () => setIsOpen(false);
+    const cancelRef = React.useRef();
+
+    const [option, setOption] = useState(actions.DELETE)
 
     useEffect(() => {
         const timer = setTimeout(() => setCollapseIsOpen(true), 0)
@@ -188,28 +194,6 @@ const SessionDetails = ({ row, user }) => {
         unlockSession(id)
         notify("Document successfully unlocked.  You may now check it out", 'info');
     }
-
-    // function reducer(_, action) {
-    //     switch (action.type) {
-    //         case actions.DELETE:
-    //             setOption(action.DELETE)
-    //             break;
-    //         case actions.UNLOCK:
-    //             setOption(action.UNLOCK)
-    //             break;
-    //         default:
-    //             if (isDev()) {
-    //                 notify(`Could not find an action of type ${action.type}`)
-    //                 break;
-    //             }
-    //             else
-    //                 throw new Error(`Could not find an action of type ${action.type}`);
-    //     }
-
-    //     onModalOpen()
-    // }
-
-    // const [_, dispatch] = useReducer(reducer, null);
 
     return (
         <Collapse isOpen={isCollapseOpen} alignContent="center" transition="all 1s ease-in-out">
@@ -261,9 +245,10 @@ const SessionDetails = ({ row, user }) => {
                                         aria-label="Delete"
                                         icon="delete"
                                         onClick={() => {
+                                            console.log('option b4:', option)
                                             setOption(action.DELETE)
-                                            onModalOpen()
-                                            alert('welp, time to delete...')
+                                            console.log('option', option)
+                                            setIsOpen(true)
                                         }}
                                     />
                                 </Tooltip>
@@ -271,19 +256,22 @@ const SessionDetails = ({ row, user }) => {
 
                             {/* TODO: Create a useReducer to resolve all options */}
 
-                            <Tooltip
+                            {/* <Tooltip
                                 label="Unlock this session"
                                 placement="bottom"
                                 aria-label="unlock-session"
                             >
                                 <Button
-                                    onClick={() => dispatch({ type: actions.UNLOCK })}
+                                    onClick={() => {
+                                        setOption(actions.UNLOCK)
+                                        setIsOpen(true)
+                                    }}
                                     isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
                                     Unlock
                                 </Button>
-                            </Tooltip>
+                            </Tooltip> */}
 
                             <Tooltip label="Edit" placement="bottom" aria-label="edit-session">
                                 <Button
@@ -296,27 +284,50 @@ const SessionDetails = ({ row, user }) => {
                                 </Button>
                             </Tooltip>
 
-                            <Confirm
-                                {...modalOption === actions.Unlock
-                                    ? {
-                                        header: "Confirm: Unlock this session?",
-                                        body: "Unlocking this edit session may cause unwanted issues like duplicated drafts. Proceed if you understand the risk.",
-                                    }
-                                    : {
-                                        header: "Confirm: Delete this session?",
-                                        body: "A session cannot be recovered after deletion!",
-                                    }
-                                }
-                                // action={modalOption === action.DELETE ? removeSession(id) : unlockSession(id)}
-                                // action={modalOption === action.DELETE ? notify('deleting...') : notify('unlocking...')}
-                                action={null}
-                                isOpen={modalIsOpen}
-                                onClose={onModalClose}
-                                yesMessage="I understand and wish to continue."
-                                nopeMessage="On second thought..."
+                            <AlertDialog
+                                isOpen={isOpen}
+                                leastDestructiveRef={cancelRef}
+                                onClose={onClose}
                             >
-                                Unlock
-                                </Confirm>
+                                <AlertDialogOverlay />
+                                <AlertDialogContent>
+                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                        {option === actions.UNLOCK ? "Confirm: Unlock this session?" : "Confirm: Delete this session?"}
+                                    </AlertDialogHeader>
+
+                                    <AlertDialogBody>
+                                        {option === actions.UNLOCK ? "Unlocking this edit session may cause unwanted issues like duplicated drafts. Proceed if you understand the risk." : "Are you sure? You can't undo this action afterwards."}
+                                    </AlertDialogBody>
+
+                                    <AlertDialogFooter>
+                                        <Button ref={cancelRef} onClick={onClose}>
+                                            Cancel
+                                        </Button>
+                                        <Button variantColor="red" onClick={() => {
+                                            removeSession(id)
+
+                                            // NOTE: setOption() won't hold the action for very long and we get an undefined when this modal is destroyed.  
+                                            // We could use a reducer (again), but it's not worth it right now.  Just disable Unlock button and have this modal be singular.
+
+                                            // switch (option) {
+                                            //     case actions.UNLOCK:
+                                            //         unlockSession(id);
+                                            //         break;
+
+                                            //     case actions.DELETE:
+                                            //         removeSession(id);
+                                            //         break;
+                                            //     default:
+                                            //         throw new Error(`Option ${option} could not be found!`);
+                                            // }
+
+                                            onClose()
+                                        }} ml={3}>
+                                            {option === actions.UNLOCK ? "Unlock" : "Delete"}
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
 
                         </Stack>
                     </Stack>

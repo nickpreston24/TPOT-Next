@@ -55,7 +55,7 @@ export const uploadLocalFile = async (file, userName = null) => {
     if (!html) {
         console.warn(`There is no html input to convert: ${html}`)
     } else {
-        console.info(`Converting Document: ${title}`)
+        console.info(`Converted Document: ${title}`)
     }
 
     // Get results from Draft and other utilities

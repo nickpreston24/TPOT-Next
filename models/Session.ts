@@ -1,7 +1,7 @@
 /* The typed representation of a session (paper) from Firestore DB */
 
 import { CheckoutStatus } from "constants/CheckoutStatus";
-import { Language } from "constants";
+import { Language } from "constants/languages";
 
 export class Session {
 

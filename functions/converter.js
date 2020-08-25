@@ -41,13 +41,13 @@ export async function convertFile(file) {
     return new Promise((resolve, reject) => {
 
         var reader = new FileReader()
-        
+
         reader.readAsArrayBuffer(file)
 
         reader.onload = async function () {
             var raw = reader.result
             let buffer = Buffer.from(raw, 'utf-8')
-            
+
             // Convert Data
             let dataFile2Html = await convertFile2Html(buffer)
             let dataMammoth = await convertMammoth(buffer)
@@ -88,13 +88,16 @@ const convertFile2Html = async (fileBuffer) => {
 ///////////////////////////////////////////////////
 
 const convertMammoth = async (buffer) => {
+    console.log('Running mammoth converter...')
 
     const data = await mammoth.convertToHtml({
         arrayBuffer: buffer
     }, mammothOptions)
 
     // : Fix Carraige Returns
-    let sanitizedHTML = data.value.replace(/[\<]+[br]+[\s]?[\/]+[\>]+[\s]?[\<]+[br]+[\s]?[\/]+[\>]/g, '<p/><p>').replace(/(?:\\[rn]|[\r\n]+)+/g, "")
+    let sanitizedHTML = data.value
+        .replace(/[\<]+[br]+[\s]?[\/]+[\>]+[\s]?[\<]+[br]+[\s]?[\/]+[\>]/g, '<p/><p>')
+        
     console.log('sanitizedHTML', sanitizedHTML)
     // Return Result
     return sanitizedHTML
