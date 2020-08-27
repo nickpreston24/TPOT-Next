@@ -46,7 +46,7 @@ function useWordpressProvider() {
     // const removePaper = (id:number)
 
     /**
-     * Published a Paper as a draft (only)
+     * Publishes a Paper as a draft only
      */
     const publish = async (paper: Paper): Promise<Paper> => {
 
@@ -64,6 +64,10 @@ function useWordpressProvider() {
 
         // If existing paper, update it:
         if (!!existingPaper) {
+
+            if (!!paper.language && paper.language.toLowerCase() !== 'english') {
+                paper.slug = paper.language + "\/" + paper.slug + "_" + paper.language
+            }
 
             wpapi.pages()
                 .author(author)

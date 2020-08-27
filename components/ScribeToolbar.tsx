@@ -16,6 +16,11 @@ import Input from '@chakra-ui/core/dist/Input'
 import ButtonGroup from '@chakra-ui/core/dist/ButtonGroup'
 import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
+import Select from '@chakra-ui/core/dist/Select';
+import Tooltip from '@chakra-ui/core/dist/Tooltip';
+import Menu, { MenuButton, MenuList, MenuItem } from '@chakra-ui/core/dist/Menu';
+// import { SelectControl } from '@chakra-ui/core/dist/Select'
+
 
 import UploadButton from 'components/buttons/UploadButton';
 import { notify } from './Toasts';
@@ -31,9 +36,8 @@ import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES, DOC, DOC2 } from 'constants/routes';
 import { SelectChip } from './atoms';
-// import { LanguageOptions, Language } from 'constants';
-import { Select, Tooltip } from '@chakra-ui/core';
 import { LanguageOptions, Language } from '../constants';
+import { observable } from 'mobx';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -50,6 +54,10 @@ type ScribeToolbarProps = {
     // scribe: ScribeStore
     getHtml: Function
 }
+
+const scribeState = observable({
+    language: Language
+})
 
 export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
@@ -71,6 +79,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
 
     /** Scribe States: **/
+    const { language } = scribeState;
     // const [mode, setMode] = useState(null);
     // const [paper, setPaper] = useState(createInstance(Paper))
     // const [session, setSession] = useState(createInstance(Session))
@@ -79,8 +88,15 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const [uploadOption] = useState(UploadMethod.Drive);
     const [title, setTitle] = useState(lastSession?.title || '')
     const [categoriesText, setCategoriesText] = useState('');
-    const [language, setLanguage] = useState(Language.English);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    // const [language, setLanguage] = useState(Language.English);    
+    // const [value, setValue] = React.useState(Language.English)
+
+    const handleChange = (event: React.ChangeEvent<any>) => {
+        console.log('event.target.value :>> ', event.target.value);
+        scribeState.language = event.target.value;
+        console.log('scribeState.language :>> ', scribeState.language);
+    }
 
     /** Modal Refs */
     const initialRef = useRef();
@@ -161,7 +177,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         if (currentStatus == CheckoutStatus.NotStarted) {
 
             let nextSession = Session
-                .create({ title, categories: categoriesText.trim().split(','), code: html })
+                .create({ title, categories: categoriesText.trim().split(','), code: html, language: scribeState.language })
                 .toJSON()
 
             isDev() && console.log('nextSession :>> ', nextSession);
@@ -178,8 +194,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             // console.log('doc :>> ', doc);
             // router.push({...doc})
 
-            router.push('/scribe/edit/[doc]', `/scribe/edit/${id}` )
-            await checkoutSession(id)
+            router.push('/scribe/edit/[doc]', `/scribe/edit/${id}`)
+            // await checkoutSession(id)
 
             return;
         }
@@ -310,7 +326,9 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         {/* Language */}
                         <FormControl mt={4}>
                             <FormLabel>Language</FormLabel>
-                            <LanguagePicker />
+
+                            <LanguageSelect handleChange={handleChange} />
+
                         </FormControl>
 
                     </ModalBody>
@@ -330,10 +348,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     )
 };
 
-// type ScribeDevStatusBarProps = {
-//     scribe: ScribeStore
-// }
-
 /** Shows the current status of Scribe in this toolbar
  * Meant only for DEBUG/Development mode.
 */
@@ -348,16 +362,14 @@ const ScribeDevStatusBar: FC = () => {
     )
 }
 
-type PickerProps = {
+const LanguageSelect = (props) => {
 
-}
-
-const LanguagePicker: FC<PickerProps> = (props) => {
+    const { handleChange } = props;
 
     return (
-        <Select defaultValue={Language.English}
-            onChange={(value) => console.log(value)}
-        // placeholder="Select option"
+        <Select
+            onChange={handleChange}
+            placeholder="Choose a language"
         >
             {LanguageOptions.map((name, key) => <option key={key}>{name}</option>)}
         </Select>

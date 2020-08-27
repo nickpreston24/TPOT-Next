@@ -34,7 +34,7 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     let title = (file.name)
         .replace(/\s/g, ' ') //Spaces first,
-        .replace(/[,?*#!:;_]/g, ' ') // then specials
+        .replace(/[,*#:;_]/g, ' ') // then specials
         .replace(/[\(\)\[\]\{\}]/g, '') // then then braces
         .replace('.docx', '')
         .trim()
@@ -46,7 +46,7 @@ export const uploadLocalFile = async (file, userName = null) => {
         .replace(/_/, ' ')
         .replace(/\s/g, '-')
         .toLowerCase()
-        
+
     // console.log('slug :>> ', slug);
 
     // Get the full, unadultured local conversion result
