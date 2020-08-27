@@ -160,6 +160,12 @@ const actions = {
     UNLOCK: 'unlock-session',
 }
 
+
+// TODO: Might try this in place of useState for modals/alerts.
+// const detailsStore = observable({
+//     modalAction: actions.UNLOCK
+// })
+
 const SessionDetails = ({ row, user }) => {
 
     const router = useRouter()
@@ -238,6 +244,7 @@ const SessionDetails = ({ row, user }) => {
                                     label="Delete this session"
                                     aria-label="delete-session"
                                     placement="bottom"
+                                    ml={3}
                                 >
                                     <IconButton
                                         variant="outline"
@@ -247,7 +254,7 @@ const SessionDetails = ({ row, user }) => {
                                         onClick={() => {
                                             console.log('option b4:', option)
                                             setOption(action.DELETE)
-                                            console.log('option', option)
+                                            console.log('option after', option)
                                             setIsOpen(true)
                                         }}
                                     />

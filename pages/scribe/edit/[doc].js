@@ -28,10 +28,10 @@ import Template from '@templates/PaperEditor'
 
 
 const Page = props => {
-  
+
   const router = useRouter()
   const { query: { doc } } = router
-  
+
   // const [currentDoc, isLoading, hasData] = useDocument('sessions', doc)
   // TODO Added back in session.filter, because the above hook isn't working quite right
 
@@ -40,8 +40,23 @@ const Page = props => {
   // This might load all sessions, however, getting the new Document by id caused issues for me.
   let currentDoc = docs.filter(s => s.id === doc)[0]
 
+  // // We don't want this event occuring on NextJS's refreshing.
+  // if (!isDev()) {
+
+  //   useEffect(() => {
+  //     window.addEventListener("beforeunload", (event) => {
+  //       event.preventDefault();
+  //       return (event || window.event).returnValue = 'Are you sure you want to close?';
+  //     });
+
+  //     return () => {
+  //       window.removeEventListener('beforeunload', null)
+  //     }
+  //   }, [])
+  // }
+
   return (
-    <Template 
+    <Template
       editorProps={{
         currentDoc
       }}

@@ -32,7 +32,7 @@ import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
 import { SelectChip } from './atoms';
 // import { LanguageOptions, Language } from 'constants';
-import { Select } from '@chakra-ui/core';
+import { Select, Tooltip } from '@chakra-ui/core';
 import { LanguageOptions, Language } from '../constants';
 
 const UploadMethod = {
@@ -226,22 +226,38 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     return (
         <Flex>
             <ButtonGroup spacing={8}>
-                <Button
-                    onClick={onPublish}
+                <Tooltip
+                    aria-label="publish-tooltip"
+                    label="Publish a Draft to TPOT"
                 >
-                    Publish Draft
-                </Button>
-                {(uploadOption === 'Drive' && isDev()) &&
-                    <UploadButton>Load a Document</UploadButton>}
+                    <Button
+                        onClick={onPublish}
+                    >
+                        Publish
+                    </Button>
+                </Tooltip>
 
-                <Button
-                    ml={8}
-                    onClick={onSave}
-                // isDisabled={!dirty} // FIXME: Can't update dirty @observable properly in ckeditor (it's late)
-                // leftIcon="save"  // FIXME: For some reason, I can't get this working.
+                {(uploadOption === 'Drive' && isDev()) &&
+                    <UploadButton
+                        label="Load"
+                    >
+                        Load a Document
+                    </UploadButton>
+                }
+
+                <Tooltip
+                    aria-label="save-tooltip"
+                    label="Save your work as a Session"
                 >
-                    Save
-                </Button>
+                    <Button
+                        onClick={onSave}
+                    // isDisabled={!dirty} // FIXME: Can't update dirty @observable properly in ckeditor (it's late)
+                    // leftIcon="save"  // FIXME: For some reason, I can't get this working.
+                    >
+                        Save
+                    </Button>
+
+                </Tooltip>
             </ButtonGroup>
 
             {/* {isDev() && <ScribeDevStatusBar />} */}
