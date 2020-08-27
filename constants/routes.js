@@ -4,7 +4,7 @@ export const LOGIN = '/login'
 export const ACCOUNT = '/account'
 export const SCRIBE = '/scribe'
 export const EDIT = '/scribe/edit'
-export const DOC = (docId) => { mask: '/scribe/edit/[doc]'; path: `/scribe/edit/${docId}` }
+export const DOC = (docId) => { mask: '/scribe/edit/[doc]'; path: `/scribe/edit/${docId}` } //FIXME: returns void.  try something different.
 export const DOC2 = '/scribe/edit/[doc]'
 export const CHECKOUT = '/scribe/checkout'
 export const SETTINGS = '/account/settings'

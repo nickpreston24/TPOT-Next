@@ -29,7 +29,7 @@ import { isDev } from 'helpers';
 import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
-import { ROUTES } from 'constants/routes';
+import { ROUTES, DOC, DOC2 } from 'constants/routes';
 import { SelectChip } from './atoms';
 // import { LanguageOptions, Language } from 'constants';
 import { Select, Tooltip } from '@chakra-ui/core';
@@ -166,11 +166,20 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
             isDev() && console.log('nextSession :>> ', nextSession);
             nextSession.date_modified = new Date();
-            await saveSession(nextSession)
+            let id = await saveSession(nextSession);
             setStatus(CheckoutStatus.CheckedOut)
             // dirty = false;
 
             notify("Saved session", "success")
+
+            isDev() && console.log('created Session id :>> ', id);
+
+            // let doc = DOC(id) as any;
+            // console.log('doc :>> ', doc);
+            // router.push({...doc})
+
+            router.push('/scribe/edit/[doc]', `/scribe/edit/${id}` )
+            await checkoutSession(id)
 
             return;
         }

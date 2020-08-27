@@ -28,7 +28,7 @@ export const unlockSession = async (id: string) => {
     }
 }
 
-export const saveSession = async (session: any | Session): Promise<Session | object> => {
+export const saveSession = async (session: any | Session): Promise<string> => {
 
     // let options = { mode: 'off' } as IDocumentOptions
     isDev() && console.log('session.slug :>> ', session.slug);
@@ -49,8 +49,7 @@ export const saveSession = async (session: any | Session): Promise<Session | obj
     Object.assign(currentSession, session)
 
     await document.set(session)
-
-    return session;
+    return document.ref.id as string
 }
 
 export const checkoutSession = async (id: string) => {
