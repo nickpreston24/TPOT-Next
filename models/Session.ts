@@ -2,7 +2,6 @@
 
 import { CheckoutStatus } from "constants/CheckoutStatus";
 import { Language } from "constants/languages";
-import { lang } from "moment";
 
 export class Session {
 
@@ -14,7 +13,7 @@ export class Session {
     excerpt?: string;
     status: string;
     code: string;
-    language: string;
+    language: string | Language;
 
     contributors: string[] = [];
     lastContributor?: string = "" // For now, this will be the email - MP
@@ -26,7 +25,7 @@ export class Session {
 
     constructor(props) {
 
-        console.log('props', props)
+        // isDev() && console.log('props', props)
         // Allows for DTOs
         if (!props)
             return
@@ -39,7 +38,7 @@ export class Session {
 
         //Set defaults/fallbacks:
 
-        language = !!language ? language.trim().toLowerCase() : ""
+        language = !!language ? language.trim() : ""
 
         this.title = title.replace(/[_;:]/g, '');
         let slug =

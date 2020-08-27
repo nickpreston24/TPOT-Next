@@ -150,6 +150,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         onClose();
 
+        const createSession = () => Session
+            .create({ title, categories: categoriesText.trim().split(','), code: html, language: scribeState.language })
+            .toJSON();
+
         let html = getHtml();
 
         isDev() && console.log('currentStatus :>> ', scribeStore.currentStatus);
@@ -157,9 +161,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         // Update an existing paper:
         if (currentStatus === CheckoutStatus.CheckedOut) {
             // WARNING: Firebase hates custom objects, so just use plain old JSON here:
-            let sessionUpdate = Session
-                .create({ title, categories: categoriesText.trim().split(','), code: html })
-                .toJSON()
+            let sessionUpdate = createSession()
 
             isDev() && console.log('nextSession :>> ', sessionUpdate);
             sessionUpdate.date_modified = new Date();
@@ -176,9 +178,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         // Save a new paper:
         if (currentStatus == CheckoutStatus.NotStarted) {
 
-            let nextSession = Session
-                .create({ title, categories: categoriesText.trim().split(','), code: html, language: scribeState.language })
-                .toJSON()
+            let nextSession = createSession();
 
             isDev() && console.log('nextSession :>> ', nextSession);
             nextSession.date_modified = new Date();

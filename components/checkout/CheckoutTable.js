@@ -174,7 +174,7 @@ const SessionDetails = ({ row, user }) => {
 
     let session = toDto(row, Session);
     // console.log('session :>> ', session);
-    let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
+    let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor } = session;
 
     // Collapse:
     const [isCollapseOpen, setCollapseIsOpen] = useState(false)
@@ -212,6 +212,12 @@ const SessionDetails = ({ row, user }) => {
             <Flex justifyContent="center">
                 <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
                     <Stack w="50%">
+                        {language &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">language</Box>
+                                <Box>{language}</Box>
+                            </Stack>
+                        }
                         {slug &&
                             <Stack direction="row">
                                 <Box minW="80px" fontWeight="bold">Slug</Box>
