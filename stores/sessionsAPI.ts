@@ -44,7 +44,7 @@ export const saveSession = async (session: any | Session): Promise<Session | obj
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let currentSession = toJS(document.data);
-    isDev() && console.log('currentSession :>> ', currentSession);
+    isDev() && console.log('saved session :>> ', currentSession);
 
     Object.assign(currentSession, session)
 

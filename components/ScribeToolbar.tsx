@@ -204,7 +204,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
                     // We have Sessions as a stopgap (i.e. the checked-out state flag).
 
-                    // console.log('published session :>> ', publishedSession);
+                    console.log('published session :>> ', sessionUpdate);
                     await updateSession(doc as string, sessionUpdate)
 
                     scribeStore.lastSession = Session.create(sessionUpdate);
@@ -215,6 +215,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     }
                     else {
                         notify(`New Session created for: ${title}\n`, 'success')
+                        // await updateSession(doc as string, { status: CheckoutStatus.FirstDraft })
                     }
 
                     return document;
