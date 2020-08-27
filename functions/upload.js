@@ -42,9 +42,11 @@ export const uploadLocalFile = async (file, userName = null) => {
     // console.log('title :>> ', title);
 
     let slug = (title)
+        .replace(/[',?!;:]/g, '')
+        .replace(/_/, ' ')
         .replace(/\s/g, '-')
         .toLowerCase()
-
+        
     // console.log('slug :>> ', slug);
 
     // Get the full, unadultured local conversion result

@@ -37,14 +37,17 @@ export class Session {
 
         //Set defaults/fallbacks:
 
-        this.title = title;
+        this.title = title.replace(/[_;:]/g, '');
         let slug =
-            // (language && language.toLowerCase() !== 'english') ? language + "\/" : "" +
-                (title || '')
-                    .replace(/\s/g, '-')
-                    .toLowerCase()
-                // + (language && language.toLowerCase() !== 'english') ? "_" + language : ""
+            (title || '')
+                .replace(/[',?!;:]/g, '')
+                .replace(/_/, ' ')
+                .replace(/\s/g, '-')
+                .toLowerCase()
+
         console.log('slug :>>', slug)
+        // (language && language.toLowerCase() !== 'english') ? language + "\/" : "" +
+        // + (language && language.toLowerCase() !== 'english') ? "_" + language : ""
 
         this.slug = slug || '';
         this.authorId = authorId || -1
