@@ -7,6 +7,7 @@ import Button from '@chakra-ui/core/dist/Button';
 import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
 // import { Button } from '@material-ui/core';
+import { useAuthorization } from '../../../hooks'
 
 function getStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
@@ -63,6 +64,10 @@ const settings = observable<Setting>(
   }])
 
 const AccountSettings = () => {
+
+  const { user } = useAuthorization();
+
+  console.log('user :>> ', user);
 
   return (
     <Flex

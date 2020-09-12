@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import '@services/firebase'
 import * as firebase from "firebase/app";
+import app from 'firebase/app';
+import { onAuthUserListener } from '../services/firebase'
 import { isDev } from "helpers";
 
 const authContext = createContext(null);
@@ -29,7 +31,13 @@ export function ProvideAuth({ children }, handleAuthFailure?: () => void) {
 // Provider hook that creates auth object and handles state
 function useProvideAuth() {
 
-    const [user, setUser] = useState(null);
+    // const [authUser, setUser] = useState(null);
+    const auth = app.auth();
+
+    const [state, setState] = useState({
+        authUser: null
+    });
+
     // Wrap any Firebase methods we want to use making sure
     // to save the user to state.
     const signin = (email, password) => {
@@ -38,7 +46,11 @@ function useProvideAuth() {
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then(response => {
-                setUser(response.user);
+                // setUser(response.user);
+                setState({
+                    ...state,
+                    authUser: response.user
+                })
                 return response.user;
             });
     };
@@ -48,7 +60,11 @@ function useProvideAuth() {
             .auth()
             .createUserWithEmailAndPassword(email, password)
             .then(response => {
-                setUser(response.user);
+                // setUser(response.user);
+                setState({
+                    ...state,
+                    authUser: response.user
+                })
                 return response.user;
             });
     };
@@ -58,8 +74,13 @@ function useProvideAuth() {
             .auth()
             .signOut()
             .then(() => {
-                setUser(null);
-                isDev() && console.log('authUser :>> ', !!user);
+                // setUser(null);
+                setState({
+                    ...state,
+                    authUser: null
+                })
+
+                // isDev() && console.log('authUser :>> ', !!authUser);
                 if (onSignout)
                     onSignout();
             })
@@ -85,33 +106,69 @@ function useProvideAuth() {
             });
     };
 
+
+
     // Subscribe to user on mount
     // Because this sets state in the callback it will cause any 
     //  component that utilizes this hook to re-render with the 
     //  latest auth object.
 
     useEffect(() => {
-        // console.log('Activating auth...')
-        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            // console.log('authUser? :>> ', !!user);
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        });
+
+        const unsubscribe = onAuthUserListener(
+            authUser => {
+                localStorage.setItem('authUser', JSON.stringify(authUser));
+                this.setState({ authUser });
+            },
+            () => {
+                localStorage.removeItem('authUser');
+                this.setState({ authUser: null });
+            },
+        );
+
+        // const unsubscribe = firebase.auth()
+        //     .onAuthStateChanged(authUser => {
+        //         console.log('auth state changed', !!authUser);
+        //         if (!!authUser) {
+        //             // setState(authUser: user);
+        //             setState({
+        //                 ...state,
+        //                 authUser: authUser
+        //             })
+
+        //             localStorage.setItem('authUser', JSON.stringify(authUser))
+        //             setState({ authUser });
+
+        //             isDev() && console.log('state :>> ', state);
+        //             isDev() && console.log('localStorage (on signin) :>> ', localStorage);
+
+        //         } else {
+        //             // setState(authUser: null);
+        //             setState({
+        //                 ...state,
+        //                 authUser: null
+        //             })
+
+        //             localStorage.removeItem('authUser');
+        //             isDev() && console.log('state :>> ', state);
+        //             isDev() && console.log('localStorage (on removal) :>> ', localStorage);
+        //         }
+        //     });
 
         // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
 
     return {
-        user,
+
+        user: state.authUser,
         signin,
         signup,
         signout,
         sendPasswordResetEmail,
         confirmPasswordReset,
-        firebase
+        // onAuthUserListener,
+
+        firebase,
     }
 }

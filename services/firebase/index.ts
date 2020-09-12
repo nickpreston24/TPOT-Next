@@ -1,13 +1,14 @@
 import * as auth from "./auth";
 // import * as db from "./db";
 // import * as firebase from "./firebase";
-import { db, firebase, storage } from './firebase'
+import { firebase, storage, onAuthUserListener } from './firebase'
 
 export {
     auth,
-    db,
+    // db,
     firebase,
     storage,
+    onAuthUserListener,
 };
 
 // import { AuthUserContext, withFirebase } from './AuthUserContext';
