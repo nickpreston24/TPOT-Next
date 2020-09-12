@@ -37,7 +37,7 @@ import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES, DOC, DOC2 } from 'constants/routes';
 import { SelectChip } from './atoms';
 import { LanguageOptions, Language } from '../constants';
-import { observable } from 'mobx';
+import { observable, toJS } from 'mobx';
 
 const UploadMethod = {
     Drive: 'Drive',
@@ -88,6 +88,25 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const [uploadOption] = useState(UploadMethod.Drive);
     const [title, setTitle] = useState(lastSession?.title || '')
     const [categoriesText, setCategoriesText] = useState('');
+
+    /** Form */
+    // const [title, setTitle] = useState(lastSession?.title || '')
+    // const [categoriesText, setCategoriesText] = useState('');
+    const [form, updateForm] = useState<any>({
+        title: '',
+        categoriesText: ''
+    });
+    const updateField = (e) => {
+        console.log('e.target.value :>> ', e.target.value);
+        updateForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(form);
+    };
+
+    const [wpCategories, setWpCategories] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     // const [language, setLanguage] = useState(Language.English);    
     // const [value, setValue] = React.useState(Language.English)
@@ -116,10 +135,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         if (!!doc) {
             checkoutSession(doc as string)
                 .then((result) => {
-                    setTitle(result.title)
+                    // setTitle(result.title)
+                    updateForm({ title: result.title })
                     isDev() && console.log('checked out session :>> ', result);
-                    !!result.categories && setCategoriesText(result.categories?.join(", ") || '')
-
+                    // !!result.categories && setCategoriesText(result.categories?.join(", ") || '')
+                    !!result.categories && updateForm({ categoriesText: result.categories?.join(", ") || '' })
+                    console.log('categories :>> ', form);
                     setStatus(CheckoutStatus.CheckedOut)
                 })
         }
@@ -129,13 +150,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     }, []);
 
 
-    const handleTitleChange = async (event) => {
-        setTitle(event.target.value);
-    }
+    // const handleTitleChange = async (event) => {
+    //     setTitle(event.target.value);
+    // }
 
-    const handleCategoryChange = async (event) => {
-        setCategoriesText(event.target.value);
-    }
+    // const handleCategoryChange = async (event) => {
+    //     setCategoriesText(event.target.value);
+    // }
 
     const onSave = async () => {
         onOpen();
@@ -151,7 +172,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         onClose();
 
         const createSession = () => Session
-            .create({ title, categories: categoriesText.trim().split(','), code: html, language: scribeState.language })
+            .create({
+                title: form.title,
+                categories: form.categoriesText.trim().split(','), code: html, language: toJS(scribeState.language)
+            })
+            // .create({ title, categories: form.categoriesText.trim().split(','), code: html, language: toJS(scribeState.language) })
             .toJSON();
 
         let html = getHtml();
@@ -202,7 +227,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
         if (lastStatus === CheckoutStatus.CheckedOut && currentStatus === CheckoutStatus.FirstDraft) {
-            publish(new Paper(title, html))
+            publish(new Paper(form.title, html))
                 .then(async (response) => {
                     isDev() && console.log('response :>> ', response);
 
@@ -222,7 +247,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         code: response.content ? response.content.rendered : '',
                         original: '',
                         excerpt: '',
-                        title,
+                        title: form.title,
                     };
 
                     // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
@@ -235,11 +260,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     scribeStore.lastSession = Session.create(sessionUpdate);
 
                     if (!document) {
-                        notify(`Failed to create Session for: ${title}`, 'warn')
+                        notify(`Failed to create Session for: ${form.title}`, 'warn')
                         return;
                     }
                     else {
-                        notify(`New Session created for: ${title}\n`, 'success')
+                        notify(`New Session created for: ${form.title}\n`, 'success')
                         // await updateSession(doc as string, { status: CheckoutStatus.FirstDraft })
                     }
 
@@ -304,11 +329,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     <ModalBody pb={6}>
 
                         {/* Title */}
-                        <FormControl>
+                        <FormControl
+                            // onSubmit={handleSubmit}
+                        >
                             <FormLabel>Title</FormLabel>
                             <Input
-                                value={title}
-                                onChange={handleTitleChange}
+                                value={form.title}
+                                onChange={updateField}
                                 ref={initialRef}
                                 placeholder="paper-name-here"
                             />
@@ -318,8 +345,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         <FormControl>
                             <FormLabel>Categories</FormLabel>
                             <Input
-                                value={categoriesText}
-                                onChange={handleCategoryChange}
+                                value={form.categoriesText}
+                                onChange={updateField}
                                 placeholder="e.g 'Chinese', 'Translations'" />
                         </FormControl>
 
