@@ -6,8 +6,9 @@ import List from '@chakra-ui/core/dist/List';
 import Button from '@chakra-ui/core/dist/Button';
 import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
-// import { Button } from '@material-ui/core';
 import { useAuthorization } from '../../../hooks'
+import { initialSettings } from '../../../constants/settings'
+import { Setting } from '../../../models/Setting';
 
 function getStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
@@ -39,29 +40,8 @@ const scribeTheme1 = {
     light: '#a29',
   }
 }
-
-// Model
-interface Setting {
-  app: string // | ToolboxApp  <== Define this later.
-  title: string
-  field: string
-  value?: string | boolean // Bool for toggles, string for text.
-}
-
 // sample DB:
-const settings = observable<Setting>(
-  [{
-    app: "Scribe",
-    title: "Enable Dark Mode", // how the user sees it.
-    field: "darkModeOn", // our ICommand name.
-    value: true,
-  },
-  {
-    app: "Scribe",
-    title: "Enable Publishing", // how the user sees it.
-    field: "enablePublish", // our ICommand name.
-    value: true,
-  }])
+const settings = observable<Setting>(initialSettings)
 
 const AccountSettings = () => {
 
@@ -75,6 +55,7 @@ const AccountSettings = () => {
       direction="column" p={4}
       style={getStyle(scribeTheme1, true)}
     >
+      <h1>Account Settings</h1>
       <List>
         {settings.map((setting, key) => {
 

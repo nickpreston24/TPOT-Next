@@ -25,7 +25,7 @@ import Menu, { MenuButton, MenuList, MenuItem } from '@chakra-ui/core/dist/Menu'
 import UploadButton from 'components/buttons/UploadButton';
 import { notify } from './Toasts';
 import { useWordpress, useAuth } from 'hooks';
-import { Paper, Session } from 'models';
+import { createInstance, Paper, Session } from 'models';
 import { checkoutSession, updateSession, saveSession } from 'stores/sessionsAPI';
 import Router, { useRouter } from 'next/router';
 import React from 'react';
@@ -39,10 +39,10 @@ import { SelectChip } from './atoms';
 import { LanguageOptions, Language } from '../constants';
 import { observable, toJS } from 'mobx';
 
-const UploadMethod = {
-    Drive: 'Drive',
-    Google: 'Google',
-    Paste: 'Paste'
+enum UploadMode {
+    Desktop = 'Desktop',
+    GoogleDrive = 'GoogleDrive',
+    Paste = 'Paste'
 }
 
 const messages = {
@@ -51,7 +51,6 @@ const messages = {
 }
 
 type ScribeToolbarProps = {
-    // scribe: ScribeStore
     getHtml: Function
 }
 
@@ -77,25 +76,21 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const { user: authUser } = useAuth();
     const { publish } = useWordpress();
 
+    /** 
+     * Form
+     */
 
-    /** Scribe States: **/
-    const { language } = scribeState;
-    // const [mode, setMode] = useState(null);
-    // const [paper, setPaper] = useState(createInstance(Paper))
-    // const [session, setSession] = useState(createInstance(Session))
-
-    /** Modal States: **/
-    const [uploadOption] = useState(UploadMethod.Drive);
-    const [title, setTitle] = useState(lastSession?.title || '')
-    const [categoriesText, setCategoriesText] = useState('');
-
-    /** Form */
-    // const [title, setTitle] = useState(lastSession?.title || '')
-    // const [categoriesText, setCategoriesText] = useState('');
     const [form, updateForm] = useState<any>({
-        title: '',
-        categoriesText: ''
-    });
+        language: Language.English,
+        mode: UploadMode.Paste,
+        title: lastSession?.title || "",
+        paper: createInstance(Paper),
+        categoriesText: "",
+        categories: [],
+        session: createInstance(Session),
+    });    
+
+
     const updateField = (e) => {
         console.log('e.target.value :>> ', e.target.value);
         updateForm({ ...form, [e.target.name]: e.target.value });
@@ -106,7 +101,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         console.log(form);
     };
 
-    const [wpCategories, setWpCategories] = useState([]);
+    // const [wpCategories, setWpCategories] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     // const [language, setLanguage] = useState(Language.English);    
     // const [value, setValue] = React.useState(Language.English)
@@ -150,14 +145,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     }, []);
 
 
-    // const handleTitleChange = async (event) => {
-    //     setTitle(event.target.value);
-    // }
-
-    // const handleCategoryChange = async (event) => {
-    //     setCategoriesText(event.target.value);
-    // }
-
     const onSave = async () => {
         onOpen();
     }
@@ -174,7 +161,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         const createSession = () => Session
             .create({
                 title: form.title,
-                categories: form.categoriesText.trim().split(','), code: html, language: toJS(scribeState.language)
+                categories: form.categoriesText.trim().split(','),
+                code: html, language: toJS(scribeState.language)
             })
             // .create({ title, categories: form.categoriesText.trim().split(','), code: html, language: toJS(scribeState.language) })
             .toJSON();
@@ -288,7 +276,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     </Button>
                 </Tooltip>
 
-                {(uploadOption === 'Drive' && isDev()) &&
+                {(form.uploadOption === 'Drive' && isDev()) &&
                     <UploadButton
                         label="Load"
                     >
@@ -330,7 +318,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
                         {/* Title */}
                         <FormControl
-                            // onSubmit={handleSubmit}
+                        // onSubmit={handleSubmit}
                         >
                             <FormLabel>Title</FormLabel>
                             <Input

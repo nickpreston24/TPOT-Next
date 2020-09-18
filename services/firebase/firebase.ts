@@ -1,5 +1,5 @@
 import firebase from 'firebase/app'
-import app from 'firebase/app'
+import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
@@ -29,11 +29,11 @@ export const storage = firebase.storage();
 
 // *** User API ***
 
-const user = uid => new Document<any>(`users/${uid}`);
+// const user = uid => new Document<any>(`users/${uid}`);
 
-const users = () => new Collection("users");
+// const users = () => new Collection("users");
 
-// const user = uid => db.ref(`users/${uid}`);
+const user = uid => firebase.database().ref(`users/${uid}`);
 
 // const users = () => db.ref('users');
 
@@ -49,37 +49,49 @@ export const onAuthUserListener = (next, fallback) =>
     auth.onAuthStateChanged(
         async authUser => {
             if (authUser) {
-                console.log('authUser (on state changed)', authUser.uid)
-                let document = user(authUser.uid);
-                await document.fetch();
-                console.log('document', document)
 
-                const dbUser = document.hasData ? toJS(document.data) : null;
-                console.log('dbUser', dbUser)
 
-                if (!dbUser)
-                    return
+                /** Using firebase db */
+                user(authUser.uid)
+                    .once('value')
+                    .then(snapshot => {
+                        const dbUser = snapshot.val();
 
-                // default empty roles
-                if (!dbUser.roles) {
-                    dbUser.roles = {};
-                }
 
-                // merge auth and db user
-                authUser = {
-                    uid: authUser.uid,
-                    email: authUser.email,
-                    emailVerified: authUser.emailVerified,
-                    providerData: authUser.providerData,
-                    ...dbUser,
-                };
+                        /**Using firestore */
+                        // console.log('authUser (on state changed)', authUser.uid)
+                        // let document = user(authUser.uid);
+                        // await document.fetch();
+                        // console.log('document', document)
 
-                console.log('(merged) authUser :>> ', authUser);
+                        // const dbUser = document.hasData ? toJS(document.data) : null;
+                        // console.log('dbUser', dbUser)
 
-                next(authUser);
+                        if (!dbUser)
+                            return
+
+                        // default empty roles
+                        if (!dbUser.roles) {
+                            dbUser.roles = {};
+                        }
+
+                        // merge auth and db user
+                        authUser = {
+                            uid: authUser.uid,
+                            email: authUser.email,
+                            emailVerified: authUser.emailVerified,
+                            providerData: authUser.providerData,
+                            ...dbUser,
+                        };
+
+                        console.log('(merged) authUser :>> ', authUser);
+
+                        next(authUser);
+                    });
+            } else {
+                fallback();
             }
-        }
-    )
+        });
 
 
 export {

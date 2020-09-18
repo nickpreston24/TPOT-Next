@@ -7,3 +7,11 @@ export class WordpressUser {
     slug: string;
     email: string;
 }
+
+export class User {
+    email: string;
+    username: string;
+    firstName: string;
+    lastName; string;
+    // permissions: Permission[]
+}
