@@ -17,11 +17,11 @@ export class AppRemote {
     constructor() {
         this.gotoScribe = new SwitchAppCommand(appStore, ROUTES.SCRIBE);
         this.openSettings = new SwitchAppCommand(appStore, ROUTES.SETTINGS);
-        console.log('openSettings', this.openSettings)
+// console.log('openSettings', this.openSettings)
     }
 
     public OpenSettings() {
-        console.log('openSettings', this.openSettings)
+// console.log('openSettings', this.openSettings)
         this.openSettings.execute()
     }
 

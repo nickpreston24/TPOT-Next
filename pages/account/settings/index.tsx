@@ -47,7 +47,7 @@ const AccountSettings = () => {
 
   const { user } = useAuthorization();
 
-  console.log('user :>> ', user);
+// console.log('user :>> ', user);
 
   return (
     <Flex

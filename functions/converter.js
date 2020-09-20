@@ -88,7 +88,7 @@ const convertFile2Html = async (fileBuffer) => {
 ///////////////////////////////////////////////////
 
 const convertMammoth = async (buffer) => {
-    console.log('Running mammoth converter...')
+// console.log('Running mammoth converter...')
 
     const data = await mammoth.convertToHtml({
         arrayBuffer: buffer
@@ -98,7 +98,7 @@ const convertMammoth = async (buffer) => {
     let sanitizedHTML = data.value
         .replace(/[\<]+[br]+[\s]?[\/]+[\>]+[\s]?[\<]+[br]+[\s]?[\/]+[\>]/g, '<p/><p>')
         
-    console.log('sanitizedHTML', sanitizedHTML)
+// console.log('sanitizedHTML', sanitizedHTML)
     // Return Result
     return sanitizedHTML
 

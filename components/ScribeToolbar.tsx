@@ -38,12 +38,7 @@ import { ROUTES, DOC, DOC2 } from 'constants/routes';
 import { SelectChip } from './atoms';
 import { LanguageOptions, Language } from '../constants';
 import { observable, toJS } from 'mobx';
-
-enum UploadMode {
-    Desktop = 'Desktop',
-    GoogleDrive = 'GoogleDrive',
-    Paste = 'Paste'
-}
+import { UploadMode } from '../models/UploadMode';
 
 const messages = {
     WarnNoWPResponse: 'No paper could be created as there was no response from Wordpress',
@@ -55,7 +50,7 @@ type ScribeToolbarProps = {
 }
 
 const scribeState = observable({
-    language: Language
+    language: Language.English
 })
 
 export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
@@ -88,29 +83,29 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         categoriesText: "",
         categories: [],
         session: createInstance(Session),
-    });    
+    });
 
 
+    /**
+     * Updates the appropriate state prop by its field name from the 
+     * form where 'name' is a prop on the target component
+     */
     const updateField = (e) => {
-        console.log('e.target.value :>> ', e.target.value);
         updateForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(form);
+        // console.log(form);
     };
 
-    // const [wpCategories, setWpCategories] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    // const [language, setLanguage] = useState(Language.English);    
-    // const [value, setValue] = React.useState(Language.English)
 
-    const handleChange = (event: React.ChangeEvent<any>) => {
-        console.log('event.target.value :>> ', event.target.value);
-        scribeState.language = event.target.value;
-        console.log('scribeState.language :>> ', scribeState.language);
-    }
+    // const handleChange = (event: React.ChangeEvent<any>) => {
+    //     // console.log('event.target.value :>> ', event.target.value);
+    //     scribeState.language = event.target.value;
+    //     // console.log('scribeState.language :>> ', scribeState.language);
+    // }
 
     /** Modal Refs */
     const initialRef = useRef();
@@ -119,7 +114,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     useEffect(() => {
 
         isDev() && console.log('checking out doc :>> ', doc);
-        console.log(LanguageOptions)
+        // console.log(LanguageOptions)
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
         Router.events.on('routeChangeComplete', (url) => {
@@ -135,7 +130,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     isDev() && console.log('checked out session :>> ', result);
                     // !!result.categories && setCategoriesText(result.categories?.join(", ") || '')
                     !!result.categories && updateForm({ categoriesText: result.categories?.join(", ") || '' })
-                    console.log('categories :>> ', form);
+                    // console.log('categories :>> ', form);
                     setStatus(CheckoutStatus.CheckedOut)
                 })
         }
@@ -242,7 +237,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
                     // We have Sessions as a stopgap (i.e. the checked-out state flag).
 
-                    console.log('published session :>> ', sessionUpdate);
+                    // console.log('published session :>> ', sessionUpdate);
                     await updateSession(doc as string, sessionUpdate)
 
                     scribeStore.lastSession = Session.create(sessionUpdate);
@@ -322,6 +317,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         >
                             <FormLabel>Title</FormLabel>
                             <Input
+                                name="title"
                                 value={form.title}
                                 onChange={updateField}
                                 ref={initialRef}
@@ -333,6 +329,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         <FormControl>
                             <FormLabel>Categories</FormLabel>
                             <Input
+                                name="categoriesText"
                                 value={form.categoriesText}
                                 onChange={updateField}
                                 placeholder="e.g 'Chinese', 'Translations'" />
@@ -342,8 +339,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         <FormControl mt={4}>
                             <FormLabel>Language</FormLabel>
 
-                            <LanguageSelect handleChange={handleChange} />
-
+                            <LanguageSelect
+                                name="language"
+                                handleChange={updateField}
+                            />
                         </FormControl>
 
                     </ModalBody>

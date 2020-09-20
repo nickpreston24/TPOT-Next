@@ -84,7 +84,7 @@ export const onAuthUserListener = (next, fallback) =>
                             ...dbUser,
                         };
 
-                        console.log('(merged) authUser :>> ', authUser);
+// console.log('(merged) authUser :>> ', authUser);
 
                         next(authUser);
                     });

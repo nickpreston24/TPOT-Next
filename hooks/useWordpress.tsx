@@ -78,7 +78,7 @@ function useWordpressProvider() {
                     let updatedPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
 
-                    console.log('updatedPaper :>> ', updatedPaper);
+// console.log('updatedPaper :>> ', updatedPaper);
                     setCurrentPaper(updatedPaper);
 
                 })

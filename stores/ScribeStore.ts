@@ -24,7 +24,7 @@ export class ScribeStore {
     @action setStatus = (status: CheckoutStatus) => {
         this.lastStatus = this.currentStatus
         this.currentStatus = status;
-        console.log('this.currentStatus', this.currentStatus)
+// console.log('this.currentStatus', this.currentStatus)
     }
 
 }
