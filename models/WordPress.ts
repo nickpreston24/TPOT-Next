@@ -24,7 +24,6 @@ export class Paper {
         this.slug = (title || '')
             .replace(/\s/g, '-')
             .toLowerCase()
-        // isDev() && console.log('Paper :>> ', this);
     }
 
     // // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:
@@ -36,5 +35,3 @@ export class Paper {
     //     }
     // }
 }
-
-

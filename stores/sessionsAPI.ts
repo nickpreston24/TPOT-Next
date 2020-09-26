@@ -85,7 +85,7 @@ export const updateSession = async (id: string, session: any | Session): Promise
 
     session.date_modified = new Date()
     Object.assign(currentSession, session)
-    isDev() && console.log('currentSession', currentSession)
+    isDev() && console.log('currentSession', currentSession) //TODO: Don't delete this, Apparently updateSession is being called on each render of the Checkout table for EACH existing session.  Why? I don't know. -MP
     await document.update(currentSession)
         .catch(console.error);
 
