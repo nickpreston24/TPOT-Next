@@ -1,4 +1,4 @@
-import ListItem from './index'
+import ListItem from '@molecules/ListItem'
 import React from 'react';
 
 export default {
