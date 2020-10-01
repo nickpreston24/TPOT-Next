@@ -35,6 +35,7 @@ import { ROUTES } from 'constants/routes';
 import { LanguageOptions, Language } from '../constants';
 import { UploadMode } from '../models/UploadMode';
 import { useSessions } from 'hooks/useSessions';
+import { Session } from 'models';
 
 
 type ScribeToolbarProps = {
@@ -58,9 +59,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     // Session API functions:
     const { getHtml } = props;
 
-    /* Wordpress support: */
-
-    const { updateSession } = useSessions();
+    const { updatePaper, savePaper } = useSessions();
 
     /** 
      * Form
@@ -91,13 +90,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     useEffect(() => {
 
         console.log('form :>> ', form);
-
         isDev() && console.log('checking out doc :>> ', doc);
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
         Router.events.on('routeChangeComplete', (url) => {
             if (url === ROUTES.CHECKOUT || url === ROUTES.EDIT)
-                updateSession(doc as string, { status: CheckoutStatus.InProgress })
+                updatePaper({ doc })
         })
 
         if (!!doc) {
@@ -122,6 +120,20 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     }, []);
 
     const onSave = async () => {
+
+        let session: Session = {
+            docId: doc as string,
+            title: form.title,
+            status: CheckoutStatus.InProgress,
+            code: getHtml(),
+            language: form.language,
+            categories: form.categories,
+            date_modified: new Date(),
+            date_uploaded: null,
+            contributors: [],
+        }
+
+        savePaper(session);
         onOpen();
     }
 
@@ -134,8 +146,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         e.preventDefault();
 
         onClose();
-
-
         console.log('form :>> ', form);
     }
 
@@ -167,8 +177,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                 >
                     <Button
                         onClick={onSave}
-                    // isDisabled={!dirty} // FIXME: Can't update dirty @observable properly in ckeditor (it's late)
-                    // leftIcon="save"  // FIXME: For some reason, I can't get this working.
                     >
                         Save
                     </Button>
@@ -189,10 +197,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>{
-                        // currentStatus === CheckoutStatus.CheckedOut ? "Publish to Wordpress" :
-                        "Save Paper"
-                    }</ModalHeader>
+                    <ModalHeader>{"Save Paper"}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
 

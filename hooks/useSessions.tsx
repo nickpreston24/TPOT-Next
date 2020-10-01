@@ -1,11 +1,17 @@
 import { notify } from '../components/Toasts';
-import { saveSession, updateSession } from '../stores/sessionsAPI';
+import { checkoutSession, saveSession, updateSession } from '../stores/sessionsAPI';
 import { CheckoutStatus } from '../constants/CheckoutStatus';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useReducer, useState } from 'react';
 import { createInstance } from '../models/domain';
 import { Session } from '../models/Session';
+import Router, { useRouter } from 'next/router';
+import { DOC } from 'constants/routes';
+import { useAuth, usePrevious, useWordpress } from 'hooks';
+import { Paper } from 'models';
+import { isDev } from 'helpers';
 
 const context = createContext(null);
+
 
 /**
  * Hook
@@ -24,39 +30,85 @@ export const ProvideSessions = ({ children }) => {
     )
 }
 
+const initialState = {
+    doc: '',
+    isDirty: false,
+    session: null,
+    status: CheckoutStatus.NotStarted,
+    lastStatus: null,
+}
+
+enum Actions {
+    Update = 'Update',
+    Save = 'Save',
+    Publish = 'Publish',
+}
+
+/**
+ * Modifies the current state according to the action specified 
+ */
+function reducer(state, action) {
+    const { payload } = action;
+
+    switch (action.type) {
+
+        case Actions.Update:
+            return {
+                ...state,
+                ...payload,
+                isDirty: false,
+                date_modified: new Date(),
+                status: CheckoutStatus.InProgress
+            }
+
+        case Actions.Save:
+            return {
+                ...state,
+                ...payload,
+                isDirty: false,
+                status: CheckoutStatus.InProgress
+            }
+
+        case Actions.Publish:
+            return {
+                ...state,
+                status: CheckoutStatus.Published,
+                isDirty: false,
+            };
+
+        default:
+            return state;
+    }
+}
+
 /**
  * Loads the API
  */
 function useSessionProvider() {
 
-    // const [session, setSession] = useState(new Session({}))
+    const [state, dispatchSession] = useReducer(reducer, initialState)
 
-    const [state, setState] = useState<any>({
-        doc: '',
-        isDirty: false,
-        lastSession: createInstance(Session),
-        // session: createInstance(Session)
-        status: CheckoutStatus.NotStarted
-    })
+    const previousState = usePrevious(state);
 
-    const updatePaper = async (session: Session) => {
+    const updatePaper = async (id, string, session: Session) => {
+
+        console.log('updating session :>> ', session);
 
         // Update an existing paper:
         if (state.status === CheckoutStatus.CheckedOut) {
+            dispatchSession({
+                type: Actions.Update,
+                payload: {
+                    session: session,
+                    status: CheckoutStatus.InProgress,  // Allow instant unlock on update.
+                    lastStatus: previousState?.status,
+                    isDirty: false,
+                }
+            })
 
-            // WARNING: Firebase hates custom objects, so just use plain old JSON here:
-            let sessionUpdate = session.toJSON();
-
-            sessionUpdate.date_modified = new Date();
-
-            setState(state.doc as string, sessionUpdate)
-                .then(() => notify("Updated session", "success"))
-                .then(() =>
-                    setState({
-                        lastSession: sessionUpdate,
-                        isDirty: false,
-                        ...state
-                    }))
+            updateSession(id, session).then(() => {
+                notify("Updated session", "success");
+            })
         }
     }
 
@@ -64,86 +116,91 @@ function useSessionProvider() {
 
         // Save a new paper:
         if (state.status == CheckoutStatus.NotStarted) {
+            
+            session.date_modified = new Date();
+            
+            console.log('saving session :>> ', session);
+            let id = await saveSession(session);
 
-            let nextSession = session.toJSON();
-
-            // isDev() && console.log('nextSession :>> ', nextSession);
-
-            nextSession.date_modified = new Date();
-
-            let id = await saveSession(nextSession);
-            notify("Saved session", "success")
-
-            setState({
-                status: CheckoutStatus.CheckedOut,
-                isDirty: false
+            dispatchSession({
+                type: Actions.Save,
+                payload: {
+                    session: session,
+                    status: CheckoutStatus.InProgress,
+                    lastStatus: previousState?.status,
+                    isDirty: false,
+                }
             })
 
-            // isDev() && console.log('created Session id :>> ', id);
+            if (!!id) {
+                Router.push('/scribe/edit/[doc]', `/scribe/edit/${id}`)
+                await checkoutSession(id)
+            }
 
-            // let doc = DOC(id) as any;
-            // router.push({...doc})
-            // router.push('/scribe/edit/[doc]', `/scribe/edit/${id}`)
-            // await checkoutSession(id)
+            notify("Saved session", "success")
 
             return id;
         }
     }
 
-    // // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
-    // if (lastStatus === CheckoutStatus.CheckedOut && status === CheckoutStatus.FirstDraft) {
-    //     let paper = new Paper(session.title, code);
-    //     publish(paper)
-    //         .then(async (response) => {
-    //             isDev() && console.log('response :>> ', response);
+    const publishPaper = async (doc: string, session: Session) => {
 
-    //             if (!response.id) {
-    //                 console.warn(messages.WarnNoWPResponse);
-    //                 notify(messages.WarnNoWPResponse, 'warn');
-    //                 return
-    //             }
+        const { user } = useAuth();
+        const { publish } = useWordpress();
 
-    //             let sessionUpdate = {
-    //                 authorId: response.author || null,
-    //                 paperId: response.id,
+        let code = `<p>test</p>`
+        // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
+        if (state.lastStatus === CheckoutStatus.CheckedOut && status === CheckoutStatus.FirstDraft) {
+            let paper = new Paper(session.title, code);
+            publish(paper)
+                .then(async (response) => {
+                    isDev() && console.log('response :>> ', response);
 
-    //                 date_modified: response.modified,
-    //                 status: CheckoutStatus.FirstDraft,
-    //                 contributors: [authUser.email], //TODO: push and filter dups
-    //                 code: response.content ? response.content.rendered : '',
-    //                 original: '',
-    //                 excerpt: '',
-    //                 title: session.title,
-    //             };
+                    if (!response.id) {
+                        // console.warn(messages.WarnNoWPResponse);
+                        // notify(messages.WarnNoWPResponse, 'warn');
+                        return
+                    }
 
-    //             // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
-    //             // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
-    //             // We have Sessions checked-out state as a stopgap
+                    let sessionUpdate = {
+                        authorId: response.author || null,
+                        paperId: response.id,
 
-    //             await updateSession(doc as string, sessionUpdate)
-    //             // console.log('published session :>> ', sessionUpdate);
+                        date_modified: response.modified,
+                        status: CheckoutStatus.FirstDraft,
+                        contributors: [user.email], //TODO: push and filter dups
+                        code: response.content ? response.content.rendered : '',
+                        original: '',
+                        excerpt: '',
+                        title: session.title,
+                    };
 
-    //             scribeStore.lastSession = Session.create(sessionUpdate);
+                    // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
+                    // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
+                    // We have Sessions checked-out state as a stopgap
 
-    //             // if (!document) {
-    //             //     notify(`Failed to create Session for: ${session.title}`, 'warn')
-    //             //     return;
-    //             // }
-    //             // else {
-    //             //     notify(`New Session created for: ${session.title}\n`, 'success')
-    //             //     // await updateSession(doc as string, { status: CheckoutStatus.FirstDraft })
-    //             // }
+                    await updateSession(doc as string, sessionUpdate)
+                    // console.log('published session :>> ', sessionUpdate);
 
-    //             // return document;
-    //         })
-    //     return
-    // }
+                    state.lastSession = sessionUpdate;
+
+                    // if (!document) {
+                    //     notify(`Failed to create Session for: ${session.title}`, 'warn')
+                    //     return;
+                    // }
+                    // else {
+                    //     notify(`New Session created for: ${session.title}\n`, 'success')
+                    //     // await updateSession(doc as string, { status: CheckoutStatus.FirstDraft })
+                    // }
+
+                    // return document;
+                })
+            return
+        }
+    }
 
     return {
         updatePaper,
         savePaper,
     }
 }
-
-
-
