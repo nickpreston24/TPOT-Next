@@ -5,7 +5,6 @@ import { toJS } from 'mobx';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { IDocumentOptions } from 'firestorter/lib/Types';
 import { isDev } from 'helpers';
-import { async } from 'rxjs/internal/scheduler/async';
 
 const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;
@@ -29,9 +28,7 @@ export const unlockSession = async (id: string) => {
 }
 
 export const saveSession = async (session: any | Session): Promise<string> => {
-    console.log('session (save session - api) :>> ', session);
     // let options = { mode: 'off' } as IDocumentOptions
-    isDev() && console.log('session.slug :>> ', session.slug);
     if (!session.slug)
         return null;
 
@@ -44,13 +41,10 @@ export const saveSession = async (session: any | Session): Promise<string> => {
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let currentSession = toJS(document.data);
-    console.log('currentSession :>> ', currentSession);
-    isDev() && console.log('saved session :>> ', currentSession);
 
     Object.assign(currentSession, session)
-    let data = { ...session }
-    console.log('data :>> ', data);
-    await document.set(data)
+    await document.set(currentSession)
+    isDev() && console.log('saved session :>> ', currentSession);
     return document.ref.id as string
 }
 
@@ -61,12 +55,9 @@ export const checkoutSession = async (id: string) => {
 
     if (!document.hasData)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
-    // console.log('document.data', document.data)
-    let session = toJS(document.data as Session);
-    isDev() && console.log('session :>> ', session);
 
-    if (session.status !== CheckoutStatus.CheckedOut)
-        session.status = CheckoutStatus.CheckedOut
+        let session = toJS(document.data as Session);
+    // isDev() && console.log('checked out session :>> ', session);
 
     await document.update(session as object)
 

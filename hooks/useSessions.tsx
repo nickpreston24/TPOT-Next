@@ -12,7 +12,6 @@ import { Language } from 'constants/languages';
 
 const context = createContext(null);
 
-
 /**
  * Hook
  */
@@ -33,7 +32,7 @@ export const ProvideSessions = ({ children }) => {
 const initialState = {
     doc: '',
     isDirty: false,
-    session: createInstance(Session),
+    session: Session.create({}),
     language: Language.English
 }
 
@@ -51,12 +50,7 @@ function reducer(state, action) {
 
     const { payload } = action;
 
-    // console.log('state :>> ', state);
-    console.log('payload :>> ', payload);
     let session = payload?.session;
-    console.log('session (reducer) :>> ', session);
-
-    // console.log('session (reducer) :>> ', session);
 
     switch (action.type) {
 
@@ -66,7 +60,6 @@ function reducer(state, action) {
                 ...state,
                 ...payload,
                 isDirty: false,
-                session,
             }
 
         // Prep the state for paper save:
@@ -75,7 +68,6 @@ function reducer(state, action) {
                 ...state,
                 ...payload,
                 isDirty: false,
-                session,
             }
 
         // Prep the state for publishing a paper:
@@ -83,15 +75,17 @@ function reducer(state, action) {
             return {
                 ...state,
                 ...payload,
-                session,
                 isDirty: false,
             };
 
-        //Statuses Only:
+        // Patch the Statuses Only:
         case Actions.Status:
             return {
                 ...state,
-                isDirty: payload.CheckoutStatus === CheckoutStatus.NotStarted ? false : true
+                session: {
+                    status: payload.CheckoutStatus
+                },
+                isDirty: payload.CheckoutStatus === CheckoutStatus.NotStarted ? false : true,
             }
 
         default:
@@ -113,11 +107,22 @@ function useSessionProvider() {
     const lastStatus = usePrevious(state?.session?.status)
     const lastSession = usePrevious(state?.session)
 
-
     useEffect(() => {
-        console.log('previousstate :>> ', previousState);
-        console.log('next state :>> ', state);
+        isDev() && console.log('previousstate :>> ', previousState);
+        isDev() && console.log('next state :>> ', state);
+
     }, [state]);
+
+    // Run save when session status changes
+    useEffect(() => {
+        let currentStatus = state?.session.status;
+
+        if (currentStatus !== lastStatus &&
+            state?.session.status == CheckoutStatus.InProgress) {
+            savePaper();
+        }
+
+    }, [state?.session?.status]);
 
     const updatePaper = async (id, string, session: Session) => {
 
@@ -144,8 +149,9 @@ function useSessionProvider() {
     const savePaper = async () => {
 
         let session = state.session;
-        console.log('state (savepaper())', state)
+        console.log('state (save paper())', state)
 
+        // Have the hook perform the actual save:
         if (!session) {
             console.warn('Null session');
             return;
@@ -157,7 +163,7 @@ function useSessionProvider() {
         }
 
         if (status == CheckoutStatus.NotStarted) {
-            session.date_modified = new Date();
+            session.date_uploaded = new Date();
         }
 
         console.log('saving session :>> ', session);
@@ -177,7 +183,6 @@ function useSessionProvider() {
         notify("Saved session", "success")
 
         return id;
-
     }
 
     const publishPaper = async (doc: string, session: Session) => {
@@ -240,6 +245,7 @@ function useSessionProvider() {
         updatePaper,
         savePaper,
 
+        session: state?.session,
         dispatchSession,
     }
 }

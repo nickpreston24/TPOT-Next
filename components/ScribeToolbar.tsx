@@ -18,11 +18,9 @@ import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Select from '@chakra-ui/core/dist/Select';
 import Tooltip from '@chakra-ui/core/dist/Tooltip';
-
-
 import UploadButton from 'components/buttons/UploadButton';
-import { useWordpress, useAuth, usePrevious } from 'hooks';
-import { checkoutSession, saveSession } from 'stores/sessionsAPI';
+import { usePrevious } from 'hooks';
+import { checkoutSession } from 'stores/sessionsAPI';
 import Router, { useRouter } from 'next/router';
 import React from 'react';
 import { isDev } from 'helpers';
@@ -31,11 +29,10 @@ import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
-import { LanguageOptions, Language } from '../constants';
+import { LanguageOptions } from '../constants';
 import { UploadMode } from '../models/UploadMode';
 import { useSessions, Actions } from 'hooks/useSessions';
 import { Session } from 'models';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 
 type ScribeToolbarProps = {
@@ -58,20 +55,18 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const { getHtml } = props;
 
     const {
-        publishPaper,
         updatePaper,
-        savePaper,
-        dispatchSession
+        dispatchSession,
     } = useSessions();
 
     /** 
      * Form
      */
     const [form, updateForm] = useState<any>({
-        language: null,
-        mode: UploadMode.Paste,
         title: "",
         categoriesText: "",
+        language: null,
+        mode: UploadMode.Paste,
         doc: null,
     });
 
@@ -88,6 +83,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         updateForm({ ...form, [name]: value });
     };
 
+    useEffect(() => {
+        console.log('previous form :>> ', previousForm);
+        console.log('current form :>> ', form);
+    }, [form]);
+
+
     /** Modal Refs */
     const initialRef = useRef();
     const finalRef = useRef();
@@ -97,17 +98,17 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      */
     useEffect(() => {
 
-        // set last form contents:
-        updateForm({ ...previousForm })
 
-        isDev() && console.log('checking out doc :>> ', doc);
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
         Router.events.on('routeChangeComplete', (url) => {
-            if (url === ROUTES.CHECKOUT || url === ROUTES.EDIT)
+            if (!!doc &&
+                url === ROUTES.CHECKOUT || url === ROUTES.EDIT) {
                 updatePaper({ doc })
+            }
         })
 
+        // Checking out Session:
         if (!!doc) {
 
             checkoutSession(doc as string)
@@ -118,16 +119,20 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         payload: { status: CheckoutStatus.CheckedOut }
                     })
 
-                    updateForm({ title: result.title })
-
-                    !!result.categories &&
-                        updateForm({
-                            categoriesText: result.categories?.join(", ") || ''
-                        })
+                    updateForm({
+                        ...form,
+                        ...result,
+                        categoriesText: result?.categories?.join(", ") || ''
+                    })
                 })
         }
 
+        // New Session:
         if (!doc) {
+
+            // set last form contents:
+            updateForm(previousForm)
+
             dispatchSession({
                 type: Actions.Status,
                 payload: { status: CheckoutStatus.NotStarted }
@@ -136,7 +141,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     }, []);
 
-    const onSubmit = async (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
 
         // isDev() && console.log('form :>> ', form);
@@ -151,13 +156,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             categories: form.categories,
         });
 
+        console.log('session (onsubmit) - form :>> ', session);
+        // console.log('form  (on submit):>> ', form);
+
         // Post changed to hook's internal state:
         dispatchSession({ type: Actions.Save, payload: { session: session } })
 
         onClose();
-
-        // Have the hook perform the actual save:
-        await savePaper();
     }
 
     return (
@@ -286,35 +291,3 @@ const Dropdown = (props) => {
 }
 
 export default ScribeToolbar;
-
-
- // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
-
-// console.log('wpUsers :>> ', wpUsers, authUser);
-
-// let authorId = session.authorId;
-
-// if (!!authorId) {
-
-//     getUser(authorId)
-//         .then((wpUser) => {
-//             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
-//             // console.log('current user :>> ', records);
-//             setUser(toDto(wpUser, WordpressUser))
-//         })
-
-//      getPages(authorId)
-//          .then((records) => {
-//          // console.log('records :>> ', records);
-//          let collection = mapToDto(records, Paper);
-//          setPapers(collection);
-//          setLoading(false)
-//      })
-
-//      getAuthorSessions(authorId)
-//         .then((sessions) => {
-//             console.log('session records', sessions)
-//         })
-// }
-
-// console.log('authorId', authorId)

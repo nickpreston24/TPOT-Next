@@ -63,7 +63,7 @@ export class Session {
 
         language = !!language ? language.trim() : ""
 
-        this.title = !!title ? '' : title.replace(/[_;:]/g, '');
+        this.title = !title ? '' : title.replace(/[_;:]/g, '');
         let slug =
             (title || '')
                 .replace(/[',?!;:]/g, '')

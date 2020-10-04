@@ -171,7 +171,7 @@ const SessionDetails = ({ row, user }) => {
     const { id } = row;
 
     let session = { ...row };
-    console.log('session :>> ', session);
+
     let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor } = session;
     const cancelUnlockRef = React.useRef();
     const cancelDeleteRef = React.useRef();
@@ -350,7 +350,7 @@ const SessionDetails = ({ row, user }) => {
                                             removeSession(id)
                                                 .then(() => {
                                                     notify('Successfully deleted a session', 'success')
-                                                    setState({ ...state, isDeleteOpen: fasle })
+                                                    setState({ ...state, isDeleteOpen: false })
                                                 })
                                                 .catch(console.error)
                                         }} ml={3}>
