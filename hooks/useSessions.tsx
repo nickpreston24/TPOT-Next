@@ -33,9 +33,7 @@ export const ProvideSessions = ({ children }) => {
 const initialState = {
     doc: '',
     isDirty: false,
-    session: null,
-    status: CheckoutStatus.NotStarted,
-    lastStatus: null,
+    session: createInstance(Session),
     language: Language.English
 }
 
@@ -50,40 +48,49 @@ export enum Actions {
  * Modifies the current state according to the action specified 
  */
 function reducer(state, action) {
+
     const { payload } = action;
-    console.log('state :>> ', state);
+
+    // console.log('state :>> ', state);
     console.log('payload :>> ', payload);
+    let session = payload?.session;
+    console.log('session (reducer) :>> ', session);
+
+    // console.log('session (reducer) :>> ', session);
 
     switch (action.type) {
 
+        // Prep the state for paper update:
         case Actions.Update:
             return {
                 ...state,
                 ...payload,
                 isDirty: false,
-                date_modified: new Date(),
-                status: CheckoutStatus.InProgress
+                session,
             }
 
+        // Prep the state for paper save:
         case Actions.Save:
             return {
                 ...state,
                 ...payload,
                 isDirty: false,
-                status: CheckoutStatus.InProgress
+                session,
             }
 
+        // Prep the state for publishing a paper:
         case Actions.Publish:
             return {
                 ...state,
-                status: CheckoutStatus.Published,
+                ...payload,
+                session,
                 isDirty: false,
             };
 
+        //Statuses Only:
         case Actions.Status:
             return {
                 ...state,
-                status: payload.CheckoutStatus,
                 isDirty: payload.CheckoutStatus === CheckoutStatus.NotStarted ? false : true
             }
 
@@ -103,6 +110,9 @@ function useSessionProvider() {
     const [state, dispatchSession] = useReducer(reducer, initialState)
 
     const previousState = usePrevious(state);
+    const lastStatus = usePrevious(state?.session?.status)
+    const lastSession = usePrevious(state?.session)
+
 
     useEffect(() => {
         console.log('previousstate :>> ', previousState);
@@ -131,35 +141,43 @@ function useSessionProvider() {
         }
     }
 
-    const savePaper = async (session: Session) => {
+    const savePaper = async () => {
 
-        // Save a new paper:
-        if (state.status == CheckoutStatus.NotStarted) {
+        let session = state.session;
+        console.log('state (savepaper())', state)
 
-            session.date_modified = new Date();
-
-            console.log('saving session :>> ', session);
-            let id = await saveSession(session);
-
-            dispatchSession({
-                type: Actions.Save,
-                payload: {
-                    session: session,
-                    status: CheckoutStatus.InProgress,
-                    lastStatus: previousState?.status,
-                    isDirty: false,
-                }
-            })
-
-            if (!!id) {
-                Router.push('/scribe/edit/[doc]', `/scribe/edit/${id}`)
-                await checkoutSession(id)
-            }
-
-            notify("Saved session", "success")
-
-            return id;
+        if (!session) {
+            console.warn('Null session');
+            return;
         }
+
+        if (status === CheckoutStatus.FirstDraft || status === CheckoutStatus.Published) {
+            console.log(`Session of status ${status} could not be saved`);
+            return null;
+        }
+
+        if (status == CheckoutStatus.NotStarted) {
+            session.date_modified = new Date();
+        }
+
+        console.log('saving session :>> ', session);
+        let id = await saveSession(session);
+        console.log('saved id :>> ', id);
+
+        dispatchSession({
+            type: Actions.Save,
+            payload: { session: session, }
+        })
+
+        if (!!id) {
+            Router.push('/scribe/edit/[doc]', `/scribe/edit/${id}`)
+            await checkoutSession(id)
+        }
+
+        notify("Saved session", "success")
+
+        return id;
+
     }
 
     const publishPaper = async (doc: string, session: Session) => {

@@ -29,7 +29,7 @@ export const unlockSession = async (id: string) => {
 }
 
 export const saveSession = async (session: any | Session): Promise<string> => {
-
+    console.log('session (save session - api) :>> ', session);
     // let options = { mode: 'off' } as IDocumentOptions
     isDev() && console.log('session.slug :>> ', session.slug);
     if (!session.slug)
@@ -44,11 +44,13 @@ export const saveSession = async (session: any | Session): Promise<string> => {
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
 
     let currentSession = toJS(document.data);
+    console.log('currentSession :>> ', currentSession);
     isDev() && console.log('saved session :>> ', currentSession);
 
     Object.assign(currentSession, session)
-
-    await document.set(session)
+    let data = { ...session }
+    console.log('data :>> ', data);
+    await document.set(data)
     return document.ref.id as string
 }
 
@@ -59,7 +61,7 @@ export const checkoutSession = async (id: string) => {
 
     if (!document.hasData)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
-// console.log('document.data', document.data)
+    // console.log('document.data', document.data)
     let session = toJS(document.data as Session);
     isDev() && console.log('session :>> ', session);
 
