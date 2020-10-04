@@ -51,7 +51,6 @@ export class ScribeEditor extends React.Component<any, any> {
                 >
                     <Box id="sticky-toolbar" h={80} w="100%" maxW={960} mt={1} mr={4} >
                         <ScribeToolbar {...{ getHtml: this.getHtml }} />
-                        {/* CK's Toolbar is appended here by this.CkEditor.onInit() */}
                     </Box>
                     <Flex id="scroll-area" h={70} w="100%" flexGrow={1} overflowY="scroll" overflowX="hidden" justifyContent="center">
                         <Box id="editor frame" w="100%" maxW={960} >
@@ -59,7 +58,7 @@ export class ScribeEditor extends React.Component<any, any> {
                             <this.CKEditor
                                 ref={this.ckeditorRef}
                                 editor={this.DecoupledEditor}
-                                data={"<p>Hello from CKEditor 5!</p>"}
+                                data={"<p></p>"}
                                 onInit={editor => {
 
                                     if (editor) {

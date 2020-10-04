@@ -1,14 +1,14 @@
 import { notify } from '../components/Toasts';
 import { checkoutSession, saveSession, updateSession } from '../stores/sessionsAPI';
 import { CheckoutStatus } from '../constants/CheckoutStatus';
-import { createContext, useContext, useReducer, useState } from 'react';
+import { createContext, useContext, useEffect, useReducer, useState } from 'react';
 import { createInstance } from '../models/domain';
 import { Session } from '../models/Session';
 import Router, { useRouter } from 'next/router';
-import { DOC } from 'constants/routes';
 import { useAuth, usePrevious, useWordpress } from 'hooks';
 import { Paper } from 'models';
 import { isDev } from 'helpers';
+import { Language } from 'constants/languages';
 
 const context = createContext(null);
 
@@ -36,12 +36,14 @@ const initialState = {
     session: null,
     status: CheckoutStatus.NotStarted,
     lastStatus: null,
+    language: Language.English
 }
 
-enum Actions {
+export enum Actions {
     Update = 'Update',
     Save = 'Save',
     Publish = 'Publish',
+    Status = "Status"
 }
 
 /**
@@ -49,6 +51,8 @@ enum Actions {
  */
 function reducer(state, action) {
     const { payload } = action;
+    console.log('state :>> ', state);
+    console.log('payload :>> ', payload);
 
     switch (action.type) {
 
@@ -76,8 +80,18 @@ function reducer(state, action) {
                 isDirty: false,
             };
 
+        case Actions.Status:
+            return {
+                ...state,
+                status: payload.CheckoutStatus,
+                isDirty: payload.CheckoutStatus === CheckoutStatus.NotStarted ? false : true
+            }
+
         default:
-            return state;
+            return {
+                ...state,
+                ...payload
+            };
     }
 }
 
@@ -89,6 +103,11 @@ function useSessionProvider() {
     const [state, dispatchSession] = useReducer(reducer, initialState)
 
     const previousState = usePrevious(state);
+
+    useEffect(() => {
+        console.log('previousstate :>> ', previousState);
+        console.log('next state :>> ', state);
+    }, [state]);
 
     const updatePaper = async (id, string, session: Session) => {
 
@@ -116,9 +135,9 @@ function useSessionProvider() {
 
         // Save a new paper:
         if (state.status == CheckoutStatus.NotStarted) {
-            
+
             session.date_modified = new Date();
-            
+
             console.log('saving session :>> ', session);
             let id = await saveSession(session);
 
@@ -202,5 +221,7 @@ function useSessionProvider() {
     return {
         updatePaper,
         savePaper,
+
+        dispatchSession,
     }
 }

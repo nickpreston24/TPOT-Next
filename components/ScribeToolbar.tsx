@@ -18,12 +18,11 @@ import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Select from '@chakra-ui/core/dist/Select';
 import Tooltip from '@chakra-ui/core/dist/Tooltip';
-// import { SelectControl } from '@chakra-ui/core/dist/Select'
 
 
 import UploadButton from 'components/buttons/UploadButton';
 import { useWordpress, useAuth } from 'hooks';
-import { checkoutSession } from 'stores/sessionsAPI';
+import { checkoutSession, saveSession } from 'stores/sessionsAPI';
 import Router, { useRouter } from 'next/router';
 import React from 'react';
 import { isDev } from 'helpers';
@@ -34,8 +33,9 @@ import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
 import { LanguageOptions, Language } from '../constants';
 import { UploadMode } from '../models/UploadMode';
-import { useSessions } from 'hooks/useSessions';
+import { useSessions, Actions } from 'hooks/useSessions';
 import { Session } from 'models';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 
 type ScribeToolbarProps = {
@@ -59,13 +59,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     // Session API functions:
     const { getHtml } = props;
 
-    const { updatePaper, savePaper } = useSessions();
+    const { updatePaper, savePaper, dispatchSession } = useSessions();
 
     /** 
      * Form
      */
     const [form, updateForm] = useState<any>({
-        language: Language.English,
+        language: null,
         mode: UploadMode.Paste,
         title: '', //lastSession?.title || "",
         categoriesText: "",
@@ -75,8 +75,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      * Updates the appropriate state prop by its field name from the 
      * form where 'name' is a prop on the target component
      */
-    const updateField = (e) => {
-        updateForm({ ...form, [e.target.name]: e.target.value });
+    const updateField = (event) => {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+        console.log('name :>> ', name);
+        console.log('value :>> ', value);
+        updateForm({ ...form, [name]: value });
     };
 
 
@@ -89,7 +94,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      */
     useEffect(() => {
 
-        console.log('form :>> ', form);
         isDev() && console.log('checking out doc :>> ', doc);
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
@@ -108,13 +112,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         updateForm({
                             categoriesText: result.categories?.join(", ") || ''
                         })
-
-                    // setStatus(CheckoutStatus.CheckedOut)
                 })
         }
 
         if (!doc) {
-            // setStatus(CheckoutStatus.NotStarted)
+            dispatchSession({ type: Actions.Status, payload: CheckoutStatus.NotStarted })
         }
 
     }, []);
@@ -147,6 +149,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         onClose();
         console.log('form :>> ', form);
+
+        dispatchSession({ type: Actions.Save, payload: { ...form } })
     }
 
     return (
@@ -229,9 +233,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         <FormControl mt={4}>
                             <FormLabel>Language</FormLabel>
 
-                            <LanguageSelect
+                            <Dropdown
                                 name="language"
-                                handleChange={updateField}
+                                onChange={updateField}
+                                placeholder="Choose a language"
                             />
                         </FormControl>
 
@@ -266,14 +271,15 @@ const ScribeDevStatusBar: FC = () => {
     )
 }
 
-const LanguageSelect = (props) => {
+const Dropdown = (props) => {
 
-    const { handleChange } = props;
+    const { onChange, name, placeholder } = props;
 
     return (
         <Select
-            onChange={handleChange}
-            placeholder="Choose a language"
+            onChange={onChange}
+            name={name}
+            placeholder={placeholder}
         >
             {LanguageOptions.map((name, key) => <option key={key}>{name}</option>)}
         </Select>
