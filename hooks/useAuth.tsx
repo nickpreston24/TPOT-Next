@@ -118,11 +118,11 @@ function useProvideAuth() {
         const unsubscribe = onAuthUserListener(
             authUser => {
                 localStorage.setItem('authUser', JSON.stringify(authUser));
-                this.setState({ authUser });
+                setState({ ...state, authUser });
             },
             () => {
                 localStorage.removeItem('authUser');
-                this.setState({ authUser: null });
+                setState({ authUser: null });
             },
         );
 

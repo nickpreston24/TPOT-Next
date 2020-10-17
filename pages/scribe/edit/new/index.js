@@ -3,9 +3,9 @@ import Template from '@templates/PaperEditor'
 
 const Page = () => {
 
-  return (
-    <Template />
-  )
+    return (
+        <Template />
+    )
 }
 
 export default Page

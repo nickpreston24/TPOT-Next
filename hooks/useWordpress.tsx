@@ -20,8 +20,6 @@ export function ProvideWordpress({ children }) {
 function useWordpressProvider() {
 
     const [currentPaper, setCurrentPaper] = useState(createInstance(Paper));
-    // console.log('default Paper :>> ', currentPaper);
-
     const [wpUsers, setWpUsers] = useState([]);
 
     const getAllUsers = () => wpapi.users();
@@ -78,7 +76,7 @@ function useWordpressProvider() {
                     let updatedPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
 
-// console.log('updatedPaper :>> ', updatedPaper);
+                    // console.log('updatedPaper :>> ', updatedPaper);
                     setCurrentPaper(updatedPaper);
 
                 })
@@ -124,6 +122,39 @@ function useWordpressProvider() {
         return currentPaper;
     }
 
+
+    // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
+
+    // console.log('wpUsers :>> ', wpUsers, authUser);
+
+    // let authorId = session.authorId;
+
+    // if (!!authorId) {
+
+    //     getUser(authorId)
+    //         .then((wpUser) => {
+    //             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
+    //             // console.log('current user :>> ', records);
+    //             setUser(toDto(wpUser, WordpressUser))
+    //         })
+
+    //      getPages(authorId)
+    //          .then((records) => {
+    //          // console.log('records :>> ', records);
+    //          let collection = mapToDto(records, Paper);
+    //          setPapers(collection);
+    //          setLoading(false)
+    //      })
+
+    //      getAuthorSessions(authorId)
+    //         .then((sessions) => {
+    //             console.log('session records', sessions)
+    //         })
+    // }
+
+    // console.log('authorId', authorId)
+
+
     useEffect(() => {
         getAllUsers()
             .then((users) => setWpUsers(users))
@@ -131,9 +162,8 @@ function useWordpressProvider() {
 
     return {
         wpUsers,
-        // getAllUsers,
-        getUser,
 
+        getUser,
         getPages,
         getPageById,
         getPageBySlug,
@@ -141,34 +171,3 @@ function useWordpressProvider() {
         publish,
     }
 }
-
-// export function getSamplePageContent(html) {
-//     // console.log('publishing html:\n', html);
-//     let slug = 'sample-slug' //TODO: use your slug making function
-//     let title = 'sample-title-2' // TODO: get from UI
-//     let excerpt = 'lorem ipsum' // TODO: get from UI
-//     const pageContents = {
-//         content: html,
-//         slug,
-//         title,
-//         excerpt
-//     }
-//     return pageContents
-// }
-
-// .then(function (response) {
-            //     console.log('response (on create): ', response)
-            //     console.log('WordPress paper id: ', response.id)
-        // })
-        // .catch(error => {
-        //     if (!!error)
-        //         console.error('Error occured when posting a new page to WordPress: ', error)
-        // })
-// .then(function (response) {
-        //     console.log('response (on update): ', response)
-        //     console.log('WordPress paper id: ', response.id)
-        // })
-        // .catch(error => {
-        //     if (!!error)
-        //         console.error('Error occured when updating a page in WordPress: ', error)
-        // })

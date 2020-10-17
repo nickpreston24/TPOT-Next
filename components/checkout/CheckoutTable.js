@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '@chakra-ui/core/dist/Button'
 import Divider from '@chakra-ui/core/dist/Divider'
 import Flex from '@chakra-ui/core/dist/Flex'
@@ -16,7 +16,6 @@ import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader,
 import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
 import { sessions, unlockSession, removeSession } from '../../stores/sessionsAPI'
-import { toDto, Session } from '../../models'
 import { notify } from 'components/Toasts'
 import { useAuth } from 'hooks'
 import { ROUTES } from 'constants/routes'
@@ -25,7 +24,6 @@ import dynamic from 'next/dynamic'
 import moment from 'moment'
 import { StatusChip, Confirm } from '../atoms'
 import { isDev } from "helpers"
-import { action } from 'mobx'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -172,28 +170,20 @@ const SessionDetails = ({ row, user }) => {
 
     const { id } = row;
 
-    let session = toDto(row, Session);
-    // console.log('session :>> ', session);
+    let session = { ...row };
+
     let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor } = session;
-
-    // Collapse:
-    const [isCollapseOpen, setCollapseIsOpen] = useState(false)
-
-    // Modals:
-    // UNLOCK Modal:
-    const [isUnlockModalOpen, setUnlockModalIsOpen] = useState(false);
-    const onUnlockModalClose = () => setUnlockModalIsOpen(false);
     const cancelUnlockRef = React.useRef();
-
-    // DELETE Modal:
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-    const onDeleteModalClose = () => setIsDeleteModalOpen(false);
     const cancelDeleteRef = React.useRef();
 
-    const [option, setOption] = useState(actions.DELETE)
+    const [state, setState] = useState({
+        isCollapseOpen: false,
+        isUnlockOpen: false,
+        isDeleteOpen: false,
+    })
 
     useEffect(() => {
-        const timer = setTimeout(() => setCollapseIsOpen(true), 0)
+        const timer = setTimeout(() => setState({ isCollapseOpen: true }), 0)
         return () => clearTimeout(timer)
     }, []);
 
@@ -208,7 +198,7 @@ const SessionDetails = ({ row, user }) => {
     }
 
     return (
-        <Collapse isOpen={isCollapseOpen} alignContent="center" transition="all 1s ease-in-out">
+        <Collapse isOpen={state.isCollapseOpen} alignContent="center" transition="all 1s ease-in-out">
             <Flex justifyContent="center">
                 <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
                     <Stack w="50%">
@@ -263,12 +253,7 @@ const SessionDetails = ({ row, user }) => {
                                         variantColor="primary"
                                         aria-label="Delete"
                                         icon="delete"
-                                        onClick={() => {
-                                            // console.log('option b4:', option)
-                                            // setOption(action.DELETE)
-                                            // console.log('option after', option)
-                                            setIsDeleteModalOpen(true)
-                                        }}
+                                        onClick={() => setState({ ...state, isDeleteOpen: true })}
                                     />
                                 </Tooltip>
                             }
@@ -281,10 +266,7 @@ const SessionDetails = ({ row, user }) => {
                                 aria-label="unlock-session"
                             >
                                 <Button
-                                    onClick={() => {
-                                        // setOption(actions.UNLOCK)
-                                        setUnlockModalIsOpen(true)
-                                    }}
+                                    onClick={() => setState({ ...state, isUnlockOpen: true })}
                                     isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
@@ -305,9 +287,9 @@ const SessionDetails = ({ row, user }) => {
 
                             {/* Unlock Modal */}
                             <AlertDialog
-                                isOpen={isUnlockModalOpen}
+                                isOpen={state.isUnlockOpen}
                                 leastDestructiveRef={cancelUnlockRef}
-                                onClose={onUnlockModalClose}
+                                onClose={() => { setState({ ...state, isUnlockOpen: false }) }}
                             >
                                 <AlertDialogOverlay />
                                 <AlertDialogContent>
@@ -320,16 +302,19 @@ const SessionDetails = ({ row, user }) => {
                                     </AlertDialogBody>
 
                                     <AlertDialogFooter>
-                                        <Button ref={cancelUnlockRef} onClick={onUnlockModalClose}>
+                                        <Button
+                                            ref={cancelUnlockRef}
+                                            onClick={() => setState({ ...state, isUnlockOpen: false })}
+                                        >
                                             Cancel
                                         </Button>
                                         <Button variantColor="red" onClick={() => {
                                             unlockSession(id)
                                                 .then(() => {
                                                     notify('Successfully Unlocked', 'success')
+                                                    setState({ ...state, isUnlockOpen: false })
                                                 })
                                                 .catch(console.error)
-                                            onUnlockModalClose()
                                         }} ml={3}>
                                             Unlock
                                         </Button>
@@ -340,9 +325,9 @@ const SessionDetails = ({ row, user }) => {
                             {/* Delete Modal */}
 
                             <AlertDialog
-                                isOpen={isDeleteModalOpen}
+                                isOpen={state.isDeleteOpen}
                                 leastDestructiveRef={cancelDeleteRef}
-                                onClose={onDeleteModalClose}
+                                onClose={() => { setState({ isDeleteOpen: false }) }}
                             >
                                 <AlertDialogOverlay />
                                 <AlertDialogContent>
@@ -355,16 +340,19 @@ const SessionDetails = ({ row, user }) => {
                                     </AlertDialogBody>
 
                                     <AlertDialogFooter>
-                                        <Button ref={cancelDeleteRef} onClick={onDeleteModalClose}>
+                                        <Button
+                                            ref={cancelDeleteRef}
+                                            onClick={() => setState({ ...state, isDeleteOpen: false })}
+                                        >
                                             Cancel
                                         </Button>
                                         <Button variantColor="red" onClick={() => {
                                             removeSession(id)
                                                 .then(() => {
                                                     notify('Successfully deleted a session', 'success')
+                                                    setState({ ...state, isDeleteOpen: false })
                                                 })
                                                 .catch(console.error)
-                                            onUnlockModalClose()
                                         }} ml={3}>
                                             Delete
                                         </Button>
@@ -376,43 +364,8 @@ const SessionDetails = ({ row, user }) => {
                     </Stack>
                 </Flex>
             </Flex>
-        </Collapse >
+        </Collapse>
     )
 }
-
-
-// // Confirm Deletion of a Session
-// // IDEA: Make a factory for this type of yes/no modal, passing in header, body, etc.
-// const ConfirmDeleteSession = ({ isOpen, onClose, action }) => {
-
-//     return (
-
-//             <Modal isOpen={isOpen} onClose={onClose}>
-//                 <ModalOverlay />
-//                 <ModalContent>
-//                     <ModalHeader>Confirm: Delete this session?</ModalHeader>
-//                     <ModalCloseButton />
-//                     <ModalBody>
-//                         Deleting this session will remove all work and cannot be recovered. Proceed if you understand the risk.
-//                     </ModalBody>
-
-//                     <ModalFooter>
-//                         <Stack>
-//                             <Button variantColor="green" mr={30} onClick={() => {
-//                                 action()
-//                                 onClose()
-//                             }}>
-//                                 I understand and wish to continue.
-//                         </Button>
-//                             <Button variantColor="blue" onClick={onClose}>
-//                                 On second thought...
-//                         </Button>
-//                         </Stack>
-//                     </ModalFooter>
-//                 </ModalContent>
-//             </Modal>
-
-//     );
-// }
 
 export default CheckoutTable;

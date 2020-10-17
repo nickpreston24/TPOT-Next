@@ -1,10 +1,33 @@
-/* The typed representation of a session (paper) from Firestore DB */
+/*  
+ * The representation of an edit session from Firestore DB
+ */
 
 import { CheckoutStatus } from "constants/CheckoutStatus";
 import { Language } from "constants/languages";
 
+// export type Session = {
+
+//     docId: string;
+//     authorId?: number;
+//     paperId?: number;
+//     title: string;
+//     filename?: string;
+//     slug?: string;
+//     excerpt?: string;
+//     status: string;
+//     code: string;
+//     language: string | Language;
+//     categories: string[]
+
+//     date_uploaded: Date;
+//     date_modified: Date;
+
+//     contributors: any[]
+// }
+
 export class Session {
 
+    docId: string;
     authorId?: number;
     paperId?: number;
     title: string;
@@ -40,7 +63,7 @@ export class Session {
 
         language = !!language ? language.trim() : ""
 
-        this.title = title.replace(/[_;:]/g, '');
+        this.title = !title ? '' : title.replace(/[_;:]/g, '');
         let slug =
             (title || '')
                 .replace(/[',?!;:]/g, '')
@@ -48,9 +71,7 @@ export class Session {
                 .replace(/\s/g, '-')
                 .toLowerCase()
 
-        // console.log('slug :>>', slug)
-        // console.log('language', language)
-
+        this.docId = null;
         this.slug = slug || '';
         this.authorId = authorId || -1
         this.paperId = paperId || -1
