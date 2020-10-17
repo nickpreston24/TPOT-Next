@@ -81,7 +81,7 @@
     "react-toastify": "^6.0.4",
     "recompose": "^0.30.0",
     "rxjs": "^6.5.5",
-    "simple-flexbox": "^2.3.1",
+    "simple-flexbox": "^2.3.2",
     "snake-case": "^3.0.3",
     "validatorjs": "^3.18.1",
     "wpapi": "^1.2.1",

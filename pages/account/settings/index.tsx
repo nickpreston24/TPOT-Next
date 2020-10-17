@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { Toggle } from 'components/atoms';
 import { observable, toJS } from 'mobx';
 import Flex from '@chakra-ui/core/dist/Flex';
@@ -6,9 +6,10 @@ import List from '@chakra-ui/core/dist/List';
 import Button from '@chakra-ui/core/dist/Button';
 import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
-import { useAuth } from '../../../hooks'
+import { useAuth, useWordpress } from '../../../hooks'
 import { initialSettings } from '../../../constants/settings'
 import { Setting } from '../../../models/Setting';
+import { Spinner } from '@chakra-ui/core';
 
 function makeStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
@@ -46,8 +47,7 @@ const settings = observable<Setting>(initialSettings)
 const AccountSettings = () => {
 
   const { user } = useAuth();
-
-// console.log('user :>> ', user);
+  const { wpUsers, isLoading } = useWordpress();
 
   return (
     <Flex
@@ -79,8 +79,16 @@ const AccountSettings = () => {
             </Flex>
           )
         })}
-        {/* <span><b>Settings:</b> {JSON.stringify(toJS(settings))}</span> */}
       </List>
+
+      <List>
+        {
+          isLoading
+            ? <Spinner size="md" />
+            : <div>Wordpress Users: {wpUsers.length}</div>
+        }
+      </List>
+
     </Flex>
   );
 }

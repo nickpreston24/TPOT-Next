@@ -27,23 +27,28 @@ export const unlockSession = async (id: string) => {
     }
 }
 
+/**Saves a new Session */
 export const saveSession = async (session: any | Session): Promise<string> => {
     // let options = { mode: 'off' } as IDocumentOptions
-    if (!session.slug)
+    if (!session.slug) {
+        console.warn(`No slug was provided for session ${session.title}`)
         return null;
+    }
 
     let document = new Document(`sessions/${session.slug}`);
     await document.fetch()
     isDev() && console.log('document', document)
 
     // Collision detection
-    if (!!document.hasData)
+    if (!!document.hasData) {
+        console.warn(`Duplicate Session ${session.title} could not be created by Firestorter`)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+    }
 
     let currentSession = toJS(document.data);
 
     Object.assign(currentSession, session)
-    await document.set(currentSession)
+    await document.set(currentSession as object)
     isDev() && console.log('saved session :>> ', currentSession);
     return document.ref.id as string
 }
@@ -53,32 +58,40 @@ export const checkoutSession = async (id: string) => {
     let document = new Document(`sessions/${id}`, options);
     await document.fetch()
 
-    if (!document.hasData)
+    if (!document.hasData) {
+        console.warn(`Session with id ${id} could not be checked out by Firestorter`)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+    }
 
-        let session = toJS(document.data as Session);
-    // isDev() && console.log('checked out session :>> ', session);
+    let session = toJS(document.data as Session);
+    session.status = CheckoutStatus.CheckedOut
 
     await document.update(session as object)
 
     return session;
 }
 
+/** Updates and existing Session */
 export const updateSession = async (id: string, session: any | Session): Promise<Session | object> => {
+
+    console.log('id :>> ', id);
 
     let options = { mode: 'off' } as IDocumentOptions
     let document = new Document(`sessions/${id}`, options);
     await document.fetch()
 
-    if (!document.hasData)
+    if (!document.hasData) {
+        console.warn(`Session with id ${id} could not be updated by Firestorter`)
         return null; // Session.None; TODO: create Null Object for session and give it the resulting error for read.
+    }
 
     let currentSession = toJS(document.data);
     // console.log('oldSession :>> ', currentSession);
 
     session.date_modified = new Date()
     Object.assign(currentSession, session)
-    isDev() && console.log('currentSession', currentSession) //TODO: Don't delete this, Apparently updateSession is being called on each render of the Checkout table for EACH existing session.  Why? I don't know. -MP
+    // isDev() && console.log('currentSession', currentSession) //TODO: Don't delete this, Apparently updateSession is being called on each render of the Checkout table for EACH existing session.  Why? I don't know. -MP
+
     await document.update(currentSession)
         .catch(console.error);
 

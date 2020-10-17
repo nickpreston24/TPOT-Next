@@ -15,13 +15,18 @@ export class Paper {
     slug: string;
     language: string;
 
-    categories: string[] = [];
+    // categories: string[] = [];
 
-    constructor(title: string, content: string, language?: string) {
-        this.content = content || null;
-        this.title = title || null;
-        this.language = language;
-        this.slug = (title || '')
+    constructor(props) {
+
+        console.log('props', props)
+        // let { title: string, content: string, language?: string } = props;
+
+        Object.assign(this, { ...props })
+        // this.content = content || null;
+        // this.title = title || null;
+        // this.language = language;
+        this.slug = (this.title || '')
             .replace(/\s/g, '-')
             .toLowerCase()
     }

@@ -83,16 +83,61 @@ function useWordpressProvider() {
         }
         // Publish paper as a new Draft:
         else {
-            // console.log('creating paper :>> ', paper);
-            let permalink_template = 'https://www.thepathoftruth.com//%postname%.htm';
+            console.log('creating paper :>> ', paper);
+            // let permalink_template = 'https://www.thepathoftruth.com//%postname%.htm';
             // console.log('fixedPermalink :>> ', fixedPermalink);
             // paper.slug = '&middot;htm'            
             // console.log('paper.slug :>> ', paper.slug);
-            let response = await wpapi.pages()
-                .author(author)
-                .create({ permalink_template, ...paper })
 
-            isDev() && console.log('response :>> ', response);
+            let wordpressCredentials = {
+                username: 'michael.n.preston@gmail.com',
+                password: 'Mercury2020!!'
+                // username: 'bpfilmsinc@gmail.com',
+                // password: 'Mercury18'
+            }
+
+            let pageConfig = {
+                content: `<p>Test Paper</p>`,
+                slug: 'test-paper-10-17',
+                title: "Test WP Publish",
+                excerpt: "This is a test of WP API's draft"
+            }
+
+            let options = {
+                ...pageConfig,
+                // slug: 'letters\/test\.htm',
+                status: 'pending',
+                author: 3, // Victor Hafichuk
+                categories: [496], // letters
+                date: new Date(), // publish time
+            }
+
+            wpapi._options = {
+                ...wpapi._options,
+                username: wordpressCredentials.username,
+                password: wordpressCredentials.password,
+            }
+
+            wpapi.pages()
+                .author(11)
+                .create(options)
+                .then((response) => {
+                    console.log(`Page is now live at: ${response.link}`)
+                    console.error('Sucessfully Published Letter to TPOT!')
+                })
+                .catch((error) => {
+                    if (error.code === 'incorrect_password') {
+                        console.log('Invalid Password. Log out and back into TPOT.')
+                    } else {
+                        console.error(`Unknown Publish Error: ${error.code}`, error)
+                    }
+                })
+
+            // let response = await wpapi.pages()
+            //     .author(author)
+            // .create({ permalink_template, ...paper })
+
+            // isDev() && console.log('response :>> ', response);
 
             // let fixedPermalinkTemplate = "https://www.thepathoftruth.com/%pagename%.htm"
 

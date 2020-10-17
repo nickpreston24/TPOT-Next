@@ -18,30 +18,20 @@ import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Select from '@chakra-ui/core/dist/Select';
 import Tooltip from '@chakra-ui/core/dist/Tooltip';
-import UploadButton from 'components/buttons/UploadButton';
 import { usePrevious } from 'hooks';
-import { checkoutSession } from 'stores/sessionsAPI';
+import { checkoutSession, updateSession } from 'stores/sessionsAPI';
 import Router, { useRouter } from 'next/router';
-import React from 'react';
-import { isDev } from 'helpers';
-
-import { scribeStore } from '../stores'
 import { useObserver } from 'mobx-react';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { ROUTES } from 'constants/routes';
 import { LanguageOptions } from '../constants';
 import { UploadMode } from '../models/UploadMode';
-import { useSessions, Actions } from 'hooks/useSessions';
+import { useSessions } from 'hooks/useSessions';
 import { Session } from 'models';
-
 
 type ScribeToolbarProps = {
     getHtml: Function
 }
-
-// const scribeState = observable({
-//     language: Language.English
-// })
 
 export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
@@ -56,7 +46,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     const {
         updatePaper,
-        dispatchSession,
+        savePaper,
+        session,
+        publishPaper,
+        setSession,
     } = useSessions();
 
     /** 
@@ -83,10 +76,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         updateForm({ ...form, [name]: value });
     };
 
-    useEffect(() => {
-        console.log('previous form :>> ', previousForm);
-        console.log('current form :>> ', form);
-    }, [form]);
+    // useEffect(() => {
+    //     console.log('previous form :>> ', previousForm);
+    //     console.log('current form :>> ', form);
+    // }, [form]);
 
 
     /** Modal Refs */
@@ -97,27 +90,26 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      * Checkout on load if doc exists
      */
     useEffect(() => {
-
-
+        console.log('doc :>> ', doc);
 
         // Setup the Reset of status on route change /edit/ => /checkout/:
         Router.events.on('routeChangeComplete', (url) => {
-            if (!!doc &&
-                url === ROUTES.CHECKOUT || url === ROUTES.EDIT) {
-                updatePaper({ doc })
+            if (!!doc && url === ROUTES.CHECKOUT || url === ROUTES.EDIT) {
+                let update = session;
+                update.status = CheckoutStatus.InProgress;
+                // updatePaper(doc, update)
             }
         })
 
         // Checking out Session:
-        if (!!doc) {
+        if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
 
             checkoutSession(doc as string)
                 .then((result) => {
 
-                    dispatchSession({
-                        type: Actions.Status,
-                        payload: { status: CheckoutStatus.CheckedOut }
-                    })
+                    console.log('checking out your session:  ', result)
+
+                    setSession(result)
 
                     updateForm({
                         ...form,
@@ -128,15 +120,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         }
 
         // New Session:
-        if (!doc) {
-
-            // set last form contents:
+        if (!doc || !session.status) {
             updateForm(previousForm)
-
-            dispatchSession({
-                type: Actions.Status,
-                payload: { status: CheckoutStatus.NotStarted }
-            })
+            console.log('creating new Paper!')
+            // dispatchSession({ type: Actions.New, })
         }
 
     }, []);
@@ -144,11 +131,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        // isDev() && console.log('form :>> ', form);
-
-        // Get the fields from the form
-
-        const session = new Session({
+        let nextSession = new Session({
             docId: doc as string,
             title: form.title,
             code: getHtml(),
@@ -156,54 +139,75 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             categories: form.categories,
         });
 
-        console.log('session (onsubmit) - form :>> ', session);
-        // console.log('form  (on submit):>> ', form);
-
-        // Post changed to hook's internal state:
-        dispatchSession({ type: Actions.Save, payload: { session: session } })
+        switch (mode) {
+            case 'Save':
+                savePaper(nextSession)
+                break;
+            case 'Update':
+                updatePaper(doc as string, nextSession)
+                break;
+            case 'Publish':
+                // console.log('PUBLISH');
+                publishPaper(doc as string, nextSession)
+                break;
+            default:
+                break;
+        }
 
         onClose();
+    }
+
+    const buttons = [
+        { name: "Save", label: "Save your work as a Session", operation: 'Save' },
+        { name: "Publish", label: "Publish your work to Wordpress", operation: 'Publish' },
+    ]
+
+    const [mode, setMode] = useState('Save');
+    const [header, setHeader] = useState('My Header')
+
+    const handleOnClick = operation => {
+        console.log('operation :>> ', operation);
+
+        switch (operation) {
+            case 'Save':
+                setHeader('Save Paper')
+                console.log('session :>> ', session);
+                console.log('doc :>> ', doc);
+                if (!!doc && session.status === CheckoutStatus.CheckedOut)
+                    setMode('Update');
+                else setMode(operation)
+                break;
+
+            case 'Publish':
+                setHeader('Publish Paper')
+                setMode('Publish')
+
+                break;
+            default:
+                break;
+        }
+
+        onOpen();
     }
 
     return (
         <Flex>
             <ButtonGroup spacing={8}>
-                <Tooltip
-                    aria-label="publish-tooltip"
-                    label="Publish a Draft to TPOT"
-                >
-                    <Button
-                        onClick={onOpen}
-                    >
-                        Publish
-                    </Button>
-                </Tooltip>
-
-                {(form.uploadOption === 'Drive' && isDev()) &&
-                    <UploadButton
-                        label="Load"
-                    >
-                        Load a Document
-                    </UploadButton>
-                }
-
-                <Tooltip
-                    aria-label="save-tooltip"
-                    label="Save your work as a Session"
-                >
-                    <Button
-                        onClick={onOpen}
-                    >
-                        Save
-                    </Button>
-
-                </Tooltip>
+                {buttons.map((button, index) => {
+                    return (
+                        <Tooltip
+                            key={index}
+                            aria-label={`${button.name}-tooltip`}
+                            label={button.label}
+                        >
+                            <Button
+                                onClick={() => handleOnClick(button.operation)}
+                            >
+                                {button.name}
+                            </Button>
+                        </Tooltip>)
+                })}
             </ButtonGroup>
-
-            {isDev() && <ScribeDevStatusBar />}
-            {/* {isDev() && <SelectChip />} */}
-
-            {/* Publish  */}
 
             <Modal
                 initialFocusRef={initialRef}
@@ -213,7 +217,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>{"Save Paper"}</ModalHeader>
+                    <ModalHeader>{header}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
 
@@ -237,7 +241,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
                         <FormControl mt={4}>
                             <FormLabel>Language</FormLabel>
-                            <Dropdown
+                            <LanguageDropdown
                                 name="language"
                                 onChange={updateField}
                                 placeholder="Choose a language"
@@ -261,21 +265,26 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     )
 };
 
+type Props = {
+    session: Session
+}
 /** Shows the current status of Scribe in this toolbar
  * Meant only for DEBUG/Development mode.
 */
-const ScribeDevStatusBar: FC = () => {
+const ScribeDevStatusBar: FC<Props> = (props) => {
     // const { dirty, currentStatus, lastStatus, lastSession } = scribe;
+    const { session } = props;
     return useObserver(() =>
         <Flex style={{ border: "1px #aaa solid" }} mb={2}>
-            <h1 style={{ marginRight: '10px' }}>{scribeStore.lastStatus || ''} =&gt; {scribeStore.currentStatus}</h1>
+            {/* <h1 style={{ marginRight: '10px' }}>{scribeStore.lastStatus || ''} =&gt; {scribeStore.currentStatus}</h1> */}
+            <h1 style={{ marginRight: '10px' }}>{session.status}</h1>
             {/* <p>Dirty? {dirty ? "Yes" : "No"}</p> */}
             {/* {!!lastSession && <p>Id: {lastSession}</p>} */}
         </Flex>
     )
 }
 
-const Dropdown = (props) => {
+const LanguageDropdown = (props) => {
 
     const { onChange, name, placeholder } = props;
 
