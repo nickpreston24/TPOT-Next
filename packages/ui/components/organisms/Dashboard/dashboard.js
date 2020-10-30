@@ -1,15 +1,19 @@
-import { Box } from "@chakra-ui/core"
-import ListItem from '@molecules/ListItem'
+import { Box, Flex, Stack } from "@chakra-ui/core";
+
+import Background from "@organisms/Background";
+import ListItem from "@molecules/ListItem";
 import PropTypes from "prop-types";
 import React from "react";
 
 const Dashboard = ({ title, ...props }) => {
   return (
-    <Box bg="purple.500" pos="absolute" display="flex" h="100%" w="100%">
-      <Box bg="green.500">test</Box>
-      <Box bg="blue.500">test</Box>
-      <ListItem />
-    </Box>
+    <Flex h="100%" w="100%" pos="absolute" justify="center">
+      <Stack spacing={4} h={"100%"} w="100%" maxW={1200}>
+        <Box bg="green.500" h={150}></Box>
+        <Box bg="red.500" flexGrow={1}></Box>
+      </Stack>
+      <Background />
+    </Flex>
   );
 };
 
