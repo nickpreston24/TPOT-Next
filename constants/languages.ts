@@ -5,6 +5,7 @@ export enum Language {
     French = 'French',
     Japanese = 'Japanese',
     Romanian = 'Romanian',
+    Spanish = 'Spanish',
 }
 
 const LanguageOptions = Object.values(Language);

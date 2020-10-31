@@ -50,7 +50,7 @@ export class ScribeEditor extends React.Component<any, any> {
                     alignItems="center"
                 >
                     <Box id="sticky-toolbar" h={80} w="100%" maxW={960} mt={1} mr={4} >
-                        <ScribeToolbar {...{ getHtml: this.getHtml }} />
+                        <ScribeToolbar {...{ getHtml: this.getHtml, setHtml: this.setHtml }} />
                     </Box>
                     <Flex id="scroll-area" h={70} w="100%" flexGrow={1} overflowY="scroll" overflowX="hidden" justifyContent="center">
                         <Box id="editor frame" w="100%" maxW={960} >

@@ -1,18 +1,18 @@
 import { useEffect } from 'react'
 
 export const useBeforeUnload = (
-    value: ((evt: BeforeUnloadEvent) => any) | string
+    value: ((e: BeforeUnloadEvent) => any) | string
 ) => {
-    const handleBeforeunload = (evt: BeforeUnloadEvent) => {
+    const handleBeforeunload = (event: BeforeUnloadEvent) => {
         let returnValue
         if (typeof value === 'function') {
-            returnValue = value(evt)
+            returnValue = value(event)
         } else {
             returnValue = value
         }
         if (returnValue) {
-            evt.preventDefault()
-            evt.returnValue = returnValue
+            event.preventDefault()
+            event.returnValue = returnValue
         }
         return returnValue
     }

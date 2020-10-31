@@ -6,14 +6,14 @@ import { useBeforeUnload, usePreventWindowUnload } from '@hooks'
 
 const Page = () => {
 
-  usePreventWindowUnload({ stuff: '' })
+  // usePreventWindowUnload({ stuff: '' })
 
-  useBeforeUnload(event => {
+  // useBeforeUnload(event => {
 
-    alert('Are you sure you wanna leave?')
+  //   alert('Are you sure you wanna leave?')
 
-    return true;
-  });
+  //   return true;
+  // });
 
   return (
     <Template

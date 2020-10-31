@@ -19,18 +19,18 @@ import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Select from '@chakra-ui/core/dist/Select';
 import Tooltip from '@chakra-ui/core/dist/Tooltip';
 import { usePrevious } from 'hooks';
-import { checkoutSession, updateSession } from 'stores/sessionsAPI';
-import Router, { useRouter } from 'next/router';
-import { useObserver } from 'mobx-react';
+import { checkoutSession } from 'stores/sessionsAPI';
+import { useRouter } from 'next/router';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
-import { ROUTES } from 'constants/routes';
 import { LanguageOptions } from '../constants';
 import { UploadMode } from '../models/UploadMode';
 import { useSessions } from 'hooks/useSessions';
 import { Session } from 'models';
+import { notify } from './Toasts';
 
 type ScribeToolbarProps = {
-    getHtml: Function
+    getHtml: Function,
+    setHtml: Function,
 }
 
 export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
@@ -41,9 +41,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    // Session API functions:
-    const { getHtml } = props;
+    // CK Editor functions:
+    const { getHtml, setHtml } = props;
 
+    // Session API functions:
     const {
         updatePaper,
         savePaper,
@@ -76,12 +77,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         updateForm({ ...form, [name]: value });
     };
 
-    // useEffect(() => {
-    //     console.log('previous form :>> ', previousForm);
-    //     console.log('current form :>> ', form);
-    // }, [form]);
-
-
     /** Modal Refs */
     const initialRef = useRef();
     const finalRef = useRef();
@@ -90,25 +85,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      * Checkout on load if doc exists
      */
     useEffect(() => {
-        console.log('doc :>> ', doc);
-
-        // Setup the Reset of status on route change /edit/ => /checkout/:
-        Router.events.on('routeChangeComplete', (url) => {
-            if (!!doc && url === ROUTES.CHECKOUT || url === ROUTES.EDIT) {
-                let update = session;
-                update.status = CheckoutStatus.InProgress;
-                // updatePaper(doc, update)
-            }
-        })
 
         // Checking out Session:
         if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
-
             checkoutSession(doc as string)
                 .then((result) => {
-
-                    console.log('checking out your session:  ', result)
-
+                    // console.log('checking out your session:  ', result)
                     setSession(result)
 
                     updateForm({
@@ -116,14 +98,14 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         ...result,
                         categoriesText: result?.categories?.join(", ") || ''
                     })
+
+                    setHtml(result.code);
                 })
         }
 
         // New Session:
         if (!doc || !session.status) {
             updateForm(previousForm)
-            console.log('creating new Paper!')
-            // dispatchSession({ type: Actions.New, })
         }
 
     }, []);
@@ -142,9 +124,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         switch (mode) {
             case 'Save':
                 savePaper(nextSession)
+                    .then(() => { notify("Saved session", "success") })
                 break;
             case 'Update':
                 updatePaper(doc as string, nextSession)
+                    .then(() => { notify("Updated session", "success"); })
                 break;
             case 'Publish':
                 // console.log('PUBLISH');
@@ -166,13 +150,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const [header, setHeader] = useState('My Header')
 
     const handleOnClick = operation => {
-        console.log('operation :>> ', operation);
 
         switch (operation) {
             case 'Save':
                 setHeader('Save Paper')
-                console.log('session :>> ', session);
-                console.log('doc :>> ', doc);
+
                 if (!!doc && session.status === CheckoutStatus.CheckedOut)
                     setMode('Update');
                 else setMode(operation)
@@ -226,6 +208,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                             <Input
                                 name="title"
                                 value={form.title}
+                                isDisabled={session.status !== CheckoutStatus.NotStarted}
                                 onChange={updateField}
                                 placeholder="paper name here" />
                         </FormControl>
@@ -243,6 +226,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                             <FormLabel>Language</FormLabel>
                             <LanguageDropdown
                                 name="language"
+                                value={form.language}
                                 onChange={updateField}
                                 placeholder="Choose a language"
                             />
@@ -268,31 +252,24 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 type Props = {
     session: Session
 }
-/** Shows the current status of Scribe in this toolbar
- * Meant only for DEBUG/Development mode.
-*/
-const ScribeDevStatusBar: FC<Props> = (props) => {
-    // const { dirty, currentStatus, lastStatus, lastSession } = scribe;
-    const { session } = props;
-    return useObserver(() =>
-        <Flex style={{ border: "1px #aaa solid" }} mb={2}>
-            {/* <h1 style={{ marginRight: '10px' }}>{scribeStore.lastStatus || ''} =&gt; {scribeStore.currentStatus}</h1> */}
-            <h1 style={{ marginRight: '10px' }}>{session.status}</h1>
-            {/* <p>Dirty? {dirty ? "Yes" : "No"}</p> */}
-            {/* {!!lastSession && <p>Id: {lastSession}</p>} */}
-        </Flex>
-    )
+
+type LanguageDropdownProps = {
+    name: string,
+    placeholder?: string,
+    onChange: (event: any) => void,
+    value: string | number | readonly string[],
 }
 
-const LanguageDropdown = (props) => {
+const LanguageDropdown: FC<LanguageDropdownProps> = (props) => {
 
-    const { onChange, name, placeholder } = props;
+    const { onChange, name, placeholder, value } = props;
 
     return (
         <Select
             onChange={onChange}
             name={name}
             placeholder={placeholder}
+            value={value}
         >
             {LanguageOptions.map((name, key) => <option key={key}>{name}</option>)}
         </Select>

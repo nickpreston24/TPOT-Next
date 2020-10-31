@@ -1,10 +1,8 @@
 import React, { useEffect, createContext, useContext, useState } from 'react'
 import { wpapi } from '../services/wordpress';
 import { Paper, toDto, createInstance } from '../models'
-import { isDev } from 'helpers';
-
-// class WordPressNotInitializedException extends ExtendableError { message = 'Wordpress has not been initialized!' }
-// class PaperNotFoundException extends ExtendableError { message = 'Could not find the Paper you\'re looking for...' }
+import { Document } from 'firestorter'
+import { toJS } from 'mobx';
 
 const wordpressContext = createContext(null);
 
@@ -21,15 +19,23 @@ function useWordpressProvider() {
 
     const [currentPaper, setCurrentPaper] = useState(createInstance(Paper));
     const [wpUsers, setWpUsers] = useState([]);
+    const [superUser, setSuperUser] = useState(null)
 
-    const getAllUsers = () => wpapi.users();
+    /** Get WP Credentials from Firebase */
+    useEffect(() => {
+        const doc = new Document<any>(`users/super-user`)
+        doc.fetch()
+            .then((response) => {
+                let user = toJS(response.data);
+                setSuperUser(user);
+            })
+    }, []);
 
-    // const findUser = (email) => getAllUsers.filter(user => user.email === email);
-
-    const getUser = async (id: number) =>
-        wpapi
-            .users()
-            .id(id)
+    /** Load the Wordpress Users on load */
+    useEffect(() => {
+        wpapi.users()
+            .then((users) => setWpUsers(users))
+    }, []);
 
     const getPageBySlug = (slug: string) => wpapi.pages().slug(slug);
 
@@ -41,8 +47,6 @@ function useWordpressProvider() {
             .author(authorId)
             .perPage(perPage)
 
-    // const removePaper = (id:number)
-
     /**
      * Publishes a Paper as a draft only
      */
@@ -50,15 +54,10 @@ function useWordpressProvider() {
 
         const { author, id } = paper;
 
-        //Testing permalink alteration here:
-        // paper.permalink = 'https://www.thepathoftruth.com/chinese/'
-
         // Check for collisions:
         const existingPaper = id ? await wpapi.pages()
             .author(author)
             .id(id) : null;
-
-        isDev() && console.log('currentPaper', existingPaper)
 
         // If existing paper, update it:
         if (!!existingPaper) {
@@ -76,139 +75,43 @@ function useWordpressProvider() {
                     let updatedPaper = toDto(response, Paper);
                     paper.id = response.id; // Update the new id for UI use.
 
-                    // console.log('updatedPaper :>> ', updatedPaper);
                     setCurrentPaper(updatedPaper);
-
                 })
         }
         // Publish paper as a new Draft:
         else {
-            console.log('creating paper :>> ', paper);
-            // let permalink_template = 'https://www.thepathoftruth.com//%postname%.htm';
-            // console.log('fixedPermalink :>> ', fixedPermalink);
-            // paper.slug = '&middot;htm'            
-            // console.log('paper.slug :>> ', paper.slug);
-
-            let wordpressCredentials = {
-                username: 'michael.n.preston@gmail.com',
-                password: 'Mercury2020!!'
-                // username: 'bpfilmsinc@gmail.com',
-                // password: 'Mercury18'
-            }
-
-            let pageConfig = {
-                content: `<p>Test Paper</p>`,
-                slug: 'test-paper-10-17',
-                title: "Test WP Publish",
-                excerpt: "This is a test of WP API's draft"
-            }
-
-            let options = {
-                ...pageConfig,
-                // slug: 'letters\/test\.htm',
-                status: 'pending',
-                author: 3, // Victor Hafichuk
-                categories: [496], // letters
-                date: new Date(), // publish time
-            }
 
             wpapi._options = {
                 ...wpapi._options,
-                username: wordpressCredentials.username,
-                password: wordpressCredentials.password,
+                ...superUser['wordpress-credentials']
+            }
+
+            const samplePaper = {
+                content: '<p>123xyz</p>',
+                title: 'wpap test',
+                slug: 'wpap-test',
+                status: 'pending',
+                author: 9,
+                categories: [496],
+                date: new Date(),
             }
 
             wpapi.pages()
-                .author(11)
-                .create(options)
+                .create(samplePaper)
                 .then((response) => {
-                    console.log(`Page is now live at: ${response.link}`)
-                    console.error('Sucessfully Published Letter to TPOT!')
+                    let createdPaper = toDto(response, Paper);
+                    paper.id = response.id; // Update the new id for UI use.
+                    setCurrentPaper(createdPaper)
                 })
-                .catch((error) => {
-                    if (error.code === 'incorrect_password') {
-                        console.log('Invalid Password. Log out and back into TPOT.')
-                    } else {
-                        console.error(`Unknown Publish Error: ${error.code}`, error)
-                    }
-                })
-
-            // let response = await wpapi.pages()
-            //     .author(author)
-            // .create({ permalink_template, ...paper })
-
-            // isDev() && console.log('response :>> ', response);
-
-            // let fixedPermalinkTemplate = "https://www.thepathoftruth.com/%pagename%.htm"
-
-            // let updatedPaper = await wpapi.pages()
-            //     .author(author)
-            //     .id(response.id)
-            //     .update({ slug: 'hot-potato&middot;htm' })
-            //     // .update({ permalink_template: fixedPermalinkTemplate })
-            //     // .update({ generated_slug: fixedPermalink, slug: fixedPermalink })
-            // console.log('updatedPaper :>> ', updatedPaper);
-
-            // wpapi.pages()
-            //     .author(author)
-            //     .create(paper)
-            //     .then((response) => {
-            //         // console.log('response :>> ', response);
-            //         //     console.log('createdPaper :>> ', createdPaper
-            //         // , 'paper as dto :>>', toDto(createdPaper, Paper));
-            //         let createdPaper = toDto(response, Paper);
-            //         paper.id = response.id; // Update the new id for UI use.
-            //         console.log('createdPaper :>> ', createdPaper);
-            //         setCurrentPaper(createdPaper)
-            //     })
-            //     .catch(console.error)
+                .catch(console.error)
         }
 
         return currentPaper;
     }
 
-
-    // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
-
-    // console.log('wpUsers :>> ', wpUsers, authUser);
-
-    // let authorId = session.authorId;
-
-    // if (!!authorId) {
-
-    //     getUser(authorId)
-    //         .then((wpUser) => {
-    //             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
-    //             // console.log('current user :>> ', records);
-    //             setUser(toDto(wpUser, WordpressUser))
-    //         })
-
-    //      getPages(authorId)
-    //          .then((records) => {
-    //          // console.log('records :>> ', records);
-    //          let collection = mapToDto(records, Paper);
-    //          setPapers(collection);
-    //          setLoading(false)
-    //      })
-
-    //      getAuthorSessions(authorId)
-    //         .then((sessions) => {
-    //             console.log('session records', sessions)
-    //         })
-    // }
-
-    // console.log('authorId', authorId)
-
-
-    useEffect(() => {
-        getAllUsers()
-            .then((users) => setWpUsers(users))
-    }, []);
-
     return {
         wpUsers,
 
-        getUser,
         getPages,
         getPageById,
         getPageBySlug,
@@ -216,3 +119,58 @@ function useWordpressProvider() {
         publish,
     }
 }
+
+
+
+// NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
+
+// console.log('wpUsers :>> ', wpUsers, authUser);
+
+// let authorId = session.authorId;
+
+// if (!!authorId) {
+//     getUser(authorId)
+//         .then((wpUser) => {
+//             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
+//             // console.log('current user :>> ', records);
+//             setUser(toDto(wpUser, WordpressUser))
+//         })
+
+//      getPages(authorId)
+//          .then((records) => {
+//          // console.log('records :>> ', records);
+//          let collection = mapToDto(records, Paper);
+//          setPapers(collection);
+//          setLoading(false)
+//      })
+
+//      getAuthorSessions(authorId)
+//         .then((sessions) => {
+//             console.log('session records', sessions)
+//         })
+// }
+
+// console.log('authorId', authorId)
+
+
+
+//Testing permalink alteration here:
+// paper.permalink = 'https://www.thepathoftruth.com/chinese/'
+// console.log('creating paper :>> ', paper);
+
+// let permalink_template = 'https://www.thepathoftruth.com//%postname%.htm';
+// // let fixedPermalinkTemplate = "https://www.thepathoftruth.com/%pagename%.htm"
+
+// let response = await wpapi.pages()
+//     .author(author)
+//     .create({ permalink_template, ...paper })
+
+// isDev() && console.log('response :>> ', response);
+
+
+// let updatedPaper = await wpapi.pages()
+//     .author(author)
+//     .id(response.id)
+//     .update({ slug: 'hot-potato&middot;htm' })
+//     // .update({ permalink_template: fixedPermalinkTemplate })
+//     // .update({ generated_slug: fixedPermalink, slug: fixedPermalink })
