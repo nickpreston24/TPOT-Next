@@ -17,20 +17,20 @@ const Dashboard = ({ title, ...props }) => {
     >
       <Stack spacing={4} h={"100%"} w="100%" maxW={1200} px="16px">
         <Box minH={{ base: 130, md: 150 }}>
-          <Navbar />
+          <Navbar bg="transparent" />
         </Box>
         <Box flexGrow={1} pos="relative">
           <Stack spacing={4} direction="row">
             <Box
               borderRadius="lg"
-              boxShadow="lg"
+              boxShadow="md"
               w={{ base: "100%" }}
               h={600}
               bg="white"
             ></Box>
             <Box
               borderRadius="lg"
-              boxShadow="lg"
+              boxShadow="md"
               d={{ base: "none", lg: "block" }}
               w={{ md: 500 }}
               h={400}
@@ -58,7 +58,6 @@ Dashboard.defaultProps = {
 
 export default Dashboard;
 
-
 const DetailsToggle = () => (
   <Flex
     right="-16px"
@@ -74,8 +73,8 @@ const DetailsToggle = () => (
     color="white"
     borderRadius="8px 0px 0px 8px"
     boxShadow="lg"
-    display={{ base: 'flex', lg: 'none'}}
+    display={{ base: "flex", lg: "none" }}
   >
-    <Icon name="info"  />
+    <Icon name="info" />
   </Flex>
 );

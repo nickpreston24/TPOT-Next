@@ -22,9 +22,9 @@ import PropTypes from "prop-types";
 import React from "react";
 import SplitBackground from "@molecules/SplitBackground";
 
-const Navbar = ({ title, ...props }) => {
+const Navbar = ({ title, bg = "#373740", ...props }) => {
   return (
-    <Stack spacing={0} userSelect="none" bg="#373740">
+    <Stack spacing={0} userSelect="none" bg={bg}>
       <Flex mt={2} py={4}>
         <Menu>
           <MenuButton as={AppSelectButton} />
@@ -60,7 +60,7 @@ const Navbar = ({ title, ...props }) => {
             textAlign="center"
             transition="150ms all ease-in"
             bg="#50505f"
-            _hover={{ bg: "#2d2d38", color: 'dodgerblue' }}
+            _hover={{ bg: "#2d2d38", color: "dodgerblue" }}
             borderRadius="full"
             boxShadow="sm"
             color="#9699a0"
@@ -108,7 +108,7 @@ const Navbar = ({ title, ...props }) => {
         h="2px"
         style={{
           background:
-            "linear-gradient(to right, #373740 0%,#42424c 5%,#42424c 95%,#373740 100%)",
+            "linear-gradient(to right, #5c5c6900 0%,#5c5c69 10%,#5c5c69 90%,#5c5c6900 100%)",
         }}
       />
       <Stack direction="row" py={3}>
