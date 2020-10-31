@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from "@chakra-ui/core";
+import { Box, Flex, Icon, Stack } from "@chakra-ui/core";
 
 import ListItem from "@molecules/ListItem";
 import Navbar from "@organisms/Navbar";
@@ -19,7 +19,7 @@ const Dashboard = ({ title, ...props }) => {
         <Box minH={{ base: 130, md: 150 }}>
           <Navbar />
         </Box>
-        <Box flexGrow={1}>
+        <Box flexGrow={1} pos="relative">
           <Stack spacing={4} direction="row">
             <Box
               borderRadius="lg"
@@ -37,6 +37,7 @@ const Dashboard = ({ title, ...props }) => {
               bg="white"
             ></Box>
           </Stack>
+          <DetailsToggle />
         </Box>
       </Stack>
       <SplitBackground />
@@ -56,3 +57,25 @@ Dashboard.defaultProps = {
 };
 
 export default Dashboard;
+
+
+const DetailsToggle = () => (
+  <Flex
+    right="-16px"
+    top="8px"
+    pos="absolute"
+    w="45px"
+    h="44px"
+    bg="#29333ae0"
+    bg="blue.500"
+    justify="center"
+    align="center"
+    color="#9699a0"
+    color="white"
+    borderRadius="8px 0px 0px 8px"
+    boxShadow="lg"
+    display={{ base: 'flex', lg: 'none'}}
+  >
+    <Icon name="info"  />
+  </Flex>
+);

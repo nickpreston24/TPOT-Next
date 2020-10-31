@@ -59,8 +59,8 @@ const Navbar = ({ title, ...props }) => {
             alignItems="center"
             textAlign="center"
             transition="150ms all ease-in"
-            bg="#42424c"
-            _hover={{ bg: "#2d2d38" }}
+            bg="#50505f"
+            _hover={{ bg: "#2d2d38", color: 'dodgerblue' }}
             borderRadius="full"
             boxShadow="sm"
             color="#9699a0"
@@ -80,14 +80,14 @@ const Navbar = ({ title, ...props }) => {
           <Menu>
             <MenuButton as={AccountButton} />
             <MenuList placement="bottom-end">
-              <MenuOptionGroup defaultChecked="scribe" title="Welcome Victor!">
-                <MenuItem as="a" value="scribe">
+              <MenuOptionGroup defaultChecked="account" title="Welcome Victor!">
+                <MenuItem as="a" value="account">
                   <Icon name="link" mr="12px" />
                   <span>Account</span>
                 </MenuItem>
                 <MenuItem
                   as="a"
-                  value="scribe"
+                  value="help"
                   target="_blank"
                   href="https://trello.com/b/9wUkSPXF/the-path-of-truth"
                 >
@@ -95,7 +95,7 @@ const Navbar = ({ title, ...props }) => {
                   <span>Get Help</span>
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem as="a" value="settings">
+                <MenuItem as="a" value="signout">
                   <Icon name="external-link" mr="12px" />
                   <span>Sign Out</span>
                 </MenuItem>
@@ -128,7 +128,7 @@ const Navbar = ({ title, ...props }) => {
           <Box>Edit</Box>
         </Stack>
         <Stack direction="row" borderRadius="lg" p="4px" px={3} color="#9699a0">
-          <Icon name="calendar" size="24px" pr={2} />
+          <Icon name="download" size="24px" pr={2} />
           <Box>Checkout</Box>
         </Stack>
       </Stack>
