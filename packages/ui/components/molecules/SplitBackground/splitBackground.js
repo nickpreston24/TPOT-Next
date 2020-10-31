@@ -14,7 +14,7 @@ const SplitBackground = ({ headerHeight }) => {
       w="100%"
     >
       <Box bg="#373740" h={headerHeight}></Box>
-      <Box bg="gray.50" flexGrow={1}></Box>
+      <Box bg="gray.100" flexGrow={1}></Box>
     </Flex>
   );
 };
