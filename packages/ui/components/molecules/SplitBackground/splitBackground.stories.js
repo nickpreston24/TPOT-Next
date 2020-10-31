@@ -1,8 +1,8 @@
-import Background from "@organisms/Background";
+import Background from "@molecules/SplitBackground";
 import React from "react";
 
 export default {
-  title: "Organisms/Background",
+  title: "Molecules/SplitBackground",
   parameters: {
     layout: "fullscreen",
   },

@@ -1,9 +1,9 @@
 import { Box, Flex, Stack } from "@chakra-ui/core";
 
-import Background from "@organisms/Background";
 import ListItem from "@molecules/ListItem";
 import PropTypes from "prop-types";
 import React from "react";
+import SplitBackground from "@molecules/SplitBackground";
 
 const Dashboard = ({ title, ...props }) => {
   return (
@@ -12,7 +12,7 @@ const Dashboard = ({ title, ...props }) => {
         <Box bg="green.500" h={150}></Box>
         <Box bg="red.500" flexGrow={1}></Box>
       </Stack>
-      <Background />
+      <SplitBackground />
     </Flex>
   );
 };
