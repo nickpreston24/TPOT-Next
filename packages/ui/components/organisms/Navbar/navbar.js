@@ -113,6 +113,7 @@ const Navbar = ({ title, bg = "#373740", ...props }) => {
       />
       <Stack direction="row" py={3}>
         <Stack
+          cursor="pointer"
           direction="row"
           borderRadius="lg"
           bg="#2d2d38"
@@ -123,11 +124,25 @@ const Navbar = ({ title, bg = "#373740", ...props }) => {
           <Icon name="add" size="24px" pr={2} />
           <Box color="white">Create</Box>
         </Stack>
-        <Stack direction="row" borderRadius="lg" p="4px" px={3} color="#9699a0">
+        <Stack
+          cursor="pointer"
+          direction="row"
+          borderRadius="lg"
+          p="4px"
+          px={3}
+          color="#9699a0"
+        >
           <Icon name="edit" size="24px" pr={2} />
           <Box>Edit</Box>
         </Stack>
-        <Stack direction="row" borderRadius="lg" p="4px" px={3} color="#9699a0">
+        <Stack
+          cursor="pointer"
+          direction="row"
+          borderRadius="lg"
+          p="4px"
+          px={3}
+          color="#9699a0"
+        >
           <Icon name="download" size="24px" pr={2} />
           <Box>Checkout</Box>
         </Stack>
@@ -194,6 +209,6 @@ const AccountButton = React.forwardRef(({ onClick }, ref) => (
     {/* <Text display={{ base: "none", sm: "block" }} pr={2}>
       Victor H
     </Text> */}
-    <Avatar size="sm" src="https://tinyurl.com/y3kbtvll" />
+    <Avatar pointerEvents="none" size="sm" src="https://tinyurl.com/y3kbtvll" />
   </Stack>
 ));
