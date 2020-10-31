@@ -176,10 +176,10 @@ const AppSelectButton = React.forwardRef(({ onClick }, ref) => (
   >
     <Icon name="toolbox" fontSize={40} mr={4} />
     <Heading fontSize={22} fontWeight="normal" color="white">
-      <Box d={{ base: "none", sm: "block" }}>TPOT Toolbox</Box>
-      <Box d={{ base: "block", sm: "none" }}>TPOT</Box>
+      <Box d={{ base: "none", md: "block" }}>TPOT Toolbox</Box>
+      <Box d={{ base: "none", sm: "block", md: "none"}}>TPOT</Box>
     </Heading>
-    <Icon name="chevron-right" mx={2} fontSize="2xl" color="white" />
+    <Icon d={{ base: "none", md: "block" }} name="chevron-right" ml={2} fontSize="2xl" color="white" />
     <PseudoBox
       ref={ref}
       transition="150ms all ease-in"
