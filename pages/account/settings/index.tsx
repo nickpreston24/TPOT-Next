@@ -1,15 +1,18 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { Toggle } from 'components/atoms';
-import { observable, toJS } from 'mobx';
+import { observable } from 'mobx';
 import Flex from '@chakra-ui/core/dist/Flex';
 import List from '@chakra-ui/core/dist/List';
 import Button from '@chakra-ui/core/dist/Button';
 import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
-import { useAuth, useWordpress } from '../../../hooks'
 import { initialSettings } from '../../../constants/settings'
 import { Setting } from '../../../models/Setting';
-import { Spinner } from '@chakra-ui/core';
+import { Chip } from 'components/atoms/chips';
+import Select from '@chakra-ui/core/dist/Select';
+import Input from '@chakra-ui/core/dist/Input';
+import FormControl from '@chakra-ui/core/dist/FormControl';
+import FormLabel from '@chakra-ui/core/dist/FormLabel';
 
 function makeStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
@@ -41,13 +44,102 @@ const scribeTheme1 = {
     light: '#a29',
   }
 }
-// sample DB:
+
 const settings = observable<Setting>(initialSettings)
+
+interface Option {
+  label: string,
+}
+
+const initialOptions = [
+  { label: "USA" },
+  { label: "Canada" },
+  { label: 'Australia' },
+  { label: 'Denmark' },
+  { label: 'Israel' },
+  { label: 'Germany' },
+  { label: 'France' },
+]
+
+const options = observable<Option>(initialOptions);
 
 const AccountSettings = () => {
 
-  const { user } = useAuth();
-  const { wpUsers, isLoading } = useWordpress();
+  // const [country, setCountry] = useState('Mexico');
+
+  return (
+
+    <Box>
+      <Flex
+        m={[2, 3]}
+        direction="column" p={4}
+        style={makeStyle(scribeTheme1, true)}
+      >
+        <h1>Account Settings</h1>
+        <List>
+          {settings.map((setting, key) => {
+
+            let { title } = setting;
+
+            return (
+              <Flex direction="row" key={key} justify="left" >
+                <Toggle
+                  onToggle={(nextValue) => {
+                    setting.value = nextValue;
+                  }}
+                >{({ toggle, on }) => (
+                  <Button
+                    mr={4}
+                    onClick={toggle}
+                    style={makeStyle(toggleTheme, on)}
+                  >{on ? 'ON' : 'off'}</Button>
+                )}
+                </Toggle>
+                <Heading>{title}</Heading>
+              </Flex>
+            )
+          })}
+        </List>
+
+      </Flex>
+
+      <MultiSelect
+        options={options.map(o => o.label)}
+        // onChange={() => { }}
+        // value={country}
+        placeholder="Mexico"
+      />
+    </Box>
+  );
+}
+
+const MultiSelect = ({ placeholder, options = [] }) => {
+
+  const [state, setState] = useState({
+    value: "",
+    selectedOptions: options
+  });
+
+  /**
+   * Updates the appropriate state prop by its field name from the 
+   * form where 'name' is a prop on the target component
+   */
+  const updateField = (event) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    setState({ ...state, [name]: value });
+  };
+
+  const onKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      setState({
+        ...state,
+        value: '',
+        selectedOptions: [...state.selectedOptions, state.value]
+      });
+    }
+  }
 
   return (
     <Flex
@@ -55,42 +147,37 @@ const AccountSettings = () => {
       direction="column" p={4}
       style={makeStyle(scribeTheme1, true)}
     >
-      <h1>Account Settings</h1>
-      <List>
-        {settings.map((setting, key) => {
 
-          let { title, value } = setting;
+      <FormLabel>Country</FormLabel>
 
-          return (
-            <Flex direction="row" key={key} justify="left" >
-              <Toggle
-                onToggle={(nextValue) => {
-                  setting.value = nextValue;
-                }}
-              >{({ toggle, on }) => (
-                <Button
-                  mr={4}
-                  onClick={toggle}
-                  style={makeStyle(toggleTheme, on)}
-                >{on ? 'ON' : 'off'}</Button>
-              )}
-              </Toggle>
-              <Heading>{title}</Heading>
-            </Flex>
-          )
-        })}
-      </List>
+      <Flex>
+        {state.selectedOptions.map((option, index) => <Chip>{{
+          title: option,
+          onDelete: () => {
+            let remainingOptions = state.selectedOptions
+              .slice(0, index)
+              .concat(state.selectedOptions.slice(index + 1, state.selectedOptions.length))
 
-      <List>
-        {
-          isLoading
-            ? <Spinner size="md" />
-            : <div>Wordpress Users: {wpUsers.length}</div>
-        }
-      </List>
+            setState({
+              ...state,
+              selectedOptions: remainingOptions
+            })
+          }
+        }}</Chip>)}
+      </Flex>
+
+      <Input
+        type='text'
+        placeholder={placeholder}
+        value={state.value}
+        name='value'
+        onChange={updateField}
+        onKeyDown={onKeyDown}
+      ></Input>
 
     </Flex>
-  );
+
+  )
 }
 
 export default AccountSettings;

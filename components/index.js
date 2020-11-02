@@ -1,4 +1,4 @@
 export { Layout } from './layout/Dashboard'
 export { CheckoutTable } from './checkout'
-export { StatusChip } from './atoms/Chips'
+export { ChipStatus } from './atoms/chips'
 export { ScribeToolbar } from './ScribeToolbar'

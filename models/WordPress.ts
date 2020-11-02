@@ -19,7 +19,6 @@ export class Paper {
 
     constructor(props) {
 
-        console.log('props', props)
         // let { title: string, content: string, language?: string } = props;
 
         Object.assign(this, { ...props })

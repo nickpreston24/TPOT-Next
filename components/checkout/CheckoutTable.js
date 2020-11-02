@@ -22,7 +22,7 @@ import { ROUTES } from 'constants/routes'
 import { CheckoutStatus } from '../../constants'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
-import { StatusChip, Confirm } from '../atoms'
+import { ChipStatus, Confirm } from '../atoms'
 import { isDev } from "helpers"
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
@@ -41,7 +41,7 @@ const MaterialTable = dynamic(() => import('material-table'),
 const columns = [
     // { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
     { title: 'Document', field: 'title', type: "string", searchable: true },
-    { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <StatusChip status={row.status} /> },
+    { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <ChipStatus status={row.status} /> },
     { title: 'Last Edited', field: 'date_modified', type: "string", searchable: false },
     { title: 'Author', field: 'author', type: "string", searchable: false },
     { title: 'Uploaded', field: 'date_uploaded', type: "string", searchable: false, hidden: true },

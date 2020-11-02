@@ -15,7 +15,7 @@ export const initialSettings = [
     // Special Views
     {
         app: "Scribe",
-        title: "Folders", // how the user sees it.
+        title: "Folders View", // how the user sees it.
         field: "isFolderViewOn", // our ICommand name.
         value: false,
     },
