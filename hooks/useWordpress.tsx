@@ -3,6 +3,7 @@ import { wpapi } from '../services/wordpress';
 import { Paper, toDto, createInstance } from '../models'
 import { Document } from 'firestorter'
 import { toJS } from 'mobx';
+import axios from 'axios'
 
 const wordpressContext = createContext(null);
 
@@ -20,6 +21,8 @@ function useWordpressProvider() {
     const [currentPaper, setCurrentPaper] = useState(createInstance(Paper));
     const [wpUsers, setWpUsers] = useState([]);
     const [superUser, setSuperUser] = useState(null)
+    const [token, setToken] = useState(null);
+    const [categories, setCategories] = useState([]);
 
     /** Get WP Credentials from Firebase */
     useEffect(() => {
@@ -31,10 +34,46 @@ function useWordpressProvider() {
             })
     }, []);
 
-    /** Load the Wordpress Users on load */
+    /** JWT Tokens */
+    useEffect(() => {
+
+        let savedToken = localStorage.getItem("token");
+        if (!savedToken) {
+            axios({
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
+                // Sign-in exists only to fetch a token, then the token is used for Posting new content...
+                params: {
+                    username: "Michael",
+                    password: "Mercury2020!!"
+                }
+            })
+                .then((response) => {
+                    console.log(response);
+                    let { token } = response.data;
+                    setToken(token);
+                    localStorage.setItem("token", token);
+                })
+                .catch(console.error);
+        }
+        // Otherwise, set the stored token to state.
+        else {
+            console.log("Successfully retrieved JWT from localstorage " + savedToken);
+            setToken(savedToken);
+        }
+
+    }, [])
+
+    /** Preload data */
     useEffect(() => {
         wpapi.users()
             .then((users) => setWpUsers(users))
+
+        wpapi.categories()
+            .then((data) => {
+                setCategories(data)
+            })
     }, []);
 
     const getPageBySlug = (slug: string) => wpapi.pages().slug(slug);
@@ -46,6 +85,8 @@ function useWordpressProvider() {
             .pages()
             .author(authorId)
             .perPage(perPage)
+
+    const search = (term: string) => wpapi.search(term);
 
     /**
      * Publishes a Paper as a draft only
@@ -117,6 +158,9 @@ function useWordpressProvider() {
         getPageBySlug,
 
         publish,
+        token,
+        categories,
+        search,
     }
 }
 

@@ -133,10 +133,13 @@ const MultiSelect = ({ placeholder, options = [] }) => {
 
   const onKeyDown = (event) => {
     if (event.key === 'Enter') {
+
+      let newOptions  = [...state.selectedOptions, state.value];
+      options = newOptions; // Update the hoisted list
       setState({
         ...state,
         value: '',
-        selectedOptions: [...state.selectedOptions, state.value]
+        selectedOptions: newOptions
       });
     }
   }

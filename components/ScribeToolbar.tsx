@@ -112,11 +112,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        let html = getHtml();
 
         let nextSession = new Session({
             docId: doc as string,
             title: form.title,
-            code: getHtml(),
+            code: html,
             language: form.language,
             categories: form.categories,
         });
@@ -131,7 +132,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                     .then(() => { notify("Updated session", "success"); })
                 break;
             case 'Publish':
-                // console.log('PUBLISH');
                 publishPaper(doc as string, nextSession)
                 break;
             default:

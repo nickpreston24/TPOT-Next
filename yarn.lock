@@ -10659,10 +10659,10 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
 
-simple-flexbox@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/simple-flexbox/-/simple-flexbox-2.3.1.tgz#36bcd20c3a4c3d600622ef736eba75819b9e8032"
-  integrity sha512-tBzaDdFS3jq0aLD1MfG+PVTxIw27JE4yXDAqajaq2pun0msG/EcqUVDZXI9Or6tUIkOPJ5JJ/MV2su9kVnJo0g==
+simple-flexbox@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/simple-flexbox/-/simple-flexbox-2.3.2.tgz#ed0fff22583dad6ff7d039e6fa05fa3745d370b1"
+  integrity sha512-i01tRcwhVwHVII041BMnIJEWAHG56mSbVevkjVmdc7LMr9eh1PV9OSoh5j6nAh0nudajQYbCYII032aQkh2L/w==
   dependencies:
     react "^15.5.4"
     webpack "^2.6.1"

@@ -6,29 +6,51 @@ import Spinner from '@chakra-ui/core/dist/Spinner';
 import { useAuth, useWordpress } from 'hooks';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { ChineseIndex } from './ChinesePapers'
 
 const index = () => {
 
     const router = useRouter();
-
     const { user } = useAuth();
-    const { wpUsers, isLoading } = useWordpress();
+    const { wpUsers, isLoading, categories, getPageBySlug, search } = useWordpress();
+
+    // console.log('categories :>> ', categories);
+
+    useEffect(() => {
+        // getPageBySlug('chinese/index.htm')
+        //     .then((response) => {
+        //         console.log('response :>> ', response);
+        //     })
+
+        // search('chinese')
+        //     .then((response) => {
+        //         console.log('response :>> ', response);
+        //     })
+    }, []);
 
     return (
-
         <Box>
-            <List>
+            <ChineseIndex />
+
+            <List>{categories.map((category, index) => {
+                let { name, id, count } = category;
+                return <span key={id}>
+                    <h3>{name} <p>({count})</p></h3>
+                </span>
+            })}</List>
+
+            {/* <List>
                 {
                     isLoading
                         ? <Spinner size="md" />
                         : <div>Wordpress Users: {wpUsers.length}</div>
                 }
-            </List>
+            </List> */}
 
-            <div>
+            {/* <div>
                 Hello, nothing is here yet... please go <Link href="/">Home</Link>
-            </div>
+            </div> */}
         </Box>
     );
 }
