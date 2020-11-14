@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import { Toggle } from 'components/atoms';
 import { observable } from 'mobx';
 import Flex from '@chakra-ui/core/dist/Flex';
@@ -8,13 +8,11 @@ import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
 import { initialSettings } from '../../../constants/settings'
 import { Setting } from '../../../models/Setting';
-import { Chip } from 'components/atoms/chips';
 import Select from '@chakra-ui/core/dist/Select';
-import Input from '@chakra-ui/core/dist/Input';
 import FormControl from '@chakra-ui/core/dist/FormControl';
-import FormLabel from '@chakra-ui/core/dist/FormLabel';
+import { MultiSelect } from './MultiSelect';
 
-function makeStyle(theme: any, usePrimary?: boolean): CSSProperties {
+export function makeStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
 
   return {
@@ -35,7 +33,7 @@ const toggleTheme = {
   }
 }
 
-const scribeTheme1 = {
+export const scribeTheme1 = {
 
   colors: {
     primary: '#bad',
@@ -61,11 +59,15 @@ const initialOptions = [
   { label: 'France' },
 ]
 
-const options = observable<Option>(initialOptions);
+let options = observable<Option>(initialOptions);
 
 const AccountSettings = () => {
 
   // const [country, setCountry] = useState('Mexico');
+
+  const updateOptions = (newOptions) => {
+    options = newOptions
+  }
 
   return (
 
@@ -84,6 +86,7 @@ const AccountSettings = () => {
             return (
               <Flex direction="row" key={key} justify="left" >
                 <Toggle
+                  key={key}
                   onToggle={(nextValue) => {
                     setting.value = nextValue;
                   }}
@@ -105,82 +108,12 @@ const AccountSettings = () => {
 
       <MultiSelect
         options={options.map(o => o.label)}
-        // onChange={() => { }}
+        updateOptions={updateOptions}
         // value={country}
         placeholder="Mexico"
       />
     </Box>
   );
-}
-
-const MultiSelect = ({ placeholder, options = [] }) => {
-
-  const [state, setState] = useState({
-    value: "",
-    selectedOptions: options
-  });
-
-  /**
-   * Updates the appropriate state prop by its field name from the 
-   * form where 'name' is a prop on the target component
-   */
-  const updateField = (event) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-    setState({ ...state, [name]: value });
-  };
-
-  const onKeyDown = (event) => {
-    if (event.key === 'Enter') {
-
-      let newOptions  = [...state.selectedOptions, state.value];
-      options = newOptions; // Update the hoisted list
-      setState({
-        ...state,
-        value: '',
-        selectedOptions: newOptions
-      });
-    }
-  }
-
-  return (
-    <Flex
-      m={[2, 3]}
-      direction="column" p={4}
-      style={makeStyle(scribeTheme1, true)}
-    >
-
-      <FormLabel>Country</FormLabel>
-
-      <Flex>
-        {state.selectedOptions.map((option, index) => <Chip>{{
-          title: option,
-          onDelete: () => {
-            let remainingOptions = state.selectedOptions
-              .slice(0, index)
-              .concat(state.selectedOptions.slice(index + 1, state.selectedOptions.length))
-
-            setState({
-              ...state,
-              selectedOptions: remainingOptions
-            })
-          }
-        }}</Chip>)}
-      </Flex>
-
-      <Input
-        type='text'
-        placeholder={placeholder}
-        value={state.value}
-        name='value'
-        onChange={updateField}
-        onKeyDown={onKeyDown}
-      ></Input>
-
-    </Flex>
-
-  )
 }
 
 export default AccountSettings;
