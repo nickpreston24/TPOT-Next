@@ -3,7 +3,9 @@ import Flex from '@chakra-ui/core/dist/Flex';
 import { Chip } from 'components/atoms/chips';
 import Input from '@chakra-ui/core/dist/Input';
 import FormLabel from '@chakra-ui/core/dist/FormLabel';
-import { makeStyle, scribeTheme1 } from './index';
+import { makeStyle, scribeTheme1 } from '../../../pages/account/settings/index';
+import Stack from '@chakra-ui/core/dist/Stack';
+import Tag, { TagCloseButton, TagLabel } from '@chakra-ui/core/dist/Tag';
 
 export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
 
@@ -46,21 +48,33 @@ export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
       <FormLabel>Country</FormLabel>
 
       <Flex>
-        {state.selectedOptions.map((option, index) => <Chip
-          key={index}
-        >{{
-          title: option,
-          onDelete: () => {
-            let remainingOptions = state.selectedOptions
-              .slice(0, index)
-              .concat(state.selectedOptions.slice(index + 1, state.selectedOptions.length));
+        {state.selectedOptions.map((option, index) =>
+          <Tag
+            key={index}
+            size='sm'
+            borderRadius="full"
+            variant="solid"
+            color="white"
+          // backgroundColor="green" // Transparent!!
+          >
+            <TagLabel>{option}</TagLabel>
+            <TagCloseButton
 
-            setState({
-              ...state,
-              selectedOptions: remainingOptions
-            });
-          }
-        }}</Chip>)}
+              onClick={
+                () => {
+                  let remainingOptions = state.selectedOptions
+                    .slice(0, index)
+                    .concat(state.selectedOptions.slice(index + 1, state.selectedOptions.length));
+
+                  setState({
+                    ...state,
+                    selectedOptions: remainingOptions
+                  });
+                }
+              }
+            />
+          </Tag>
+        )}
       </Flex>
 
       <Input
@@ -76,3 +90,5 @@ export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
 
   );
 };
+
+export default MultiSelect;
