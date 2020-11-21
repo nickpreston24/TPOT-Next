@@ -19,8 +19,8 @@ import { store } from 'services/firebase/firebase'
 import Post from './Post'
 import Spinner from '@chakra-ui/core/dist/Spinner'
 
-const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)" }
-const tpotStyle = { background: "linear-gradient(to left, #722, #f31)" }
+const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }
+const tpotStyle = { background: "linear-gradient(to left, #722, #f31)", color: '#efe' }
 
 export default function Search({ take = 10 }) {
 
@@ -60,9 +60,6 @@ export default function Search({ take = 10 }) {
                     setLoading(false);
                 })
                 .catch(console.error);
-
-
-
 
         } else {
             // setPapers([]);

@@ -2,7 +2,7 @@ import { useReducer, useEffect } from "react";
 import { useMemoCompare } from './useMemoCompare'
 
 // Reducer for hook state and actions
-const reducer = (state, action) => {
+const reducer = (_, action) => {
     switch (action.type) {
         case "idle":
             return { status: "idle", data: undefined, error: undefined };
