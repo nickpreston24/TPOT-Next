@@ -5,15 +5,24 @@ import Badge from '@chakra-ui/core/dist/Badge'
 import Link from '@chakra-ui/core/dist/Link'
 import Image from '@chakra-ui/core/dist/Image'
 import Heading from '@chakra-ui/core/dist/Heading'
-import { useWordpress } from 'hooks'
+import { FiExternalLink } from 'react-icons/fi'
+import React from 'react'
+import Stack from '@chakra-ui/core/dist/Stack'
+import { Router, useRouter } from 'next/router'
 
 export const Post = ({ post }) => {
 
-    // console.log('post :>> ', post);
-    const { content, excerpt, title, link, categories, image } = post;
+    const router = useRouter();
 
-    const { categories: allCategories } = useWordpress();
-    console.log('allCategories :>> ', allCategories);
+    if (!post)
+        return null;
+
+    const { excerpt, title, link, categories, image } = post || {};
+
+    // console.log('post :>> ', post);
+
+    // const { categories: allCategories } = useWordpress();
+    // console.log('allCategories :>> ', allCategories);
     return (
 
         <Box
@@ -23,7 +32,7 @@ export const Post = ({ post }) => {
             p={4}
             borderRadius="25px"
             verticalAlign="center"
-            width={"50%"}
+            margin={2}
         >
             <Card>
                 {{
@@ -44,18 +53,22 @@ export const Post = ({ post }) => {
                             </Flex>
 
                             {excerpt.rendered &&
-                                <Flex
-                                    align="center"
+                                <Box
+                                    width="full"
+
+                                    flexWrap="wrap"
+                                    // align="center"
+                                    // alignContent='center'
                                     color="blue.200"
                                     // color="#2bc0e4"
-                                    fontWeight="semibold"
+                                    // fontWeight="semibold"
                                     letterSpacing="wide"
                                     fontSize="md"
-                                    textTransform="uppercase"
-                                    ml="2"
+                                // textTransform="uppercase"
+                                // ml="2"
                                 >
                                     {excerpt.rendered || "No Excerpt"}
-                                </Flex>
+                                </Box>
                             }
                         </Flex>,
                     media:
@@ -94,7 +107,7 @@ export const Post = ({ post }) => {
                         </Flex>,
 
                     actions:
-                        <Box>
+                        <Stack direction="row">
                             <Link
                                 href={link}
                                 isExternal
@@ -102,7 +115,16 @@ export const Post = ({ post }) => {
                             >
                                 {`Read ${title.rendered}`}
                             </Link>
-                        </Box>
+                            <FiExternalLink color="#eee"
+                            // onClick={() => router.push(link)}
+                            >
+                                {/* <Link
+                                    href={link}
+                                    isExternal
+                                    color="blue.100"
+                                /> */}
+                            </FiExternalLink>
+                        </Stack>
                 }}
             </Card>
 

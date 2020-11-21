@@ -23,6 +23,7 @@ function useWordpressProvider() {
     const [superUser, setSuperUser] = useState(null)
     const [token, setToken] = useState(null);
     const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     /** Get WP Credentials from Firebase */
     useEffect(() => {
@@ -67,6 +68,9 @@ function useWordpressProvider() {
 
     /** Preload data */
     useEffect(() => {
+
+        setLoading(true)
+
         wpapi.users()
             .then((users) => setWpUsers(users))
 
@@ -74,6 +78,8 @@ function useWordpressProvider() {
             .then((data) => {
                 setCategories(data)
             })
+
+        setLoading(false);
     }, []);
 
     const getPageBySlug = (slug: string) => wpapi.pages().slug(slug);

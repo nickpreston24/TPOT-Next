@@ -1,58 +1,34 @@
-import Box from '@chakra-ui/core/dist/Box';
-import Button from '@chakra-ui/core/dist/Button';
-import Flex from '@chakra-ui/core/dist/Flex';
-import List from '@chakra-ui/core/dist/List';
-import Spinner from '@chakra-ui/core/dist/Spinner';
-import { useAuth, useWordpress } from 'hooks';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
-import { ChineseIndex } from './ChinesePapers'
+import Stack from '@chakra-ui/core/dist/Stack';
+import React, { } from 'react';
+import Search from './Search';
 
-const index = () => {
+const Wordpress = () => {
 
-    const router = useRouter();
-    const { user } = useAuth();
-    const { wpUsers, isLoading, categories, getPageBySlug, search } = useWordpress();
+    // useEffect(() => {
+    // getPageBySlug('chinese/index.htm')
+    //     .then((response) => {
+    //         console.log('response :>> ', response);
+    //     })
 
-    // console.log('categories :>> ', categories);
-
-    useEffect(() => {
-        // getPageBySlug('chinese/index.htm')
-        //     .then((response) => {
-        //         console.log('response :>> ', response);
-        //     })
-
-        // search('chinese')
-        //     .then((response) => {
-        //         console.log('response :>> ', response);
-        //     })
-    }, []);
+    // search('chinese')
+    //     .then((response) => {
+    //         console.log('response :>> ', response);
+    //     })
+    // }, []);
 
     return (
-        <Box>
-            <ChineseIndex />
+        <Stack>
+            <Search />
 
-            <List>{categories.map((category, index) => {
-                let { name, id, count } = category;
-                return <span key={id}>
-                    <h3>{name} <p>({count})</p></h3>
-                </span>
-            })}</List>
+            {/* <ChineseIndex /> */}
 
-            {/* <List>
-                {
-                    isLoading
-                        ? <Spinner size="md" />
-                        : <div>Wordpress Users: {wpUsers.length}</div>
-                }
-            </List> */}
+            {/* <CategoryList /> */}
 
             {/* <div>
                 Hello, nothing is here yet... please go <Link href="/">Home</Link>
             </div> */}
-        </Box>
+        </Stack>
     );
 }
 
-export default index;
+export default Wordpress;

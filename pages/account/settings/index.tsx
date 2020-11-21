@@ -8,9 +8,7 @@ import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
 import { initialSettings } from '../../../constants/settings'
 import { Setting } from '../../../models/Setting';
-import Select from '@chakra-ui/core/dist/Select';
-import FormControl from '@chakra-ui/core/dist/FormControl';
-import { MultiSelect } from './MultiSelect';
+import { MultiSelect } from '../../../components/molecules/list/MultiSelect';
 
 export function makeStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
