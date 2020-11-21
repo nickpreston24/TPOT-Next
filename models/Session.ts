@@ -5,26 +5,6 @@
 import { CheckoutStatus } from "constants/CheckoutStatus";
 import { Language } from "constants/languages";
 
-// export type Session = {
-
-//     docId: string;
-//     authorId?: number;
-//     paperId?: number;
-//     title: string;
-//     filename?: string;
-//     slug?: string;
-//     excerpt?: string;
-//     status: string;
-//     code: string;
-//     language: string | Language;
-//     categories: string[]
-
-//     date_uploaded: Date;
-//     date_modified: Date;
-
-//     contributors: any[]
-// }
-
 export class Session {
 
     docId: string;

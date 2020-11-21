@@ -13,6 +13,7 @@ type Props = {
 }
 
 export const DeadLinks: FC<Props> = ({ papers, loading }) => {
+    // console.log('papers :>> ', papers);
     if (!papers || papers.length == 0)
         return null;
 
@@ -30,6 +31,9 @@ export const DeadLinks: FC<Props> = ({ papers, loading }) => {
         }
 
     }, links);
+
+    // remove dups
+    links = [...new Set(links)]
 
     // console.log('links :>> ', links);
     if (!links || links.length == 0)

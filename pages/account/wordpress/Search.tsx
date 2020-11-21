@@ -5,54 +5,70 @@ import FormControl from '@chakra-ui/core/dist/FormControl'
 import FormLabel from '@chakra-ui/core/dist/FormLabel'
 import Input from '@chakra-ui/core/dist/Input'
 import React, { useEffect, useState } from 'react'
+import Icon from '@chakra-ui/core/dist/Icon'
 import Flex from '@chakra-ui/core/dist/Flex'
 import Heading from '@chakra-ui/core/dist/Heading'
+import Stack from '@chakra-ui/core/dist/Stack'
+import { InputLeftElement } from '@chakra-ui/core/dist/InputElement'
 import PostList from './PostList'
 import { DeadLinks } from './DeadLinks'
-import { useDebounce } from 'hooks'
+import { useDebounce, useFirestoreQuery } from 'hooks'
+import { MdSearch } from "react-icons/md"
+import InputGroup from '@chakra-ui/core/dist/InputGroup'
+import { store } from 'services/firebase/firebase'
+import Post from './Post'
+import Spinner from '@chakra-ui/core/dist/Spinner'
 
-export default function Search() {
+const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)" }
+const tpotStyle = { background: "linear-gradient(to left, #722, #f31)" }
 
-    // const sample_url = 'https://www.thepathoftruth.com/false-teachers/clayton-jennings.htm'
-    // const sample_term = 'clayton-jennings'
-
-    // const sample_content_search = 'https://www.thepathoftruth.com/wp-json/wp/v2/pages?per_page=3&search=replacement%20theology'
-
-    // const sample_title_search = ''
+export default function Search({ take = 10 }) {
 
     const [form, updateForm] = useState({ term: '' })
-    const [papers, setPapers] = useState([]);
+    const [papers, setPapers] = useState([]); // Papers from Wordpress
+    const [sessions, setSessions] = useState([{
+        title: 'test',
+        excerpt: 'test',
+        slug: 'test-session',
+        href: 'http://www.thepathoftruth.com',
+
+    }]); // Sessions from Firestore
     const [loading, setLoading] = useState(false);
     const [url, setUrl] = useState('');
 
-    const [isSearching, setIsSearching] = useState(false);
-    // Debounce search term so that it only gives us latest value ...
-    // ... if searchTerm has not been updated within last 500ms.
-    // The goal is to only have the API call fire when user stops typing ...
-    // ... so that we aren't hitting our API rapidly.
-    const debouncedSearchTerm = useDebounce(form.term, 500);
+    // Debounce search term so that it only gives us latest value 
+    // so that we aren't hitting our API rapidly.
+    const debouncedSearchTerm = useDebounce(form.term, 500).trim();
 
-    // Effect for API call 
-    useEffect(
-        () => {
-            if (debouncedSearchTerm) {
-                setIsSearching(true);
+    // Effect for API call
+    useEffect(() => {
+        // console.log('loading? :>> ', loading);
+        setLoading(true);
 
-                let url = `https://www.thepathoftruth.com/wp-json/wp/v2/pages?per_page=10&search=${debouncedSearchTerm.trim()}`
+        if (debouncedSearchTerm) {
+            setLoading(true);
+            let query = `pages?per_page=${take}&search="${debouncedSearchTerm}"`
+            let url = `https://www.thepathoftruth.com/wp-json/wp/v2/${query}`
 
-                axios
-                    .get(url)
-                    .then((response) => {
-                        console.log('response :>> ', response.data);
-                        setPapers(response.data)
-                        setLoading(false);
-                        setIsSearching(false);
-                    })
-                    .catch(console.error);
-            } else {
-                setPapers([]);
-            }
-        },
+            setUrl(url)
+
+            axios
+                .get(url)
+                .then((response) => {
+                    // console.log('response :>> ', response.data);
+                    setPapers(response.data)
+                    setLoading(false);
+                })
+                .catch(console.error);
+
+
+
+
+        } else {
+            // setPapers([]);
+            setLoading(false)
+        }
+    },
         [debouncedSearchTerm] // Only call effect if debounced search term changes
     );
 
@@ -65,22 +81,19 @@ export default function Search() {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         updateForm({ ...form, [name]: value });
-
-        setUrl(`https://www.thepathoftruth.com/wp-json/wp/v2/pages?per_page=10&search=${form.term.trim()}`)
-        console.log('url :>> ', url);
     };
-
-
 
     const onSubmit = (e) => {
         e.preventDefault();
+
+        if (!url)
+            return;
+
         setLoading(true)
-        setUrl(`https://www.thepathoftruth.com/wp-json/wp/v2/pages?per_page=10&search=${form.term.trim()}`)
-        console.log('url :>> ', url);
         axios
             .get(url)
             .then((response) => {
-                console.log('response :>> ', response.data);
+                // console.log('response :>> ', response.data);
                 setPapers(response.data)
                 setLoading(false);
             })
@@ -88,49 +101,131 @@ export default function Search() {
     }
 
     return (
-        <Flex
+        <Stack
             width="100%"
             align="center"
+            p={2}
         >
-            <Box p={2}
-                width="100%"
+            <Box textAlign="center">
+                <Heading size="lg">Search</Heading>
+            </Box>
+            <Stack
+                my={4}
+                textAlign="left"
+                direction='column'
             >
-                <Box textAlign="center">
-                    <Heading>Search</Heading>
-                </Box>
-                <Box my={4} textAlign="left">
-                    <form onSubmit={onSubmit}>
-                        <a href={url}>{url}</a>
-                        <FormControl>
-                            <FormLabel>Search by Contents</FormLabel>
+                <form onSubmit={onSubmit}>
+                    <a href={url}>{url}</a>
+                    <FormControl>
+                        <FormLabel>Search by Contents</FormLabel>
+
+                        <InputGroup>
+
+                            <InputLeftElement
+                                pointerEvents="none"
+                                children={<Icon
+                                    as={MdSearch}
+                                    size="5"
+                                    color="green.300" />}
+                            />
                             <Input
                                 value={form.term}
                                 name='term'
                                 onChange={updateField}
-                                type="text" isRequired placeholder="faith" />
-                        </FormControl>
-                        <Button
-                            variantColor="teal"
-                            variant="outline"
-                            type="submit"
-                            width="full"
-                            mt={4}>
-                            Search
+                                type="text"
+                                isRequired
+                                placeholder="faith"
+                            />
+                            {/* <InputRightElement children={<MdSearch color="green.500" /> */}
+                        </InputGroup>
+                    </FormControl>
+                    <Button
+                        variantColor="teal"
+                        variant="outline"
+                        type="submit"
+                        width="full"
+                        mt={4}
+                        isDisabled={loading}
+                    >
+                        Search
                         </Button>
-                    </form>
-                </Box>
+                </form>
+            </Stack>
+
+
+            <Stack direction='row'>
 
                 <PostList
+                    style={tpotStyle}
                     heading="Results"
                     loading={loading}
                     papers={papers}
                 />
 
-                <DeadLinks
+                {/* <PostList
+                    heading="Results"
                     loading={loading}
-                    papers={papers}></DeadLinks>
-            </Box>
+                    papers={sessions}
+                /> */}
 
-        </Flex>
+                {/* <SessionDoc uid={'my-paper'} /> */}
+                <SessionsList />
+            </Stack>
+
+            <DeadLinks
+                loading={loading}
+                papers={papers}
+            />
+
+        </Stack>
+    );
+}
+
+
+// All Sessions
+const SessionsList = () => {
+
+    const { data, status, error } = useFirestoreQuery(
+        store.collection('sessions') // Collection
+    )
+
+    if (status === "loading") {
+        return <Spinner />
+    }
+
+    if (status === "error") {
+        return <div><b>`Error: ${error.message}`</b></div>
+    }
+
+    console.log('data :>> ', data);
+
+    return <PostList
+        style={sessionStyle}
+        heading="Sessions" papers={data} />
+}
+
+// Single Session
+const SessionDoc = ({ uid }) => {
+
+    const { data, status, error } = useFirestoreQuery(
+        store.collection('sessions')
+            .doc(uid) // Document
+    )
+
+    if (status === "loading") {
+        return "Loading...";
+    }
+
+    if (status === "error") {
+        return `Error: ${error.message}`;
+    }
+
+    console.log('data :>> ', data);
+
+    return (
+        <Post
+            style={sessionStyle}
+            post={data}
+        />
     );
 }

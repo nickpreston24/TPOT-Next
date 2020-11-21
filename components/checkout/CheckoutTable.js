@@ -10,10 +10,22 @@ import Collapse from '@chakra-ui/core/dist/Collapse'
 import Tooltip from '@chakra-ui/core/dist/Tooltip'
 import IconButton from '@chakra-ui/core/dist/IconButton'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
+import List from '@chakra-ui/core/dist/List'
+import Badge from '@chakra-ui/core/dist/Badge'
+import Heading from '@chakra-ui/core/dist/Heading'
+import Tag, { TagLabel } from '@chakra-ui/core/dist/Tag'
+// import {
+//     Tag,
+//     TagLabel,
+//     TagLeftIcon,
+//     TagRightIcon,
+//     TagCloseButton,
+// } from "@chakra-ui/core/dist/Tag"
 
 import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogBody } from '@chakra-ui/core/dist/AlertDialog'
 
 import { observer } from 'mobx-react'
+import { toJS } from 'mobx'
 import { useRouter } from 'next/router'
 import { sessions, unlockSession, removeSession } from '../../stores/sessionsAPI'
 import { notify } from 'components/Toasts'
@@ -24,6 +36,7 @@ import dynamic from 'next/dynamic'
 import moment from 'moment'
 import { ChipStatus, Confirm } from '../atoms'
 import { isDev } from "helpers"
+import CategoryList from 'pages/account/wordpress/CategoryList'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -172,7 +185,10 @@ const SessionDetails = ({ row, user }) => {
 
     let session = { ...row };
 
-    let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor } = session;
+    let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor, categories } = session;
+
+    console.log('categories', toJS(categories))
+
     const cancelUnlockRef = React.useRef();
     const cancelDeleteRef = React.useRef();
 
@@ -204,7 +220,7 @@ const SessionDetails = ({ row, user }) => {
                     <Stack w="50%">
                         {language &&
                             <Stack direction="row">
-                                <Box minW="80px" fontWeight="bold">language</Box>
+                                <Box minW="80px" fontWeight="bold">Language</Box>
                                 <Box>{language}</Box>
                             </Stack>
                         }
@@ -220,6 +236,7 @@ const SessionDetails = ({ row, user }) => {
                                 <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
                             </Stack>
                         }
+                        <CategoryBadges categories={categories} />
                     </Stack>
                     <Divider orientation="vertical" m={4} />
                     <Stack w="50%">
@@ -366,6 +383,35 @@ const SessionDetails = ({ row, user }) => {
             </Flex>
         </Collapse>
     )
+}
+
+const CategoryBadges = ({ categories = [] }) => {
+
+    return (
+        <Stack
+            justify='space-between'
+            isInline
+            flexWrap='wrap'
+        >
+            <Box minW="80px" fontWeight="bold">Categories</Box>
+            {categories.map((name, index) => <Tag
+                size='sm'
+                key={index}
+                // width='100%'
+                variant="outline"
+                colorScheme="blue" >
+                <TagLabel>{name}</TagLabel>
+            </Tag>)}
+        </Stack>
+    )
+
+    {/* <Badge
+        // height="100%"
+        color="teal"
+        // bg="transparent"
+        borderColor="teal"
+        key={index}
+    >{name}</Badge> */}
 }
 
 export default CheckoutTable;

@@ -10,14 +10,16 @@ import React from 'react'
 import Stack from '@chakra-ui/core/dist/Stack'
 import { Router, useRouter } from 'next/router'
 
-export const Post = ({ post }) => {
+export const Post = ({ post, style }) => {
 
     const router = useRouter();
 
     if (!post)
         return null;
 
-    const { excerpt, title, link, categories, image } = post || {};
+    const { link, categories, image } = post || {};
+    let excerpt = post?.excerpt?.rendered || post?.excerpt || ''
+    let title = post?.title?.rendered || post?.title || ''
 
     // console.log('post :>> ', post);
 
@@ -26,8 +28,7 @@ export const Post = ({ post }) => {
     return (
 
         <Box
-            // style={{ background: "linear-gradient(to left, #ff34d7, #2bc0e4)" }}
-            style={{ background: "linear-gradient(to left, #722, #f31)" }}
+            style={style}
             mb={10}
             p={4}
             borderRadius="25px"
@@ -52,7 +53,7 @@ export const Post = ({ post }) => {
                                 }
                             </Flex>
 
-                            {excerpt.rendered &&
+                            {excerpt &&
                                 <Box
                                     width="full"
 
@@ -67,7 +68,7 @@ export const Post = ({ post }) => {
                                 // textTransform="uppercase"
                                 // ml="2"
                                 >
-                                    {excerpt.rendered || "No Excerpt"}
+                                    {excerpt || "No Excerpt"}
                                 </Box>
                             }
                         </Flex>,
@@ -89,7 +90,7 @@ export const Post = ({ post }) => {
                                 </Image>
                             }
 
-                            {title.rendered &&
+                            {title &&
                                 <Heading
                                     ml={10}
                                     textAlign="center"
@@ -101,7 +102,7 @@ export const Post = ({ post }) => {
                                     border="3px #fff solid"
                                 // transform="translate(0%, 50%)"
                                 >
-                                    {title.rendered}
+                                    {title}
                                 </Heading>}
 
                         </Flex>,
@@ -113,7 +114,7 @@ export const Post = ({ post }) => {
                                 isExternal
                                 color="blue.100"
                             >
-                                {`Read ${title.rendered}`}
+                                {`Read ${title}`}
                             </Link>
                             <FiExternalLink color="#eee"
                             // onClick={() => router.push(link)}

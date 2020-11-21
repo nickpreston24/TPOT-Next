@@ -6,7 +6,7 @@ import React from "react";
 import Post from "./Post";
 
 /** Renders a list of Posts */
-export const PostList = ({ heading, loading, papers }) => {
+export const PostList = ({ heading = '', loading = false, papers = [], style }) => {
 
     if (!papers || papers.length == 0)
         return null;
@@ -14,16 +14,17 @@ export const PostList = ({ heading, loading, papers }) => {
     return (
 
         <Box>
-            <Box textAlign="center">
-                <Heading>{heading}</Heading>
-            </Box>
+            {!!heading &&
+                <Box textAlign="center">
+                    <Heading>{heading}</Heading>
+                </Box>}
 
             {
                 loading
                     ? <Spinner />
                     : <List>
                         {papers.map((post, id) => (
-                            <Post key={id} post={post} />
+                            <Post style={style} key={id} post={post} />
                         ))}
                     </List>
             }
