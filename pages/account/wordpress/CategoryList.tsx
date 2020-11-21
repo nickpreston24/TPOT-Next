@@ -37,3 +37,5 @@ const CategoryList = () => {
         </Box>
     );
 };
+
+export default CategoryList

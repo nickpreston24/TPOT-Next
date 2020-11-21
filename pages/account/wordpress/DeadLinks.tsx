@@ -71,3 +71,5 @@ export const DeadLinks: FC<Props> = ({ papers, loading }) => {
         </Box>
     );
 };
+
+export default DeadLinks
