@@ -10,7 +10,12 @@ import React from 'react'
 import Stack from '@chakra-ui/core/dist/Stack'
 import { Router, useRouter } from 'next/router'
 
-export const Post = ({ post, style }) => {
+const defaultStyle = {
+    color: '#111',
+    background: '#efe'
+}
+
+export const Post = ({ post, style = defaultStyle }) => {
 
     const router = useRouter();
 

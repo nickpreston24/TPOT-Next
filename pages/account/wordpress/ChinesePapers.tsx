@@ -33,7 +33,8 @@ export const ChineseIndex = () => {
                     ? <Spinner />
                     : <List>
                         {posts.map((post, id) => (
-                            <Post key={id} post={post}></Post>
+                            <Post                                
+                                key={id} post={post}></Post>
                         ))}
                     </List>
             }
