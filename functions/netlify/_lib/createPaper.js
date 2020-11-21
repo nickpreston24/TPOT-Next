@@ -160,8 +160,6 @@ async function createPaperViaPlaywright(pageData) {
     await browser.close();
 }
 
-
-
 module.exports = {
     createPaper,
     createPaperViaPlaywright
