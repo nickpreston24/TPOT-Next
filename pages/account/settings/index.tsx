@@ -105,8 +105,10 @@ const AccountSettings = () => {
       </Flex>
 
       <MultiSelect
-        options={options.map(o => o.label)}
-        updateOptions={updateOptions}
+        selectedOptions={options.map(o => o.label)}
+        // options={updateOptions}
+        onChange={null}
+        options={[]}
         // value={country}
         placeholder="Mexico"
       />

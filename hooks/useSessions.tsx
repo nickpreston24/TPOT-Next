@@ -42,9 +42,12 @@ function useSessionProvider() {
     const { user } = useAuth();
     const { publish } = useWordpress();
 
+    const [error, setError] = useState('');
+
     const updatePaper = async (doc: string, session: Session) => {
         session.status = CheckoutStatus.CheckedOut
         await updateSession(doc as string, session)
+            .catch((error) => { console.error(error), setError(error) })
     }
 
     const savePaper = async (session: Session) => {
@@ -67,6 +70,7 @@ function useSessionProvider() {
 
         if (!!id) {
             await checkoutSession(id)
+                .catch((error) => { console.error(error), setError(error) })
             Router.push('/scribe/edit/[doc]', `/scribe/edit/${id}`)
         }
 
@@ -110,6 +114,8 @@ function useSessionProvider() {
                 await updateSession(doc as string, sessionUpdate)
 
             })
+            .catch((error) => { console.error(error), setError(error) })
+
     }
 
     return {
@@ -119,5 +125,6 @@ function useSessionProvider() {
 
         session,
         setSession,
+        error,
     }
 }

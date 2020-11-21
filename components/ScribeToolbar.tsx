@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, FC } from 'react';
+import React, { useState, useRef, useEffect, FC } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -18,7 +18,7 @@ import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Select from '@chakra-ui/core/dist/Select';
 import Tooltip from '@chakra-ui/core/dist/Tooltip';
-import { usePrevious } from 'hooks';
+import { usePrevious, useWordpress } from 'hooks';
 import { checkoutSession } from 'stores/sessionsAPI';
 import { useRouter } from 'next/router';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
@@ -27,6 +27,7 @@ import { UploadMode } from '../models/UploadMode';
 import { useSessions } from 'hooks/useSessions';
 import { Session } from 'models';
 import { notify } from './Toasts';
+import { MultiSelect } from './molecules/list';
 
 type ScribeToolbarProps = {
     getHtml: Function,
@@ -53,18 +54,28 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         setSession,
     } = useSessions();
 
+    const { categories, loading } = useWordpress();
+
+
     /** 
      * Form
      */
     const [form, updateForm] = useState<any>({
         title: "",
-        categoriesText: "",
+        // categoriesText: "",
+        categories: [],
         language: null,
         mode: UploadMode.Paste,
         doc: null,
     });
 
+    // DO NOT DELETE
     const previousForm = usePrevious(form);
+
+    useEffect(() => {
+        console.log('previousform :>> ', previousForm);
+        console.log('form :>> ', form);
+    }, [form]);
 
     /**
      * Updates the appropriate state prop by its field name from the 
@@ -90,13 +101,13 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
             checkoutSession(doc as string)
                 .then((result) => {
-                    // console.log('checking out your session:  ', result)
+                    console.log('result', result)
                     setSession(result)
 
                     updateForm({
                         ...form,
                         ...result,
-                        categoriesText: result?.categories?.join(", ") || ''
+                        // categoriesText: result?.categories?.join(", ") || ''
                     })
 
                     setHtml(result.code);
@@ -124,10 +135,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         switch (mode) {
             case 'Save':
+                console.log('nextSession', nextSession)
                 savePaper(nextSession)
                     .then(() => { notify("Saved session", "success") })
                 break;
             case 'Update':
+                console.log('nextSession', nextSession)
                 updatePaper(doc as string, nextSession)
                     .then(() => { notify("Updated session", "success"); })
                 break;
@@ -208,18 +221,26 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                             <Input
                                 name="title"
                                 value={form.title}
-                                isDisabled={session.status !== CheckoutStatus.NotStarted}
+                                isDisabled={!!session?.status && session.status !== CheckoutStatus.NotStarted}
                                 onChange={updateField}
                                 placeholder="paper name here" />
                         </FormControl>
 
                         <FormControl>
+
                             <FormLabel>Categories</FormLabel>
-                            <Input
-                                name="categoriesText"
-                                value={form.categoriesText}
-                                onChange={updateField}
-                                placeholder="e.g 'Chinese', 'Translations'" />
+
+                            <MultiSelect
+                                selectedOptions={form.categories}
+                                options={categories.map(c => c.name)}
+                                mode="dropdown"
+                                onChange={(set) => {
+                                    updateForm({
+                                        ...form,
+                                        categories: set
+                                    })
+                                }}
+                            />
                         </FormControl>
 
                         <FormControl mt={4}>
@@ -248,10 +269,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         </Flex>
     )
 };
-
-type Props = {
-    session: Session
-}
 
 type LanguageDropdownProps = {
     name: string,

@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Flex from '@chakra-ui/core/dist/Flex';
-import { Chip } from 'components/atoms/chips';
 import Input from '@chakra-ui/core/dist/Input';
-import FormLabel from '@chakra-ui/core/dist/FormLabel';
-import { makeStyle, scribeTheme1 } from '../../../pages/account/settings/index';
-import Stack from '@chakra-ui/core/dist/Stack';
 import Tag, { TagCloseButton, TagLabel } from '@chakra-ui/core/dist/Tag';
+import { Dropdown } from '../../atoms'
+import { usePrevious } from 'hooks';
 
-export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
+type Props = {
+  placeholder?: string,
+  options?: string[], // options to choose from
+  selectedOptions: string[], // currently selected options
+  onChange: (selectedItems: string[]) => void,
+  mode?: "dropdown" | "input"
+}
 
+export const MultiSelect: FC<Props> = ({
+  placeholder = '',
+  options = [],
+  selectedOptions = [],
+  onChange,
+  mode = 'input'
+}) => {
   const [state, setState] = useState({
     value: "",
-    selectedOptions: options
+    selectedOptions: selectedOptions
   });
 
   /**
@@ -20,34 +31,46 @@ export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
    */
   const updateField = (event) => {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-    setState({ ...state, [name]: value });
+    const value = target?.type === 'checkbox' ? target.checked : target?.value || '';
+    const name = target?.name || '';
+    setState({ ...state, [name]: value })
   };
 
   const onKeyDown = (event) => {
     if (event.key === 'Enter') {
-
-      let newOptions = [...state.selectedOptions, state.value];
-      options = newOptions; // Update the hoisted list
-      setState({
-        ...state,
-        value: '',
-        selectedOptions: newOptions
-      });
+      addOption(state.value.trim())
     }
   };
+
+  const addOption = (nextOption = null) => {
+
+
+    if (!nextOption) return
+
+    let newOptions = [...state.selectedOptions, nextOption];
+    // options = newOptions; // Update the hoisted list
+
+
+    // Merge in the new option
+    setState({
+      ...state,
+      value: '',
+      selectedOptions: newOptions
+    });
+
+    // Run whatever should happen when options array is updated
+    onChange(newOptions);
+  }
 
   return (
     <Flex
       m={[2, 3]}
       direction="column" p={4}
-      style={makeStyle(scribeTheme1, true)}
+      style={{ border: '2px solid red' }}
     >
+      {/* {!!header && <Heading size="md">{header}</Heading>} */}
 
-      <FormLabel>Country</FormLabel>
-
-      <Flex>
+      <Flex wrap='wrap'>
         {state.selectedOptions.map((option, index) =>
           <Tag
             key={index}
@@ -68,8 +91,11 @@ export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
 
                   setState({
                     ...state,
-                    selectedOptions: remainingOptions
+                    selectedOptions: remainingOptions,
+                    value: '',
                   });
+
+                  onChange(remainingOptions)
                 }
               }
             />
@@ -77,14 +103,48 @@ export const MultiSelect = ({ placeholder, options = [], updateOptions }) => {
         )}
       </Flex>
 
-      <Input
-        type='text'
-        placeholder={placeholder}
-        value={state.value}
-        name='value'
-        onChange={updateField}
-        onKeyDown={onKeyDown}
-      ></Input>
+      {
+        mode === 'input' &&
+        <Input
+          margin={1}
+          type='text'
+          placeholder={placeholder
+            || selectedOptions[0]
+            || options[0]
+            || ''}
+          value={state.value}
+          name='value'
+          onChange={updateField}
+          onKeyDown={onKeyDown}
+        ></Input>
+      }
+
+      {
+        mode === 'dropdown' &&
+        <Dropdown
+          // margin={1}
+          placeholder={placeholder
+            || selectedOptions[0]
+            || options[0]
+            || ''}
+          options={options}
+          onChange={(selected) => {
+            if (!selected)
+              return
+            let newOptions = [...new Set([...state.selectedOptions, selected])];
+
+            // Merge in the new option
+            setState({
+              ...state,
+              selectedOptions: newOptions
+            });
+
+            onChange(newOptions)
+          }}
+          initial={state.value}
+          name="value"
+        />
+      }
 
     </Flex>
 
