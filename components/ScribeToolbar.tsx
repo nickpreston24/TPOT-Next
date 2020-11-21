@@ -56,7 +56,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     const { categories, loading } = useWordpress();
 
-
     /** 
      * Form
      */
@@ -71,11 +70,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
     // DO NOT DELETE
     const previousForm = usePrevious(form);
-
-    useEffect(() => {
-        console.log('previousform :>> ', previousForm);
-        console.log('form :>> ', form);
-    }, [form]);
 
     /**
      * Updates the appropriate state prop by its field name from the 
@@ -101,13 +95,12 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
             checkoutSession(doc as string)
                 .then((result) => {
-                    console.log('result', result)
+                    
                     setSession(result)
 
                     updateForm({
                         ...form,
                         ...result,
-                        // categoriesText: result?.categories?.join(", ") || ''
                     })
 
                     setHtml(result.code);
@@ -135,12 +128,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
 
         switch (mode) {
             case 'Save':
-                console.log('nextSession', nextSession)
                 savePaper(nextSession)
                     .then(() => { notify("Saved session", "success") })
                 break;
             case 'Update':
-                console.log('nextSession', nextSession)
                 updatePaper(doc as string, nextSession)
                     .then(() => { notify("Updated session", "success"); })
                 break;

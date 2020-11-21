@@ -3,7 +3,9 @@ import Flex from '@chakra-ui/core/dist/Flex';
 import Input from '@chakra-ui/core/dist/Input';
 import Tag, { TagCloseButton, TagLabel } from '@chakra-ui/core/dist/Tag';
 import { Dropdown } from '../../atoms'
-import { usePrevious } from 'hooks';
+import { GrClear } from 'react-icons/gr'
+import Box from '@chakra-ui/core/dist/Box';
+import { Tooltip } from '@chakra-ui/core';
 
 type Props = {
   placeholder?: string,
@@ -43,14 +45,9 @@ export const MultiSelect: FC<Props> = ({
   };
 
   const addOption = (nextOption = null) => {
-
-
     if (!nextOption) return
 
     let newOptions = [...state.selectedOptions, nextOption];
-    // options = newOptions; // Update the hoisted list
-
-
     // Merge in the new option
     setState({
       ...state,
@@ -62,14 +59,23 @@ export const MultiSelect: FC<Props> = ({
     onChange(newOptions);
   }
 
+  const clear = () => {
+
+    setState({
+      ...state,
+      selectedOptions: []
+    });
+
+    onChange([])
+  }
+
   return (
     <Flex
-      m={[2, 3]}
-      direction="column" p={4}
-      style={{ border: '2px solid red' }}
+      m={[1, 1]}
+      direction="column"
+    // p={4}
+    // style={{ border: '2px solid red' }}
     >
-      {/* {!!header && <Heading size="md">{header}</Heading>} */}
-
       <Flex wrap='wrap'>
         {state.selectedOptions.map((option, index) =>
           <Tag
@@ -101,7 +107,23 @@ export const MultiSelect: FC<Props> = ({
             />
           </Tag>
         )}
+
+        {state.selectedOptions.length > 0 &&
+          <Box
+            m={[1, 1]}
+            alignSelf='center'
+          >
+            <Tooltip
+              label="Clear Paper Categories"
+              aria-label='clear-tip'
+            >
+              <GrClear
+                onClick={clear}
+              />
+            </Tooltip>
+          </Box>}
       </Flex>
+
 
       {
         mode === 'input' &&

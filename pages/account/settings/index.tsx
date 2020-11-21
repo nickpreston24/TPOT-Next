@@ -8,7 +8,6 @@ import Heading from '@chakra-ui/core/dist/Heading';
 import Box from '@chakra-ui/core/dist/Box';
 import { initialSettings } from '../../../constants/settings'
 import { Setting } from '../../../models/Setting';
-import { MultiSelect } from '../../../components/molecules/list/MultiSelect';
 
 export function makeStyle(theme: any, usePrimary?: boolean): CSSProperties {
   const { primary, secondary, light, dark } = theme.colors;
@@ -43,32 +42,9 @@ export const scribeTheme1 = {
 
 const settings = observable<Setting>(initialSettings)
 
-interface Option {
-  label: string,
-}
-
-const initialOptions = [
-  { label: "USA" },
-  { label: "Canada" },
-  { label: 'Australia' },
-  { label: 'Denmark' },
-  { label: 'Israel' },
-  { label: 'Germany' },
-  { label: 'France' },
-]
-
-let options = observable<Option>(initialOptions);
-
 const AccountSettings = () => {
 
-  // const [country, setCountry] = useState('Mexico');
-
-  const updateOptions = (newOptions) => {
-    options = newOptions
-  }
-
   return (
-
     <Box>
       <Flex
         m={[2, 3]}
@@ -101,17 +77,7 @@ const AccountSettings = () => {
             )
           })}
         </List>
-
       </Flex>
-
-      <MultiSelect
-        selectedOptions={options.map(o => o.label)}
-        // options={updateOptions}
-        onChange={null}
-        options={[]}
-        // value={country}
-        placeholder="Mexico"
-      />
     </Box>
   );
 }

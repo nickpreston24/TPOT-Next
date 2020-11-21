@@ -1,11 +1,7 @@
 import React, { FC, useState } from "react";
 import Select from '@chakra-ui/core/dist/Select'
 
-/** A simple Dropdown.  TODO: Needs to send back the selected option */
-
-
 type DropdownProps = {
-    // onChange: (event: any) => void,
     options: string[]
     onChange?: (selected: string) => void
     initial?: string | number,
@@ -13,11 +9,10 @@ type DropdownProps = {
     name?: string, // The name of the controlled input - useful for changing states implicitly
 }
 
+/** A simple Dropdown.  TODO: Needs to send back the selected option */
 export const Dropdown: FC<DropdownProps> = (props) => {
-
+    
     const { options, onChange, name, placeholder, initial } = props;
-    // console.log('options :>> ', options);
-
     const [selected, setSelected] = useState(initial?.toString() || '')
 
     return (
