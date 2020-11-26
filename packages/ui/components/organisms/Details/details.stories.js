@@ -1,18 +1,18 @@
-import Dashboard from '@organisms/Dashboard'
+import Details from '@organisms/Details'
 import React from 'react'
 
 export default {
-    title: 'Organisms/Dashboard',
+    title: 'organisms/Details',
     parameters: {
         layout: 'fullscreen',
     },
 }
 
-const Template = args => <Dashboard {...args} />
+const Template = args => <Details {...args} />
 
 export const Example = Template.bind({})
 Example.args = {
-    title: 'Kittens',
+    name: 'Dave',
 }
 
 export const Empty = Template.bind({})

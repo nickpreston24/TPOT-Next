@@ -1142,6 +1142,18 @@
     toasted-notes "3.2.0"
     use-dark-mode "2.3.1"
 
+"@ckeditor/ckeditor5-build-decoupled-document@^23.1.0":
+  version "23.1.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-build-decoupled-document/-/ckeditor5-build-decoupled-document-23.1.0.tgz#074046de8411239577c23e1c58f85a338e342938"
+  integrity sha512-dn8/Cw3wf75ZybMLfmPy1ZtitObi6YTHPeavkyu0TVDbJhefpBL+gKWRrTptpvNk3Txw40zWU5MYq0225FpPkA==
+
+"@ckeditor/ckeditor5-react@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-react/-/ckeditor5-react-3.0.0.tgz#05a1bdd7b26a8c1df6fd734376ea84e394d6ab47"
+  integrity sha512-kqoD0rbGeUp7CjYBtKcwXVVSWO/VL1QsoTyeGbFyoMHmkM96fBj0TI0Xs2kFqKkeiICtAnwvul3GVNWbIlK/Tw==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"

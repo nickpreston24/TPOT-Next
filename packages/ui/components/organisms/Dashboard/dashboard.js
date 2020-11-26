@@ -39,14 +39,12 @@ const Dashboard = ({ title, ...props }) => {
         </Box>
         <Box flexGrow={1} pos="relative">
           <Stack spacing={4} direction="row">
-            <Box
-              borderRadius="lg"
-              boxShadow="md"
-              w={{ base: "100%" }}
-              h={600}
-              bg="white"
-            ></Box>
-            <DetailsPanel />
+            <Box flexGrow={1}>
+              <EditorPanel />
+            </Box>
+            <Box w={350}>
+              <DetailsPanel />
+            </Box>
           </Stack>
           <DetailsToggle />
         </Box>
@@ -100,7 +98,6 @@ const DetailsPanel = () => (
     d={{ base: "none", lg: "block" }}
     boxSizing="border-box"
     p={6}
-    minW={{ base: 0, md: 350 }}
     h="100%"
     bg="white"
     color="gray.600"
@@ -198,7 +195,7 @@ const DetailsPanel = () => (
   </Stack>
 );
 
-const CardTitle = () => (
+const CardTitle = ({ title, children }) => (
   <Stack pb={4}>
     <Stack direction="row">
       <Heading size="md" mt={1} fontWeight={500}>
@@ -206,5 +203,32 @@ const CardTitle = () => (
       </Heading>
     </Stack>
     <Box h="2px" bg="gray.100" />
+  </Stack>
+);
+
+const EditorPanel = () => (
+  <Stack
+    spacing={4}
+    borderRadius="lg"
+    boxShadow="md"
+    // d={{ base: "none", lg: "block" }}
+    // boxSizing="border-box"
+    w="100%"
+    flexGrow={1}
+    h="100%"
+    p={6}
+    // minW={{ base: 0, md: 350 }}
+    h="100%"
+    bg="white"
+    color="gray.600"
+  >
+    <Stack pb={4}>
+      <Stack direction="row">
+        <Heading size="md" mt={1} fontWeight={500}>
+          Publish Details2
+        </Heading>
+      </Stack>
+      <Box h="2px" bg="gray.100" />
+    </Stack>
   </Stack>
 );
