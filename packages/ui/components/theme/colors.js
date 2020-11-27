@@ -1,8 +1,23 @@
-import theme from "@chakra-ui/core/dist/theme";
+// import theme from "@chakra-ui/theme";
 
 export default {
   colors: {
-    ...theme.colors,
+    // ...theme.colors,
+    teal: {
+      500: '#ff0099'
+    },
+    customWhite: {
+      50: '#f5f5f5',
+      100: '#ebebeb',
+      200: '#d6d6d6',
+      300: '#b8b8b8',
+      400: '#999999',
+      500: '#7a7a7a',
+      600: '#5c5c5c',
+      700: '#474747',
+      800: '#292929',
+      900: '#141414',
+    },
     dark: {
       50: '#eeeefe',
       100: '#cecfe6',

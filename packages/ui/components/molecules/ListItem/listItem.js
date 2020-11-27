@@ -1,11 +1,11 @@
-import { Box, Button } from "@chakra-ui/core";
+import { Box, Button } from "@chakra-ui/react";
 
 import PropTypes from "prop-types";
 import React from "react";
 
 const ListItem = ({ text, size, color, ...props }) => {
   return (
-    <Button variantColor="black" bg={color} color="white" size={size} {...props}>
+    <Button colorScheme="black" bg={color} color="white" size={size} {...props}>
       {text}
     </Button>
   );

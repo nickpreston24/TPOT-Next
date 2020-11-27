@@ -13,10 +13,9 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
-  PseudoBox,
   Stack,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 
 import PropTypes from "prop-types";
 import React from "react";
@@ -49,7 +48,7 @@ const Navbar = ({ title, bg = "#373740", ...props }) => {
         {/* <Box bg="red.500">test</Box> */}
         <Box flexGrow={1} />
         <Stack direction="row" align="center" spacing={4}>
-          <PseudoBox
+          <Box
             pos="relative"
             h="32px"
             w="32px"
@@ -76,7 +75,7 @@ const Navbar = ({ title, bg = "#373740", ...props }) => {
               h="10px"
               bg="red.400"
             />
-          </PseudoBox>
+          </Box>
           <Menu>
             <MenuButton as={AccountButton} />
             <MenuList placement="bottom-end">
@@ -165,7 +164,7 @@ Navbar.defaultProps = {
 export default Navbar;
 
 const AppSelectButton = React.forwardRef(({ onClick }, ref) => (
-  <PseudoBox
+  <Box
     onClick={onClick}
     alignItems="center"
     cursor="pointer"
@@ -180,7 +179,7 @@ const AppSelectButton = React.forwardRef(({ onClick }, ref) => (
       <Box d={{ base: "none", sm: "block", md: "none"}}>TPOT</Box>
     </Heading>
     <Icon d={{ base: "none", md: "block" }} name="chevron-right" ml={2} fontSize="2xl" color="white" />
-    <PseudoBox
+    <Box
       ref={ref}
       transition="150ms all ease-in"
       _groupHover={{ bg: "#2d2d38" }}
@@ -193,8 +192,8 @@ const AppSelectButton = React.forwardRef(({ onClick }, ref) => (
         Scribe
       </Heading>
       <Icon name="chevron-down" ml={2} fontSize="2xl" color="white" />
-    </PseudoBox>
-  </PseudoBox>
+    </Box>
+  </Box>
 ));
 
 const AccountButton = React.forwardRef(({ onClick }, ref) => (
