@@ -3,7 +3,7 @@ const toPath = _path => path.join(process.cwd(), _path)
 
 module.exports = {
   stories: [
-    // '../markdown/**/*.stories.mdx',
+    '../markdown/**/*.stories.mdx',
     '../components/**/*.stories.@(js|jsx)'
   ],
   refs: {},

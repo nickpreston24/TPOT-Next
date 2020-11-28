@@ -1,3 +1,10 @@
-const Home = () => <h1>Hello world!</h1>;
+import Link from 'next/link'
+import { layout as fullpageLayout } from '../components/layouts/FullpageLayout'
 
-export default Home;
+const Index = () => (
+  <h1>Splashscreen</h1>
+)
+
+Index.layout = fullpageLayout
+
+export default Index
