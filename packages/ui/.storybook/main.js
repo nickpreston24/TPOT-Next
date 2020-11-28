@@ -36,6 +36,7 @@ module.exports = {
             '@molecules': './components/molecules',
             '@organisms': './components/organisms',
             '@templates': './components/templates',
+            '@layouts': './components/layouts',
             '@components': './components'
           }
         }

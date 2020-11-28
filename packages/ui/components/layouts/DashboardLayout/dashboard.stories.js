@@ -1,14 +1,14 @@
-import Dashboard from '@organisms/Dashboard'
+import DashboardLayout from '@layouts/DashboardLayout'
 import React from 'react'
 
 export default {
-    title: 'Organisms/Dashboard',
+    title: 'Layouts/Dashboard',
     parameters: {
         layout: 'fullscreen',
     },
 }
 
-const Template = args => <Dashboard {...args} />
+const Template = args => <DashboardLayout {...args} />
 
 export const Example = Template.bind({})
 Example.args = {

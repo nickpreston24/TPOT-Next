@@ -16,32 +16,53 @@ import {
   Text,
   useTheme
 } from '@chakra-ui/react'
+import React, { useEffect } from 'react'
 
-import ListItem from '@molecules/ListItem'
 import Navbar from '@organisms/Navbar'
 import PropTypes from 'prop-types'
-import React from 'react'
 import SplitBackground from '@molecules/SplitBackground'
+import { layout as fullpageLayout } from '../FullpageLayout'
 
-const Dashboard = ({ title, ...props }) => {
+/* ////////////////////////////////////////////////////// */
+/*                     MAIN COMPONENT                     */
+/* ////////////////////////////////////////////////////// */
+
+const DashboardLayout = ({ title, children }) => {
+  useEffect(() => {
+    console.log('dashboard mounted')
+    return () => {
+      console.log('dashboard unmounting')
+    }
+  }, [])
+
   return (
     <Flex
-      h='100%'
-      w='100%'
+      h='100vh'
+      w='100vw'
       pos='absolute'
       justify='center'
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
-      <Stack spacing={4} h={'100%'} w='100%' maxW={1200} px='16px'>
+      <Stack
+        h='100%'
+        w='100%'
+        // border='2px solid blue'
+        overflow='hidden'
+        maxW={1200}
+        spacing={4}
+        px={4}
+      >
         <Box minH={{ base: 130, md: 150 }}>
           <Navbar bg='transparent' />
         </Box>
         <Box flexGrow={1} pos='relative'>
           <Stack spacing={4} direction='row'>
             <Box flexGrow={1}>
-              <EditorPanel />
+              <EditorPanel>{children}</EditorPanel>
             </Box>
             <Box w={350}>
+              {/* Details
+            <Input /> */}
               <DetailsPanel />
             </Box>
           </Stack>
@@ -53,18 +74,25 @@ const Dashboard = ({ title, ...props }) => {
   )
 }
 
-Dashboard.propTypes = {
+DashboardLayout.propTypes = {
   /**
-   * The text at the top given to the Header
+   * The input name of the component
    */
-  title: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired
 }
 
-Dashboard.defaultProps = {
-  title: 'Dashboard'
+DashboardLayout.defaultProps = {
+  name: 'Name'
 }
 
-export default Dashboard
+export const layout = page =>
+  fullpageLayout(<DashboardLayout>{page}</DashboardLayout>)
+
+export default DashboardLayout
+
+/* ////////////////////////////////////////////////////// */
+/*                    OTHER COMPONENTS                    */
+/* ////////////////////////////////////////////////////// */
 
 const tagOptions = ['chinese', 'diabolical doctrine', 'salvation', 'faith']
 
@@ -183,7 +211,7 @@ const DetailsPanel = () => (
         />
       </Box>
     </Box>
-    <Stack direction='row' pt={2} spacing={0}>
+    <Stack direction='row' pt={2} spacing={2}>
       <Button colorScheme='blue' w='50%'>
         Save
       </Button>
@@ -205,7 +233,7 @@ const CardTitle = ({ title, children }) => (
   </Stack>
 )
 
-const EditorPanel = () => (
+const EditorPanel = ({ children }) => (
   <Stack
     spacing={4}
     borderRadius='lg'
@@ -228,6 +256,7 @@ const EditorPanel = () => (
         </Heading>
       </Stack>
       <Box h='2px' bg='gray.100' />
+      <Box>{children}</Box>
     </Stack>
   </Stack>
 )

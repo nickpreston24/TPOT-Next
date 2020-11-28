@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { layout as fullpageLayout } from '../components/layouts/FullpageLayout'
+import { layout as fullpageLayout } from '@layouts/FullpageLayout'
 
 const Index = () => (
   <h1>Splashscreen</h1>

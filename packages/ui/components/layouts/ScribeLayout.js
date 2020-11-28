@@ -1,4 +1,4 @@
-import { layout as dashboardLayout } from './DashboardLayout'
+import { layout as dashboardLayout } from '@layouts/DashboardLayout'
 
 const ScribeLayout = ({ children }) => <>{children}</>
 

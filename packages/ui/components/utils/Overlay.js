@@ -19,7 +19,7 @@ const Overlay = () => {
       py={4}
       top={2}
       right={2}
-      bg='gray.100'
+      bg='gray.50'
       boxShadow='md'
       borderRadius='lg'
     >

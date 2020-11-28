@@ -1,8 +1,8 @@
 import App from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react'
-import Overlay from '../components/utils/Overlay'
+import Overlay from '@components/utils/Overlay'
 import React from 'react'
-import { layout as fullpageLayout } from '../components/layouts/FullpageLayout'
+import { layout as fullpageLayout } from '@layouts/FullpageLayout'
 
 class MyApp extends App {
   render() {

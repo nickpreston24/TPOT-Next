@@ -9,7 +9,7 @@ const ColorModeToggle = () => {
   const text = useColorModeValue('Light', 'Dark')
 
   return (
-    <Box pos='fixed' right={2} top={2}>
+    <Box pos='fixed' right={2} top={2} zIndex={9999}>
       <Button size='sm' colorScheme={color} onClick={toggleColorMode}>{text}</Button>
     </Box>
   )

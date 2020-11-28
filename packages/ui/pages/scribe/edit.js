@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { layout as scribeLayout } from '../../components/layouts/ScribeLayout'
+import { layout as scribeLayout } from '@layouts/ScribeLayout'
 
 const ScribeEditorPage = () => <h1>Editor</h1>
 
