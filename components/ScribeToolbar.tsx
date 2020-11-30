@@ -102,8 +102,10 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         ...form,
                         ...result,
                     })
+                    
+                    console.log('checked out code', result.code.replace(/&nbsp;/g, ''))
 
-                    setHtml(result.code);
+                    setHtml(result.code.replace(/&nbsp;/g, ''));
                 })
         }
 

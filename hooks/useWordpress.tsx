@@ -4,6 +4,9 @@ import { Paper, toDto, createInstance } from '../models'
 import { Document } from 'firestorter'
 import { toJS } from 'mobx';
 import axios from 'axios'
+import { notify } from 'components/Toasts';
+
+let endpoint = `https://www.thepathoftruth.com/wp-json/wp/v2/pages`;
 
 const wordpressContext = createContext(null);
 
@@ -25,46 +28,90 @@ function useWordpressProvider() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    /** Get WP Credentials from Firebase */
     useEffect(() => {
+
+        /** Get WP Credentials from Firebase */
         const doc = new Document<any>(`users/super-user`)
-        doc.fetch()
-            .then((response) => {
-                let user = toJS(response.data);
-                setSuperUser(user);
-            })
+        let user = null;
+
+        const fetchSuperUser = async () => {
+            await doc.fetch()
+                .then((response) => {
+                    let data = toJS(response.data);
+                    console.log('retrieved user: ', data)
+                    user = data;
+                    console.log('user', user)
+                    setSuperUser(data);
+
+                    /** JWT Tokens */
+                    let config = {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
+                        // Sign-in exists only to fetch a token, then the token is used for Posting new content...
+                        params: {
+                            username: user['wordpress-credentials']?.email,
+                            password: user['wordpress-credentials']?.password
+                        }
+                    }
+
+                    console.log('config', config)
+
+                    let savedToken = localStorage.getItem("token");
+                    if (!savedToken) {
+                        axios(config as any)
+                            .then((response) => {
+                                console.log('JWT post response:', response);
+                                let { token } = response.data;
+                                setToken(token);
+                                localStorage.setItem("token", token);
+                            })
+                            .catch(console.error);
+                    }
+                    // Otherwise, set the stored token to state.
+                    else {
+                        console.log("Successfully retrieved JWT from localstorage " + savedToken);
+                        setToken(savedToken);
+                    }
+                })
+        }
+
+        fetchSuperUser();
     }, []);
 
     /** JWT Tokens */
-    useEffect(() => {
+    // useEffect(() => {
 
-        let savedToken = localStorage.getItem("token");
-        if (!savedToken) {
-            axios({
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
-                // Sign-in exists only to fetch a token, then the token is used for Posting new content...
-                params: {
-                    username: "Michael",
-                    password: "Mercury2020!!"
-                }
-            })
-                .then((response) => {
-                    console.log(response);
-                    let { token } = response.data;
-                    setToken(token);
-                    localStorage.setItem("token", token);
-                })
-                .catch(console.error);
-        }
-        // Otherwise, set the stored token to state.
-        else {
-            console.log("Successfully retrieved JWT from localstorage " + savedToken);
-            setToken(savedToken);
-        }
+    //     let config = {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
+    //         // Sign-in exists only to fetch a token, then the token is used for Posting new content...
+    //         params: {
+    //             username: superUser['wordpress-credentials']?.email,
+    //             password: superUser['wordpress-credentials']?.password
+    //         }
+    //     }
+    //     console.log('config', config)
 
-    }, [])
+    //     let savedToken = localStorage.getItem("token");
+    //     if (!savedToken) {
+    //         axios(config as any)
+    //             .then((response) => {
+    //                 console.log('JWT post response:', response);
+    //                 let { token } = response.data;
+    //                 setToken(token);
+    //                 localStorage.setItem("token", token);
+    //             })
+    //             .catch(console.error);
+    //     }
+    //     // Otherwise, set the stored token to state.
+    //     else {
+    //         console.log("Successfully retrieved JWT from localstorage " + savedToken);
+    //         setToken(savedToken);
+    //     }
+
+    // }, [])
 
     /** Preload data */
     useEffect(() => {
@@ -97,14 +144,24 @@ function useWordpressProvider() {
     /**
      * Publishes a Paper as a draft only
      */
-    const publish = async (paper: Paper): Promise<Paper> => {
+    const publish = async (paper: Paper, useWpapi: boolean = false): Promise<Paper> => {
+
+        console.log('currentPaper', currentPaper)
+        const config = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                // "Content-Type": "text/html",
+                Authorization: `Bearer ${token}`
+            }
+        };
 
         const { author, id } = paper;
 
         // Check for collisions:
         const existingPaper = id ? await wpapi.pages()
             .author(author)
-            .id(id) : null;
+            .id(id) : false;
 
         // If existing paper, update it:
         if (!!existingPaper) {
@@ -113,20 +170,25 @@ function useWordpressProvider() {
                 paper.slug = paper.language + "\/" + paper.slug + "_" + paper.language
             }
 
-            wpapi.pages()
-                .author(author)
-                .id(existingPaper.id)
-                .update(paper)
-                .then((response) => {
+            if (useWpapi) {
+                wpapi.pages()
+                    .author(author)
+                    .id(existingPaper.id)
+                    .update(paper)
+                    .then((response) => {
 
-                    let updatedPaper = toDto(response, Paper);
-                    paper.id = response.id; // Update the new id for UI use.
-
-                    setCurrentPaper(updatedPaper);
-                })
+                        let updatedPaper = toDto(response, Paper);
+                        paper.id = response.id; // Update the new id for UI use.
+                        console.log('updatedPaper', updatedPaper)
+                        setCurrentPaper(updatedPaper);
+                    })
+            }
+            else {
+                //TODO: implement an axios PUT (update) request
+            }
         }
         // Publish paper as a new Draft:
-        else {
+        else if (!existingPaper) {
 
             wpapi._options = {
                 ...wpapi._options,
@@ -143,14 +205,27 @@ function useWordpressProvider() {
                 date: new Date(),
             }
 
-            wpapi.pages()
-                .create(samplePaper)
-                .then((response) => {
-                    let createdPaper = toDto(response, Paper);
-                    paper.id = response.id; // Update the new id for UI use.
-                    setCurrentPaper(createdPaper)
-                })
-                .catch(console.error)
+            if (useWpapi) {
+                wpapi.pages()
+                    .create(samplePaper)
+                    .then((response) => {
+                        let createdPaper = toDto(response, Paper);
+                        // paper.id = response.id; // Update the new id for UI use.
+                        console.log('createdPaper', createdPaper)
+                        setCurrentPaper(createdPaper)
+                    })
+                    .catch(console.error)
+            }
+            else {
+                axios
+                    .post(endpoint, paper, config as any)
+                    .then((response) => {
+                        console.log(`Post successful!`, response);
+                        notify(`Post successful!`, 'success')
+                        // setResponse(JSON.stringify(response));
+                    })
+                    .catch((err) => console.error(err));
+            }
         }
 
         return currentPaper;

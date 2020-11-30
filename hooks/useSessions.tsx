@@ -79,18 +79,47 @@ function useSessionProvider() {
 
     const publishPaper = async (doc: string, session: Session) => {
 
-        let code = `<p>test</p>`
+        const strongparagraphs = /(<p[^>]+>|<p>|<\/p>)/g;
+        const allTags = /<[^>]*>/g
+        const carraiges = /<p[^>]*>&nbsp;<\/p>|&nbsp;/gm; // Gunk
+        // const correspondence = /<p[^>]*><strong[^>]*>(From:|To:|Sent:|Subject:)<\/strong>(.*)<\/p>/gmi
+        // const correspondence = /<\w+[^>]*><strong[^>]*>(From:|To:|Sent:|Subject:|CC:)<\/strong>(.*)<\/\w+>/gmi
+        const correspondence = /<(\w+[^>]*)><strong[^>]*>(From:|To:|Sent:|Subject:)<\/strong>(.*)<\/\w+>/gmi
+        const paragraphs = /<[p>|\/p]*>/gm
+
+        /**
+         * https://regex101.com/r/bIePf4/3
+         */
+
+        let code = session?.code
+            .replace(carraiges, '')
+            // .replace(paragraphs, '')
+            // .replace(correspondence, '<strong>$2<br></strong>')
+            // .replace(correspondence, '<strong>$1</strong>$2<br>')
+            .replace(correspondence, '<$1><strong>$2</strong>$3<br></$1>')
+            || `<p></p>`
+        console.log('code w/o backspace returns', code)
+        // &nbsp;
 
         // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
 
-        let paper = new Paper({ content: code, author: 9 });
+        console.log('session', session)
+
+        let paper = new Paper({
+            ...session,
+            content: code,
+            author: 9,
+            categories: [] // TODO: update the categories to be mapped to their corresponding Wordpress numbers
+        });
+
+        console.log('new paper', paper)
 
         publish(paper)
             .then(async (response) => {
-                // console.log('response :>> ', response);
+                console.log('Post response :>> ', response);
 
                 if (!response.id) {
-                    console.warn('Nothing came back from Wordpress');
+                    // console.warn('Nothing came back from Wordpress');
                     return
                 }
 
@@ -114,7 +143,7 @@ function useSessionProvider() {
                 await updateSession(doc as string, sessionUpdate)
 
             })
-            .catch((error) => { console.error(error), setError(error) })
+            .catch((error) => { console.error("error", error), setError(error) })
 
     }
 
