@@ -1,0 +1,1 @@
+export { withObservableStream } from './withObservableStream'

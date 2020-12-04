@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import NextLink from 'next/link'
 import Template from '@templates/Scribe'
 import * as ROUTES from '@constants/routes'
+// import { useBeforeUnload, usePreventWindowUnload } from '@hooks'
 
 const Page = () => {
 
-  const CheckoutLink = <NextLink href={ROUTES.CHECKOUT}><a>{'Checkout a paper'}</a></NextLink>
-  const EditorLink = <NextLink href={ROUTES.EDIT}><a>{'Start from scratch'}</a></NextLink>
+  // usePreventWindowUnload({ stuff: '' })
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", (event) => {
-      event.preventDefault();
-      return (event || window.event).returnValue = 'Are you sure you want to close?';
-    });
-  }, [])
+  // useBeforeUnload(event => {
+
+  //   alert('Are you sure you wanna leave?')
+
+  //   return true;
+  // });
 
   return (
     <Template
@@ -32,5 +32,15 @@ const Page = () => {
     />
   )
 }
+
+const CheckoutLink = (<NextLink
+  href={ROUTES.CHECKOUT}>
+  <a>{'Checkout a paper'}</a>
+</NextLink>)
+
+const EditorLink = (<NextLink
+  href={ROUTES.EDIT}>
+  <a>{'Start from scratch'}</a>
+</NextLink>)
 
 export default Page

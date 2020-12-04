@@ -13,15 +13,21 @@ export class Paper {
     author: number;
     content: string;
     slug: string;
-    categories: string[] = [];
+    language: string;
 
-    constructor(title: string, content: string) {
-        this.content = content || null;
-        this.title = title || null;
-        this.slug = (title || '')
+    // categories: string[] = [];
+
+    constructor(props) {
+
+        // let { title: string, content: string, language?: string } = props;
+
+        Object.assign(this, { ...props })
+        // this.content = content || null;
+        // this.title = title || null;
+        // this.language = language;
+        this.slug = (this.title || '')
             .replace(/\s/g, '-')
             .toLowerCase()
-        // console.log('this :>> ', this);
     }
 
     // // Sample code - TODO: expand it to actually validate slugs, author name, html, etc using regex:
@@ -33,5 +39,3 @@ export class Paper {
     //     }
     // }
 }
-
-

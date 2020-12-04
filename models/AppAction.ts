@@ -3,5 +3,5 @@ export type AppAction = {
     onClick: Function;
     activationRoute?: string;
     icon?: string;
-    toolTipText?: string;
+    toolTip?: string;
 };

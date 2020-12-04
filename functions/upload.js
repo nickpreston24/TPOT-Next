@@ -3,6 +3,7 @@ import { Collection } from 'firestorter'
 import { draftContentFromHtml, stateFromElementConfig, draftContentToHtml } from './utilities'
 import { EditorState, convertToRaw } from 'draft-js'
 import { storage } from '@services/firebase'
+import { CheckoutStatus } from '@constants'
 
 export const uploadLocalFile = async (file, userName = null) => {
 
@@ -10,7 +11,7 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     // const storageRef = await firebase.storage().ref()
     const storageRef = storage.ref();
-    
+
     // console.log('storageRef :>> ', !!storageRef);
     // console.log('file name', file.name)
 
@@ -33,7 +34,7 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     let title = (file.name)
         .replace(/\s/g, ' ') //Spaces first,
-        .replace(/[,?*#!:;_]/g, ' ') // then specials
+        .replace(/[,*#:;_]/g, ' ') // then specials
         .replace(/[\(\)\[\]\{\}]/g, '') // then then braces
         .replace('.docx', '')
         .trim()
@@ -41,6 +42,8 @@ export const uploadLocalFile = async (file, userName = null) => {
     // console.log('title :>> ', title);
 
     let slug = (title)
+        .replace(/[',?!;:]/g, '')
+        .replace(/_/, ' ')
         .replace(/\s/g, '-')
         .toLowerCase()
 
@@ -54,7 +57,7 @@ export const uploadLocalFile = async (file, userName = null) => {
     if (!html) {
         console.warn(`There is no html input to convert: ${html}`)
     } else {
-        console.info(`Converting Document: ${title}`)
+        console.info(`Converted Document: ${title}`)
     }
 
     // Get results from Draft and other utilities
@@ -65,7 +68,7 @@ export const uploadLocalFile = async (file, userName = null) => {
 
     // Build a full Document in the '/sessions' Collection
     const document = await new Collection('sessions').add({
-        status: 'not-started',
+        status: CheckoutStatus.NotStarted,
         contributors: userName,
         date_uploaded: new Date(),
         date_modified: new Date(),

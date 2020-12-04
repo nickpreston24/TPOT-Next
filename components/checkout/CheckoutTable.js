@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, ModalHeader, ModalOverlay, ModalFooter, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/core/dist/Modal'
 import Button from '@chakra-ui/core/dist/Button'
 import Divider from '@chakra-ui/core/dist/Divider'
 import Flex from '@chakra-ui/core/dist/Flex'
@@ -9,18 +8,35 @@ import Box from '@chakra-ui/core/dist/Box'
 import Stack from '@chakra-ui/core/dist/Stack'
 import Collapse from '@chakra-ui/core/dist/Collapse'
 import Tooltip from '@chakra-ui/core/dist/Tooltip'
+import IconButton from '@chakra-ui/core/dist/IconButton'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
+import List from '@chakra-ui/core/dist/List'
+import Badge from '@chakra-ui/core/dist/Badge'
+import Heading from '@chakra-ui/core/dist/Heading'
+import Tag, { TagLabel } from '@chakra-ui/core/dist/Tag'
+// import {
+//     Tag,
+//     TagLabel,
+//     TagLeftIcon,
+//     TagRightIcon,
+//     TagCloseButton,
+// } from "@chakra-ui/core/dist/Tag"
+
+import { AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogBody } from '@chakra-ui/core/dist/AlertDialog'
+
 import { observer } from 'mobx-react'
+import { toJS } from 'mobx'
 import { useRouter } from 'next/router'
-import { sessions, unlockSession } from '../../stores/sessionsAPI'
-import { toDto, Session } from '../../models'
+import { sessions, unlockSession, removeSession } from '../../stores/sessionsAPI'
 import { notify } from 'components/Toasts'
 import { useAuth } from 'hooks'
 import { ROUTES } from 'constants/routes'
 import { CheckoutStatus } from '../../constants'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
-import { StatusChip } from '../atoms'
+import { ChipStatus, Confirm } from '../atoms'
+import { isDev } from "helpers"
+import CategoryList from 'pages/account/wordpress/CategoryList'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -36,9 +52,9 @@ const MaterialTable = dynamic(() => import('material-table'),
 )
 
 const columns = [
-    { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
+    // { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
     { title: 'Document', field: 'title', type: "string", searchable: true },
-    { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <StatusChip status={row.status} /> },
+    { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <ChipStatus status={row.status} /> },
     { title: 'Last Edited', field: 'date_modified', type: "string", searchable: false },
     { title: 'Author', field: 'author', type: "string", searchable: false },
     { title: 'Uploaded', field: 'date_uploaded', type: "string", searchable: false, hidden: true },
@@ -54,13 +70,10 @@ const queryLimit = 10;
 export const CheckoutTable = observer(() => {
 
     const router = useRouter();
-    // console.log('router', router.pathname, 'base: ', router.basePath, 'asPath:', router.asPath)
-
     const { user } = useAuth();
-    // console.log('user :>> ', user);   
 
     const { isLoading, hasDocs } = sessions;
-    
+
     let tableData = []
 
     if (hasDocs) {
@@ -102,7 +115,7 @@ export const CheckoutTable = observer(() => {
             data={tableData}
             columns={columns}
             isLoading={isLoading}
-            detailPanel={row => <TableDetails user={user} row={row} />}
+            detailPanel={row => <SessionDetails user={user} row={row} />}
             options={{
                 pageSize: 7,
                 pageSizeOptions: [5, 7, 10],
@@ -152,26 +165,41 @@ export const CheckoutTable = observer(() => {
     )
 })
 
-const TableDetails = ({ row, user }) => {
 
-    const { id } = row;
-    let session = toDto(row, Session);
+const actions = {
+    DELETE: 'delete-session',
+    UNLOCK: 'unlock-session',
+}
 
-    // console.log('session :>> ', session);
 
-    let { slug, excerpt, original, date_uploaded, filename, status, lastContributor } = session;
+// TODO: Might try this in place of useState for modals/alerts.
+// const detailsStore = observable({
+//     modalAction: actions.UNLOCK
+// })
 
-    const [isOpen, setIsOpen] = useState(false)
-
-    const { isOpen: unlockIsOpen, onOpen: onUnlockModalOpen, onClose: afterUnlockModalClose } = useDisclosure(); // For the unlock modal confirmation to pop up to work, we need these.
+const SessionDetails = ({ row, user }) => {
 
     const router = useRouter()
 
-    // console.log('status :>> ', status);
-    // console.log('lastContributor :>> ', lastContributor);
+    const { id } = row;
+
+    let session = { ...row };
+
+    let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor, categories } = session;
+
+    console.log('categories', toJS(categories))
+
+    const cancelUnlockRef = React.useRef();
+    const cancelDeleteRef = React.useRef();
+
+    const [state, setState] = useState({
+        isCollapseOpen: false,
+        isUnlockOpen: false,
+        isDeleteOpen: false,
+    })
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsOpen(true), 0)
+        const timer = setTimeout(() => setState({ isCollapseOpen: true }), 0)
         return () => clearTimeout(timer)
     }, []);
 
@@ -186,10 +214,16 @@ const TableDetails = ({ row, user }) => {
     }
 
     return (
-        <Collapse isOpen={isOpen} alignContent="center" transition="all 1s ease-in-out">
+        <Collapse isOpen={state.isCollapseOpen} alignContent="center" transition="all 1s ease-in-out">
             <Flex justifyContent="center">
                 <Flex height={150} flexGrow={1} maxW={800} px={6} py={2}>
                     <Stack w="50%">
+                        {language &&
+                            <Stack direction="row">
+                                <Box minW="80px" fontWeight="bold">Language</Box>
+                                <Box>{language}</Box>
+                            </Stack>
+                        }
                         {slug &&
                             <Stack direction="row">
                                 <Box minW="80px" fontWeight="bold">Slug</Box>
@@ -202,6 +236,7 @@ const TableDetails = ({ row, user }) => {
                                 <Box overflowX="hidden" overflowY="scroll">{excerpt}</Box>
                             </Stack>
                         }
+                        <CategoryBadges categories={categories} />
                     </Stack>
                     <Divider orientation="vertical" m={4} />
                     <Stack w="50%">
@@ -220,28 +255,43 @@ const TableDetails = ({ row, user }) => {
                             </Stack>
                         }
                         <Stack flexGrow={1} justifyContent="flex-end" alignItems="flex-end" direction="row">
-                            <ConfirmUnlock
-                                action={unlock}
-                                isOpen={unlockIsOpen}
-                                onClose={afterUnlockModalClose}
-                            // confirmedAction={unlock}  // may not be used, I forget.
-                            >
-                                Unlock
-                                </ConfirmUnlock>
+
+                            {
+                                (isDev() && status !== CheckoutStatus.CheckedOut) &&
+
+                                <Tooltip
+                                    label="Delete this session"
+                                    aria-label="delete-session"
+                                    placement="bottom"
+                                    ml={3}
+                                >
+                                    <IconButton
+                                        variant="outline"
+                                        variantColor="primary"
+                                        aria-label="Delete"
+                                        icon="delete"
+                                        onClick={() => setState({ ...state, isDeleteOpen: true })}
+                                    />
+                                </Tooltip>
+                            }
+
+                            {/* TODO: Create a useReducer to resolve all options */}
+
                             <Tooltip
-                                label="Unlock a paper for editing"
+                                label="Unlock this session"
                                 placement="bottom"
-                                aria-label="unlock-paper"
+                                aria-label="unlock-session"
                             >
                                 <Button
-                                    onClick={onUnlockModalOpen}
+                                    onClick={() => setState({ ...state, isUnlockOpen: true })}
                                     isDisabled={status !== CheckoutStatus.CheckedOut}
                                     leftIcon="unlock"
                                 >
                                     Unlock
-                            </Button>
+                                </Button>
                             </Tooltip>
-                            <Tooltip label="Edit this paper" placement="bottom" aria-label="edit-paper">
+
+                            <Tooltip label="Edit" placement="bottom" aria-label="edit-session">
                                 <Button
                                     onClick={() => checkout()}
                                     leftIcon="edit"
@@ -251,45 +301,117 @@ const TableDetails = ({ row, user }) => {
                                     Start Editing
                                 </Button>
                             </Tooltip>
+
+                            {/* Unlock Modal */}
+                            <AlertDialog
+                                isOpen={state.isUnlockOpen}
+                                leastDestructiveRef={cancelUnlockRef}
+                                onClose={() => { setState({ ...state, isUnlockOpen: false }) }}
+                            >
+                                <AlertDialogOverlay />
+                                <AlertDialogContent>
+                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                        Confirm: Unlock this session?
+                                    </AlertDialogHeader>
+
+                                    <AlertDialogBody>
+                                        Unlocking this session may cause unwanted side effects. Proceed?
+                                    </AlertDialogBody>
+
+                                    <AlertDialogFooter>
+                                        <Button
+                                            ref={cancelUnlockRef}
+                                            onClick={() => setState({ ...state, isUnlockOpen: false })}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button variantColor="red" onClick={() => {
+                                            unlockSession(id)
+                                                .then(() => {
+                                                    notify('Successfully Unlocked', 'success')
+                                                    setState({ ...state, isUnlockOpen: false })
+                                                })
+                                                .catch(console.error)
+                                        }} ml={3}>
+                                            Unlock
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
+                            {/* Delete Modal */}
+
+                            <AlertDialog
+                                isOpen={state.isDeleteOpen}
+                                leastDestructiveRef={cancelDeleteRef}
+                                onClose={() => { setState({ isDeleteOpen: false }) }}
+                            >
+                                <AlertDialogOverlay />
+                                <AlertDialogContent>
+                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                        Confirm: Delete this session?
+                                    </AlertDialogHeader>
+
+                                    <AlertDialogBody>
+                                        Are you sure? You can't undo this action afterwards.
+                                    </AlertDialogBody>
+
+                                    <AlertDialogFooter>
+                                        <Button
+                                            ref={cancelDeleteRef}
+                                            onClick={() => setState({ ...state, isDeleteOpen: false })}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button variantColor="red" onClick={() => {
+                                            removeSession(id)
+                                                .then(() => {
+                                                    notify('Successfully deleted a session', 'success')
+                                                    setState({ ...state, isDeleteOpen: false })
+                                                })
+                                                .catch(console.error)
+                                        }} ml={3}>
+                                            Delete
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
                         </Stack>
                     </Stack>
                 </Flex>
             </Flex>
-        </Collapse >
+        </Collapse>
     )
 }
 
-const ConfirmUnlock/*: FC<any>*/ = ({ isOpen, onClose, action }) => {
+const CategoryBadges = ({ categories = [] }) => {
 
     return (
-        <>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Confirm: Unlock this paper?</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        Unlocking this paper for editing may cause unwanted issues like duplicated drafts.
-                        Proceed if you understand the risk.
-                    </ModalBody>
+        <Stack
+            justify='space-between'
+            isInline
+            flexWrap='wrap'
+        >
+            <Box minW="80px" fontWeight="bold">Categories</Box>
+            {categories.map((name, index) => <Tag
+                size='sm'
+                key={index}
+                // width='100%'
+                variant="outline"
+                colorScheme="blue" >
+                <TagLabel>{name}</TagLabel>
+            </Tag>)}
+        </Stack>
+    )
 
-                    <ModalFooter>
-                        <Stack>
-                            <Button variantColor="green" mr={30} onClick={() => {
-                                action()
-                                onClose()
-                            }}>
-                                I understand and wish to continue.
-                        </Button>
-                            <Button variantColor="blue" onClick={onClose}>
-                                On second thought...
-                        </Button>
-                        </Stack>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </>
-    );
+    {/* <Badge
+        // height="100%"
+        color="teal"
+        // bg="transparent"
+        borderColor="teal"
+        key={index}
+    >{name}</Badge> */}
 }
 
 export default CheckoutTable;

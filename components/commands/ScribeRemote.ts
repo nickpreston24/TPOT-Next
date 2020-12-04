@@ -31,7 +31,7 @@ export class ScribeRemote {
 
 const scribeRemote = new ScribeRemote(
     new CheckoutCommand(scribeStore, ROUTES.CHECKOUT)
-    , new FreshEditCommand(scribeStore, ROUTES.EDIT)
+    , new FreshEditCommand(scribeStore, ROUTES.NEW)
 )
 
 export default ScribeRemote;

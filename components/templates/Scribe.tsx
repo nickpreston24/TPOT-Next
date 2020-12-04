@@ -8,7 +8,7 @@ import Text from '@chakra-ui/core/dist/Text'
 import Layout from '../layout/Dashboard'
 import SplashScreen from '../svg/SittingAtComputer'
 
-type ScribeTemplateProps = {
+type TemplateProps = {
     title?: string,
     subtitle?: string,
     children: ReactNode,
@@ -16,7 +16,7 @@ type ScribeTemplateProps = {
     secondaryButtonProps?: Partial<ButtonProps>
 }
 
-const Template: FC<ScribeTemplateProps> = ({
+const Template: FC<TemplateProps> = ({
     title = 'Enter a Title',
     subtitle = 'Enter a Subtitle',
     children,

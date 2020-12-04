@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, FC } from 'react';
+import React, { useState, useRef, useEffect, FC } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -16,35 +16,22 @@ import Input from '@chakra-ui/core/dist/Input'
 import ButtonGroup from '@chakra-ui/core/dist/ButtonGroup'
 import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
-
-import UploadButton from 'components/buttons/UploadButton';
-import { notify } from './Toasts';
-import { useWordpress, useAuth } from 'hooks';
-import { Paper, Session } from 'models';
-import { checkoutSession, updateSession, saveSession } from 'stores/sessionsAPI';
-import Router, { useRouter } from 'next/router';
-import React from 'react';
-import { isDev } from 'helpers';
-
-import { scribeStore } from '../stores'
-import { useObserver } from 'mobx-react';
+import Select from '@chakra-ui/core/dist/Select';
+import Tooltip from '@chakra-ui/core/dist/Tooltip';
+import { usePrevious, useWordpress } from 'hooks';
+import { checkoutSession } from 'stores/sessionsAPI';
+import { useRouter } from 'next/router';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
-import { ROUTES } from 'constants/routes';
-
-const UploadMethod = {
-    Drive: 'Drive',
-    Google: 'Google',
-    Paste: 'Paste'
-}
-
-const messages = {
-    WarnNoWPResponse: 'No paper could be created as there was no response from Wordpress',
-    Success: "Paper uploaded successfully!",
-}
+import { LanguageOptions } from '../constants';
+import { UploadMode } from '../models/UploadMode';
+import { useSessions } from 'hooks/useSessions';
+import { Session } from 'models';
+import { notify } from './Toasts';
+import { MultiSelect } from './molecules/list';
 
 type ScribeToolbarProps = {
-    // scribe: ScribeStore
-    getHtml: Function
+    getHtml: Function,
+    setHtml: Function,
 }
 
 export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
@@ -53,200 +40,162 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const router = useRouter();
     let doc = router.query.doc;
 
-    isDev() && console.log('doc :>> ', doc);
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
-    let { dirty, currentStatus, lastStatus, lastSession, setStatus } = scribeStore;
+    // CK Editor functions:
+    const { getHtml, setHtml } = props;
 
     // Session API functions:
-    const { getHtml } = props;
+    const {
+        updatePaper,
+        savePaper,
+        session,
+        publishPaper,
+        setSession,
+    } = useSessions();
 
-    /* Wordpress support: */
-    const { user: authUser } = useAuth();
-    const { publish } = useWordpress();
+    const { categories, loading } = useWordpress();
 
+    /** 
+     * Form
+     */
+    const [form, updateForm] = useState<any>({
+        title: "",
+        // categoriesText: "",
+        categories: [],
+        language: null,
+        mode: UploadMode.Paste,
+        doc: null,
+    });
 
-    /** Scribe States: **/
-    // const [mode, setMode] = useState(null);
-    // const [paper, setPaper] = useState(createInstance(Paper))
-    // const [session, setSession] = useState(createInstance(Session))
+    // DO NOT DELETE
+    const previousForm = usePrevious(form);
 
-    /** Modal States: **/
-    const [uploadOption] = useState(UploadMethod.Drive);
-    const [title, setTitle] = useState(lastSession?.title || '')
-    const [categoriesText, setCategoriesText] = useState('');
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    /**
+     * Updates the appropriate state prop by its field name from the 
+     * form where 'name' is a prop on the target component
+     */
+    const updateField = (event) => {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+        updateForm({ ...form, [name]: value });
+    };
 
     /** Modal Refs */
     const initialRef = useRef();
     const finalRef = useRef();
 
-
+    /**
+     * Checkout on load if doc exists
+     */
     useEffect(() => {
 
-        isDev() && console.log('checking out doc :>> ', doc);
-
-        // Setup the Reset of status on route change /edit/ => /checkout/:
-        Router.events.on('routeChangeComplete', (url) => {
-            if (url === ROUTES.CHECKOUT || url === ROUTES.EDIT)
-                updateSession(doc as string, { status: CheckoutStatus.InProgress })
-        })
-
-        if (!!doc) {
+        // Checking out Session:
+        if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
             checkoutSession(doc as string)
                 .then((result) => {
-                    setTitle(result.title)
-                    isDev() && console.log('checked out session :>> ', result);
-                    !!result.categories && setCategoriesText(result.categories?.join(", ") || '')
+                    
+                    setSession(result)
 
-                    setStatus(CheckoutStatus.CheckedOut)
+                    updateForm({
+                        ...form,
+                        ...result,
+                    })
+                    
+                    console.log('checked out code', result.code.replace(/&nbsp;/g, ''))
+
+                    setHtml(result.code.replace(/&nbsp;/g, ''));
                 })
         }
-        if (!doc) {
-            setStatus(CheckoutStatus.NotStarted)
+
+        // New Session:
+        if (!doc || !session.status) {
+            updateForm(previousForm)
         }
+
     }, []);
 
-
-    const handleTitleChange = async (event) => {
-        setTitle(event.target.value);
-    }
-
-    const handleCategoryChange = async (event) => {
-        setCategoriesText(event.target.value);
-    }
-
-    const onSave = async () => {
-        onOpen();
-    }
-
-    const onPublish = async () => {
-        // scribeStore.currentStatus = CheckoutStatus.FirstDraft
-        // scribeStore.lastStatus = CheckoutStatus.CheckedOut
-        setStatus(CheckoutStatus.FirstDraft)
-        onOpen()
-    }
-
-    const onSubmit = async () => {
-
-        onClose();
-
+    const onSubmit = (e) => {
+        e.preventDefault();
         let html = getHtml();
 
-        isDev() && console.log('currentStatus :>> ', scribeStore.currentStatus);
+        let nextSession = new Session({
+            docId: doc as string,
+            title: form.title,
+            code: html,
+            language: form.language,
+            categories: form.categories,
+        });
 
-        // Update an existing paper:
-        if (currentStatus === CheckoutStatus.CheckedOut) {
-            // WARNING: Firebase hates custom objects, so just use plain old JSON here:
-            let sessionUpdate = Session
-                .create({ title, categories: categoriesText.trim().split(','), code: html })
-                .toJSON()
-
-            isDev() && console.log('nextSession :>> ', sessionUpdate);
-            sessionUpdate.date_modified = new Date();
-
-            await updateSession(doc as string, sessionUpdate)
-
-            notify("Updated session", "success")
-
-            scribeStore.lastSession = sessionUpdate;
-            scribeStore.dirty = false;
-            return;
+        switch (mode) {
+            case 'Save':
+                savePaper(nextSession)
+                    .then(() => { notify("Saved session", "success") })
+                break;
+            case 'Update':
+                updatePaper(doc as string, nextSession)
+                    .then(() => { notify("Updated session", "success"); })
+                break;
+            case 'Publish':
+                publishPaper(doc as string, nextSession)
+                break;
+            default:
+                break;
         }
 
-        // Save a new paper:
-        if (currentStatus == CheckoutStatus.NotStarted) {
+        onClose();
+    }
 
-            let nextSession = Session
-                .create({ title, categories: categoriesText.trim().split(','), code: html })
-                .toJSON()
+    const buttons = [
+        { name: "Save", label: "Save your work as a Session", operation: 'Save' },
+        { name: "Publish", label: "Publish your work to Wordpress", operation: 'Publish' },
+    ]
 
-            isDev() && console.log('nextSession :>> ', nextSession);
-            nextSession.date_modified = new Date();
-            await saveSession(nextSession)
-            setStatus(CheckoutStatus.CheckedOut)
-            dirty = false;
+    const [mode, setMode] = useState('Save');
+    const [header, setHeader] = useState('My Header')
 
-            notify("Saved session", "success")
+    const handleOnClick = operation => {
 
-            // scribeStore.lastSession = nextSession;
+        switch (operation) {
+            case 'Save':
+                setHeader('Save Paper')
 
+                if (!!doc && session.status === CheckoutStatus.CheckedOut)
+                    setMode('Update');
+                else setMode(operation)
+                break;
 
-            return;
+            case 'Publish':
+                setHeader('Publish Paper')
+                setMode('Publish')
+
+                break;
+            default:
+                break;
         }
 
-        // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
-        if (lastStatus === CheckoutStatus.CheckedOut && currentStatus === CheckoutStatus.FirstDraft) {
-            publish(new Paper(title, html))
-                .then(async (response) => {
-                    isDev() && console.log('response :>> ', response);
-
-                    if (!response.id) {
-                        console.warn(messages.WarnNoWPResponse);
-                        notify(messages.WarnNoWPResponse, 'warn');
-                        return
-                    }
-
-                    let sessionUpdate = {
-                        authorId: response.author || null,
-                        paperId: response.id,
-
-                        date_modified: response.modified,
-                        status: 'Published', //response.status,
-                        contributors: [authUser.email], //TODO: push and filter dups
-                        code: response.content ? response.content.rendered : '',
-                        original: '',
-                        excerpt: '',
-                        title,
-                    };
-
-                    // FYI:  This is a one-way street and it assumes we're not going to perform update()s,
-                    // at least for now.  Only way we can do proper updates is if we prevent users from committing the same draft.
-                    // We have Sessions as a stopgap (i.e. the checked-out state flag).
-
-                    // console.log('published session :>> ', publishedSession);
-                    await updateSession(doc as string, sessionUpdate)
-
-                    scribeStore.lastSession = Session.create(sessionUpdate);
-
-                    if (!document) {
-                        notify(`Failed to create Session for: ${title}`, 'warn')
-                        return;
-                    }
-                    else {
-                        notify(`New Session created for: ${title}\n`, 'success')
-                    }
-
-                    return document;
-                })
-            return
-        }
+        onOpen();
     }
 
     return (
         <Flex>
             <ButtonGroup spacing={8}>
-                {!isDev() && <Button
-                    onClick={onPublish}
-                >
-                    Publish
-                </Button>}
-
-                {(uploadOption === 'Drive' && isDev()) &&
-                    <UploadButton>Load a Document</UploadButton>}
-
-                <Button
-                    ml={8}
-                    onClick={onSave}
-                // isDisabled={!dirty} // FIXME: Can't update dirty @observable properly in ckeditor (it's late)
-                // leftIcon="save"  // FIXME: For some reason, I can't get this working.
-                >
-                    Save
-                </Button>
+                {buttons.map((button, index) => {
+                    return (
+                        <Tooltip
+                            key={index}
+                            aria-label={`${button.name}-tooltip`}
+                            label={button.label}
+                        >
+                            <Button
+                                onClick={() => handleOnClick(button.operation)}
+                            >
+                                {button.name}
+                            </Button>
+                        </Tooltip>)
+                })}
             </ButtonGroup>
-
-            {isDev() && <ScribeDevStatusBar />}
-
-            {/* Publish  */}
 
             <Modal
                 initialFocusRef={initialRef}
@@ -256,26 +205,47 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>{currentStatus === CheckoutStatus.CheckedOut ? "Publish to Wordpress" : "Save Paper"}</ModalHeader>
+                    <ModalHeader>{header}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
+
                         <FormControl>
                             <FormLabel>Title</FormLabel>
                             <Input
-                                value={title}
-                                onChange={handleTitleChange}
-                                ref={initialRef}
-                                placeholder="paper-name-here"
+                                name="title"
+                                value={form.title}
+                                isDisabled={!!session?.status && session.status !== CheckoutStatus.NotStarted}
+                                onChange={updateField}
+                                placeholder="paper name here" />
+                        </FormControl>
+
+                        <FormControl>
+
+                            <FormLabel>Categories</FormLabel>
+
+                            <MultiSelect
+                                selectedOptions={form.categories}
+                                options={categories.map(c => c.name)}
+                                mode="dropdown"
+                                onChange={(set) => {
+                                    updateForm({
+                                        ...form,
+                                        categories: set
+                                    })
+                                }}
                             />
                         </FormControl>
 
                         <FormControl mt={4}>
-                            <FormLabel>Categories</FormLabel>
-                            <Input
-                                value={categoriesText}
-                                onChange={handleCategoryChange}
-                                placeholder="e.g 'Chinese', 'Translations'" />
+                            <FormLabel>Language</FormLabel>
+                            <LanguageDropdown
+                                name="language"
+                                value={form.language}
+                                onChange={updateField}
+                                placeholder="Choose a language"
+                            />
                         </FormControl>
+
                     </ModalBody>
 
                     <ModalFooter>
@@ -293,54 +263,27 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     )
 };
 
-// type ScribeDevStatusBarProps = {
-//     scribe: ScribeStore
-// }
+type LanguageDropdownProps = {
+    name: string,
+    placeholder?: string,
+    onChange: (event: any) => void,
+    value: string | number | readonly string[],
+}
 
-/** Shows the current status of Scribe in this toolbar
- * Meant only for DEBUG/Development mode.
-*/
-const ScribeDevStatusBar: FC = () => {
-    // const { dirty, currentStatus, lastStatus, lastSession } = scribe;
-    return useObserver(() =>
-        <Flex style={{ border: "1px #aaa solid" }} mb={2}>
-            <h1 style={{ marginRight: '10px' }}>{scribeStore.lastStatus || ''} &gt; {scribeStore.currentStatus}</h1>
-            {/* <p>Dirty? {dirty ? "Yes" : "No"}</p> */}
-            {/* {!!lastSession && <p>Id: {lastSession}</p>} */}
-        </Flex>
+const LanguageDropdown: FC<LanguageDropdownProps> = (props) => {
+
+    const { onChange, name, placeholder, value } = props;
+
+    return (
+        <Select
+            onChange={onChange}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+        >
+            {LanguageOptions.map((name, key) => <option key={key}>{name}</option>)}
+        </Select>
     )
 }
 
 export default ScribeToolbar;
-
-
- // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
-
-// console.log('wpUsers :>> ', wpUsers, authUser);
-
-// let authorId = session.authorId;
-
-// if (!!authorId) {
-
-//     getUser(authorId)
-//         .then((wpUser) => {
-//             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
-//             // console.log('current user :>> ', records);
-//             setUser(toDto(wpUser, WordpressUser))
-//         })
-
-//      getPages(authorId)
-//          .then((records) => {
-//          // console.log('records :>> ', records);
-//          let collection = mapToDto(records, Paper);
-//          setPapers(collection);
-//          setLoading(false)
-//      })
-
-//      getAuthorSessions(authorId)
-//         .then((sessions) => {
-//             console.log('session records', sessions)
-//         })
-// }
-
-// console.log('authorId', authorId)

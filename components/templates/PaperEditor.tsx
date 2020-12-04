@@ -4,9 +4,9 @@ import PageSpinner from '../../components/layout/PageSpinner'
 import dynamic from 'next/dynamic'
 
 
-const MyEditor = dynamic(() => import('../../packages/tpot-scribe-editor/ScribeEditor'), {
+const ScribeEditor = dynamic(() => import('../../packages/tpot-scribe-editor/ScribeEditor'), {
     ssr: false, loading: PageSpinner
-  })
+})
 
 type PaperEditorTemplateProps = {
     editorProps?: Partial<any>
@@ -20,7 +20,7 @@ const Template: FC<PaperEditorTemplateProps> = ({
 
     return (
         <Layout>
-            <MyEditor doc={currentDoc} />
+            <ScribeEditor doc={currentDoc} />
         </Layout>
     )
 }

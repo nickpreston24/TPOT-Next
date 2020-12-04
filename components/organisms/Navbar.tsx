@@ -28,14 +28,6 @@ const Navbar = () => {
             toolTip: 'Scribe',
             onClickFn: () => appRemote.GotoScribe()
         },
-        {
-            // Settings should always be defined last
-            icon: 'settings',
-            title: 'Open Settings',
-            toolTip: "Edit your Settings",
-            style: disableMe(!isDev()),
-            onClickFn: () => appRemote.OpenSettings()
-        },
     ]
 
     // These options can change on a per-app or per-page basis. To be controlled 
@@ -55,7 +47,7 @@ const Navbar = () => {
         },
     ]
 
-    let appButtons = appItems.slice(0, -1)
+    let appButtons = appItems
     let settingsProps = appItems.slice(-1)
 
     isDev() && console.log('settingsProps', settingsProps)
@@ -79,7 +71,9 @@ const Navbar = () => {
                 )}
             </NavbarGroup>
             <Flex alignItems="flex-end" flexGrow={1} pb={4}>
-                <SettingsButton disabled={isDev()} {...settingsProps} />
+                <SettingsButton
+                    onClickFn={() => appRemote.OpenSettings()}
+                    {...settingsProps} />
             </Flex>
         </Stack>
     )

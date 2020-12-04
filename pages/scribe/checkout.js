@@ -1,13 +1,10 @@
-import React from 'react'
-import { ProvideSessions } from '@hooks'
-import Layout from '../../components/templates/Checkout.tsx' // Remove Checkout.js later to simplify this import
+import React, { useEffect } from 'react'
+import Layout from '../../components/templates/Checkout.tsx' 
+import { isDev } from '@helpers'
 
 const Checkout = () => {
-  return (
-    <ProvideSessions>
-      <Layout />
-    </ProvideSessions>
-  )
+
+  return (<Layout />)
 }
 
 export default Checkout
