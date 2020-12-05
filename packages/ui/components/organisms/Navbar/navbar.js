@@ -14,32 +14,34 @@ import {
   MenuList,
   MenuOptionGroup,
   Stack,
-  Text,
-} from "@chakra-ui/react";
+  Text
+} from '@chakra-ui/react'
 
-import PropTypes from "prop-types";
-import React from "react";
-import SplitBackground from "@molecules/SplitBackground";
+import PropTypes from 'prop-types'
+import React from 'react'
+import SplitBackground from '@molecules/SplitBackground'
+import { observer } from 'mobx-react-lite'
+import { useDashboardLayout } from '@hooks'
 
-const Navbar = ({ title, bg = "#373740", ...props }) => {
+const Navbar = ({ title, bg = '#373740', ...props }) => {
   return (
-    <Stack spacing={0} userSelect="none" bg={bg}>
+    <Stack spacing={0} userSelect='none' bg={bg}>
       <Flex mt={2} py={4}>
         <Menu>
           <MenuButton as={AppSelectButton} />
           <MenuList>
             <MenuOptionGroup
               // defaultValue="scribe"
-              title="Switch App"
+              title='Switch App'
               // type="radio"
             >
-              <MenuItem as="a" value="scribe">
-                <Icon name="scribe" mr="12px" />
+              <MenuItem as='a' value='scribe'>
+                <Icon name='scribe' mr='12px' />
                 <span>Scribe</span>
               </MenuItem>
               <MenuDivider />
-              <MenuItem value="settings">
-                <Icon name="settings" mr="12px" />
+              <MenuItem value='settings'>
+                <Icon name='settings' mr='12px' />
                 <span>Settings</span>
               </MenuItem>
             </MenuOptionGroup>
@@ -47,55 +49,55 @@ const Navbar = ({ title, bg = "#373740", ...props }) => {
         </Menu>
         {/* <Box bg="red.500">test</Box> */}
         <Box flexGrow={1} />
-        <Stack direction="row" align="center" spacing={4}>
+        <Stack direction='row' align='center' spacing={4}>
           <Box
-            pos="relative"
-            h="32px"
-            w="32px"
-            display="flex"
-            cursor="pointer"
-            justifyContent="center"
-            alignItems="center"
-            textAlign="center"
-            transition="150ms all ease-in"
-            bg="#50505f"
-            _hover={{ bg: "#2d2d38", color: "dodgerblue" }}
-            borderRadius="full"
-            boxShadow="sm"
-            color="#9699a0"
+            pos='relative'
+            h='32px'
+            w='32px'
+            display='flex'
+            cursor='pointer'
+            justifyContent='center'
+            alignItems='center'
+            textAlign='center'
+            transition='150ms all ease-in'
+            bg='#50505f'
+            _hover={{ bg: '#2d2d38', color: 'dodgerblue' }}
+            borderRadius='full'
+            boxShadow='sm'
+            color='#9699a0'
           >
-            <Icon name="chat" fontSize="18px" />
+            <Icon name='chat' fontSize='18px' />
             <Box
-              pos="absolute"
+              pos='absolute'
               zIndex={1}
               right={-2}
               top={-2}
-              borderRadius="full"
-              w="10px"
-              h="10px"
-              bg="red.400"
+              borderRadius='full'
+              w='10px'
+              h='10px'
+              bg='red.400'
             />
           </Box>
           <Menu>
             <MenuButton as={AccountButton} />
-            <MenuList placement="bottom-end">
-              <MenuOptionGroup defaultChecked="account" title="Welcome Victor!">
-                <MenuItem as="a" value="account">
-                  <Icon name="link" mr="12px" />
+            <MenuList placement='bottom-end'>
+              <MenuOptionGroup defaultChecked='account' title='Welcome Victor!'>
+                <MenuItem as='a' value='account'>
+                  <Icon name='link' mr='12px' />
                   <span>Account</span>
                 </MenuItem>
                 <MenuItem
-                  as="a"
-                  value="help"
-                  target="_blank"
-                  href="https://trello.com/b/9wUkSPXF/the-path-of-truth"
+                  as='a'
+                  value='help'
+                  target='_blank'
+                  href='https://trello.com/b/9wUkSPXF/the-path-of-truth'
                 >
-                  <Icon name="info-outline" mr="12px" />
+                  <Icon name='info-outline' mr='12px' />
                   <span>Get Help</span>
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem as="a" value="signout">
-                  <Icon name="external-link" mr="12px" />
+                <MenuItem as='a' value='signout'>
+                  <Icon name='external-link' mr='12px' />
                   <span>Sign Out</span>
                 </MenuItem>
               </MenuOptionGroup>
@@ -104,110 +106,121 @@ const Navbar = ({ title, bg = "#373740", ...props }) => {
         </Stack>
       </Flex>
       <Box
-        h="2px"
+        h='2px'
         style={{
           background:
-            "linear-gradient(to right, #5c5c6900 0%,#5c5c69 10%,#5c5c69 90%,#5c5c6900 100%)",
+            'linear-gradient(to right, #5c5c6900 0%,#5c5c69 10%,#5c5c69 90%,#5c5c6900 100%)'
         }}
       />
-      <Stack direction="row" py={3}>
+      <Stack direction='row' py={3}>
         <Stack
-          cursor="pointer"
-          direction="row"
-          borderRadius="lg"
-          bg="#2d2d38"
-          p="4px"
+          cursor='pointer'
+          direction='row'
+          borderRadius='lg'
+          bg='#2d2d38'
+          p='4px'
           px={3}
-          color="#36ec77"
+          color='#36ec77'
         >
-          <Icon name="add" size="24px" pr={2} />
-          <Box color="white">Create</Box>
+          <Icon name='add' size='24px' pr={2} />
+          <Box color='white'>Create</Box>
         </Stack>
         <Stack
-          cursor="pointer"
-          direction="row"
-          borderRadius="lg"
-          p="4px"
+          cursor='pointer'
+          direction='row'
+          borderRadius='lg'
+          p='4px'
           px={3}
-          color="#9699a0"
+          color='#9699a0'
         >
-          <Icon name="edit" size="24px" pr={2} />
+          <Icon name='edit' size='24px' pr={2} />
           <Box>Edit</Box>
         </Stack>
         <Stack
-          cursor="pointer"
-          direction="row"
-          borderRadius="lg"
-          p="4px"
+          cursor='pointer'
+          direction='row'
+          borderRadius='lg'
+          p='4px'
           px={3}
-          color="#9699a0"
+          color='#9699a0'
         >
-          <Icon name="download" size="24px" pr={2} />
+          <Icon name='download' size='24px' pr={2} />
           <Box>Checkout</Box>
         </Stack>
       </Stack>
     </Stack>
-  );
-};
+  )
+}
 
 Navbar.propTypes = {
   /**
    * The text at the top given to the Header
    */
-  title: PropTypes.string.isRequired,
-};
+  title: PropTypes.string.isRequired
+}
 
 Navbar.defaultProps = {
-  title: "Dashboard",
-};
+  title: 'Dashboard'
+}
 
-export default Navbar;
+export default Navbar
 
 const AppSelectButton = React.forwardRef(({ onClick }, ref) => (
   <Box
     onClick={onClick}
-    alignItems="center"
-    cursor="pointer"
-    direction="row"
-    align="center"
-    display="flex"
-    role="group"
+    alignItems='center'
+    cursor='pointer'
+    direction='row'
+    align='center'
+    display='flex'
+    role='group'
   >
-    <Icon name="toolbox" fontSize={40} mr={4} />
-    <Heading fontSize={22} fontWeight="normal" color="white">
-      <Box d={{ base: "none", md: "block" }}>TPOT Toolbox</Box>
-      <Box d={{ base: "none", sm: "block", md: "none"}}>TPOT</Box>
+    <Icon name='toolbox' fontSize={40} mr={4} />
+    <Heading fontSize={22} fontWeight='normal' color='white'>
+      <AppTitleText />
+      <Box d={{ base: 'none', sm: 'block', md: 'none' }}>TPOT</Box>
     </Heading>
-    <Icon d={{ base: "none", md: "block" }} name="chevron-right" ml={2} fontSize="2xl" color="white" />
+    <Icon
+      d={{ base: 'none', md: 'block' }}
+      name='chevron-right'
+      ml={2}
+      fontSize='2xl'
+      color='white'
+    />
     <Box
       ref={ref}
-      transition="150ms all ease-in"
-      _groupHover={{ bg: "#2d2d38" }}
-      borderRadius="lg"
-      bg="red"
-      p="6px"
+      transition='150ms all ease-in'
+      _groupHover={{ bg: '#2d2d38' }}
+      borderRadius='lg'
+      bg='red'
+      p='6px'
       pl={3}
     >
-      <Heading fontSize={22} fontWeight="normal" color="white">
+      <Heading fontSize={22} fontWeight='normal' color='white'>
         Scribe
       </Heading>
-      <Icon name="chevron-down" ml={2} fontSize="2xl" color="white" />
+      <Icon name='chevron-down' ml={2} fontSize='2xl' color='white' />
     </Box>
   </Box>
-));
+))
+
+const AppTitleText = observer(() => {
+  const model = useDashboardLayout()
+  return <Box d={{ base: 'none', md: 'block' }}>{`TPOT ${model.title}`}</Box>
+})
 
 const AccountButton = React.forwardRef(({ onClick }, ref) => (
   <Stack
     ref={ref}
     onClick={onClick}
-    cursor="pointer"
-    direction="row"
-    align="center"
-    color="white"
+    cursor='pointer'
+    direction='row'
+    align='center'
+    color='white'
   >
     {/* <Text display={{ base: "none", sm: "block" }} pr={2}>
       Victor H
     </Text> */}
-    <Avatar pointerEvents="none" size="sm" src="https://tinyurl.com/y3kbtvll" />
+    <Avatar pointerEvents='none' size='sm' src='https://tinyurl.com/y3kbtvll' />
   </Stack>
-));
+))

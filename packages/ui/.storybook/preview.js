@@ -1,4 +1,11 @@
-import { Box, Button, ChakraProvider, useColorMode, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  ChakraProvider,
+  useColorMode,
+  useColorModeValue
+} from '@chakra-ui/react'
+import { StoreProvider, store } from '@models/RootModel'
 
 import React from 'react'
 import theme from '@theme'
@@ -10,7 +17,9 @@ const ColorModeToggle = () => {
 
   return (
     <Box pos='fixed' right={2} top={2} zIndex={9999}>
-      <Button size='sm' colorScheme={color} onClick={toggleColorMode}>{text}</Button>
+      <Button size='sm' colorScheme={color} onClick={toggleColorMode}>
+        {text}
+      </Button>
     </Box>
   )
 }
@@ -22,9 +31,11 @@ export const parameters = {
 
 export const decorators = [
   StoryFn => (
-    <ChakraProvider theme={theme}>
-      <ColorModeToggle />
-      <StoryFn />
-    </ChakraProvider>
+    <StoreProvider value={store}>
+      <ChakraProvider theme={theme}>
+        <ColorModeToggle />
+        <StoryFn />
+      </ChakraProvider>
+    </StoreProvider>
   )
 ]

@@ -1,3 +1,5 @@
+import { StoreProvider, store } from '@models/RootModel'
+
 import App from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react'
 import Overlay from '@components/utils/Overlay'
@@ -8,18 +10,19 @@ class MyApp extends App {
   render() {
     const { Component, pageProps, router } = this.props
 
-    const layout =
-      Component.layout || fullpageLayout
-      
+    const layout = Component.layout || fullpageLayout
+
     const Page = <Component {...pageProps} />
-    
+
     const App = layout(Page)
 
     return (
-      <ChakraProvider>
-        {App}
-        <Overlay />
-      </ChakraProvider>
+      <StoreProvider value={store}>
+        <ChakraProvider>
+          {App}
+          <Overlay />
+        </ChakraProvider>
+      </StoreProvider>
     )
   }
 }

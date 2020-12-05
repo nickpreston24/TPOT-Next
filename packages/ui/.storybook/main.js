@@ -37,7 +37,9 @@ module.exports = {
             '@organisms': './components/organisms',
             '@templates': './components/templates',
             '@layouts': './components/layouts',
-            '@components': './components'
+            '@components': './components',
+            '@models': './models',
+            '@hooks': './hooks'
           }
         }
       ]

@@ -2,19 +2,16 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
   FormLabel,
   Heading,
   Icon,
-  IconButton,
   Input,
   Select,
   Stack,
   Tag,
   TagCloseButton,
   TagLabel,
-  Text,
-  useTheme
+  Text
 } from '@chakra-ui/react'
 import React, { useEffect } from 'react'
 
@@ -22,6 +19,8 @@ import Navbar from '@organisms/Navbar'
 import PropTypes from 'prop-types'
 import SplitBackground from '@molecules/SplitBackground'
 import { layout as fullpageLayout } from '../FullpageLayout'
+import { observer } from 'mobx-react-lite'
+import { useDetailsModel } from '@hooks'
 
 /* ////////////////////////////////////////////////////// */
 /*                     MAIN COMPONENT                     */
@@ -117,110 +116,120 @@ const DetailsToggle = () => (
   </Flex>
 )
 
-const DetailsPanel = () => (
-  <Stack
-    spacing={4}
-    borderRadius='lg'
-    boxShadow='md'
-    d={{ base: 'none', lg: 'block' }}
-    boxSizing='border-box'
-    p={6}
-    h='100%'
-    bg='white'
-    color='gray.600'
-  >
-    <CardTitle />
-    <Stack direction='row'>
-      <Box width={1 / 2}>
-        <FormLabel htmlFor='type'>Type</FormLabel>
-        <Select
-          id='type'
-          value='translation'
-          onChange={() => null}
-          variant='filled'
-        >
-          <option value='letter'>Letter</option>
-          <option value='translation'>Translation</option>
-          <option value='biography'>Biography</option>
-          <option value='page'>Generic</option>
-        </Select>
+const DetailsPanel = observer(() => {
+  const model = useDetailsModel()
+
+  return (
+    <Stack
+      spacing={4}
+      borderRadius='lg'
+      boxShadow='md'
+      d={{ base: 'none', lg: 'block' }}
+      boxSizing='border-box'
+      p={6}
+      h='100%'
+      bg='white'
+      color='gray.600'
+    >
+      <CardTitle />
+      <Stack direction='row'>
+        <Box width={1 / 2}>
+          <FormLabel htmlFor='type'>Type</FormLabel>
+          <Select
+            id='type'
+            value='translation'
+            onChange={() => null}
+            variant='filled'
+          >
+            <option value='letter'>Letter</option>
+            <option value='translation'>Translation</option>
+            <option value='biography'>Biography</option>
+            <option value='page'>Generic</option>
+          </Select>
+        </Box>
+        <Box width={1 / 2}>
+          <FormLabel htmlFor='tags'>Tags</FormLabel>
+          <Select
+            id='type'
+            defaultValue=''
+            onChange={() => null}
+            variant='filled'
+          >
+            <option value=''>Select...</option>
+            <option value='translation'>Translation</option>
+            <option value='biography'>Biography</option>
+            <option value='page'>Generic</option>
+          </Select>
+        </Box>
+      </Stack>
+      <Box>
+        {model.tags.map((tag, idx) => (
+          <Tag
+            key={idx}
+            rounded='full'
+            size='sm'
+            colorScheme='teal'
+            mr={1}
+            mb={1}
+          >
+            <TagLabel>{tag}</TagLabel>
+            <TagCloseButton />
+          </Tag>
+        ))}
       </Box>
-      <Box width={1 / 2}>
-        <FormLabel htmlFor='tags'>Tags</FormLabel>
-        <Select
-          id='type'
-          defaultValue=''
-          onChange={() => null}
-          variant='filled'
-        >
-          <option value=''>Select...</option>
-          <option value='translation'>Translation</option>
-          <option value='biography'>Biography</option>
-          <option value='page'>Generic</option>
-        </Select>
+      <Box>
+        <FormLabel htmlFor='slug'>Slug</FormLabel>
+        <Stack direction='row'>
+          <Input
+            id='slug'
+            placeholder='name-of-paper'
+            variant='filled'
+            value={model.text}
+            onChange={e => model.setText(e.target.value)}
+          />
+        </Stack>
       </Box>
-    </Stack>
-    <Box>
-      {tagOptions.map((tag, idx) => (
-        <Tag
-          key={idx}
+      <Box>
+        <Stack direction='row'>
+          <FormLabel htmlFor='slug' flexGrow={1}>
+            When live, the URL will be:
+          </FormLabel>
+          <Button size='xs'>Copy</Button>
+        </Stack>
+        <Box
+          mt={1}
           rounded='full'
-          size='sm'
-          colorScheme='teal'
-          mr={1}
-          mb={1}
+          transition='250ms background ease-in'
+          _hover={{ bg: 'blue.100' }}
+          _active={{ bg: 'blue.100' }}
         >
-          <TagLabel>{tag}</TagLabel>
-          <TagCloseButton />
-        </Tag>
-      ))}
-    </Box>
-    <Box>
-      <FormLabel htmlFor='slug'>Slug</FormLabel>
-      <Stack direction='row'>
-        <Input id='slug' placeholder='name-of-paper' variant='filled' />
-      </Stack>
-    </Box>
-    <Box>
-      <Stack direction='row'>
-        <FormLabel htmlFor='slug' flexGrow={1}>
-          When live, the URL will be:
-        </FormLabel>
-        <Button size='xs'>Copy</Button>
-      </Stack>
-      <Box
-        mt={1}
-        rounded='full'
-        transition='250ms background ease-in'
-        _hover={{ bg: 'blue.100' }}
-        _active={{ bg: 'blue.100' }}
-      >
-        <Text
-          px={4}
-          as='input'
-          w='100%'
-          outline='none'
-          color='blue.500'
-          bg='transparent'
-          textDecor='underline'
-          fontSize='sm'
-          readOnly
-          contentEditable
-          isTruncated
-          value='www.thepathoftruth.com/letters/name-of-paper.htm'
-        />
+          <Text
+            px={4}
+            as='input'
+            w='100%'
+            outline='none'
+            color='blue.500'
+            bg='transparent'
+            textDecor='underline'
+            fontSize='sm'
+            readOnly
+            contentEditable
+            isTruncated
+            value='www.thepathoftruth.com/letters/name-of-paper.htm'
+          />
+        </Box>
       </Box>
-    </Box>
-    <Stack direction='row' pt={2} spacing={2}>
-      <Button colorScheme='blue' w='50%'>
-        Save
-      </Button>
-      <Button colorScheme='green' w='100%'>
-        Submit for Review
-      </Button>
+      <Stack direction='row' pt={2} spacing={2}>
+        <Button colorScheme='blue' w='50%'>
+          Save
+        </Button>
+        <Button colorScheme='green' w='100%'>
+          Submit for Review
+        </Button>
+      </Stack>
     </Stack>
-  </Stack>
-)
+  )
+})
 
 const CardTitle = ({ title, children }) => (
   <Stack pb={4}>
