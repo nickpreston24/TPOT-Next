@@ -1,32 +1,28 @@
 import Stack from '@chakra-ui/core/dist/Stack';
-import React, { } from 'react';
-import Search from './Search';
+import React, {  } from 'react';
+import CategoryList from './CategoryList';
+import { DraftedPapersList } from './DraftedPapersList';
+import PostList from './PostList';
+import SearchBar, { sessionStyle } from './SearchBar';
 
 const Wordpress = () => {
 
-    // useEffect(() => {
-    // getPageBySlug('chinese/index.htm')
-    //     .then((response) => {
-    //         console.log('response :>> ', response);
-    //     })
-
-    // search('chinese')
-    //     .then((response) => {
-    //         console.log('response :>> ', response);
-    //     })
-    // }, []);
-
     return (
         <Stack>
-            <Search />
-
-            {/* <ChineseIndex /> */}
-
-            {/* <CategoryList /> */}
-
-            {/* <div>
-                Hello, nothing is here yet... please go <Link href="/">Home</Link>
-            </div> */}
+            <SearchBar>
+                {({ loading, posts }) =>
+                    <Stack direction="row">
+                        <PostList
+                            style={sessionStyle}
+                            heading="Search Results"
+                            posts={posts}
+                            loading={loading}
+                        />
+                        <DraftedPapersList />
+                        <CategoryList />
+                    </Stack>
+                }
+            </SearchBar>
         </Stack>
     );
 }

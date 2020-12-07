@@ -108,8 +108,9 @@ function useSessionProvider() {
         let paper = new Paper({
             ...session,
             content: code,
-            author: 9,
-            categories: [] // TODO: update the categories to be mapped to their corresponding Wordpress numbers
+            author: 10,
+            categories: [], // TODO: update the categories to be mapped to their corresponding Wordpress numbers
+            status: 'publish'
         });
 
         console.log('new paper', paper)

@@ -133,11 +133,17 @@ function useWordpressProvider() {
 
     const getPageById = (id: number) => wpapi.pages().id(id);
 
-    const getPages = (authorId: number, perPage: number = 10) =>
+    const getPagesForAuthor = (authorId: number, take: number = 10) =>
         wpapi
             .pages()
             .author(authorId)
-            .perPage(perPage)
+            .perPage(take)
+
+
+    const getDrafts = () => wpapi.pages()
+        .auth()
+        // .param('context', 'edit')
+        .param('status', 'publish')
 
     const search = (term: string) => wpapi.search(term);
 
@@ -147,16 +153,20 @@ function useWordpressProvider() {
     const publish = async (paper: Paper, useWpapi: boolean = false): Promise<Paper> => {
 
         console.log('currentPaper', currentPaper)
+        let permalink = `https://www.thepathoftruth.com/${slug}.htm`
+        const { author, id, slug } = paper;
         const config = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 // "Content-Type": "text/html",
                 Authorization: `Bearer ${token}`
-            }
+            },
+            // meta: {
+            //     permalink, link: permalink
+            // }
         };
 
-        const { author, id } = paper;
 
         // Check for collisions:
         const existingPaper = id ? await wpapi.pages()
@@ -170,73 +180,71 @@ function useWordpressProvider() {
                 paper.slug = paper.language + "\/" + paper.slug + "_" + paper.language
             }
 
-            if (useWpapi) {
-                wpapi.pages()
-                    .author(author)
-                    .id(existingPaper.id)
-                    .update(paper)
-                    .then((response) => {
+            // if (useWpapi) {
+            //     wpapi.pages()
+            //         .author(author)
+            //         .id(existingPaper.id)
+            //         .update(paper)
+            //         .then((response) => {
 
-                        let updatedPaper = toDto(response, Paper);
-                        paper.id = response.id; // Update the new id for UI use.
-                        console.log('updatedPaper', updatedPaper)
-                        setCurrentPaper(updatedPaper);
-                    })
-            }
-            else {
-                //TODO: implement an axios PUT (update) request
-            }
+            //             let updatedPaper = toDto(response, Paper);
+            //             paper.id = response.id; // Update the new id for UI use.
+            //             console.log('updatedPaper', updatedPaper)
+            //             setCurrentPaper(updatedPaper);
+            //         })
+            // }
+            // else {
+            //TODO: implement an axios PUT (update) request
+            // }
         }
         // Publish paper as a new Draft:
         else if (!existingPaper) {
 
-            wpapi._options = {
-                ...wpapi._options,
-                ...superUser['wordpress-credentials']
-            }
+            // wpapi._options = {
+            //     ...wpapi._options,
+            //     ...superUser['wordpress-credentials']
+            // }
 
-            const samplePaper = {
-                content: '<p>123xyz</p>',
-                title: 'wpap test',
-                slug: 'wpap-test',
-                status: 'pending',
-                author: 9,
-                categories: [496],
-                date: new Date(),
-            }
-
-            if (useWpapi) {
-                wpapi.pages()
-                    .create(samplePaper)
-                    .then((response) => {
-                        let createdPaper = toDto(response, Paper);
-                        // paper.id = response.id; // Update the new id for UI use.
-                        console.log('createdPaper', createdPaper)
-                        setCurrentPaper(createdPaper)
-                    })
-                    .catch(console.error)
-            }
-            else {
-                axios
-                    .post(endpoint, paper, config as any)
-                    .then((response) => {
-                        console.log(`Post successful!`, response);
-                        notify(`Post successful!`, 'success')
-                        // setResponse(JSON.stringify(response));
-                    })
-                    .catch((err) => console.error(err));
-            }
+            // if (useWpapi) {
+            //     console.info(`posting '${paper.slug}' using wpapi...`)
+            //     wpapi.pages()
+            //         .create(paper)
+            //         .then((response) => {
+            //             let createdPaper = toDto(response, Paper);
+            //             // paper.id = response.id; // Update the new id for UI use.
+            //             console.log('createdPaper', createdPaper)
+            //             setCurrentPaper(createdPaper)
+            //         })
+            //         .catch(console.error)
+            // }
+            // else {
+            console.info(`posting '${paper.slug}' using axios...`)
+            axios
+                .post(endpoint, {
+                    ...paper, meta: {
+                        permalink, link: permalink
+                    }
+                }, config as any)
+                .then((response) => {
+                    console.log(`Post successful!`, response);
+                    notify(`Post successful!`, 'success')
+                    // setResponse(JSON.stringify(response));
+                })
+                .catch((err) => console.error(err));
+            // }
         }
 
         return currentPaper;
     }
 
     return {
+        wpapi,
         wpUsers,
 
-        getPages,
+        getPagesForAuthor,
         getPageById,
         getPageBySlug,
+        getDrafts,
 
         publish,
         token,

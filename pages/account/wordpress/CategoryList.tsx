@@ -3,6 +3,7 @@ import Flex from '@chakra-ui/core/dist/Flex';
 import Heading from '@chakra-ui/core/dist/Heading';
 import List from '@chakra-ui/core/dist/List';
 import Spinner from '@chakra-ui/core/dist/Spinner';
+import { Card } from 'components/atoms';
 import { useWordpress } from 'hooks';
 import React from 'react';
 
@@ -31,7 +32,12 @@ const CategoryList = () => {
                             <Flex
                                 key={id}
                                 direction="row">
-                                <h3>{name} <p>({count})</p></h3>
+                                <Card>
+                                    {{
+                                        header: <Heading size="md">{name} - ({count})</Heading>,
+                                        content: <Heading size="sm">Id: {id}</Heading>,
+                                    }}
+                                </Card>
                             </Flex>);
                     })}</List>}
         </Box>

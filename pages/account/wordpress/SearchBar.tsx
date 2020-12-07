@@ -4,34 +4,21 @@ import Button from '@chakra-ui/core/dist/Button'
 import FormControl from '@chakra-ui/core/dist/FormControl'
 import FormLabel from '@chakra-ui/core/dist/FormLabel'
 import Input from '@chakra-ui/core/dist/Input'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Icon from '@chakra-ui/core/dist/Icon'
 import Heading from '@chakra-ui/core/dist/Heading'
 import Stack from '@chakra-ui/core/dist/Stack'
 import { InputLeftElement } from '@chakra-ui/core/dist/InputElement'
-import PostList from './PostList'
-import { DeadLinks } from './DeadLinks'
-import { useDebounce, useFirestoreQuery } from 'hooks'
+import { useDebounce } from 'hooks'
 import { MdSearch } from "react-icons/md"
 import InputGroup from '@chakra-ui/core/dist/InputGroup'
-import { store } from 'services/firebase/firebase'
-import Post from './Post'
-import Spinner from '@chakra-ui/core/dist/Spinner'
 
-const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }
-const tpotStyle = { background: "linear-gradient(to left, #722, #f31)", color: '#efe' }
+export const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }
 
-export default function Search({ take = 10 }) {
+const SearchBar: FC<any> = ({ take = 10, children }) => {
 
     const [form, updateForm] = useState({ term: '' })
-    const [papers, setPapers] = useState([]); // Papers from Wordpress
-    const [sessions, setSessions] = useState([{
-        title: 'test',
-        excerpt: 'test',
-        slug: 'test-session',
-        href: 'http://www.thepathoftruth.com',
-
-    }]); // Sessions from Firestore
+    const [posts, setPosts] = useState([]); // Papers from Wordpress
     const [loading, setLoading] = useState(false);
     const [url, setUrl] = useState('');
 
@@ -41,7 +28,6 @@ export default function Search({ take = 10 }) {
 
     // Effect for API call
     useEffect(() => {
-        // console.log('loading? :>> ', loading);
         setLoading(true);
 
         if (debouncedSearchTerm) {
@@ -54,14 +40,12 @@ export default function Search({ take = 10 }) {
             axios
                 .get(url)
                 .then((response) => {
-                    // console.log('response :>> ', response.data);
-                    setPapers(response.data)
+                    console.log('response.data', response.data)
+                    setPosts(response.data)
                     setLoading(false);
                 })
-                .catch(console.error);
 
         } else {
-            // setPapers([]);
             setLoading(false)
         }
     },
@@ -89,11 +73,9 @@ export default function Search({ take = 10 }) {
         axios
             .get(url)
             .then((response) => {
-                // console.log('response :>> ', response.data);
-                setPapers(response.data)
+                setPosts(response.data)
                 setLoading(false);
             })
-            .catch(console.error);
     }
 
     return (
@@ -136,7 +118,8 @@ export default function Search({ take = 10 }) {
                         </InputGroup>
                     </FormControl>
                     <Button
-                        variantColor="teal"
+                        // variantColor="teal"
+                        color='green.300'
                         variant="outline"
                         type="submit"
                         width="full"
@@ -146,82 +129,11 @@ export default function Search({ take = 10 }) {
                         Search
                         </Button>
                 </form>
+                {/* {props.children({ loading, papers })} */}
+                {children({ loading, posts })}
             </Stack>
-
-
-            <Stack direction='row'>
-
-                <PostList
-                    style={tpotStyle}
-                    heading="Results"
-                    loading={loading}
-                    papers={papers}
-                />
-
-                {/* <PostList
-                    heading="Results"
-                    loading={loading}
-                    papers={sessions}
-                /> */}
-
-                {/* <SessionDoc uid={'my-paper'} /> */}
-                <SessionsList />
-            </Stack>
-
-            <DeadLinks
-                loading={loading}
-                papers={papers}
-            />
-
         </Stack>
     );
-}
+};
 
-
-// All Sessions
-const SessionsList = () => {
-
-    const { data, status, error } = useFirestoreQuery(
-        store.collection('sessions') // Collection
-    )
-
-    if (status === "loading") {
-        return <Spinner />
-    }
-
-    if (status === "error") {
-        return <div><b>`Error: ${error.message}`</b></div>
-    }
-
-    console.log('data :>> ', data);
-
-    return <PostList
-        style={sessionStyle}
-        heading="Sessions" papers={data} />
-}
-
-// Single Session
-const SessionDoc = ({ uid }) => {
-
-    const { data, status, error } = useFirestoreQuery(
-        store.collection('sessions')
-            .doc(uid) // Document
-    )
-
-    if (status === "loading") {
-        return "Loading...";
-    }
-
-    if (status === "error") {
-        return `Error: ${error.message}`;
-    }
-
-    console.log('data :>> ', data);
-
-    return (
-        <Post
-            style={sessionStyle}
-            post={data}
-        />
-    );
-}
+export default SearchBar;

@@ -4,6 +4,7 @@ export enum CheckoutStatus {
     CheckedOut = 'Checked Out', // Checked out by another User.
     FirstDraft = 'First Draft', // Is in the 'Draft' mode in Wordpress; Additionally, the paper is In-Progress.
     Published = 'Published', // Is completely finalized in WP (as Victor) and cannot be updated in WP, except as a Super User (Victor, Ronnie, MP, BP)
+    SetAside = 'Set Aside', // Paper is set aside as unused, private to the person, etc.
 }
 
 export const CheckoutColors = new Map<string, string>([
@@ -12,4 +13,5 @@ export const CheckoutColors = new Map<string, string>([
     [CheckoutStatus.CheckedOut, '#ffc6c8'],
     [CheckoutStatus.Published, '#a6ffc6'],
     [CheckoutStatus.FirstDraft, '#a4a8f7'],
+    [CheckoutStatus.SetAside, '#445882']
 ])
