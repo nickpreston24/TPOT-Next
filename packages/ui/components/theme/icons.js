@@ -1,10 +1,11 @@
 import React from 'react'
-import theme from "@chakra-ui/core/dist/theme";
+
+// import theme from "@chakra-ui/react";
 
 export default {
     icons: {
         // Add Chakra's icons
-        ...theme.icons,
+        // ...theme.icons,
         // Your custom icons
         ribbon: {
             path: (

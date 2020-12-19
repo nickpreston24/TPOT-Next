@@ -1,0 +1,1 @@
+This is the package where mobx-state-tree models are managed separately for unit testing and independant dependency management. Imported by alias into other packages.

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, useTheme } from "@chakra-ui/core";
+import { Box, Button, Flex, useTheme } from "@chakra-ui/react";
 import { diagonalLines, morphingDiamonds } from "hero-patterns";
 
 import PropTypes from "prop-types";

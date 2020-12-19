@@ -1,0 +1,1 @@
+This is the package where the backed api ( Strapi ) will be developed and maintained.

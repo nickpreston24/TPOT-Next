@@ -1,4 +1,4 @@
-import theme from "@chakra-ui/core/dist/theme";
+// import theme from "@chakra-ui/react";
 
 export default {
     space: {

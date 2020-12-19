@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@utils/*": [
+                "./components/utils/*"
+            ],
+            "@theme/*": [
+                "./components/theme/*"
+            ],
+            "@atoms/*": [
+                "./components/atoms/*"
+            ],
+            "@molecules/*": [
+                "./components/molecules/*"
+            ],
+            "@organisms/*": [
+                "./components/organisms/*"
+            ],
+            "@templates/*": [
+                "./components/templates/*"
+            ],
+            "@layouts/*": [
+                "./components/layouts/*"
+            ],
+            "@components/*": [
+                "./components/*"
+            ],
+            "@models/*": [
+                "./models/*"
+            ],
+            "@hooks": [
+                "./hooks"
+            ],
+        }
+    }
+}
