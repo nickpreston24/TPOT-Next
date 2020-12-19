@@ -1,0 +1,94 @@
+/* Frame and Editable area */
+
+.ck.ck-editor__editable_inline {
+    padding: 40px 85px 85px 85px !important;
+    height: 100%;
+    background-color: #fff;
+    border: 0px solid transparent !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+
+/* Paragraph Spacing (ESSENTIAL!) */
+
+.ck p {
+    margin: 10.8px 0px 10.8px 0px !important;
+}
+
+
+/* Header sizes */
+
+.ck h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: bold;
+    margin: 26px 0px 26px 0px;
+}
+
+.ck h1 {
+    font-size: 60px;
+    line-height: 72px;
+}
+
+.ck h2 {
+    font-size: 30px;
+    line-height: 36px;
+}
+
+.ck h3 {
+    font-size: 28px;
+    line-height: 33.6px;
+}
+
+.ck h4 {
+    font-size: 22px;
+    line-height: 26.4px;
+}
+
+.ck h5 {
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.ck h6 {
+    font-size: 16px;
+    line-height: 19.2px;
+}
+
+.ck ul {
+    padding-left: 16px;
+}
+
+.ck ol {
+    padding-left: 16px;
+}
+
+
+/* Selection Colors */
+
+.ck *::selection,
+::selection {
+    background-color: hsla(202, 100%, 50%, 0.20) !important;
+}
+
+
+/* Scrollbars */
+
+.ck::-webkit-scrollbar {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.ck::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    width: 4px !important;
+    border: 4px solid white;
+    background: #EDF2F7 !important;
+}
+
+.ck::-webkit-scrollbar-thumb:hover {
+    background: #d0dae6 !important;
+}
