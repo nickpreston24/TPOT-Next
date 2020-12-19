@@ -8,16 +8,13 @@ import Heading from '@chakra-ui/core/dist/Heading'
 import { FiExternalLink } from 'react-icons/fi'
 import React from 'react'
 import Stack from '@chakra-ui/core/dist/Stack'
-import { Router, useRouter } from 'next/router'
 
 const defaultStyle = {
     color: '#111',
     background: '#efe'
 }
 
-export const Post = ({ post, style = defaultStyle }) => {
-
-    const router = useRouter();
+export const Post = ({ post = null, style = defaultStyle }) => {
 
     if (!post)
         return null;
@@ -26,12 +23,7 @@ export const Post = ({ post, style = defaultStyle }) => {
     let excerpt = post?.excerpt?.rendered || post?.excerpt || ''
     let title = post?.title?.rendered || post?.title || ''
 
-    // console.log('post :>> ', post);
-
-    // const { categories: allCategories } = useWordpress();
-    // console.log('allCategories :>> ', allCategories);
     return (
-
         <Box
             style={style}
             mb={10}
@@ -61,7 +53,6 @@ export const Post = ({ post, style = defaultStyle }) => {
                             {excerpt &&
                                 <Box
                                     width="full"
-
                                     flexWrap="wrap"
                                     // align="center"
                                     // alignContent='center'
@@ -107,7 +98,7 @@ export const Post = ({ post, style = defaultStyle }) => {
                                     border="3px #fff solid"
                                 // transform="translate(0%, 50%)"
                                 >
-                                    {title}
+                                    {`${title}`}
                                 </Heading>}
 
                         </Flex>,
@@ -122,7 +113,6 @@ export const Post = ({ post, style = defaultStyle }) => {
                                 {`Read ${title}`}
                             </Link>
                             <FiExternalLink color="#eee"
-                            // onClick={() => router.push(link)}
                             >
                                 {/* <Link
                                     href={link}
@@ -135,20 +125,7 @@ export const Post = ({ post, style = defaultStyle }) => {
             </Card>
 
         </Box>
-
     );
 };
-
-// const Post = () => {
-//     return (
-//         <div>
-//             <h3 style={{ marginBottom: "0" }}><b>{title?.rendered}</b></h3>
-//             {/* <a href={link}></a> */}
-//             {excerpt && (
-//                 <i dangerouslySetInnerHTML={{ __html: excerpt?.rendered }}></i>
-//             )}
-//         </div>
-//     );
-// }
 
 export default Post;

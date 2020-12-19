@@ -17,6 +17,7 @@ export class Session {
     status: string;
     code: string;
     language: string | Language;
+    notes: string; // Notes can include things like the reason for set-aside.
 
     contributors: string[] = [];
     lastContributor?: string = "" // For now, this will be the email - MP

@@ -54,7 +54,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         setSession,
     } = useSessions();
 
-    const { categories, loading } = useWordpress();
+    const { categories, loading, wpUsers } = useWordpress();
+
 
     /** 
      * Form
@@ -91,18 +92,21 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      */
     useEffect(() => {
 
+        console.log('all users', wpUsers)
+
+
         // Checking out Session:
         if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
             checkoutSession(doc as string)
                 .then((result) => {
-                    
+
                     setSession(result)
 
                     updateForm({
                         ...form,
                         ...result,
                     })
-                    
+
                     console.log('checked out code', result.code.replace(/&nbsp;/g, ''))
 
                     setHtml(result.code.replace(/&nbsp;/g, ''));
