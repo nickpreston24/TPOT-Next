@@ -98,12 +98,12 @@ function useSessionProvider() {
             // .replace(correspondence, '<strong>$1</strong>$2<br>')
             .replace(correspondence, '<$1><strong>$2</strong>$3<br></$1>')
             || `<p></p>`
-        console.log('code w/o backspace returns', code)
+
         // &nbsp;
 
         // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
 
-        console.log('session', session)
+
 
         let paper = new Paper({
             ...session,
@@ -113,11 +113,11 @@ function useSessionProvider() {
             status: 'publish'
         });
 
-        console.log('new paper', paper)
+
 
         publish(paper)
             .then(async (response) => {
-                console.log('Post response :>> ', response);
+
 
                 if (!response.id) {
                     // console.warn('Nothing came back from Wordpress');
