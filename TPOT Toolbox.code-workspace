@@ -5,6 +5,10 @@
 			"path": "."
 		},
 		{
+			"name": "Alpha Release (legacy)",
+			"path": "./alpha"
+		},
+		{
 			"name": "@api",
 			"path": "./packages/api"
 		},

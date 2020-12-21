@@ -1,0 +1,12 @@
+{
+  "name": "@toolbox/api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "diff": "^5.0.0",
+    "pretty-format": "^26.6.2"
+  }
+}
