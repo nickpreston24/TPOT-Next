@@ -1,1 +1,0 @@
-This is the package where utility functions are managed separately for unit testing and independant dependency management. Imported by alias into other packages.

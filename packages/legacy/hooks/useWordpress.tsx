@@ -5,10 +5,13 @@ import { Document } from 'firestorter'
 import { toJS } from 'mobx';
 import axios from 'axios'
 import { notify } from 'components/Toasts';
+import jwt from 'jsonwebtoken'
 
 let endpoint = `https://www.thepathoftruth.com/wp-json/wp/v2/pages`;
 
 const wordpressContext = createContext(null);
+
+const isTokenExpired = (token) => jwt.decode(token, { complete: true }).exp < new Date().getTime()
 
 export const useWordpress = () => useContext(wordpressContext)
 
@@ -38,9 +41,9 @@ function useWordpressProvider() {
             await doc.fetch()
                 .then((response) => {
                     let data = toJS(response.data);
-                    console.log('retrieved user: ', data)
-                    user = data;
-                    console.log('user', user)
+
+                    user = data['wordpress-credentials'];
+
                     setSuperUser(data);
 
                     /** JWT Tokens */
@@ -50,27 +53,36 @@ function useWordpressProvider() {
                         url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
                         // Sign-in exists only to fetch a token, then the token is used for Posting new content...
                         params: {
-                            username: user['wordpress-credentials']?.email,
-                            password: user['wordpress-credentials']?.password
+                            username: user?.email,
+                            password: user?.password,
+                            token: data?.token,
                         }
                     }
 
-                    console.log('config', config)
+                    let savedToken = user?.token || localStorage.getItem("token");
+                    let expired = isTokenExpired(savedToken);
 
-                    let savedToken = localStorage.getItem("token");
-                    if (!savedToken) {
+                    if (expired) {
+                        let message = 'Your Wordpress JWT has expired!  Requesting new one...'
+                        console.warn(message)
+                    }
+
+                    // If token is bad or non-existent, get a new one from WP
+                    if (!savedToken || expired) {
                         axios(config as any)
                             .then((response) => {
-                                console.log('JWT post response:', response);
                                 let { token } = response.data;
                                 setToken(token);
+                                doc.update({
+                                    token: token
+                                })
+                                    .catch((err) => console.error('Error occured when trying to update JWT in super-user:' + err))
                                 localStorage.setItem("token", token);
                             })
-                            .catch(console.error);
+                            .catch((err) => console.error('Error when fetching new JWT token from Wordpress:' + err));
                     }
                     // Otherwise, set the stored token to state.
                     else {
-                        console.log("Successfully retrieved JWT from localstorage " + savedToken);
                         setToken(savedToken);
                     }
                 })
@@ -78,40 +90,6 @@ function useWordpressProvider() {
 
         fetchSuperUser();
     }, []);
-
-    /** JWT Tokens */
-    // useEffect(() => {
-
-    //     let config = {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
-    //         // Sign-in exists only to fetch a token, then the token is used for Posting new content...
-    //         params: {
-    //             username: superUser['wordpress-credentials']?.email,
-    //             password: superUser['wordpress-credentials']?.password
-    //         }
-    //     }
-    //     console.log('config', config)
-
-    //     let savedToken = localStorage.getItem("token");
-    //     if (!savedToken) {
-    //         axios(config as any)
-    //             .then((response) => {
-    //                 console.log('JWT post response:', response);
-    //                 let { token } = response.data;
-    //                 setToken(token);
-    //                 localStorage.setItem("token", token);
-    //             })
-    //             .catch(console.error);
-    //     }
-    //     // Otherwise, set the stored token to state.
-    //     else {
-    //         console.log("Successfully retrieved JWT from localstorage " + savedToken);
-    //         setToken(savedToken);
-    //     }
-
-    // }, [])
 
     /** Preload data */
     useEffect(() => {
@@ -151,8 +129,6 @@ function useWordpressProvider() {
      * Publishes a Paper as a draft only
      */
     const publish = async (paper: Paper, useWpapi: boolean = false): Promise<Paper> => {
-
-        console.log('currentPaper', currentPaper)
         let permalink = `https://www.thepathoftruth.com/${slug}.htm`
         const { author, id, slug } = paper;
         const config = {
@@ -175,50 +151,14 @@ function useWordpressProvider() {
 
         // If existing paper, update it:
         if (!!existingPaper) {
-
             if (!!paper.language && paper.language.toLowerCase() !== 'english') {
                 paper.slug = paper.language + "\/" + paper.slug + "_" + paper.language
             }
-
-            // if (useWpapi) {
-            //     wpapi.pages()
-            //         .author(author)
-            //         .id(existingPaper.id)
-            //         .update(paper)
-            //         .then((response) => {
-
-            //             let updatedPaper = toDto(response, Paper);
-            //             paper.id = response.id; // Update the new id for UI use.
-            //             console.log('updatedPaper', updatedPaper)
-            //             setCurrentPaper(updatedPaper);
-            //         })
-            // }
-            // else {
-            //TODO: implement an axios PUT (update) request
-            // }
         }
         // Publish paper as a new Draft:
         else if (!existingPaper) {
 
-            // wpapi._options = {
-            //     ...wpapi._options,
-            //     ...superUser['wordpress-credentials']
-            // }
-
-            // if (useWpapi) {
-            //     console.info(`posting '${paper.slug}' using wpapi...`)
-            //     wpapi.pages()
-            //         .create(paper)
-            //         .then((response) => {
-            //             let createdPaper = toDto(response, Paper);
-            //             // paper.id = response.id; // Update the new id for UI use.
-            //             console.log('createdPaper', createdPaper)
-            //             setCurrentPaper(createdPaper)
-            //         })
-            //         .catch(console.error)
-            // }
-            // else {
-            console.info(`posting '${paper.slug}' using axios...`)
+            /** Post a paper using Axios */
             axios
                 .post(endpoint, {
                     ...paper, meta: {
@@ -226,7 +166,7 @@ function useWordpressProvider() {
                     }
                 }, config as any)
                 .then((response) => {
-                    console.log(`Post successful!`, response);
+
                     notify(`Post successful!`, 'success')
                     // setResponse(JSON.stringify(response));
                 })
@@ -257,21 +197,19 @@ function useWordpressProvider() {
 
 // NOTE: We won't need wordpress users until much later in the special case where a published paper needs reviewed.
 
-// console.log('wpUsers :>> ', wpUsers, authUser);
-
 // let authorId = session.authorId;
 
 // if (!!authorId) {
 //     getUser(authorId)
 //         .then((wpUser) => {
 //             wpUser['yoast_head'] = '' // Try: https://blog.bitsrc.io/6-tricks-with-resting-and-spreading-javascript-objects-68d585bdc83
-//             // console.log('current user :>> ', records);
+
 //             setUser(toDto(wpUser, WordpressUser))
 //         })
 
 //      getPages(authorId)
 //          .then((records) => {
-//          // console.log('records :>> ', records);
+
 //          let collection = mapToDto(records, Paper);
 //          setPapers(collection);
 //          setLoading(false)
@@ -279,17 +217,14 @@ function useWordpressProvider() {
 
 //      getAuthorSessions(authorId)
 //         .then((sessions) => {
-//             console.log('session records', sessions)
+
 //         })
 // }
-
-// console.log('authorId', authorId)
-
 
 
 //Testing permalink alteration here:
 // paper.permalink = 'https://www.thepathoftruth.com/chinese/'
-// console.log('creating paper :>> ', paper);
+
 
 // let permalink_template = 'https://www.thepathoftruth.com//%postname%.htm';
 // // let fixedPermalinkTemplate = "https://www.thepathoftruth.com/%pagename%.htm"
@@ -297,9 +232,6 @@ function useWordpressProvider() {
 // let response = await wpapi.pages()
 //     .author(author)
 //     .create({ permalink_template, ...paper })
-
-// isDev() && console.log('response :>> ', response);
-
 
 // let updatedPaper = await wpapi.pages()
 //     .author(author)
