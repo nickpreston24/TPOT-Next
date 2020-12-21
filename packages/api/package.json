@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "dependencies": {
     "chalk": "^4.1.0",
     "diff": "^5.0.0",

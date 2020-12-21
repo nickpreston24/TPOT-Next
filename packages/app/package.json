@@ -1,11 +1,11 @@
 {
-  "name": "@toolbox/app",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "private": false,
-  "dependencies": {
-    "@toolbox/api": "1.0.0",
-    "chalk": "^4.1.0"
-  }
+    "name": "@toolbox/app",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "@toolbox/api": "^1.0.0",
+        "chalk": "^4.1.0"
+    }
 }
