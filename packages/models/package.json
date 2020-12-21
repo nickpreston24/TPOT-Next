@@ -1,12 +1,10 @@
 {
-  "name": "@toolbox/api",
+  "name": "@toolbox/models",
   "version": "1.0.1",
   "main": "index.js",
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "chalk": "^4.1.0",
-    "diff": "^5.0.0",
-    "pretty-format": "^26.6.2"
+    "chalk": "^2.1.0"
   }
 }
