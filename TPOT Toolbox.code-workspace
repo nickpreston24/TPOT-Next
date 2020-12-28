@@ -1,8 +1,12 @@
 {
 	"folders": [
 		{
-			"name": "Monorepo Root",
+			"name": "TPOT Toolbox",
 			"path": "."
+		},
+		{
+			"name": "Alpha Release (@legacy)",
+			"path": "./packages/legacy"
 		},
 		{
 			"name": "@api",
