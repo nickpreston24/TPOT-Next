@@ -44,3 +44,5 @@ export const DraftedPapersList = ({ take = 10 }) => {
     />
 
 };
+
+export default DraftedPapersList

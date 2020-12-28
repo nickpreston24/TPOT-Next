@@ -46,3 +46,6 @@ test
 
 # Anything that's a code sample
 _samples
+
+# Local Netlify folder
+.netlify

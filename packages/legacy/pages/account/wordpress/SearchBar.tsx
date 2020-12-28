@@ -130,7 +130,7 @@ const SearchBar: FC<any> = ({ take = 10, children }) => {
                         </Button>
                 </form>
                 {/* {props.children({ loading, papers })} */}
-                {children({ loading, posts })}
+                {/* {children({ loading, posts })} */}
             </Stack>
         </Stack>
     );

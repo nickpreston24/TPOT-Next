@@ -69,6 +69,7 @@
     "formik": "^2.1.4",
     "global": "^4.4.0",
     "immutable": "^4.0.0-rc.12",
+    "jsonwebtoken": "^8.5.1",
     "mammoth-colors": "^1.0.2",
     "material-table": "^1.54.2",
     "mobx": "^5.15.1",

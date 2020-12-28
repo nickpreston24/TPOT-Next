@@ -5,7 +5,7 @@ import Post from './Post';
 import { sessionStyle } from './SearchBar';
 
 // Renders A Single Session by a known uid
-const Session = ({ uid }) => {
+const Session = ({ uid='0001' }) => {
 
     const { data, status, error } = useFirestoreQuery(
         store.collection('sessions')
@@ -27,3 +27,5 @@ const Session = ({ uid }) => {
             post={data} />
     );
 };
+
+export default Session

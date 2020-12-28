@@ -26,3 +26,5 @@ export const SessionsList = () => {
         posts={data}
     />;
 };
+
+export default SessionsList
