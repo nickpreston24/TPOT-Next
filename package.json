@@ -1,15 +1,8 @@
 {
   "name": "toolbox",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "description": "A progressive web app for posting content to ThePathOfTruth",
-  "keywords": [
-    "wordpress",
-    "strapi",
-    "react",
-    "ckeditor",
-    "mobx"
-  ],
   "repository": "https://github.com/HarvestHaven/TPOT-Next.git",
   "author": "Braden Preston <bpfilmsinc@gmail.com>",
   "homepage": "https://toolbox.tpot.tech",
@@ -30,6 +23,13 @@
     "legacy:export": "cd packages/legacy && yarn export",
     "legacy:deploy": "netlify deploy"
   },
+  "keywords": [
+    "wordpress",
+    "strapi",
+    "react",
+    "ckeditor",
+    "mobx"
+  ],
   "workspaces": [
     "packages/api",
     "packages/app",

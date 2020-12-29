@@ -1,14 +1,19 @@
 {
   "name": "@toolbox/app",
-  "version": "1.0.2",
-  "main": "index.js",
+  "version": "1.0.3",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
-    "@toolbox/api": "^1.0.2",
-    "@toolbox/hooks": "^1.0.2",
-    "@toolbox/models": "^1.0.2",
-    "@toolbox/ui": "^1.0.2",
-    "chalk": "^4.1.0"
+    "@toolbox/hooks": "^1.0.3",
+    "@toolbox/models": "^1.0.3",
+    "@toolbox/ui": "^1.0.3",
+    "next": "10.0.4",
+    "react": "17.0.1",
+    "react-dom": "17.0.1"
   }
 }
