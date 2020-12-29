@@ -1,14 +1,14 @@
 {
-  "name": "@toolbox/ui",
+  "name": "@toolbox/app",
   "version": "1.0.2",
   "main": "index.js",
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@toolbox/api": "^1.0.2",
     "@toolbox/hooks": "^1.0.2",
     "@toolbox/models": "^1.0.2",
-    "chalk": "^4.1.0",
-    "diff": "^5.0.0",
-    "pretty-format": "^26.6.2"
+    "@toolbox/ui": "^1.0.2",
+    "chalk": "^4.1.0"
   }
 }

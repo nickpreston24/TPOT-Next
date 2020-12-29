@@ -1,0 +1,57 @@
+{
+	"folders": [
+		{
+			"name": "TPOT Toolbox",
+			"path": "."
+		},
+		{
+			"name": "Alpha Release (@legacy)",
+			"path": "./packages/legacy"
+		},
+		{
+			"name": "@api",
+			"path": "./packages/api"
+		},
+		{
+			"name": "@app",
+			"path": "./packages/app"
+		},
+		{
+			"name": "@editor",
+			"path": "./packages/editor"
+		},
+		{
+			"name": "@functions",
+			"path": "./packages/functions"
+		},
+		{
+			"name": "@hooks",
+			"path": "./packages/hooks"
+		},
+		{
+			"name": "@models",
+			"path": "./packages/models"
+		},
+		{
+			"name": "@ui",
+			"path": "./packages/ui"
+		}
+	],
+	"settings": {
+		"explorer.compactFolders": false,
+		"workbench.tree.indent": 16,
+		"workbench.tree.renderIndentGuides": "none",
+		"workbench.iconTheme": "material-icon-theme",
+		"material-icon-theme.activeIconPack": "react",
+		"material-icon-theme.folders.color": "#cf9f72",
+		"material-icon-theme.hidesExplorerArrows": true,
+		"material-icon-theme.folders.associations": {
+			"layouts": "",
+			"layout": ""
+		},
+		"material-icon-theme.files.associations": {
+			"*.ts": "javascript",
+			"*.tsx": "react",
+		},
+	}
+}

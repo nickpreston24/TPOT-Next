@@ -1,4 +1,5 @@
 [build]
-  Command = "yarn build && yarn export"
+  base = "packages/legacy/"
+  command = "yarn build && yarn export"
   functions = "lambda"
   publish = "out"

@@ -1,261 +1,269 @@
-# TPOT-Next
+# TPOT Toolbox
 
-<div style="text-align: center">
-    <img src="https://api.netlify.com/api/v1/badges/8b0d19ae-6ae5-449b-bd6b-0510478ca3dc/deploy-status">
-    <br />
-    <br />
-    <img src="docs/tpot_main.png">
-</div>
+#### A Progressive Web App for ThePathOfTruth
 
-## Contents
-
-- [Repo Structure](#🧱-repo-structure)
-- [App Structure](#📚-app-structure)
+- [🏇 Quick Start](#🏇-quick-start)
+- [🧱 Monorepo Management](#🧱-monorepo-management)
+- [🚧 Development Environment](#🚧-development-environment)
+- [🐫 Releasing Versions](#🐫-releasing-versions)
+- [📦 Package & Deploy](#📦-package-&-deploy)
+- [🚀 Strapi API Backend](#🚀-strapi-api-backend)
+- [🌳 Global Variables](#🌳-global-variables)
+- [🏷️ Alpha Development](#🏷️-alpha-development)
 
 ---
 
-## 🧱 Repo Structure
+## 🏇 Quick Start
 
-> Note: This has to happen progressively as we root out cruft in the exising application. Here is a plan that I think could work and save us a lot of maintainence stress down the road
+> These commands are intended for Beta onward. See what's different in [Alpha](#🏷️-alpha-development)
 
-**Long Term Goal:**
+### `yarn dev`
 
-"Do the same thing Chakra does for its repo" - **_[Source](https://github.com/chakra-ui/chakra-ui/tree/develop/packages)_**
+Starts up both the client web app and the [strapi](https://strapi.io/) backend. You can also run them individually with `yarn dev:app` and `yarn dev:api`
 
-### Phase 1
+### `yarn build`
 
-Restructure this repo into a [monorepo]() over time. Start with creating mobile-ready UI components in the the `@tpot-toolbox/ui` package and then move everything left over that is legacy to `@tpot-toolbox/core` to start.
+Runs the webpack configuration for each package and exports to `dist`, `out`, and `build` directories. Creates production-ready front and backend apps that can be served with `yarn serve`
+
+### `yarn lint`
+
+Runs code syntax and formatting validation globally and as overridden by each package.
+
+### `yarn test`
+
+Runs the testing suites (Jest, Cypress, Puppeteer) for each package in parallel. Should be run before a patch is [versioned](#🐫-releasing-versions)
+
+### `yarn deploy`
+
+Builds the client application and all sub-packages and deploys it to Netlify. The backend API is [hosted manually](#🚀-strapi-api-backend).
+
+---
+
+## 🧱 Monorepo Management
+
+- [Why a Monorepo?](#why-a-monorepo)
+- [Commonly Used Commands](#commonly-used-commands)
+
+### Why a Monorepo?
+
+Just what is a monorepo? See [this video](https://www.youtube.com/watch?v=E188J7E_MDU) for a 10 minute overview.
+
+There are many great libraries that use monorepos like [babel](https://github.com/babel/babel), [jest](https://github.com/facebook/jest), and [chakra-ui](https://github.com/chakra-ui/chakra-ui). But you are not limited to using monorepos for libraries. You can also use them to [organize a webapp](https://github.com/ferreiro/website).
 
 ```
-└── tpot-toolbox (repo-root)
+└── @toolbox (Repository Root)
     ├── .netlify
     ├── .vscode
-    ├── tests
     ├── docs
-    ├── packages
-    │   ├── core                  <-- Get this done second (M + P)
-    │   │   ├── .next
-    │   │   ├── constants
-    │   │   ├── models
-    │   │   ├── hooks
-    │   │   ├── pages
-    │   │   │   ├── account
-    │   │   │   ├── edit
-    │   │   │   └── index
-    │   │   ├── .eslintrc
-    │   │   ├── next.config.js
-    │   │   ├── package.json
-    │   │   └── etc...
-    │   └── ui                    <-- Get this done first (Braden)
-    │       ├── .storybook
-    │       ├── components
-    │       │   ├── atoms
-    │       │   ├── organisms
-    │       │   ├── templates
-    │       │   └── etc...
-    │       └── package.json
-    └── monorepo.config.js
-```
-
-**Reasoning**
-
-It will separate components that are unused or are still using `@material-ui` and `draft-js` or are intrinsically bound to app logic, like `ScribeToolbar` is. Will make it easier to remove those packages and trim down dependencies in the `core` package.
-
-Import aliases will be the norm. For example, in `@tpot-toolbox/core` (the main NextJS app), under `pages/edit/index.js`, you would be able to import the template for that page from `@tpot-toolbox/ui/templates`. We can also remap the current alias `@templates` to point this location in the `UI` package.
-
-Helps jobs roles and commit conflicts. Easier to separate concerns but still have it all in the same repo for simplicity. Packages can be versioned and tested separately.
-
-### Phase 2
-
-Later, when it makes sense in the course of development, certain parts of `@tpot-toolbox/core` get broken apart into separate modules like, `model`, `services`, `hooks`, etc.
-
-```
-└── tpot-toolbox (repo-root)
-    ├── .netlify
-    ├── .vscode
     ├── tests
-    ├── docs
     ├── packages
-    │   ├── services
-    │   ├── storage
+    │   ├── app
+    │   ├── api
     │   ├── editor
-    │   ├── models
+    │   ├── functions
     │   ├── hooks
-    │   ├── utils
-    │   ├── core
+    │   ├── models
     │   └── ui
-    ├── repo.vs-workspace
-    └── monorepo.config.js
+    └──TPOT Toolbox.vs-workspace
 ```
 
-**Reasoning**
+#### Better Tooling & Packaging
 
-It isn't a requirement that the modules have to be big or anything. Its just to give them space to breath and make testing easier.
+This lets you be very specific in your build process for each package. For example, the `app` package can have separate tooling, dependencies, and bundling that works best for that type of package. It would make no sense to include `storybook` as a dependency in the `app` package if it is only used for testing things in the `ui` package.
 
-Will be helpful to separate out TypeScript usage too, because a package like `models` can use TS and other modules like `core` don't necessarily have to have TS as a dependency when importing something from `@tpot-toolbox/models`
+Maybe in some packages like `functions`, it makes sense to use TypeScript, but you may import functions from it in the `app` package which runs off of vanilla Javascript. Sometimes it makes sense for `app` to use a different `.babelrc` configuration than `functions`. This is all possible in a monorepo.
+
+#### Better Depenency Managment
+
+Each package has its own `package.json` containing only the unique dependencies needed for that package.
+
+It is easy to add packages of a monorepo as dependencies of one another. For example, `app` can have `ui`, `hooks`, and `editor` as a dependency which would be [installable](#install-package-b-as-a-dependency-of-package-a) as `@toolbox/[package]`
+
+#### Easier Managment Tools
+
+There are several libraries for managing a monorepo. We are not using, even though it is wildly popular, `lerna` because it isn't clean. Instead, we are doing the lightest and low-level form of monorepos using [`oao`](https://www.npmjs.com/package/oao) and [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) with the following features:
+
+- Maintain separate packages, such as: `@toolbox/ui`, `@toolbox/app`, `@toolbox/hooks`, etc.
+- Synchronized package versioning. Individual packages will always match the version in the repo's root `package.json`
+- Only dependencies that are unique to a package will be stored in that package's `node_modules`. Common modules are hoisted to the root `node_modules` automatically.
+
+We aren't using features like automatic NPM publishing of packages for instance, which `oao` supports.
+
+### Commonly Used Commands
+
+#### Install [`oao`](https://www.npmjs.com/package/oao#installationv) globally so you can use it directly:
+
+```
+yarn add oao -D -W
+```
+
+#### Clean all node_modules:
+
+```
+oao clean
+```
+
+#### Create a new package:
+
+```
+mkdir packages/[package]
+cd packages/[package]
+yarn init
+```
+
+During `yarn init`, the name of the package should be scoped:
+
+```
+>>> question name: @toolbox/[package]
+```
+
+You should see it now with [`oao status`](#check-status-of-all-packages)
+
+#### Install a dependency for a single package:
+
+```
+oao add @toolbox/[package] chalk
+```
+
+#### Install package B as a dependency of package A:
+
+```
+oao add @toolbox/[package-a] @toolbox/[package-b]
+```
+
+#### Check status of all packages:
+
+```
+oao status
+```
+
+```
+* Subpackage status: [8 package/s, incl. root]
+
+    Name                                     Version        Private Changes Dependencies
+    @toolbox/api                             1.0.2          yes     1       3
+    @toolbox/app                             1.0.2          yes     1       5
+    @toolbox/editor                          1.0.2          yes     1       0
+    @toolbox/functions                       1.0.2          yes     1       0
+    @toolbox/hooks                           1.0.2          yes     1       2
+    @toolbox/models                          1.0.2          yes     1       1
+    @toolbox/ui                              1.0.2          yes     1       5
+    Root                                     1.0.2          yes     N/A     0 (+ 1 dev)
+```
+
+There are more [features](https://www.npmjs.com/package/oao#main-commands), yet to be explored that `oao` can offer us in the future.
 
 ---
 
-## 📚 App Structure
+## 🚧 Development Environment
 
-The main NextJS app in the future will be housed under `/packages/core` as `@tpot-toolbox/core`.
+> The following is different for Beta vs [Alpha](#🏷️-alpha-development)
 
-### NextJS Use Case
+- [Commands](#commands)
+- [Debugging](#debugging)
+- [Linting](#linting)
 
-We are using NextJS primarily for its file-based routing and its ability to modify the webpack and babel configs easier than CRA did.
+Use [VSCode](https://code.visualstudio.com/) for development. You can open up the `Toolbox.code-workspace` file for better organization in the explorer. A `.vscode` directory is also checked into the repo to keep extensions, linting settings, and formatting consistent.
 
-It is important to note that we are NOT using Server Sider Rendering (SSR). We are only using the Static Site generation features of NextJS. See Vercel's docs on [our specific use case](https://nextjs.org/docs/basic-features/data-fetching#fetching-data-on-the-client-side)
+You can right-click on any of the workspace folder names - `@toolbox/[package]` - and select `Open in Integrated Terminal` to quickly switch your terminal to the right package for running the following commands:
 
-### Core Methodology
+### Commands
 
-1. The website is made of "statically optimized pages", meaning that when the page loads, we aren't asking the NextJS backend server for any initial props to generate a new page to be served to us on the fly. Our page isn't build dynamically.
-2. We would never want to do anything dynamically anyways, because our data changes too frequently. We wouldn't want to rebuild a new page everytime a letter changed in Firestore, for example.
-3. What we **DO** want is a optimized page that has all of its dependencies nicely bundled by NextJS, code splitting, etc.
-4. If dynamic data is needed, the static page makes an API call for external data after it mounts to the DOM.
-5. We can fetch data like that using "State While Revalidate" (SWR) libraries like `react-query` and `useSWR` to make this easy and predicable.
-6. When data is recieved, it is stuffed into the data [model]() for that page. That model is then applied to the template the page is using, as prop data.
+### `@toolbox/app`
 
-### Terminology
+| Command       | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `yarn dev`    | Starts a live-reload development server for Nextjs |
+| `yarn build`  | Build a production-ready app with webpack          |
+| `yarn deploy` | Bundle and deploy the Nextjs app to Netlify        |
 
-> _Roughly_ in the order that NextJS "calls" them
+### `@toolbox/ui`
 
-#### Page
+| Command      | Description                                  |
+| ------------ | -------------------------------------------- |
+| `yarn story` | Startup Storybook for component development |
+| `yarn build` | Builds your Storybook as a static webapp     |
 
-Directly linked to the routing system. Filesystem based structure. It is the glue between the Models and the Views (MVC pattern). A page is essentially Model + Template, tied to a route.
+### `@toolbox/api`
 
-Example: (very rough)
+| Command      | Description                                      |
+| ------------ | ------------------------------------------------ |
+| `yarn start` | Launch the Strapi backend API in dev mode        |
+| `yarn build` | Builds Strapi so that it is ready to be deployed |
 
-```javascript
-import accountModel from '@tpot-toolbox/models/account'
-import AccountTemplate from '@tpot-toolbox/ui/template/account'
+### Debugging
 
-// ...other imports
+There are two VSCode launch configurations for debugging in the `.vscode` folder. They allow you to add breakpoints to pause the execution of code, making it easier to find problems faster.
 
-// User Account Page (@core/pages/account/index.js)
-const AccountPage = () => {
+The `Debug Client` run option will debug `@toolbox/app`'s Nextjs app in the browser. Google Chrome is most suitable for this type of debugging.
 
-    // Make an instance of the page model
-    const account = accountModel()
-    // Get some specific route-based props
-    const { id } = useQueryParams()
+The `Debug Server` run option will debug `@toolbox/api`'s Strapi API backend in Node. The debugging is handled within VSCode's terminal.
 
-    // Fetch data on mount
-    useEffect(() => {
-        const userData = await fetch(`/api/users${id}/settings`)
-        account.setUserData(userData)
-    }[])
+### Linting
 
-    return (
-        <AccountTemplate
-            fullName={account.fullName}
-            avatar={account.lastName}
-        />
-    )
-}
+It is highly recommended you install the ESLint extension for VSCode. This will keep a live server running in the background checking for errors on the files you have open.
+
+You can run `yarn lint` to check for errors globally and fix them automatically. The root configuration is ESLint + Airbnb + Prettier. Though each package has the option of adding a local `.eslintrc.yaml` to override the global config locally.
+
+---
+
+## 🐫 Releasing Versions
+
+We tag releases on the `master` branch and patch versions on `develop`.
+
+Examples:
+
+- A feature branch was merged into `develop`. We run `yarn bump` to patch the version from `1.2.55` to `1.2.56` on the `develop` branch.
+- The `develop` branch was merged into `master`. We run `yarn release:minor` to version from `1.2.34` to `1.3.0` on the `master` branch.
+
+---
+
+## 📦 Package & Deploy
+
+Unlike [development](#🚧-development-environment), these commands are run at the root of the repo
+
+| Command       | Description                                                    |
+| ------------- | -------------------------------------------------------------- |
+| `yarn dev`    | Runs Nextjs, Storybook, and Strapi all at once for development |
+| `yarn lint`   | Runs ESLint with `--fix` on all files in the repo              |
+| `yarn build`  | Runs the build command for each package                        |
+| `yarn deploy` | Deploys the packages according to the repo's netlify.toml      |
+
+---
+
+## 🚀 Strapi API Backend
+
+> To be added at a later date...
+
+---
+
+## 🌳 Global Variables
+
+Make sure you keep a copy of your `.env` files for each package in a safe place
+
+#### `@toolbox/app`
+
+```
+packages/app/.env
+
+REACT_APP_API_KEY=········································
+REACT_APP_AUTH_DOMAIN=······.firebaseapp.com
+REACT_APP_DATABASE_URL=https://······.firebaseio.com
+REACT_APP_PROJECT_ID=······
+REACT_APP_STORAGE_BUCKET=······.appspot.com
+REACT_APP_MESSAGING_SENDER_ID=············
 ```
 
-#### Model
+---
 
-Model stores the static and reactive data for a page (and sometimes the data/methods for other components on that page, like CKEditor). It contains all the methods needed for managing data, snapshots, dependency injection, etc. This example is of a typed model done in MobX State Tree (MST)
+## 🏷️ Alpha Development
 
-The contents of the model are applied as props to a React component, primarily a Template. App specific logic can definately be stored here.
+The codebase for the Alpha release was never set up to be a monorepo. With the upcoming Beta using a monorepo, we needed a place to store the alpha codebase within the repo so it could continue to be maintained and deployed.
 
-Example: (very rough)
+The location of the alpha codebase now lives in an untracked package called `legacy`. This is in the `packages/legacy` folder of the repo. This directory is not tracked by the monorepo [managment tools](#easier-managment-tools).
 
-```javascript
-const accountModel = types
-  .model("account", {
-    firstName: types.string,
-    lastName: types.string,
-    avatar: types.string,
-  })
-  .views((self) => {
-    // @ computed properties
-    return {
-      get fullName() {
-        return `${self.firstName} ${self.lastName}`;
-      },
-    };
-  })
-  .actions((self) => {
-    return {
-      setUserData(data) {
-        self = { ...data, ...self };
-      },
-    };
-  });
-```
+The VSCode workspace has been updated so you can right-click the `Alpha Release (@legacy)` folder and `Open in Integrated Terminal`. This will allow you to use commands like `yarn dev` just as before. Also, in the top-level `package.json`, some commands for the Alpha codebase are elevated there and prefixed, such as `yarn legacy:dev` so that you don't always have to `cd packages/legacy`.
 
-#### Template
+If you are deploying the Alpha, you can run `yarn deploy` at the root of the repo. The `netlify.toml` is now there, and the monorepo and respects deploying Alpha from it.
 
-Templates are React components only ever used by Pages. They are usually unique the app and typically only used once per route. They don't contain ANY app-specific logic.
-
-All of their data comes in as props, usally provided by the model when both are rendered together in the Page.
-
-```javascript
-import AvatarSection from '@organisms/AvatarSection'
-import UserTable from '@modlecules/UserTable'
-
-// ... other imports
-
-export interface AccountTemplateProps {
-    /**
-     * The name of the user. Rendered as an H1
-     */
-    fullName: string
-    /**
-     * The url address for the avatar image. Must be HTTPS
-     */
-    avatar: string
-}
-
-
-const AccountTemplate: React.FC<AccountTemplateProps> = ({
-    fullName = 'John Doe'
-    avatar = 'https://tinyurl/48NIEST5.png'
-}) => {
-
-    if (loading) {
-        return <Skeleton>
-    } else {
-        return (
-            <Box display="flex" pt={4} bg="gray.100">
-                <AvatarSection title={fullName} src={avatar}>
-                <UserTable>
-            </Box>
-        )
-    }
-}
-```
-
-#### Component
-
-The lowest level items that make up templates. They are very generic, and are likely reused often. Follow the Atomic Design principles outlined by Brad Frost.
-
-Stored in the `@tpot-toolbox/ui` package. Usually aliased as `@atoms`, `@modlecules`, `@organisms`, etc. for use inside Templates.
-
-Example:
-
-```javascript
-import { Box, Heading, Avatar } from '@chakra-ui/core'
-
-const AvatarSection = (
-    title = 'Avatar Name'
-    src = null
-) => {
-    <Box display="inline-block" p={2}>
-        <Heading as="h1">{title}</Heading>
-        <Avatar src={src}>
-    </Box>
-}
-```
-
-### Summary
-
-#### Component-Flow
-
-Page --> Template --> Organisms --> Molecules --> Atoms
-
-#### Data Flow
-
-Page (props) --> Model (as state) <--> Template (as props) --> Components (as props)
+At some point, Beta will release, and the `legacy` package will be deleted - as the code from Alpha will have already been refactored into Beta at that point.
