@@ -1,37 +1,45 @@
 {
-    "name": "toolbox",
-    "version": "1.0.1",
-    "main": "index.js",
-    "description": "A progressive web app for posting content to ThePathOfTruth",
-    "keywords": ["wordpress", "strapi", "react", "ckeditor", "mobx"],
-    "repository": "https://github.com/HarvestHaven/TPOT-Next.git",
-    "author": "Braden Preston <bpfilmsinc@gmail.com>",
-    "homepage": "https://toolbox.tpot.tech",
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "oao": "npx oao",
-        "clean": "npx oao clean",
-        "status": "npx oao status",
-        "bootstrap": "npx oao bootstrap",
-        "dependants": "yarn workspaces info",
-        "release:major": "npx oao publish --no-npm-publish --increment-version-by major",
-        "release:minor": "npx oao publish --no-master --no-npm-publish --increment-version-by minor",
-        "bump": "npx oao publish --no-checks --no-master --no-git-commit --no-npm-publish",
-        "legacy:dev": "cd packages/legacy && yarn dev",
-        "legacy:start": "cd packages/legacy && yarn start",
-        "legacy:build": "cd packages/legacy && yarn build",
-        "legacy:export": "cd packages/legacy && yarn export",
-        "legacy:deploy": "netlify deploy"
-    },
-    "workspaces": [
-        "packages/api",
-        "packages/app",
-        "packages/hooks",
-        "packages/models",
-        "packages/ui"
-    ],
-    "devDependencies": {
-        "oao": "^2.0.0"
-    }
+  "name": "toolbox",
+  "version": "1.0.2",
+  "main": "index.js",
+  "description": "A progressive web app for posting content to ThePathOfTruth",
+  "keywords": [
+    "wordpress",
+    "strapi",
+    "react",
+    "ckeditor",
+    "mobx"
+  ],
+  "repository": "https://github.com/HarvestHaven/TPOT-Next.git",
+  "author": "Braden Preston <bpfilmsinc@gmail.com>",
+  "homepage": "https://toolbox.tpot.tech",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "oao": "npx oao",
+    "clean": "npx oao clean",
+    "status": "npx oao status",
+    "bootstrap": "npx oao bootstrap",
+    "dependants": "yarn workspaces info",
+    "release:major": "npx oao publish --no-npm-publish --increment-version-by major",
+    "release:minor": "npx oao publish --no-master --no-npm-publish --increment-version-by minor",
+    "bump": "npx oao publish --no-checks --no-master --no-git-commit --no-npm-publish",
+    "legacy:dev": "cd packages/legacy && yarn dev",
+    "legacy:start": "cd packages/legacy && yarn start",
+    "legacy:build": "cd packages/legacy && yarn build",
+    "legacy:export": "cd packages/legacy && yarn export",
+    "legacy:deploy": "netlify deploy"
+  },
+  "workspaces": [
+    "packages/api",
+    "packages/app",
+    "packages/editor",
+    "packages/functions",
+    "packages/hooks",
+    "packages/models",
+    "packages/ui"
+  ],
+  "devDependencies": {
+    "oao": "^2.0.0"
+  }
 }

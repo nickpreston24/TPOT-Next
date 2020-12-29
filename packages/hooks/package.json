@@ -1,11 +1,11 @@
 {
   "name": "@toolbox/hooks",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@toolbox/models": "^1.0.1",
+    "@toolbox/models": "^1.0.2",
     "diff": "^4.0.1"
   }
 }
