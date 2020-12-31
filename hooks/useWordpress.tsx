@@ -129,8 +129,8 @@ function useWordpressProvider() {
      * Publishes a Paper as a draft only
      */
     const publish = async (paper: Paper, useWpapi: boolean = false): Promise<Paper> => {
-        let permalink = `https://www.thepathoftruth.com/${slug}.htm`
         const { author, id, slug } = paper;
+        let permalink = `https://www.thepathoftruth.com/${slug}.htm`
         const config = {
             method: "POST",
             headers: {

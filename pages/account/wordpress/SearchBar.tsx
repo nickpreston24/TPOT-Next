@@ -4,7 +4,7 @@ import Button from '@chakra-ui/core/dist/Button'
 import FormControl from '@chakra-ui/core/dist/FormControl'
 import FormLabel from '@chakra-ui/core/dist/FormLabel'
 import Input from '@chakra-ui/core/dist/Input'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, ReactElement, useEffect, useState } from 'react'
 import Icon from '@chakra-ui/core/dist/Icon'
 import Heading from '@chakra-ui/core/dist/Heading'
 import Stack from '@chakra-ui/core/dist/Stack'
@@ -12,10 +12,14 @@ import { InputLeftElement } from '@chakra-ui/core/dist/InputElement'
 import { useDebounce } from 'hooks'
 import { MdSearch } from "react-icons/md"
 import InputGroup from '@chakra-ui/core/dist/InputGroup'
+import { isDev } from 'helpers'
 
-export const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }
+type Props = {
+    take?: number,
+    children: (props: any) => ReactElement
+}
 
-const SearchBar: FC<any> = ({ take = 10, children }) => {
+const SearchBar: FC<Props> = ({ take = 10, children }) => {
 
     const [form, updateForm] = useState({ term: '' })
     const [posts, setPosts] = useState([]); // Papers from Wordpress
@@ -40,7 +44,7 @@ const SearchBar: FC<any> = ({ take = 10, children }) => {
             axios
                 .get(url)
                 .then((response) => {
-                    console.log('response.data', response.data)
+                    isDev() && console.log('response.data', response.data)
                     setPosts(response.data)
                     setLoading(false);
                 })
@@ -114,11 +118,9 @@ const SearchBar: FC<any> = ({ take = 10, children }) => {
                                 isRequired
                                 placeholder="faith"
                             />
-                            {/* <InputRightElement children={<MdSearch color="green.500" /> */}
                         </InputGroup>
                     </FormControl>
                     <Button
-                        // variantColor="teal"
                         color='green.300'
                         variant="outline"
                         type="submit"
@@ -129,7 +131,6 @@ const SearchBar: FC<any> = ({ take = 10, children }) => {
                         Search
                         </Button>
                 </form>
-                {/* {props.children({ loading, papers })} */}
                 {children({ loading, posts })}
             </Stack>
         </Stack>

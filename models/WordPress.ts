@@ -15,16 +15,9 @@ export class Paper {
     slug: string;
     language: string;
 
-    // categories: string[] = [];
-
     constructor(props) {
 
-        // let { title: string, content: string, language?: string } = props;
-
         Object.assign(this, { ...props })
-        // this.content = content || null;
-        // this.title = title || null;
-        // this.language = language;
         this.slug = (this.title || '')
             .replace(/\s/g, '-')
             .toLowerCase()

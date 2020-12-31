@@ -1,9 +1,11 @@
 import Stack from '@chakra-ui/core/dist/Stack';
-import React, {  } from 'react';
+import React, { } from 'react';
 import CategoryList from './CategoryList';
 import { DraftedPapersList } from './DraftedPapersList';
 import PostList from './PostList';
-import SearchBar, { sessionStyle } from './SearchBar';
+import SearchBar from './SearchBar';
+
+const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }
 
 const Wordpress = () => {
 

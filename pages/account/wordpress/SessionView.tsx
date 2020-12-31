@@ -2,10 +2,12 @@ import React from 'react';
 import { useFirestoreQuery } from 'hooks';
 import { store } from 'services/firebase/firebase';
 import Post from './Post';
-import { sessionStyle } from './SearchBar';
+
+const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }
+
 
 // Renders A Single Session by a known uid
-const Session = ({ uid }) => {
+export const SessionView = ({ uid = '' }) => {
 
     const { data, status, error } = useFirestoreQuery(
         store.collection('sessions')
@@ -20,10 +22,12 @@ const Session = ({ uid }) => {
         return `Error: ${error.message}`;
     }
 
-
     return (
-        <Post
-            style={sessionStyle}
-            post={data} />
+        !!uid ? null :
+            <Post
+                style={sessionStyle}
+                post={data} />
     );
 };
+
+export default SessionView
