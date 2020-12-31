@@ -19,7 +19,7 @@ type Props = {
     children: (props: any) => ReactElement
 }
 
-const SearchBar: FC<Props> = ({ take = 10, children }) => {
+const SearchBar: FC<Props> = ({ take = 10, children = _ => { } }) => {
 
     const [form, updateForm] = useState({ term: '' })
     const [posts, setPosts] = useState([]); // Papers from Wordpress
@@ -131,6 +131,8 @@ const SearchBar: FC<Props> = ({ take = 10, children }) => {
                         Search
                         </Button>
                 </form>
+                {/* Render any children of the Search Bar using render props, but instead of normal render props,
+                 it's a function w/ the child component's props passed in! */}
                 {children({ loading, posts })}
             </Stack>
         </Stack>

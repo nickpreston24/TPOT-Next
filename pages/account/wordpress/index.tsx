@@ -13,7 +13,7 @@ const Wordpress = () => {
         <Stack>
             <SearchBar>
                 {({ loading, posts }) =>
-                    <Stack direction="row">
+                    <Stack direction='row'>
                         <PostList
                             style={sessionStyle}
                             heading="Search Results"

@@ -7,7 +7,7 @@ const sessionStyle = { background: "linear-gradient(to left, #ff34d7, #2bc0e4)",
 
 
 // Renders A Single Session by a known uid
-export const SessionView = ({ uid = '' }) => {
+export const SessionView = ({ uid = '-1' }) => {
 
     const { data, status, error } = useFirestoreQuery(
         store.collection('sessions')
