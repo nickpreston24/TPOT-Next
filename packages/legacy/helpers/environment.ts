@@ -7,8 +7,9 @@ export function isDev(): boolean {
     return development;
 }
 
-export function isAdmin():boolean {
-    store.collection('users').get()
+export function isAdmin(): boolean {
+    // store.collection('users').get()
+    return true;
 }
 
 export default isDev;
