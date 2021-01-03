@@ -4,7 +4,7 @@ import { store } from 'services/firebase/firebase';
 import Post from './Post';
 
 // Renders A Single Session by a known uid
-const Session = ({ uid='0001' }) => {
+export const SessionView = ({ uid = '-1' }) => {
 
     const { data, status, error } = useFirestoreQuery(
         store.collection('sessions')
@@ -19,11 +19,12 @@ const Session = ({ uid='0001' }) => {
         return `Error: ${error.message}`;
     }
 
-
     return (
-        <Post
-            post={data} />
+        !!uid ? null :
+            <Post
+                style={{ background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }}
+                post={data} />
     );
 };
 
-export default Session
+export default SessionView

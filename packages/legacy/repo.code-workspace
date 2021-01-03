@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "@tpot-toolbox",
+			"path": "."
+		},
+		{
+			"name": "@/editor",
+			"path": "packages\\editor"
+		},
+		{
+			"name": "@/core",
+			"path": "packages\\core"
+		},
+		{
+			"name": "@/ui",
+			"path": "packages\\ui"
+		},
+	],
+	"settings": {}
+}

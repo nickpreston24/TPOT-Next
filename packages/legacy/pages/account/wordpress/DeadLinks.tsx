@@ -5,7 +5,6 @@ import List, { ListItem } from '@chakra-ui/core/dist/List';
 import Spinner from '@chakra-ui/core/dist/Spinner';
 import Link from '@chakra-ui/core/dist/Link';
 import Switch from '@chakra-ui/core/dist/Switch';
-import { Paper } from 'models';
 
 type Props = {
     papers: any[]
@@ -13,7 +12,7 @@ type Props = {
 }
 
 export const DeadLinks: FC<Props> = ({ papers, loading }) => {
-    // console.log('papers :>> ', papers);
+
     if (!papers || papers.length == 0)
         return null;
 
@@ -35,7 +34,6 @@ export const DeadLinks: FC<Props> = ({ papers, loading }) => {
     // remove dups
     links = [...new Set(links)]
 
-    // console.log('links :>> ', links);
     if (!links || links.length == 0)
         return <span>No dead Links found :)</span>;
 

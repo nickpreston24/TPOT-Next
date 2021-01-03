@@ -14,7 +14,12 @@ type Props = {
 }
 
 /** Renders a list of Posts */
-export const PostList: FC<any> = ({ heading = '', loading = null, posts = [], style = { color: '#111', background: 'transparent' } }) => {
+export const PostList: FC<any> = ({
+    heading = '',
+    loading = null,
+    posts = [],
+    style = { color: '#111', background: 'transparent' }
+}) => {
 
     if (!posts || posts.length == 0)
         return null;

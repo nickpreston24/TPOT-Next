@@ -4,7 +4,7 @@
 .vscode
 
 # dependencies
-**/node_modules
+/node_modules
 /.pnp
 .pnp.js
 
@@ -13,8 +13,8 @@
 test
 
 # next.js
-**/*/.next/
-**/*/out/
+/.next/
+/out/
 
 # production
 /build
@@ -46,6 +46,3 @@ test
 
 # Anything that's a code sample
 _samples
-
-# Local Netlify folder
-.netlify
