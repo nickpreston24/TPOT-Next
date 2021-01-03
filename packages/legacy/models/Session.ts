@@ -29,7 +29,6 @@ export class Session {
 
     constructor(props) {
 
-        // isDev() && console.log('props', props)
         // Allows for DTOs
         if (!props)
             return
@@ -44,15 +43,15 @@ export class Session {
         //Set defaults/fallbacks:
 
         language = !!language ? language.trim() : ""
-        console.log('title', title)
+
         this.title = !title ? '' : title.replace(/[_;:]/g, '');
         let slug =
             (title || '')
                 .replace(/[',?!;:]/g, '')
+                .replace(/[.\s]/g, '-')
                 .replace(/_/, ' ')
-                .replace(/\s/g, '-')
                 .toLowerCase()
-        console.log('this.slug', this.slug)
+
         this.docId = null;
         this.slug = slug || '';
         this.authorId = authorId || -1

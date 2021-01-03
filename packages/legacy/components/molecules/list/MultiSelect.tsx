@@ -12,7 +12,8 @@ type Props = {
   options?: string[], // options to choose from
   selectedOptions: string[], // currently selected options
   onChange: (selectedItems: string[]) => void,
-  mode?: "dropdown" | "input"
+  mode?: "dropdown" | "input",
+  initial?: string
 }
 
 export const MultiSelect: FC<Props> = ({
@@ -20,7 +21,8 @@ export const MultiSelect: FC<Props> = ({
   options = [],
   selectedOptions = [],
   onChange,
-  mode = 'input'
+  mode = 'input',
+  initial = ''
 }) => {
   const [state, setState] = useState({
     value: "",
@@ -51,7 +53,7 @@ export const MultiSelect: FC<Props> = ({
     // Merge in the new option
     setState({
       ...state,
-      value: '',
+      value: initial,
       selectedOptions: newOptions
     });
 
@@ -73,8 +75,6 @@ export const MultiSelect: FC<Props> = ({
     <Flex
       m={[1, 1]}
       direction="column"
-    // p={4}
-    // style={{ border: '2px solid red' }}
     >
       <Flex wrap='wrap'>
         {state.selectedOptions.map((option, index) =>
@@ -123,7 +123,6 @@ export const MultiSelect: FC<Props> = ({
             </Tooltip>
           </Box>}
       </Flex>
-
 
       {
         mode === 'input' &&

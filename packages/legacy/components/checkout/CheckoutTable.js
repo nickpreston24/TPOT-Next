@@ -37,6 +37,7 @@ import moment from 'moment'
 import { ChipStatus, Confirm } from '../atoms'
 import { isDev } from "helpers"
 import CategoryList from 'pages/account/wordpress/CategoryList'
+import { useLocalStorage } from '../../hooks'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
 // 'sessions' Collection. It is an inexpensive reactive component that displays the
@@ -70,9 +71,9 @@ const queryLimit = 10;
 export const CheckoutTable = observer(() => {
 
     const router = useRouter();
-    const { user } = useAuth();
 
     const { isLoading, hasDocs } = sessions;
+    const [user, setUser] = useLocalStorage('user', '')
 
     let tableData = []
 
@@ -82,8 +83,6 @@ export const CheckoutTable = observer(() => {
         sessions.docs.reduce((array, doc, idx) => {
             let { id, data } = doc
             let { status, date_modified, date_uploaded, contributors } = data
-
-            // console.log('contributors :>> ', contributors);
 
             let now = moment()
             if (date_modified) {
@@ -187,7 +186,7 @@ const SessionDetails = ({ row, user }) => {
 
     let { slug, excerpt, original, date_uploaded, filename, status, language, lastContributor, categories } = session;
 
-    console.log('categories', toJS(categories))
+    // console.log('categories', toJS(categories))
 
     const cancelUnlockRef = React.useRef();
     const cancelDeleteRef = React.useRef();

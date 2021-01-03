@@ -3,12 +3,12 @@ import { useFirestoreQuery } from 'hooks';
 import { store } from 'services/firebase/firebase';
 import Post from './Post';
 
-// Renders A Single Session by a known uid
-const Session = ({ uid='0001' }) => {
+// Renders A Single Session by a known id
+const Session = ({ id = '-1' }) => {
 
     const { data, status, error } = useFirestoreQuery(
         store.collection('sessions')
-            .doc(uid) // Document
+            .doc(id) // Document
     );
 
     if (status === "loading") {

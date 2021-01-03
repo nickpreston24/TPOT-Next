@@ -92,9 +92,6 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
      */
     useEffect(() => {
 
-        console.log('all users', wpUsers)
-
-
         // Checking out Session:
         if (!!doc && session.status !== CheckoutStatus.CheckedOut) {
             checkoutSession(doc as string)
@@ -107,9 +104,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                         ...result,
                     })
 
-                    console.log('checked out code', result.code.replace(/&nbsp;/g, ''))
-
-                    setHtml(result.code.replace(/&nbsp;/g, ''));
+                    setHtml(result.code);
                 })
         }
 
@@ -123,8 +118,8 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         let html = getHtml();
-
         let nextSession = new Session({
+            ...session,
             docId: doc as string,
             title: form.title,
             code: html,
@@ -135,11 +130,11 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
         switch (mode) {
             case 'Save':
                 savePaper(nextSession)
-                    .then(() => { notify("Saved session", "success") })
+                    .then(() => { notify("Saved Session!", "success") })
                 break;
             case 'Update':
                 updatePaper(doc as string, nextSession)
-                    .then(() => { notify("Updated session", "success"); })
+                    .then(() => { notify("Updated Paper!", "success") })
                 break;
             case 'Publish':
                 publishPaper(doc as string, nextSession)
@@ -231,6 +226,7 @@ export const ScribeToolbar: FC<ScribeToolbarProps> = (props) => {
                                 selectedOptions={form.categories}
                                 options={categories.map(c => c.name)}
                                 mode="dropdown"
+                                initial="--"
                                 onChange={(set) => {
                                     updateForm({
                                         ...form,

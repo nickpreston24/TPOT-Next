@@ -25,8 +25,6 @@ export class Session {
 
     constructor(props) {
 
-        // isDev() && console.log('props', props)
-        // Allows for DTOs
         if (!props)
             return
 
@@ -37,9 +35,7 @@ export class Session {
         } = props;
 
         //Set defaults/fallbacks:
-
         language = !!language ? language.trim() : ""
-        console.log('title', title)
         this.title = !title ? '' : title.replace(/[_;:]/g, '');
         let slug =
             (title || '')
@@ -47,7 +43,6 @@ export class Session {
                 .replace(/_/, ' ')
                 .replace(/\s/g, '-')
                 .toLowerCase()
-        console.log('this.slug', this.slug)
         this.docId = null;
         this.slug = slug || '';
         this.authorId = authorId || -1
@@ -69,29 +64,28 @@ export class Session {
         return new Session(props);
     }
 
-    public toJSON() {
-        return {
-            authorId: this.authorId,
-            paperId: this.paperId,
-            title: this.title,
-            status: this.status,
-            language: this.language,
-            code: this.code,
-            slug: this.slug,
-            excerpt: this.excerpt,
-            categories: this.categories,
-            contributors: this.contributors,
-            lastContributor: this.lastContributor,
-            date_modified: this.date_modified,
-            date_uploaded: this.date_uploaded,
-            filename: this.filename,
-        }
-    }
+    // public toJSON() {
+    //     return {
+    //         authorId: this.authorId,
+    //         paperId: this.paperId,
+    //         title: this.title,
+    //         status: this.status,
+    //         language: this.language,
+    //         code: this.code,
+    //         slug: this.slug,
+    //         excerpt: this.excerpt,
+    //         categories: this.categories,
+    //         contributors: this.contributors,
+    //         lastContributor: this.lastContributor,
+    //         date_modified: this.date_modified,
+    //         date_uploaded: this.date_uploaded,
+    //         filename: this.filename,
+    //     }
+    // }
 }
 
-export class Scribe {
-    @observable.shallow list: Session[] = [];
-    constructor(){}
+// export class Scribe {
+//     @observable.shallow list: Session[] = [];
+//     constructor(){}
 
-    // @action
-}
+// }

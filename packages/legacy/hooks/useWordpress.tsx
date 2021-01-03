@@ -4,8 +4,11 @@ import { Paper, toDto, createInstance } from '../models'
 import { Document } from 'firestorter'
 import { toJS } from 'mobx';
 import axios from 'axios'
-import { notify } from 'components/Toasts';
 import jwt from 'jsonwebtoken'
+import { isDev } from 'helpers';
+import { useAuth } from './useAuth';
+import { useLocalStorage } from 'hooks'
+import { store } from 'services/firebase/firebase';
 
 let endpoint = `https://www.thepathoftruth.com/wp-json/wp/v2/pages`;
 
@@ -31,61 +34,75 @@ function useWordpressProvider() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    /* TODO: @Braden-Preston or @mikepreston17,
+       Instead of using localStorage, we'll need to have the auth user in MST
+    */
+
+    // const { user } = useAuth();
+    const [user, setUser] = useLocalStorage('user', '')
+
     useEffect(() => {
 
         /** Get WP Credentials from Firebase */
         const doc = new Document<any>(`users/super-user`)
-        let user = null;
+        let credentials = null;
+        const ref = store.collection('users')
+        // .where('firstName', '==', )
 
         const fetchSuperUser = async () => {
-            await doc.fetch()
-                .then((response) => {
-                    let data = toJS(response.data);
+            await
+                doc.fetch()
+                    .then((response) => {
+                        let data = toJS(response.data);
 
-                    user = data['wordpress-credentials'];
+                        credentials = data['wordpress-credentials'];
 
-                    setSuperUser(data);
+                        setSuperUser(data);
 
-                    /** JWT Tokens */
-                    let config = {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
-                        // Sign-in exists only to fetch a token, then the token is used for Posting new content...
-                        params: {
-                            username: user?.email,
-                            password: user?.password,
-                            token: data?.token,
+                        /** JWTs (tokens) */
+                        let config = {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            url: `https://www.thepathoftruth.com/wp-json/jwt-auth/v1/token`,
+                            // Sign-in exists only to fetch a token, then the token is used for Posting new content...
+                            params: {
+                                username: credentials?.email,
+                                password: credentials?.password,
+                                token: data?.token,
+                            }
                         }
-                    }
 
-                    let savedToken = user?.token || localStorage.getItem("token");
-                    let expired = isTokenExpired(savedToken);
+                        let savedToken = credentials?.token || localStorage.getItem("token");
+                        let isExpired = !credentials?.token || isTokenExpired(savedToken);
 
-                    if (expired) {
-                        let message = 'Your Wordpress JWT has expired!  Requesting new one...'
-                        console.warn(message)
-                    }
+                        // isExpired = true;  // Uncomment to trigger a token change for this user
+                        if (isExpired) {
+                            let message = 'Your Wordpress JWT has expired!  Requesting new one...'
+                            console.warn(message)
+                        }
 
-                    // If token is bad or non-existent, get a new one from WP
-                    if (!savedToken || expired) {
-                        axios(config as any)
-                            .then((response) => {
-                                let { token } = response.data;
-                                setToken(token);
-                                doc.update({
-                                    token: token
+                        // If token is bad or non-existent, get a new one from WP
+                        if (!savedToken || isExpired) {
+                            axios(config as any)
+                                .then((response) => {
+                                    let { token } = response.data;
+                                    setToken(token);
+                                    doc.update({
+                                        'wordpress-credentials': {
+                                            ...credentials,
+                                            token
+                                        }
+                                    })
+                                        .catch((err) => console.error('Error occured when trying to update JWT in super-user:' + err))
+                                    localStorage.setItem("token", token);
                                 })
-                                    .catch((err) => console.error('Error occured when trying to update JWT in super-user:' + err))
-                                localStorage.setItem("token", token);
-                            })
-                            .catch((err) => console.error('Error when fetching new JWT token from Wordpress:' + err));
-                    }
-                    // Otherwise, set the stored token to state.
-                    else {
-                        setToken(savedToken);
-                    }
-                })
+                                .catch((err) => console.error('Error when fetching new JWT token from Wordpress:' + err));
+                        }
+                        // Otherwise, set the stored token to state.
+                        else {
+                            setToken(savedToken);
+                        }
+                    })
         }
 
         fetchSuperUser();
@@ -128,7 +145,7 @@ function useWordpressProvider() {
     /**
      * Publishes a Paper as a draft only
      */
-    const publish = async (paper: Paper, useWpapi: boolean = false): Promise<Paper> => {
+    const publish = async (paper: Paper) => {
         const { author, id, slug } = paper;
         let permalink = `https://www.thepathoftruth.com/${slug}.htm`
         const config = {
@@ -143,38 +160,43 @@ function useWordpressProvider() {
             // }
         };
 
+        let query = `${endpoint}/${id}`
 
         // Check for collisions:
-        const existingPaper = id ? await wpapi.pages()
-            .author(author)
-            .id(id) : false;
+        const existingPaper = !!id
+            ? (await axios.get(query, config as any)).data
+            : false;
 
         // If existing paper, update it:
         if (!!existingPaper) {
             if (!!paper.language && paper.language.toLowerCase() !== 'english') {
                 paper.slug = paper.language + "\/" + paper.slug + "_" + paper.language
             }
+
+            // TODO: make an axios update call using POST.
+            /** PUT a paper using Axios */
+            let response = await axios
+                .put(query, {
+                    ...paper, meta: {
+                        permalink, link: permalink
+                    }
+                }, config as any)
+
+            return response.data
         }
         // Publish paper as a new Draft:
         else if (!existingPaper) {
 
             /** Post a paper using Axios */
-            axios
+            let response = await axios
                 .post(endpoint, {
                     ...paper, meta: {
                         permalink, link: permalink
                     }
                 }, config as any)
-                .then((response) => {
 
-                    notify(`Post successful!`, 'success')
-                    // setResponse(JSON.stringify(response));
-                })
-                .catch((err) => console.error(err));
-            // }
+            return response.data
         }
-
-        return currentPaper;
     }
 
     return {
