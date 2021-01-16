@@ -4,6 +4,7 @@ import * as firebase from "firebase/app";
 import app from 'firebase/app';
 import { onAuthUserListener } from '../services/firebase'
 import { isDev } from "helpers";
+import useFirestoreQuery from "./useFirestoreQuery";
 
 const authContext = createContext(null);
 
@@ -31,12 +32,18 @@ export function ProvideAuth({ children }, handleAuthFailure?: () => void) {
 // Provider hook that creates auth object and handles state
 function useProvideAuth() {
 
-    // const [authUser, setUser] = useState(null);
     const auth = app.auth();
 
     const [state, setState] = useState({
-        authUser: null
+        authUser: null //TODO: MST-ify this.  When page reloads, it turns null. - MP
     });
+
+    // NOTE: This is temporary for cases where our user is not stored on refresh (f5) or localStorage.  Use MST to fix that issue!
+    const getUser = () => {
+        // useFirestoreQuery()
+        // const snapshot = await store.collection('users')
+        // .where()
+    }
 
     // Wrap any Firebase methods we want to use making sure
     // to save the user to state.
@@ -47,10 +54,15 @@ function useProvideAuth() {
             .signInWithEmailAndPassword(email, password)
             .then(response => {
                 // setUser(response.user);
+                console.log('response.user', response.user)
                 setState({
                     ...state,
                     authUser: response.user
                 })
+
+                // TODO: @Braden-Preston or @mikepreston17, use MST to store this user between refreshes
+                localStorage.setItem('user', JSON.stringify(response.user))
+
                 return response.user;
             });
     };
@@ -65,6 +77,10 @@ function useProvideAuth() {
                     ...state,
                     authUser: response.user
                 })
+
+                // TODO: @Braden-Preston or @mikepreston17, use MST to store this user between refreshes
+                localStorage.setItem('user', JSON.stringify(response.user))
+
                 return response.user;
             });
     };
@@ -74,15 +90,16 @@ function useProvideAuth() {
             .auth()
             .signOut()
             .then(() => {
-                // setUser(null);
                 setState({
                     ...state,
                     authUser: null
                 })
 
-                // isDev() && console.log('authUser :>> ', !!authUser);
-                if (onSignout)
+                if (onSignout) {
+                    // TODO: @Braden-Preston or @mikepreston17, use MST to store this user between refreshes
+                    localStorage.setItem('user', '')
                     onSignout();
+                }
             })
             .catch(console.error);
     };
@@ -126,49 +143,17 @@ function useProvideAuth() {
             },
         );
 
-        // const unsubscribe = firebase.auth()
-        //     .onAuthStateChanged(authUser => {
-        //         console.log('auth state changed', !!authUser);
-        //         if (!!authUser) {
-        //             // setState(authUser: user);
-        //             setState({
-        //                 ...state,
-        //                 authUser: authUser
-        //             })
-
-        //             localStorage.setItem('authUser', JSON.stringify(authUser))
-        //             setState({ authUser });
-
-        //             isDev() && console.log('state :>> ', state);
-        //             isDev() && console.log('localStorage (on signin) :>> ', localStorage);
-
-        //         } else {
-        //             // setState(authUser: null);
-        //             setState({
-        //                 ...state,
-        //                 authUser: null
-        //             })
-
-        //             localStorage.removeItem('authUser');
-        //             isDev() && console.log('state :>> ', state);
-        //             isDev() && console.log('localStorage (on removal) :>> ', localStorage);
-        //         }
-        //     });
-
         // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
 
     return {
-
         user: state.authUser,
         signin,
         signup,
         signout,
         sendPasswordResetEmail,
         confirmPasswordReset,
-        // onAuthUserListener,
-
         firebase,
     }
 }

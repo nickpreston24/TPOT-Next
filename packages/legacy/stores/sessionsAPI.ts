@@ -4,6 +4,7 @@ import { Session } from 'models'
 import { toJS } from 'mobx';
 import { CheckoutStatus } from 'constants/CheckoutStatus';
 import { IDocumentOptions } from 'firestorter/lib/Types';
+import { isDev } from 'helpers';
 
 const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;
@@ -70,6 +71,7 @@ export const checkoutSession = async (id: string) => {
 
 /** Updates and existing Session */
 export const updateSession = async (id: string, session: any | Session): Promise<Session | object> => {
+
 
     let options = { mode: 'off' } as IDocumentOptions
     let document = new Document(`sessions/${id}`, options);

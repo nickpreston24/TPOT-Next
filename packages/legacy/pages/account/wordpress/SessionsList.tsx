@@ -3,7 +3,6 @@ import PostList from './PostList';
 import { useFirestoreQuery } from 'hooks';
 import { store } from 'services/firebase/firebase';
 import Spinner from '@chakra-ui/core/dist/Spinner';
-import { sessionStyle } from './SearchBar';
 
 // All Sessions
 export const SessionsList = () => {
@@ -21,7 +20,7 @@ export const SessionsList = () => {
     }
 
     return <PostList
-        style={sessionStyle}
+        style={{ background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }}
         heading="Sessions"
         posts={data}
     />;
