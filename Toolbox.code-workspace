@@ -5,36 +5,24 @@
 			"path": "."
 		},
 		{
-			"name": "Alpha Release (@legacy)",
-			"path": "./packages/legacy"
+			"name": "📦 Packages",
+			"path": "./packages"
 		},
 		{
-			"name": "@api",
+			"name": "🐋 Docker",
+			"path": "./packages/docker"
+		},
+		{
+			"name": "📚 Docs",
+			"path": "./packages/docs"
+		},
+		{
+			"name": "🚀 Server",
 			"path": "./packages/api"
 		},
 		{
-			"name": "@app",
+			"name": "🐠 Client",
 			"path": "./packages/app"
-		},
-		{
-			"name": "@editor",
-			"path": "./packages/editor"
-		},
-		{
-			"name": "@functions",
-			"path": "./packages/functions"
-		},
-		{
-			"name": "@hooks",
-			"path": "./packages/hooks"
-		},
-		{
-			"name": "@models",
-			"path": "./packages/models"
-		},
-		{
-			"name": "@ui",
-			"path": "./packages/ui"
 		}
 	],
 	"settings": {

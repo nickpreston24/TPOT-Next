@@ -1,0 +1,1 @@
+Use Strapi to make the backend. Host on Ubuntu. Replaces all Google based services.

@@ -17,10 +17,10 @@
     "release:major": "npx oao publish --no-npm-publish --increment-version-by major",
     "release:minor": "npx oao publish --no-master --no-npm-publish --increment-version-by minor",
     "bump": "npx oao publish --no-checks --no-master --no-git-commit --no-npm-publish",
-    "dev": "cd packages/legacy && yarn dev",
-    "start": "cd packages/legacy && yarn start",
-    "build": "cd packages/legacy && yarn build",
-    "export": "cd packages/legacy && yarn export",
+    "dev": "cd packages/app && yarn dev",
+    "start": "cd packages/app && yarn start",
+    "build": "cd packages/app && yarn build",
+    "export": "cd packages/app && yarn export",
     "deploy": "netlify deploy"
   },
   "keywords": [
@@ -31,13 +31,7 @@
     "mobx"
   ],
   "workspaces": [
-    "packages/api",
-    "packages/app",
-    "packages/editor",
-    "packages/functions",
-    "packages/hooks",
-    "packages/models",
-    "packages/ui"
+    "packages/*"
   ],
   "devDependencies": {
     "oao": "^2.0.0"
