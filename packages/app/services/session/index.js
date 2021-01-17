@@ -1,9 +1,4 @@
-// import AuthUserContext from '../firebase/AuthUserContext'
-import withAuthentication from './withAuthentication';
-import withAuthorization from './withAuthorization';
+import withAuthentication from './withAuthentication'
+import withAuthorization from './withAuthorization'
 
-export {
-    // AuthUserContext,
-    withAuthentication,
-    withAuthorization,
-};
+export { withAuthentication, withAuthorization }

@@ -1,5 +1,5 @@
 export enum UploadMode {
-    Desktop = 'Desktop',
-    GoogleDrive = 'GoogleDrive',
-    Paste = 'Paste'
+  Desktop = 'Desktop',
+  GoogleDrive = 'GoogleDrive',
+  Paste = 'Paste',
 }

@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Template from '../../../components/templates/PaperEditor'
 
 const Page = () => {
-
-  return (
-    <Template />
-  )
+  return <Template />
 }
 
 export default Page

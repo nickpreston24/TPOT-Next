@@ -1,5 +1,4 @@
-export { scriptureParser } from './Scripture'
-export { Paper } from './WordPress'
+export { createInstance, toDto } from './domain'
 export { Session } from './Session'
-export { toDto, createInstance } from './domain'
 export { Setting } from './Setting'
+export { Paper } from './WordPress'

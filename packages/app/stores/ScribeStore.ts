@@ -1,32 +1,21 @@
-import { observable, action } from 'mobx'
-import { CheckoutStatus } from '../constants/CheckoutStatus';
+import { action, observable } from 'mobx'
+import { CheckoutStatus } from '../constants/CheckoutStatus'
 
-/**
- * Holds contextual information for the Scribe app
- */
 export class ScribeStore {
+  static instance = null
+  static getInstance() {
+    if (!ScribeStore.instance) ScribeStore.instance = new ScribeStore()
 
-    // Optional singleton support
-    static instance = null;
-    static getInstance() {
-        if (!ScribeStore.instance)
-            ScribeStore.instance = new ScribeStore();
+    return this.instance
+  }
 
-        return this.instance;
-    }
+  @observable lastStatus: CheckoutStatus = CheckoutStatus.NotStarted
+  @observable currentStatus: CheckoutStatus = CheckoutStatus.NotStarted
 
-
-    // @observable dirty: boolean = false;
-    // @observable lastSession: Session = createInstance(Session);
-    @observable lastStatus: CheckoutStatus = CheckoutStatus.NotStarted;
-    @observable currentStatus: CheckoutStatus = CheckoutStatus.NotStarted;
-
-    @action setStatus = (status: CheckoutStatus) => {
-        this.lastStatus = this.currentStatus
-        this.currentStatus = status;
-// console.log('this.currentStatus', this.currentStatus)
-    }
-
+  @action setStatus = (status: CheckoutStatus) => {
+    this.lastStatus = this.currentStatus
+    this.currentStatus = status
+  }
 }
 
-export const scribeStore = ScribeStore.getInstance();
+export const scribeStore = ScribeStore.getInstance()

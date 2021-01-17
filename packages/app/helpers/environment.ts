@@ -1,15 +1,16 @@
-import process from "process";
-import { store } from "../services/firebase/firebase";
+import process from 'process'
 
-const development: boolean = process.env.NODE_ENV === 'production' ? false : !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+const development: boolean =
+  process.env.NODE_ENV === 'production'
+    ? false
+    : !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 export function isDev(): boolean {
-    return development;
+  return development
 }
 
 export function isAdmin(): boolean {
-    // store.collection('users').get()
-    return true;
+  return true
 }
 
-export default isDev;
+export default isDev

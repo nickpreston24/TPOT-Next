@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react'
-import Layout from '../../components/templates/Checkout.tsx' 
-import { isDev } from '@helpers'
+import React from 'react'
+import Layout from '../../components/templates/Checkout.tsx'
 
 const Checkout = () => {
-
-  return (<Layout />)
+  return <Layout />
 }
 
 export default Checkout

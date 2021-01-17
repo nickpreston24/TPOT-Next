@@ -1,1 +1,1 @@
-export { wpapi } from './api';
+export { wpapi } from './api'

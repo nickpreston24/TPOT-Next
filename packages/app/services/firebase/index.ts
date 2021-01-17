@@ -1,10 +1,4 @@
-import * as auth from "./auth";
+import * as auth from './auth'
+import { firebase, onAuthUserListener, storage } from './firebase'
 
-import { firebase, storage, onAuthUserListener } from './firebase'
-
-export {
-    auth,
-    firebase,
-    storage,
-    onAuthUserListener,
-};
+export { auth, firebase, storage, onAuthUserListener }

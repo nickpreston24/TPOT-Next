@@ -1,3 +1,3 @@
 export const DEFAULT_AUTHOR = 10 //Victor
-export { CheckoutStatus, CheckoutColors } from './CheckoutStatus'
+export { CheckoutColors, CheckoutStatus } from './CheckoutStatus'
 export { Language, LanguageOptions } from './languages'
