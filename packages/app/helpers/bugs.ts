@@ -1,5 +1,5 @@
-import { useFirestoreQuery, useLocalStorage } from "hooks";
-import { store } from "services/firebase/firebase";
+import { useFirestoreQuery, useLocalStorage } from "../hooks";
+import { store } from "../services/firebase/firebase";
 import isDev from "./environment";
 
 export enum BugType {

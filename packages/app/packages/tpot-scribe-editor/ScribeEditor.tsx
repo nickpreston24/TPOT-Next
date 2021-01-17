@@ -1,9 +1,9 @@
 import React, { createRef } from "react";
 import { ScribeToolbar } from '../../components'
 import { Spinner, Box, Flex, Button } from "@chakra-ui/core";
-import { isDev } from "helpers";
-import { ProvideSessions } from "hooks";
-import './styles.css'
+import { isDev } from "../../helpers";
+import { ProvideSessions } from "../../hooks";
+import './ScribeEditor.module.css'
 
 export class ScribeEditor extends React.Component<any, any> {
     state = { loading: true, contents: '' };

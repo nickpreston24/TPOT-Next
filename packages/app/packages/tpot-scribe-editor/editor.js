@@ -1,4 +1,4 @@
-import 'ckeditor5-build-fully-featured/sample/styles.css'
+import '../ckeditor5-build-fully-featured/sample/styles.css'
 import React, { useRef } from 'react'
 import CKEditor from '@ckeditor/ckeditor5-react'
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector'

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { sessions } from '@stores'
-import Template from '@templates/PaperEditor'
+import Template from '../../../components/templates/PaperEditor'
 
 const Page = () => {
 

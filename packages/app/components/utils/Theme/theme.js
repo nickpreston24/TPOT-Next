@@ -1,3 +1,4 @@
+// @ts-ignore
 import theme from "@chakra-ui/core/dist/theme";
 import icons from './icons'
 import colors from './colors'

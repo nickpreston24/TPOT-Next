@@ -1,10 +1,10 @@
-import '@services/firebase'
+import '../services/firebase'
 import { Collection, Document } from 'firestorter'
-import { Session } from 'models'
+import { Session } from '../models'
 import { toJS } from 'mobx';
-import { CheckoutStatus } from 'constants/CheckoutStatus';
+import { CheckoutStatus } from '../constants/CheckoutStatus';
 import { IDocumentOptions } from 'firestorter/lib/Types';
-import { isDev } from 'helpers';
+import { isDev } from '../helpers';
 
 const DEFAULT_AUTHOR = 9;
 const queryLimit = 10;

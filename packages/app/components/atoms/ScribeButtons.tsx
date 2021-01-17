@@ -5,7 +5,7 @@ import Text from '@chakra-ui/core/dist/Text'
 import Button from '@chakra-ui/core/dist/Button'
 
 import { FC } from "react"
-import { notify } from 'components/Toasts'
+import { notify } from '../../components/Toasts'
 
 type NavbarButtonProps = {
     icon?: string,

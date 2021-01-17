@@ -254,12 +254,12 @@ Make sure you keep a copy of your `.env` files for each package in a safe place
 ```
 packages/app/.env
 
-REACT_APP_API_KEY=········································
-REACT_APP_AUTH_DOMAIN=······.firebaseapp.com
-REACT_APP_DATABASE_URL=https://······.firebaseio.com
-REACT_APP_PROJECT_ID=······
-REACT_APP_STORAGE_BUCKET=······.appspot.com
-REACT_APP_MESSAGING_SENDER_ID=············
+NEXT_PUBLIC_API_KEY=········································
+NEXT_PUBLIC_AUTH_DOMAIN=······.firebaseapp.com
+NEXT_PUBLIC_DATABASE_URL=https://······.firebaseio.com
+NEXT_PUBLIC_PROJECT_ID=······
+NEXT_PUBLIC_STORAGE_BUCKET=······.appspot.com
+NEXT_PUBLIC_MESSAGING_SENDER_ID=············
 ```
 
 ---

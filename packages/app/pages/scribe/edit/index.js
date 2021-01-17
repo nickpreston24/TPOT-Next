@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Template from '@templates/PaperEditor'
+import Template from '../../../components/templates/PaperEditor'
 
 const Page = () => {
 

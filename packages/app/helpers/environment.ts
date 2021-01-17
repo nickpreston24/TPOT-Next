@@ -1,5 +1,5 @@
 import process from "process";
-import { store } from "services/firebase/firebase";
+import { store } from "../services/firebase/firebase";
 
 const development: boolean = process.env.NODE_ENV === 'production' ? false : !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 

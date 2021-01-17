@@ -1,13 +1,12 @@
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import { ProvideAuth, ProvideWordpress } from '@hooks'
 import ThemeProvider from '@chakra-ui/core/dist/ThemeProvider'
 import CSSReset from '@chakra-ui/core/dist/CSSReset'
 
-import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
-import customTheme from 'components/utils/Theme'
-import muiTheme from 'components/utils/MuiTheme'
+// import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
+import customTheme from '../components/utils/Theme'
+// import muiTheme from 'components/utils/MuiTheme'
 import { useRouter } from 'next/router'
 import * as ROUTES from '@routes'
 
@@ -17,7 +16,7 @@ const MobxApp = (props) => {
   const router = useRouter()
 
   return (
-    <MuiThemeProvider theme={muiTheme}>
+    // <MuiThemeProvider theme={muiTheme}>
       <ThemeProvider theme={customTheme}>
         <CSSReset />
         <ProvideWordpress>
@@ -29,7 +28,7 @@ const MobxApp = (props) => {
           </ProvideAuth>
         </ProvideWordpress>
       </ThemeProvider>
-    </MuiThemeProvider>
+    // </MuiThemeProvider>
   )
 }
 

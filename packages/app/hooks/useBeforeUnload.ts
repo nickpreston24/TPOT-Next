@@ -18,8 +18,13 @@ export const useBeforeUnload = (
     }
 
     useEffect(() => {
-        window.addEventListener('beforeunload', handleBeforeunload)
-        return () => window.removeEventListener('beforeunload', handleBeforeunload)
+        try {
+            window.addEventListener('beforeunload', handleBeforeunload)
+            return () => window.removeEventListener('beforeunload', handleBeforeunload)
+        } catch (error) {
+            console.log('no window for beforeunload')
+            return
+        }
     }, [])
 }
 
@@ -27,8 +32,13 @@ export function usePreventWindowUnload(preventDefault) {
     useEffect(() => {
         if (!preventDefault) return;
         const handleBeforeUnload = event => event.preventDefault();
-        window.addEventListener("beforeunload", handleBeforeUnload);
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+        try {
+            window.addEventListener("beforeunload", handleBeforeUnload);
+            return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+        } catch (error) {
+            console.log('no window for preventwindowunload')
+            return
+        }
     }, [preventDefault]);
 }
 

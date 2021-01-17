@@ -152,7 +152,7 @@ export const MultiSelect: FC<Props> = ({
           onChange={(selected) => {
             if (!selected)
               return
-            let newOptions = [...new Set([...state.selectedOptions, selected])];
+            let newOptions = [...state.selectedOptions, selected];
 
             // Merge in the new option
             setState({

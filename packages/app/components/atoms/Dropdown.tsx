@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import Select from '@chakra-ui/core/dist/Select'
-import { BugType, Log } from "helpers/bugs";
+import { BugType, Log } from "../../helpers/bugs";
 
 type DropdownProps = {
     options: string[]

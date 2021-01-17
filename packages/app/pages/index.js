@@ -1,7 +1,7 @@
 import React from 'react'
 import NextLink from 'next/link'
-import Template from '@templates/Welcome'
-import * as ROUTES from '@constants/routes'
+import Template from '../components/templates/Welcome'
+import * as ROUTES from '../constants/routes'
 import { useRouter } from 'next/router'
 
 import Icon from '@chakra-ui/core/dist/Icon'

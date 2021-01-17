@@ -5,10 +5,10 @@ import { Document } from 'firestorter'
 import { toJS } from 'mobx';
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
-import { isDev } from 'helpers';
+import { isDev } from '../helpers';
 import { useAuth } from './useAuth';
-import { useLocalStorage } from 'hooks'
-import { store } from 'services/firebase/firebase';
+import { useLocalStorage } from '../hooks'
+import { store } from '../services/firebase/firebase';
 
 let endpoint = `https://www.thepathoftruth.com/wp-json/wp/v2/pages`;
 

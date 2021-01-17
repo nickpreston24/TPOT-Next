@@ -1,47 +1,30 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "target": "es2020",
+    "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext",
-      "es2015",
-      "es2016",
-      "es2017",
-      "ES2019",
-      "ES2019.Array"
+      "esnext"
     ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
     "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noEmit": true,
     "jsx": "preserve",
-    "sourceMap": true,
-    "declaration": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
-    "noFallthroughCasesInSwitch": true,
-    "isolatedModules": true
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
   },
   "include": [
-    "pages/**/*",
-    "stores/**/*",
-    "components/**/*",
-    "services/**/*",
-    "models/**/*",
-    "helpers/**/*"
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "build",
-    "pages/wordpress/**/*"
+    "node_modules"
   ]
 }

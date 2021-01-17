@@ -2,8 +2,8 @@ import React from 'react'
 import Box from '@chakra-ui/core/dist/Box'
 import Flex from '@chakra-ui/core/dist/Flex'
 
-import Header from '@organisms/Header'
-import Navbar from '@organisms/Navbar'
+import Header from '../organisms/Header'
+import Navbar from '../organisms/Navbar'
 
 export const Layout = ({ children }) => {
 

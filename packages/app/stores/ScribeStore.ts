@@ -1,5 +1,5 @@
 import { observable, action } from 'mobx'
-import { CheckoutStatus } from 'constants/CheckoutStatus';
+import { CheckoutStatus } from '../constants/CheckoutStatus';
 
 /**
  * Holds contextual information for the Scribe app

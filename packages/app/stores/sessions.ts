@@ -1,5 +1,5 @@
-import { CheckoutStatus } from "constants/CheckoutStatus";
-import { Language } from "constants/languages";
+import { CheckoutStatus } from "../constants/CheckoutStatus";
+import { Language } from "../constants/languages";
 import { action, observable } from "mobx";
 
 export class Session {

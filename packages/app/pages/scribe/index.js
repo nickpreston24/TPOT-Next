@@ -1,7 +1,7 @@
 import React from 'react'
 import NextLink from 'next/link'
-import Template from '@templates/Scribe'
-import * as ROUTES from '@constants/routes'
+import Template from '../../components/templates/Scribe'
+import * as ROUTES from '../../constants/routes'
 // import { useBeforeUnload, usePreventWindowUnload } from '@hooks'
 
 const Page = () => {

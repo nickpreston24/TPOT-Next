@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { isDev } from "helpers"
+import { isDev } from "../../helpers"
 
 export interface ICommand {
     execute(): void;

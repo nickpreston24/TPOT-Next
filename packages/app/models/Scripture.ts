@@ -1,4 +1,4 @@
-import { isDev } from "helpers"
+import { isDev } from "../helpers"
 
 const patterns = {
     'prefix': /(?<Scripture>[a-zA-Z]+\s+\d{1,3}:?\d{1,2}-?\d{1,2}\s+[A-Z]+\r*\n)(?<Text>.*?)(?:\r*\n){2}/gsm,

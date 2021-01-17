@@ -18,14 +18,14 @@ import Button from '@chakra-ui/core/dist/Button'
 import useDisclosure from '@chakra-ui/core/dist/useDisclosure'
 import Select from '@chakra-ui/core/dist/Select';
 import Tooltip from '@chakra-ui/core/dist/Tooltip';
-import { usePrevious, useWordpress } from 'hooks';
-import { checkoutSession } from 'stores/sessionsAPI';
+import { usePrevious, useWordpress } from '../hooks';
+import { checkoutSession } from '../stores/sessionsAPI';
 import { useRouter } from 'next/router';
-import { CheckoutStatus } from 'constants/CheckoutStatus';
+import { CheckoutStatus } from '../constants/CheckoutStatus';
 import { LanguageOptions } from '../constants';
 import { UploadMode } from '../models/UploadMode';
-import { useSessions } from 'hooks/useSessions';
-import { Session } from 'models';
+import { useSessions } from '../hooks/useSessions';
+import { Session } from '../models';
 import { notify } from './Toasts';
 import { MultiSelect } from './molecules/list';
 

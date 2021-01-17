@@ -3,8 +3,8 @@ import { CheckoutStatus } from '../constants/CheckoutStatus';
 import { createContext, useContext, useState } from 'react';
 import { Session } from '../models/Session';
 import Router from 'next/router';
-import { useAuth, useWordpress } from 'hooks';
-import { Paper } from 'models';
+import { useAuth, useWordpress } from '../hooks';
+import { Paper } from '../models';
 import useLocalStorage from './useLocalStorage';
 
 const context = createContext(null);

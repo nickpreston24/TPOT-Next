@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import router from 'next/router';
-import { auth, firebase } from '@services/firebase'
+import { auth, firebase } from '../firebase'
 import { AuthUserContext } from '../firebase/AuthUserContext';
 
 /* Mine */

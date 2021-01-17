@@ -27,7 +27,13 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
             // Save state
             setStoredValue(valueToStore);
             // Save to local storage
-            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+            setTimeout(() => {
+                try {
+                    window.localStorage.setItem(key, JSON.stringify(valueToStore))
+                } catch (error) {
+                    console.log('Window is not available')
+                }
+            }, 100);
         } catch (error) {
             // A more advanced implementation would handle the error case
             console.log(error);

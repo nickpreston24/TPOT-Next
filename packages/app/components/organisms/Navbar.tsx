@@ -6,10 +6,10 @@ import Heading from '@chakra-ui/core/dist/Heading'
 import Text from '@chakra-ui/core/dist/Text'
 import Stack from '@chakra-ui/core/dist/Stack'
 import Divider from '@chakra-ui/core/dist/Divider'
-import { disableMe } from '../utils/disableMe'
-import { isDev } from 'helpers'
-import { NavbarButton, SettingsButton } from 'components/atoms'
-import { scribeRemote, appRemote } from 'components/commands'
+// import { disableMe } from '../utils/disableMe'
+import { isDev } from '../../helpers'
+import { NavbarButton, SettingsButton } from '../atoms'
+import { scribeRemote, appRemote } from '../commands'
 
 // This is the main component that will be rendered into Dashboard's "sidebar"
 const Navbar = () => {
@@ -50,7 +50,7 @@ const Navbar = () => {
     let appButtons = appItems
     let settingsProps = appItems.slice(-1)
 
-    isDev() && console.log('settingsProps', settingsProps)
+    // isDev() && console.log('settingsProps', settingsProps)
 
     return (
         <Stack

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
-import '@services/firebase'
+import '../services/firebase'
 import * as firebase from "firebase/app";
 import app from 'firebase/app';
 import { onAuthUserListener } from '../services/firebase'
-import { isDev } from "helpers";
+import { isDev } from "../helpers";
 import useFirestoreQuery from "./useFirestoreQuery";
 
 const authContext = createContext(null);

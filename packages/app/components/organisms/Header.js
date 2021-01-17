@@ -14,12 +14,12 @@ import Tooltip from '@chakra-ui/core/dist/Tooltip'
 import Text from '@chakra-ui/core/dist/Text'
 import Stack from '@chakra-ui/core/dist/Stack'
 
-import { useAuth } from 'hooks'
+import { useAuth } from '../../hooks'
 import { useRouter } from 'next/router'
-import * as ROUTES from '@constants/routes'
-import { notify } from 'components/Toasts'
+import * as ROUTES from '../../constants/routes'
+import { notify } from '../../components/Toasts'
 import { disableMe, hideMe } from '../utils/disableMe'
-import { isDev } from 'helpers'
+import { isDev } from '../../helpers'
 
 const Header = ({ children }) => {
 
@@ -107,13 +107,13 @@ const AccountDropdown = () => {
             disabled: false,
             title: 'Trello',
             icon: 'calendar',
-            cb: () => window.open(ROUTES.TRELLO, "_blank")
+            // cb: () => window.open(ROUTES.TRELLO, "_blank")
         },
         {
             disabled: true,
             title: 'Docs',
             icon: 'info-outline',
-            cb: () => window.history.pushState({}, 'My Title', ROUTES.TRELLO)
+            // cb: () => window.history.pushState({}, 'My Title', ROUTES.TRELLO)
         },
     ]
 

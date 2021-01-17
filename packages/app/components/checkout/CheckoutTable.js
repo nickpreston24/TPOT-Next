@@ -28,15 +28,13 @@ import { observer } from 'mobx-react'
 import { toJS } from 'mobx'
 import { useRouter } from 'next/router'
 import { sessions, unlockSession, removeSession } from '../../stores/sessionsAPI'
-import { notify } from 'components/Toasts'
-import { useAuth } from 'hooks'
-import { ROUTES } from 'constants/routes'
+import { notify } from '../../components/Toasts'
+import { useAuth } from '../../hooks'
+import { ROUTES } from '../../constants/routes'
 import { CheckoutStatus } from '../../constants'
 import dynamic from 'next/dynamic'
 import moment from 'moment'
-import { ChipStatus, Confirm } from '../atoms'
-import { isDev } from "helpers"
-import CategoryList from 'pages/account/wordpress/CategoryList'
+import { isDev } from "../../helpers"
 import { useLocalStorage } from '../../hooks'
 
 // <CheckoutTable /> is a class component that has a live connection to the firebase
@@ -55,7 +53,7 @@ const MaterialTable = dynamic(() => import('material-table'),
 const columns = [
     // { field: 'Icon', searchable: false, export: false, render: () => <Icon maxW={20} name="calendar" /> },
     { title: 'Document', field: 'title', type: "string", searchable: true },
-    { title: 'Status', field: 'status', type: "string", searchable: false, render: row => <ChipStatus status={row.status} /> },
+    { title: 'Status', field: 'status', type: "string", searchable: false },
     { title: 'Last Edited', field: 'date_modified', type: "string", searchable: false },
     { title: 'Author', field: 'author', type: "string", searchable: false },
     { title: 'Uploaded', field: 'date_uploaded', type: "string", searchable: false, hidden: true },
