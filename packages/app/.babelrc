@@ -1,43 +1,28 @@
 {
-  "presets": [
-    "next/babel",
-    "@zeit/next-typescript/babel"
-  ],
+  "presets": ["next/babel", "@zeit/next-typescript/babel"],
   "plugins": [
-    [
-      "module-resolver",
-      {
-        "root": "./",
-        "alias": {
-          "@services": "./services",
-          "@stores": "./stores",
-          "@components": "./components",
-          "@hooks": "./hooks",
-          "@constants": "./constants",
-          "@helpers": "./helpers",
-          "@contexts": "./contexts",
-          "@routes": "./constants/routes",
-          "@models": "./models",
-          "@templates": "./components/templates",
-          "@organisms": "./components/organisms",
-          "@functions": [
-            "./functions"
-          ],
-          "@errors": "./models/Errors"
-        }
-      }
-    ],
-    [
-      "@babel/plugin-proposal-decorators",
-      {
-        "legacy": true
-      }
-    ],
-    [
-      "@babel/plugin-proposal-class-properties",
-      {
-        "loose": true
-      }
-    ]
+    // [
+    //   "module-resolver",
+    //   {
+    //     "root": ".",
+    //     "alias": {
+    //       "@services": "./src/services",
+    //       "@stores": "./src/stores",
+    //       "@components": "./src/components",
+    //       "@hooks": "./src/hooks/defunct",
+    //       "@constants": "./src/constants/defunct",
+    //       "@helpers": "./src/helpers",
+    //       "@contexts": "./src/contexts",
+    //       "@routes": "./src/routes",
+    //       "@models": "./src/models",
+    //       "@templates": "./src/components/templates",
+    //       "@organisms": "./src/components/organisms",
+    //       "@functions": ["./src/functions"],
+    //       "@errors": "./src/models/Errors"
+    //     }
+    //   }
+    // ],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
   ]
 }
