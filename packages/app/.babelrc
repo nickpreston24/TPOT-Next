@@ -1,0 +1,28 @@
+{
+  "presets": ["next/babel", "@zeit/next-typescript/babel"],
+  "plugins": [
+    // [
+    //   "module-resolver",
+    //   {
+    //     "root": ".",
+    //     "alias": {
+    //       "@services": "./src/services",
+    //       "@stores": "./src/stores",
+    //       "@components": "./src/components",
+    //       "@hooks": "./src/hooks/defunct",
+    //       "@constants": "./src/constants/defunct",
+    //       "@helpers": "./src/helpers",
+    //       "@contexts": "./src/contexts",
+    //       "@routes": "./src/routes",
+    //       "@models": "./src/models",
+    //       "@templates": "./src/components/templates",
+    //       "@organisms": "./src/components/organisms",
+    //       "@functions": ["./src/functions"],
+    //       "@errors": "./src/models/Errors"
+    //     }
+    //   }
+    // ],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
+  ]
+}

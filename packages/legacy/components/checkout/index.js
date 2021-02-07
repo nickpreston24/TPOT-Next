@@ -1,1 +1,0 @@
-export { CheckoutTable } from './CheckoutTable' //JS

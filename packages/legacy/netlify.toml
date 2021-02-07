@@ -1,4 +1,0 @@
-[build]
-  Command = "yarn build && yarn export"
-  functions = "lambda"
-  publish = "out"

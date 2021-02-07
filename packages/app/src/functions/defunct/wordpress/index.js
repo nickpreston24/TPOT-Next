@@ -1,0 +1,1 @@
+export { wpapi } from './api'
