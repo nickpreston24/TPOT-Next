@@ -312,14 +312,12 @@
     "@ckeditor/ckeditor5-ui" "^27.0.0"
     "@ckeditor/ckeditor5-utils" "^27.0.0"
 
-"@ckeditor/ckeditor5-paste-from-office@^19.0.2":
-  version "19.0.2"
-  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-paste-from-office/-/ckeditor5-paste-from-office-19.0.2.tgz#edfb4762195d34742785e7bbc2a09bbd9e443541"
-  integrity sha512-Rmn0+sKyF0xGT623cvGTk26ip0jjZTbJfbyDx8lSAt15LtL1VgVs0zGbiTR6le/91YS9rL1ytcPkjoWDc1EppA==
+"@ckeditor/ckeditor5-paste-from-office@^27.0.0":
+  version "27.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-paste-from-office/-/ckeditor5-paste-from-office-27.0.0.tgz#e6ae3006906c4dd2b08aada28d1f0664e73e8f4a"
+  integrity sha512-ywvw9pJiLd3aYbnu/vPwmet9/dPa8B7kRljoxz9CiHBf/qN3QMXMd1vAtuVxN2ZtV4HIe36Opw4zINMcz7jiRQ==
   dependencies:
-    "@ckeditor/ckeditor5-clipboard" "^19.0.1"
-    "@ckeditor/ckeditor5-core" "^19.0.1"
-    "@ckeditor/ckeditor5-engine" "^19.0.1"
+    ckeditor5 "^27.0.0"
 
 "@ckeditor/ckeditor5-select-all@^19.0.1":
   version "19.0.1"
