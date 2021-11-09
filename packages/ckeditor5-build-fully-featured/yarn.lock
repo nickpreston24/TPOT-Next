@@ -273,16 +273,12 @@
     "@ckeditor/ckeditor5-ui" "^19.0.1"
     lodash-es "^4.17.10"
 
-"@ckeditor/ckeditor5-list@^19.0.1":
-  version "19.0.1"
-  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-list/-/ckeditor5-list-19.0.1.tgz#666b8579f418417e2822cbef71fc3bde600ac40e"
-  integrity sha512-fkM9ssw6C+DtmXPe7l5GZhNKq5kS4oGJZwRSMdI69tX0hVgGHI6o+WgfCG37/6jR7PPxCIzd+XgcyMcuFKfwpA==
+"@ckeditor/ckeditor5-list@^27.0.0":
+  version "27.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-list/-/ckeditor5-list-27.0.0.tgz#98ea679002119412d7426504e351f444001a3a43"
+  integrity sha512-mIU06LeVahGhQ93wYKwEZcxA+YP8a/OzA3hDBwluqR+9hWGPSttDeD0t+JDaX4HCefVj0f9BvZvkWwRBZeB4nw==
   dependencies:
-    "@ckeditor/ckeditor5-core" "^19.0.1"
-    "@ckeditor/ckeditor5-engine" "^19.0.1"
-    "@ckeditor/ckeditor5-paragraph" "^19.1.0"
-    "@ckeditor/ckeditor5-ui" "^19.0.1"
-    "@ckeditor/ckeditor5-utils" "^19.0.1"
+    ckeditor5 "^27.0.0"
 
 "@ckeditor/ckeditor5-media-embed@^19.1.0":
   version "19.1.0"
