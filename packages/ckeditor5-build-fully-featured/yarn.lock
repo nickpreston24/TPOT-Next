@@ -278,19 +278,13 @@
   dependencies:
     ckeditor5 "^27.0.0"
 
-"@ckeditor/ckeditor5-media-embed@^19.1.0":
-  version "19.1.0"
-  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-media-embed/-/ckeditor5-media-embed-19.1.0.tgz#1587ca5844ab0c68f20b2af1ae8cb412146f4bef"
-  integrity sha512-vzauNj0RWKQhg07dgs2/z9EzAikRA7Hkxj2YeCP6wd6m2VjdljG+ayzMXC3jorYsFF5Wgg8LXi+lCp2RtC/Opg==
+"@ckeditor/ckeditor5-media-embed@^27.0.0":
+  version "27.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-media-embed/-/ckeditor5-media-embed-27.0.0.tgz#7512052c8669045d630d3b8333340db40d4bd82d"
+  integrity sha512-j1W0qKy/+v4E33z8nZgcAtBiftvxNQUWU9VlaJODNbX+qGV4ZucLHeA1FOzV3AQlwrZGcN7+mDQ91uuM5GUHcw==
   dependencies:
-    "@ckeditor/ckeditor5-clipboard" "^19.0.1"
-    "@ckeditor/ckeditor5-core" "^19.0.1"
-    "@ckeditor/ckeditor5-engine" "^19.0.1"
-    "@ckeditor/ckeditor5-image" "^19.0.1"
-    "@ckeditor/ckeditor5-ui" "^19.0.1"
-    "@ckeditor/ckeditor5-undo" "^19.0.1"
-    "@ckeditor/ckeditor5-utils" "^19.0.1"
-    "@ckeditor/ckeditor5-widget" "^19.1.0"
+    "@ckeditor/ckeditor5-ui" "^27.0.0"
+    ckeditor5 "^27.0.0"
 
 "@ckeditor/ckeditor5-paragraph@^19.1.0":
   version "19.1.0"
