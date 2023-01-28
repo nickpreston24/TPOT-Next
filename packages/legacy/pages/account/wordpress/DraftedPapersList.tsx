@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from 'axios'
 import PostList from "./PostList";
-import { sessionStyle } from "./SearchBar";
 import { useWordpress } from "hooks";
+
+
 
 export const DraftedPapersList = ({ take = 10 }) => {
 
@@ -24,25 +25,16 @@ export const DraftedPapersList = ({ take = 10 }) => {
                 setPosts(response.data);
                 setLoading(false);
             });
-
-        // getDrafts()
-        //     .then(response => console.log(response.data))
-
-        // 400 error
-        // wpapi.pages().status(['draft', 'future'])
-        //     .then((response) => {
-        //         console.log(response)
-        //         setPosts(response.data)
-        //     })
     }, []);
 
     return <PostList
-        style={sessionStyle}
+        style={{ background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }}
         heading="Drafts"
         posts={posts}
         loading={loading}
     />
 
 };
+
 
 export default DraftedPapersList

@@ -17,7 +17,7 @@ export class Session {
     status: string;
     code: string;
     language: string | Language;
-    notes: string; // Notes can include things like the reason for set-aside.
+    // notes?: string; // Notes can include things like the reason for set-aside.
 
     contributors: string[] = [];
     lastContributor?: string = "" // For now, this will be the email - MP
@@ -37,7 +37,8 @@ export class Session {
         let { authorId, paperId, categories
             , language, title, excerpt, filename
             , status, code, lastContributor
-            , date_uploaded, date_modified
+            , date_uploaded, date_modified,
+            notes
         } = props;
 
         //Set defaults/fallbacks:
@@ -67,6 +68,7 @@ export class Session {
         this.categories = categories || []
         this.date_modified = date_modified || null;
         this.date_uploaded = date_uploaded || null;
+        // this.notes = notes
     }
 
     static create(props): Session {

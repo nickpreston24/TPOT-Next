@@ -1,9 +1,9 @@
 import Stack from '@chakra-ui/core/dist/Stack';
-import React, {  } from 'react';
+import React, { } from 'react';
 import CategoryList from './CategoryList';
 import { DraftedPapersList } from './DraftedPapersList';
 import PostList from './PostList';
-import SearchBar, { sessionStyle } from './SearchBar';
+import SearchBar from './SearchBar';
 
 const Wordpress = () => {
 
@@ -11,9 +11,9 @@ const Wordpress = () => {
         <Stack>
             <SearchBar>
                 {({ loading, posts }) =>
-                    <Stack direction="row">
+                    <Stack direction='row'>
                         <PostList
-                            style={sessionStyle}
+                            style={{ background: "linear-gradient(to left, #ff34d7, #2bc0e4)", color: '#efe' }}
                             heading="Search Results"
                             posts={posts}
                             loading={loading}

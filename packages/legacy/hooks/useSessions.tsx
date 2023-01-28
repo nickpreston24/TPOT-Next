@@ -103,17 +103,13 @@ function useSessionProvider() {
 
         // Publish a Paper {New | Existing} to Wordpress and send the updated Session to Firebase:
 
-
-
         let paper = new Paper({
             ...session,
             content: code,
             author: 10,
             categories: [], // TODO: update the categories to be mapped to their corresponding Wordpress numbers
-            status: 'publish'
+            status: 'draft'
         });
-
-
 
         publish(paper)
             .then(async (response) => {

@@ -2,7 +2,6 @@ import React from 'react';
 import { useFirestoreQuery } from 'hooks';
 import { store } from 'services/firebase/firebase';
 import Post from './Post';
-import { sessionStyle } from './SearchBar';
 
 // Renders A Single Session by a known uid
 const Session = ({ uid='0001' }) => {
@@ -23,7 +22,6 @@ const Session = ({ uid='0001' }) => {
 
     return (
         <Post
-            style={sessionStyle}
             post={data} />
     );
 };
